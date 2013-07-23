@@ -15,7 +15,7 @@ lm.init_app(app)
 lm.login_view = 'login' 
 oid = OpenID(app, os.path.join(basedir, 'tmp'))
 
-if not app.debug: #from run.py
+if not app.debug: #from run.py. Only emails administrator of error if not in debug mode
 	import logging
 	from logging.handlers import SMTPHandler
 	credentials = None

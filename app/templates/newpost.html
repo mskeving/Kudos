@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Edit Your Profile</h1>
+<form action="" method="POST" name="newpost">
+	{{form.hidden_tag()}} 
+	<!-- Will get replaced with hidden field that implements the CSRF prevention enabled in configuration. Needs to be in all forms -->
+	<p>New Post:</p><br>
+	{{form.new_post}}
+</form>
+
+{% endblock %}

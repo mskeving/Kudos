@@ -19,6 +19,13 @@ class User(db.Model):
 	def make_unique_nickname(nickname):
 		if User.query.filter_by(nickname = nickname).first() == None:
 			return nickname
+			version = 2
+			while True:
+				new_nickname = nickname + str(version)
+				if User.query.filter_by(nickname = new_nickname).first() == None:
+					break
+				version += 1
+			return new_nickname
 
 	def avatar(self, size):
 		return 'http://www.gravatar.com/avatar/' + md5(self.email).hexdigest() + '?d=mm&s=' + str(size)
