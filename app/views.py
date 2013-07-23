@@ -2,7 +2,7 @@ from app import app, lm, db, oid
 from flask import render_template, flash, redirect, session, url_for, request, g 
 from flask.ext.login import login_user, logout_user, current_user, login_required 
 
-from forms import LoginForm, EditForm
+from forms import LoginForm, EditForm, NewPost
 from models import User, ROLE_USER, ROLE_ADMIN
 from datetime import datetime
 
@@ -36,13 +36,15 @@ def index():
 		user = user, 
 		posts = posts)
 
+#LOGIN 
 @app.route('/login', methods = ['GET', 'POST'])
 @oid.loginhandler #tells Flask-OpenID that this is our login view function
 def login():
 	if g.user is not None and g.user.is_authenticated():
 		#if there's a logged in user already, will not do a second login on top
 		return redirect(url_for('index'))
-	form = LoginForm()
+	login_form = LoginForm()
+
 	if form.validate_on_submit(): #if anything fails validation, will return false
 		#store value of remember_me boolean in flask session (NOT db.session)
 		session['remember_me'] = form.remember_me.data
@@ -51,9 +53,10 @@ def login():
 		return oid.try_login(form.openid.data, ask_for = ['nickname', 'email'])
 	return render_template('login.html', 
 		title = 'Sign In', 
-		form = form,
+		login_form = login_form,
 		providers = app.config['OPENID_PROVIDERS']) #if validation fails, load login page them so they can resubmit 
 
+#LOGOUT
 @app.route('/logout')
 def logout():
 	logout_user()
@@ -86,10 +89,13 @@ def load_user(id):
 	#user ids in Flask-login are always unicode. Need to convert to int
 	return User.query.get(int(id))
 
+
+#USER PROFILE
 @app.route('/user/<nickname>')
 @login_required
 def user(nickname):
 	user = User.query.filter_by(nickname = nickname).first()
+	post_form = NewPost()
 	if user == None:
 		flash('User ' + nickname + ' not found.')
 		return redirect(url_for('index'))
@@ -98,13 +104,16 @@ def user(nickname):
 		{ 'author': user, 'body': 'Test post #2'}
 	]
 	return render_template('user.html', 
+		post_form = post_form,
 		user = user, 
 		posts = posts)
 
+#EDIT PROFILE
 @app.route('/edit', methods = ['GET', 'POST'])
 @login_required
 def edit():
-	form = EditForm()
+	form = EditForm(g.user.nickname) #pass in nickname to make sure it's unique
+		#EditForm is in forms.py
 	if form.validate_on_submit():
 		g.user.nickname = form.nickname.data
 		g.user.about_me = form.about_me.data
@@ -115,14 +124,33 @@ def edit():
 	else:
 		form.nickname.data = g.user.nickname
 		form.about_me.data = g.user.about_me
+
 	return render_template('edit.html', 
 		form = form)
 
-@app.errorhandler(404)
-def internal_error(error):
-	return render_template('404.html'), 404
+#NEW POST
+@app.route('/newpost', methods=['POST'])
+@login_required
+def new_post():
+	print "starting new_post"
+	form = NewPost()
+	post = request.form["new_post"] #from NewPost
+	user = g.user.nickname
+	user_id = g.user.id
 
-@app.errorhandler(500)
-def internal_error(error):
-	db.session.rollback()
-	return render_template('500.html'), 500
+	print "got user information"
+
+	new_post = db.Post(id=user_id, body=post, timestamp=datetime.utcnow(), user_id=user_id)
+	print new_post
+	# db.session.add(new_post)
+	# db.session.commit()
+	return redirect(url_for('user'))
+
+# @app.errorhandler(404)
+# def internal_error(error):
+# 	return render_template('404.html'), 404
+
+# @app.errorhandler(500)
+# def internal_error(error):
+# 	db.session.rollback()
+# 	return render_template('500.html'), 500

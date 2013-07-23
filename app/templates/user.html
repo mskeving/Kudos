@@ -11,14 +11,27 @@
 		{% if user.about_me %}<p>{{user.about_me}}</p>{% endif %}
 		{% if user.last_seen %}<p><i>Last seen on: {{user.last_seen}}</i></p>{% endif %}
 		<!-- can only change your own profile page (if logged in) -->
-		{% if user.id == g.user.id %}<p><a href="url_for('edit')}}">Edit</a></p>{% endif %}
+		{% if user.id == g.user.id %}<p><a href="{{ url_for('edit') }}">Edit</a></p>{% endif %}
+
 		</td>
 	</tr>
 </table>
+
+<h3>Add a new post</h3>
+
+<!-- submit new post -->
+<form action"/newpost" method="POST">
+	{{ post_form.post_body }}
+	<p>{{ post_form.post_btn(value="submit post")}}</p>
+
+</form>
+
 <hr>
 
+<!-- display posts -->
 {% for post in posts %}
 <table>
+
 	<tr valign="top">
 		<td><img src="{{post.author.avatar(50)}}"></td><td><i>{{post.author.nickname}} says:</i><br>
 		{{post.body}}</td>
