@@ -1,10 +1,14 @@
-from flask.ext.wtf import Form, TextField, BooleanField, TextAreaField, SubmitField
+from flask.ext.wtf import Form, TextField, BooleanField, TextAreaField, SubmitField, HiddenField
 from flask.ext.wtf import Required, Length
 from app.models import User
+
+
 
 class LoginForm(Form):
 	openid = TextField('openid', validators = [Required()]) #required checks to make sure field isn't empty
 	remember_me = BooleanField('remember_me', default = False)
+
+
 
 class EditForm(Form):
 	nickname = TextField('nickname', validators = [Required()])
@@ -29,14 +33,15 @@ class EditForm(Form):
 			return False
 		return True	
 
-class NewPost(Form):
+
+
+class EditPost(Form):
 	post_body = TextAreaField('post_body', validators = [Required()])
-	post_btn = SubmitField('post_btn')
+	post_submit_btn = SubmitField('post_submit_btn')
+	post_delete_btn = SubmitField('post_delete_btn')
+	post_id = HiddenField("post_id") #validator that this is number
 
+class DeletePost(Form):
+	post_id = HiddenField("post_id") #validator that this is number
+	post_delete_btn = SubmitField('post_delete_btn')
 
-
-	# def validate(self):
-	# 	if not Form.validate(self):
-	# 		return False
-
-	#do I have to create a form for a new post? 

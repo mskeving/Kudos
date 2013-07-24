@@ -6,14 +6,19 @@ ROLE_USER = 0
 ROLE_ADMIN = 1
 
 class User(db.Model):
+	__tablename__ = "users"
+
 	id = db.Column(db.Integer, primary_key = True)
 	nickname = db.Column(db.String(64), index = True, unique = True)
 	#unique means no values can be the same for that column? 
 	email = db.Column(db.String(120), index = True, unique = True)
 	role = db.Column(db.SmallInteger, default = ROLE_USER)
-	posts = db.relationship('Post', backref = 'author', lazy = 'dynamic')
 	about_me = db.Column(db.String(140))
 	last_seen = db.Column(db.Date)
+	posts = db.relationship('Post', backref = 'author', lazy = 'dynamic')
+	#backref is adding author to Post class
+	#lazy.. whether all posts are loaded at the same time as user. look up options
+
 
 	@staticmethod
 	def make_unique_nickname(nickname):
@@ -48,10 +53,14 @@ class User(db.Model):
 		return '<User %r>' %(self.nickname)
 
 class Post(db.Model):
+	__tablename__ = "posts"
+
 	id = db.Column(db.Integer, primary_key = True)
 	body = db.Column(db.String(140))
 	timestamp = db.Column(db.Date)
-	user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+	user_id = db.Column(db.Integer, db.ForeignKey('users.id')) #users is tablename
+	#Post.author (because of backref in User)
+	#relationship with user table?
 
 	def __repr__(self):
 		return '<Post %r>' %(self.body)

@@ -10,8 +10,10 @@
 
 		{% if user.about_me %}<p>{{user.about_me}}</p>{% endif %}
 		{% if user.last_seen %}<p><i>Last seen on: {{user.last_seen}}</i></p>{% endif %}
+
+		<!-- Edit Profile -->
 		<!-- can only change your own profile page (if logged in) -->
-		{% if user.id == g.user.id %}<p><a href="{{ url_for('edit') }}">Edit</a></p>{% endif %}
+		{% if user.id == g.user.id %}<p><a href="{{ url_for('edit') }}">Edit your nickname</a></p>{% endif %}
 
 		</td>
 	</tr>
@@ -20,26 +22,47 @@
 <h3>Add a new post</h3>
 
 <!-- submit new post -->
-<form action"/newpost" method="POST">
-	{{ post_form.post_body }}
-	<p>{{ post_form.post_btn(value="submit post")}}</p>
+<form action="/editpost" method="POST" name="add">
+		<!-- inclide csrf token in every form for security -->
+		{{ post_form.csrf_token }} 
+		{% for error in post_form.errors.post_body %}
+		<span style="color:red;">[{{error}}]</span> 
+		{% endfor %}<br>
+		{{ post_form.post_body }}
+		<p>{{ post_form.post_submit_btn(value="submit post")}}</p>
 
 </form>
 
+
+
 <hr>
 
-<!-- display posts -->
-{% for post in posts %}
-<table>
+<!-- Delete Posts-->
+<!-- Posts ordered by unique id. Number buttons with count to correspond with id (can we get user.id in here instead?-->
 
-	<tr valign="top">
-		<td><img src="{{post.author.avatar(50)}}"></td><td><i>{{post.author.nickname}} says:</i><br>
-		{{post.body}}</td>
-	</tr>
-{% endfor %}
-	
-</table>
 
-<!-- 	{% include 'post.html' %} -->
+	<table>
+
+	{% for post in posts %}
+
+		<tr valign="top", id="{{count}}">
+
+			<td>
+					<form action="/deletepost" method="POST" name="delete">
+						<!-- These are coming from EditPost, not DeletePost -->
+						<!-- How do we get post.id? -->
+					{{ post_form.post_id(value=post.id) }}
+					{{ post_form.post_delete_btn(value="X") }}
+					</form>
+			</td>
+			<td><img src="{{post.author.avatar(50)}}"></td><td><i>{{post.author.nickname}} says:</i><br>
+			{{post.body}}</td>
+		</tr>
+
+
+	{% endfor %}
+		
+	</table>
+
 
 {% endblock %}

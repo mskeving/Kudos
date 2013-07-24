@@ -2,8 +2,8 @@ from app import app, lm, db, oid
 from flask import render_template, flash, redirect, session, url_for, request, g 
 from flask.ext.login import login_user, logout_user, current_user, login_required 
 
-from forms import LoginForm, EditForm, NewPost
-from models import User, ROLE_USER, ROLE_ADMIN
+from forms import LoginForm, EditForm, EditPost, DeletePost
+from models import User, Post, ROLE_USER, ROLE_ADMIN
 from datetime import datetime
 
 @app.before_request
@@ -45,12 +45,12 @@ def login():
 		return redirect(url_for('index'))
 	login_form = LoginForm()
 
-	if form.validate_on_submit(): #if anything fails validation, will return false
+	if login_form.validate_on_submit(): #if anything fails validation, will return false
 		#store value of remember_me boolean in flask session (NOT db.session)
-		session['remember_me'] = form.remember_me.data
+		session['remember_me'] = login_form.remember_me.data
 		#trigger user authentication through Flask-OpenID
 		#form.openid.data is what user enters. nickname and email is the data we want from the openid provider
-		return oid.try_login(form.openid.data, ask_for = ['nickname', 'email'])
+		return oid.try_login(login_form.openid.data, ask_for = ['nickname', 'email'])
 	return render_template('login.html', 
 		title = 'Sign In', 
 		login_form = login_form,
@@ -94,15 +94,14 @@ def load_user(id):
 @app.route('/user/<nickname>')
 @login_required
 def user(nickname):
+
 	user = User.query.filter_by(nickname = nickname).first()
-	post_form = NewPost()
+	post_form = EditPost()
 	if user == None:
 		flash('User ' + nickname + ' not found.')
 		return redirect(url_for('index'))
-	posts = [
-		{ 'author': user, 'body': 'Test post #1' },
-		{ 'author': user, 'body': 'Test post #2'}
-	]
+	#posts = Post.query.filter_by(id = user.id).all()
+	posts = Post.query.filter_by(user_id = user.id).all()
 	return render_template('user.html', 
 		post_form = post_form,
 		user = user, 
@@ -128,23 +127,39 @@ def edit():
 	return render_template('edit.html', 
 		form = form)
 
-#NEW POST
-@app.route('/newpost', methods=['POST'])
+#EDIT POSTS
+@app.route('/editpost', methods=['POST'])
 @login_required
 def new_post():
-	print "starting new_post"
-	form = NewPost()
-	post = request.form["new_post"] #from NewPost
-	user = g.user.nickname
-	user_id = g.user.id
+	form = EditPost()
 
-	print "got user information"
+	print form.post_body.name
 
-	new_post = db.Post(id=user_id, body=post, timestamp=datetime.utcnow(), user_id=user_id)
-	print new_post
-	# db.session.add(new_post)
-	# db.session.commit()
-	return redirect(url_for('user'))
+	#checks if text in form fields
+	if form.validate_on_submit():
+		# if there's text, submit post
+		post_text = form.post_body.data
+		user_id = g.user.id
+		new_post = Post(body=post_text, timestamp=datetime.utcnow(), user_id=user_id) 
+		#don't include id value, primary key will automatically increment
+		db.session.add(new_post)
+		db.session.commit()
+		return redirect(url_for("user", nickname=g.user.nickname))
+
+	else:
+		#no text for post. re-render template, which will display error message
+		return render_template(('user.html'), post_form=form, user = g.user, posts=g.user.posts)
+
+#DELETE POSTS
+@app.route('/deletepost', methods=['POST'])
+@login_required
+def delete_post():
+	form = DeletePost()
+	print "created form"
+	return render_template(('user.html'), post_form=form, posts=g.user.posts)
+	
+
+
 
 # @app.errorhandler(404)
 # def internal_error(error):
