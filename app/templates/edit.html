@@ -1,6 +1,11 @@
 {% extends "base.html" %}
 
 {% block content %}
+<head>
+	<!-- <link rel="stylesheet" href={{ url_for('static', filename='styles.css') }} type="text/css"/> -->
+</head>
+
+<body>
 <h1>Edit Your Profile</h1>
 <form action="" method="post" name="edit">
 	{{form.hidden_tag()}}  <!-- wha? -->
@@ -8,7 +13,7 @@
 	<table>
 		<tr>
 			<td>Your nickname:</td>
-			<td>{{form.nickname(size = 50)}}
+			<td>{{form.nickname(class="profile-textfield")}}
 				{% for error in form.errors.nickname %}
 				<!-- set nickname text box to blank -->
 				<br><span style="color: red;">[{{error}}]</span>
@@ -16,10 +21,59 @@
 			</td>
 		</tr>
 		<tr>
+			<td>Your first name:</td>
+			{% if user.firstname %}
+				<td>{{ form.firstname(value=user.firstname, class="profile-textfield") }}</td>
+			{% else %}
+				<td><i>{{ form.firstname(value="none", class="profile-textfield", id="textfield-none") }}</i></td>
+			{% endif %}
+		</tr>
+		<tr>
+			<td>Your last name:</td>
+			{% if user.lastname %}
+				<td>{{ form.lastname(value=user.lastname, class="profile-textfield") }}</td>
+			{% else %}
+				<td><i>{{ form.lastname(placeholder="none", class="profile-textfield", id="textfield-none") }}</i></td>
+			{% endif %}
+		</tr>
+		<tr>
+			<td>Your team:</td>
+			{% if user.team %}
+				<td>{{ form.team(value=user.team, class="profile-textfield") }}</td>
+			{% else %}
+				<td><i>{{ form.team(placeholder="none", class="profile-textfield", id="textfield-none") }}</i></td>
+			{% endif %}
+		</tr>
+		<tr>
+			<td>Your email address:</td>
+			{% if user.email %}
+				<td>{{ form.email(value=user.email, class="profile-textfield") }}</td>
+			{% else %}
+				<td><i>{{ form.email(placeholder="none", class="profile-textfield", id="textfield-none") }}</i></td>
+			{% endif %}
+		</tr>
+		<tr>
+			<td>Your phone number: </td>
+			{% if user.phone %}
+				<td>{{ form.phone(value=user.phone, class="profile-textfield") }}</td>
+			{% else %}
+				<td><i>{{ form.phone(placeholder="none", class="profile-textfield", id="textfield-none") }}</i></td>
+			{% endif %}
+		</tr>
+		<tr>
 			<td>About yourself:</td>
+			{% if user.about_me %}
+				<td>{{ form.about_me(value=user.about_me) }}</td>
+			{% else %}
+				<td><i>{{ form.about_me(placeholder="none", class="profile-textfield", id="textfield-none") }}</i></td>
+			{% endif %}
+		</tr>
+		<tr>
 			<td><input type="submit" value="Save Changes"></td>
+			<!-- <td><input type="submit" value="Cancel"></td> -->
 		</tr>
 	</table>
 </form>
 
+</body>
 {% endblock %}

@@ -1,17 +1,35 @@
 <html>
 	<head>
 		{% if title %}
-		<title>{{title}} - microblog </title>
+		<title>{{title}} - Kudos </title>
 		{% else %}
-		<title>Welcome to microblog</title>
+		<title>Kudos</title>
 		{% endif %}
 	</head>
 	<body>
 		{% extends "base.html" %}
 		{% block content %}
-		<h1>Hello, {{user.nickname}}!</h1>
+		<h3>Kudus!</h3>
+			<!-- Submit new Kudos -->
+			<form action="/editpost" method="POST" name="add">
+				<!-- inclide csrf token in every form for security -->
+				{{ edit_form.csrf_token }} 
+
+				{% for error in edit_form.errors.post_body %}
+				<span style="color:red;">[{{error}}]</span> 
+				{% endfor %}<br>
+
+				{{ edit_form.post_body (style="margin: 1.80398px; width: 440px; height: 57px;") }}
+				<p>{{ edit_form.post_submit_btn(value="submit post")}}</p>
+				{{ edit_form.hidden(value=0) }}
+			</form>
 		{% for post in posts %}
-		<p>{{post.author.nickname}} says: <b>{{post.body}}</b></p>
+			<table>
+				<tr>
+					<td><img src="{{post.author.avatar(50)}}"></td><td><i>{{post.author.nickname}} says:</i><br>
+					{{post.body}}</td>
+				</tr>
+			</table>
 		{% endfor %}
 		{% endblock %}
 	</body>

@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+
+	{% for user in all_users %}
+		<table>
+			<tr width="25px">
+				<td><u>Name</u></td>
+				<td><u>Email</u></td>
+				<td><u>Team</u></td>
+			</tr>
+			<tr>
+				<td>{{user.firstname}} {{user.lastname}} </td>
+				<td><a href="{{ url_for('user', nickname=user.nickname) }}">{{user.email}} </a> </td>
+				<td>{{user.team}}  </td>
+			</tr>
+		</table>
+
+	{% endfor %}
+
+
+
+
+
+{% endblock %}

@@ -9,10 +9,13 @@ class User(db.Model):
 	__tablename__ = "users"
 
 	id = db.Column(db.Integer, primary_key = True)
+	firstname = db.Column(db.String(64), index = True)
+	lastname = db.Column(db.String(64), index = True)
+	#change nickname unique=false
 	nickname = db.Column(db.String(64), index = True, unique = True)
-	#unique means no values can be the same for that column? 
 	email = db.Column(db.String(120), index = True, unique = True)
-	role = db.Column(db.SmallInteger, default = ROLE_USER)
+	phone = db.Column(db.String(25), index = True)
+	team = db.Column(db.String(120), index = True)
 	about_me = db.Column(db.String(140))
 	last_seen = db.Column(db.Date)
 	posts = db.relationship('Post', backref = 'author', lazy = 'dynamic')
