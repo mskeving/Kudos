@@ -12,6 +12,11 @@ class LoginForm(Form):
 
 class EditForm(Form):
 	nickname = TextField('nickname', validators = [Required()])
+	firstname = TextField('lastname', validators = [Length(min = 0, max = 140)])
+	lastname = TextField('lastname', validators = [Length(min = 0, max = 140)])
+	email = TextField('email', validators = [Length(min = 0, max = 140)])
+	team = TextField('team', validators = [Length(min = 0, max = 140)])
+	phone = TextField('phone', validators = [Length(min = 0, max = 140)])
 	about_me = TextAreaField('about_me', validators = [Length(min = 0, max = 140)])
 
 	def __init__(self, original_nickname, *args, **kwargs):
@@ -36,12 +41,12 @@ class EditForm(Form):
 
 
 class EditPost(Form):
+	# hidden field to tell whether submit button should go to ('/') or user profile
+	hidden = HiddenField('hidden')
 	post_body = TextAreaField('post_body', validators = [Required()])
 	post_submit_btn = SubmitField('post_submit_btn')
-	post_delete_btn = SubmitField('post_delete_btn')
-	post_id = HiddenField("post_id") #validator that this is number
 
 class DeletePost(Form):
-	post_id = HiddenField("post_id") #validator that this is number
+	post_id = HiddenField('post_id') #validator that this is number
 	post_delete_btn = SubmitField('post_delete_btn')
 

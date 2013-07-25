@@ -1,5 +1,7 @@
 <html>
 	<head>
+		<link rel="stylesheet" href={{ url_for('static', filename='styles.css') }} type="text/css"/>
+
 		{% if title %}
 		<title>{{title}} - microblog </title>
 		{% else %}
@@ -12,6 +14,7 @@
 		{% if g.user.is_authenticated() %}
 		<!-- If user is logged in, allow them to logout -->
 		| <a href="{{ url_for('user', nickname = g.user.nickname) }}">Your Profile</a>
+		| <a href="{{ url_for('all_users') }}">All Users</a>
 		| <a href="{{ url_for('logout') }}">Logout</a>
 		{% endif %}
 

@@ -20,21 +20,13 @@ def before_request():
 @login_required #this page is only seen by logged in users
 def index():
 	user = g.user
-	posts = [
-		{
-			'author':{'nickname':'John'},
-			'body': 'Beautiful day in Portland!'
-		}, 
-		{
-			'author':{'nickname':'Susan'},
-			'body':'The Avengers was a good movie.'
-		}
-
-	]
+	posts = db.session.query(Post).all()
+	form = EditPost()
 	return render_template("index.html", 
-		title = 'Home', 
-		user = user, 
-		posts = posts)
+		title='Home', 
+		user=user,
+		posts=posts,
+		edit_form=form)
 
 #LOGIN 
 @app.route('/login', methods = ['GET', 'POST'])
@@ -55,6 +47,8 @@ def login():
 		title = 'Sign In', 
 		login_form = login_form,
 		providers = app.config['OPENID_PROVIDERS']) #if validation fails, load login page them so they can resubmit 
+
+
 
 #LOGOUT
 @app.route('/logout')
@@ -96,14 +90,18 @@ def load_user(id):
 def user(nickname):
 
 	user = User.query.filter_by(nickname = nickname).first()
-	post_form = EditPost()
+	print user
+	edit_form = EditPost()
+	delete_form = DeletePost()
 	if user == None:
 		flash('User ' + nickname + ' not found.')
 		return redirect(url_for('index'))
 	#posts = Post.query.filter_by(id = user.id).all()
 	posts = Post.query.filter_by(user_id = user.id).all()
+	print "user before render_template: " + str(user)
 	return render_template('user.html', 
-		post_form = post_form,
+		edit_form = edit_form,
+		delete_form = delete_form,
 		user = user, 
 		posts = posts)
 
@@ -114,20 +112,25 @@ def edit():
 	form = EditForm(g.user.nickname) #pass in nickname to make sure it's unique
 		#EditForm is in forms.py
 	if form.validate_on_submit():
+		#is there a more succinct way of doing this? Looping through form elements?
 		g.user.nickname = form.nickname.data
+		g.user.firstname = form.firstname.data
+		g.user.lastname = form.lastname.data
+		g.user.team = form.team.data
+		g.user.email = form.email.data
+		g.user.phone = form.phone.data
 		g.user.about_me = form.about_me.data
 		db.session.add(g.user)
 		db.session.commit()
-		flash('Your changes have been saved')
-		return redirect(url_for('edit'))
+		return redirect(url_for('user', nickname=g.user.nickname))
 	else:
 		form.nickname.data = g.user.nickname
 		form.about_me.data = g.user.about_me
 
 	return render_template('edit.html', 
-		form = form)
+		form=form, user=g.user)
 
-#EDIT POSTS
+#ADD POSTS
 @app.route('/editpost', methods=['POST'])
 @login_required
 def new_post():
@@ -135,7 +138,7 @@ def new_post():
 
 	print form.post_body.name
 
-	#checks if text in form fields
+	#checks if input in post text box
 	if form.validate_on_submit():
 		# if there's text, submit post
 		post_text = form.post_body.data
@@ -144,7 +147,15 @@ def new_post():
 		#don't include id value, primary key will automatically increment
 		db.session.add(new_post)
 		db.session.commit()
-		return redirect(url_for("user", nickname=g.user.nickname))
+
+		#check to see if should stay on home or go to user profile when submitting new post
+		#'0'=home, '1'=user profile
+		print "hidden value is: " + str(request.form['hidden'])
+		if request.form['hidden'] == '0':
+			return redirect(url_for('index'))
+		else:
+			print "hidden value is 1"
+			return redirect(url_for('user', nickname=g.user.nickname))
 
 	else:
 		#no text for post. re-render template, which will display error message
@@ -156,8 +167,25 @@ def new_post():
 def delete_post():
 	form = DeletePost()
 	print "created form"
-	return render_template(('user.html'), post_form=form, posts=g.user.posts)
-	
+
+	post_id = request.form["post_id"] #hidden value in DeletePost form
+	user_id = g.user.id
+
+	#delete from posts where id=post_id
+	print post_id
+	delete_post = db.session.query(Post).filter_by(id=post_id).one()
+	print "deleted post: " + str(delete_post)
+	db.session.delete(delete_post)
+	db.session.commit()
+
+	return redirect(url_for('user', nickname=g.user.nickname))
+
+#ALL USERS
+@app.route('/all_users')
+@login_required
+def all_users():
+	all_users = db.session.query(User).all()
+	return render_template('allusers.html', all_users=all_users)
 
 
 
