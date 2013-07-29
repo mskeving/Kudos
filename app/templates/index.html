@@ -9,28 +9,66 @@
 	<body>
 		{% extends "base.html" %}
 		{% block content %}
-		<h3>Kudus!</h3>
+		<h3>Kudos!</h3>
 			<!-- Submit new Kudos -->
 			<form action="/editpost" method="POST" name="add">
 				<!-- inclide csrf token in every form for security -->
-				{{ edit_form.csrf_token }} 
+				{{ new_post.csrf_token }} 
 
-				{% for error in edit_form.errors.post_body %}
+				{% for error in new_post.errors.post_body %}
 				<span style="color:red;">[{{error}}]</span> 
 				{% endfor %}<br>
 
-				{{ edit_form.post_body (style="margin: 1.80398px; width: 440px; height: 57px;") }}
-				<p>{{ edit_form.post_submit_btn(value="submit post")}}</p>
-				{{ edit_form.hidden(value=0) }}
+				{{ new_post.post_body (style="margin: 1.80398px; width: 440px; height: 57px;") }}
+				<p>{{ new_post.post_submit_btn(value="submit post")}}</p>
+
 			</form>
+
+		<!-- Display all posts -->
+		{{posts}}
 		{% for post in posts %}
 			<table>
+				
 				<tr>
-					<td><img src="{{post.author.avatar(50)}}"></td><td><i>{{post.author.nickname}} says:</i><br>
-					{{post.body}}</td>
+					<td style="padding:5px;">
+						<img src={{ url_for('static', filename='blobfish.png') }} height='42' width='42'>
+					</td>
+					<td>
+							<i> {{post.get('nickname')}} says:</i><br>
+						<!-- if parent post -->
+						<!-- post[0] is message, post[1] is indent level -->
+						{% if post.get('indent') == 0 %}
+							{{post.get('body')}}
+						{% elif post.get('indent') == 1 %}
+							<td style="color:red">
+								{{post.get('body')}}
+							</td>
+						{% endif %}
+					</td>
+				</tr>
+				<tr>
+				
+					<table>
+			<!-- New Reply -->
+						<form action="/newreply" method="POST">
+
+							<td style="padding:5px">
+								{{reply_form.reply_body (style="width: 200px; height: 25px;")}} 
+							</td>
+							<td>
+								{{ reply_form.reply_submit_btn(value="submit")}}
+							</td>
+							<!-- Associate text box with specific post -->
+
+							{{ reply_form.hidden_post_id(value=post.get('post_id')) }}
+
+						</form>
+					</table>
 				</tr>
 			</table>
+
 		{% endfor %}
+		
 		{% endblock %}
 	</body>
 </html>

@@ -2,7 +2,7 @@ from app import app, lm, db, oid
 from flask import render_template, flash, redirect, session, url_for, request, g 
 from flask.ext.login import login_user, logout_user, current_user, login_required 
 
-from forms import LoginForm, EditForm, EditPost, DeletePost
+from forms import LoginForm, EditForm, EditPost, DeletePost, NewReply
 from models import User, Post, ROLE_USER, ROLE_ADMIN
 from datetime import datetime
 
@@ -19,14 +19,35 @@ def before_request():
 @app.route('/index')
 @login_required #this page is only seen by logged in users
 def index():
+	print "starting index()"
 	user = g.user
-	posts = db.session.query(Post).all()
-	form = EditPost()
+	posts = Post.query.all()
+	print posts
+		#group by parent_post_id to keep thread together
+	indented_posts=[]
+	new_post = EditPost() 
+	reply_form = NewReply()
+
+	if posts != None:
+		#create parent/child list of all posts
+		hposts = HPost.build(posts)
+		print hposts
+
+		#indentend posts = list of (post body, indent) values
+		indented_posts = HPost.calcIndent(hposts)
+
+		#for debugging
+		#HPost.dump(hposts,0)
+	print "Indented posts: "
+	print indented_posts
+
 	return render_template("index.html", 
 		title='Home', 
 		user=user,
-		posts=posts,
-		edit_form=form)
+		posts=indented_posts,
+		new_post=new_post,
+		reply_form=reply_form)
+
 
 #LOGIN 
 @app.route('/login', methods = ['GET', 'POST'])
@@ -67,7 +88,7 @@ def after_login(resp):
 		nickname = resp.nickname
 		if nickname is None or nickname == "":
 			nickname = resp.email.split('@')[0]
-		user = User(nickname = nickname, email = resp.email, role = ROLE_USER)
+		user = User(nickname = nickname, email = resp.email)
 		db.session.add(user)
 		db.session.commit()
 	remember_me = False 
@@ -98,6 +119,11 @@ def user(nickname):
 		return redirect(url_for('index'))
 	#posts = Post.query.filter_by(id = user.id).all()
 	posts = Post.query.filter_by(user_id = user.id).all()
+
+	#function for returning all posts in dictionary
+	#then go through dictionary and get only ones that match user_id 
+
+
 	print "user before render_template: " + str(user)
 	return render_template('user.html', 
 		edit_form = edit_form,
@@ -130,55 +156,74 @@ def edit():
 	return render_template('edit.html', 
 		form=form, user=g.user)
 
-#ADD POSTS
+#ADD NEW POST
 @app.route('/editpost', methods=['POST'])
 @login_required
 def new_post():
 	form = EditPost()
+	delete_form = DeletePost()
+	reply_form = NewReply()
 
-	print form.post_body.name
+	user_id = g.user.id
 
-	#checks if input in post text box
+
+	#checks if new Post
 	if form.validate_on_submit():
 		# if there's text, submit post
 		post_text = form.post_body.data
-		user_id = g.user.id
 		new_post = Post(body=post_text, timestamp=datetime.utcnow(), user_id=user_id) 
 		#don't include id value, primary key will automatically increment
 		db.session.add(new_post)
 		db.session.commit()
 
-		#check to see if should stay on home or go to user profile when submitting new post
-		#'0'=home, '1'=user profile
-		print "hidden value is: " + str(request.form['hidden'])
-		if request.form['hidden'] == '0':
-			return redirect(url_for('index'))
-		else:
-			print "hidden value is 1"
-			return redirect(url_for('user', nickname=g.user.nickname))
+		return redirect(url_for('index'))
 
 	else:
-		#no text for post. re-render template, which will display error message
-		return render_template(('user.html'), post_form=form, user = g.user, posts=g.user.posts)
+		#no text for post. display error message??
+		return redirect(url_for('index'))
+
+#ADD NEW REPLY
+@app.route('/newreply', methods=['POST'])
+@login_required
+def add_reply():
+	print "in add_reply"
+	reply_form = NewReply()
+
+	print "body: " + reply_form.reply_body.data
+	#if reply_form.validate_on_submit():
+	body = reply_form.reply_body.data
+	print "body: " + body
+	post_id = request.form['hidden_post_id']
+	
+	new_reply = Post(body = body, parent_post_id = post_id, timestamp = datetime.utcnow(), user_id = g.user.id)
+	print str(new_reply) + " ready to be added"
+	db.session.add(new_reply)
+	db.session.commit()
+
+	return redirect(url_for('index'))
+	# else:
+	# 	print "not validated"
+	# 	return redirect(url_for('index'))
+		#add redirect to include error message that no text was included
 
 #DELETE POSTS
 @app.route('/deletepost', methods=['POST'])
 @login_required
 def delete_post():
+	print "in /deletepost"
 	form = DeletePost()
-	print "created form"
 
-	post_id = request.form["post_id"] #hidden value in DeletePost form
+	post_id = request.form['hidden_post_id'] #hidden value in DeletePost form
 	user_id = g.user.id
 
-	#delete from posts where id=post_id
-	print post_id
 	delete_post = db.session.query(Post).filter_by(id=post_id).one()
-	print "deleted post: " + str(delete_post)
+
 	db.session.delete(delete_post)
 	db.session.commit()
-
+	print "committed to database"
 	return redirect(url_for('user', nickname=g.user.nickname))
+
+
 
 #ALL USERS
 @app.route('/all_users')
@@ -197,3 +242,66 @@ def all_users():
 # def internal_error(error):
 # 	db.session.rollback()
 # 	return render_template('500.html'), 500
+
+
+class HPost:
+	def __init__(self, dbo):
+		self.dbo = dbo
+		self.children = []
+
+	def __repr__(self):
+		return "HPost(%d, %r)" % (self.dbo.id, self.children)
+
+	@staticmethod
+	def build(posts_list):
+		#builds a tree of all posts
+		#returns lists of parent post, with list of replies 
+		#Each parent creates a new HPost, with post_id as dbo and children is list of replies
+		#HPost(1, [HPost(3)]) -- 3rd post in Post is reply to first post
+
+		ret = []
+		d = {}
+		for post in posts_list:
+			h = HPost(post)
+			d[post.id] = h
+
+			#parent posts have no parent_post_id
+			if post.parent_post_id == None:
+				
+				ret.append(h)
+			#if it's a child, append to parent's children list
+			else:
+				parent = post.parent_post_id	
+				d[parent].children.append(h)
+		return ret
+
+	#cls is HPost, so you can do cls.method instead of HPost.method
+	@classmethod
+	def calcIndent(cls, hposts, post_list = [], indent=0):
+		#returns a list of dictionaries. Each dictionary has properties of each post
+
+		d = {}
+		for post in hposts:
+			#better way of getting column names? 
+			d['body'] = post.dbo.body
+			d['indent'] = indent
+			d['post_id'] = post.dbo.id
+			d['nickname'] = post.dbo.author.nickname
+			d['timestamp'] = post.dbo.timestamp
+
+			post_list.append(d)
+			d = {}
+			cls.calcIndent(post.children, post_list, indent+1)
+		print "post_list in calcIndent"
+		print post_list
+		return post_list
+
+		
+	@classmethod
+	def dump(cls, hposts, indent):
+		for post in hposts:
+			print indent * " " + str(post.dbo.id), str(post.dbo.body)
+			cls.dump(post.children, indent+1)
+
+
+

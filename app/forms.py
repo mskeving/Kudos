@@ -38,15 +38,18 @@ class EditForm(Form):
 			return False
 		return True	
 
-
+class NewReply(Form):
+	reply_body = TextAreaField('reply_body', validators = [Required()])
+	reply_submit_btn = SubmitField('reply_submit_btn')
+	hidden_post_id = HiddenField('post_id') #validator that this is number
 
 class EditPost(Form):
-	# hidden field to tell whether submit button should go to ('/') or user profile
+	# hidden field to tell whether submit button should go to ('/') or user profile. value=0 goes home, value=1 goes to profile
 	hidden = HiddenField('hidden')
 	post_body = TextAreaField('post_body', validators = [Required()])
 	post_submit_btn = SubmitField('post_submit_btn')
 
 class DeletePost(Form):
-	post_id = HiddenField('post_id') #validator that this is number
+	hidden_post_id = HiddenField('post_id') #validator that this is number
 	post_delete_btn = SubmitField('post_delete_btn')
 

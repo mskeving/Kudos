@@ -6,7 +6,7 @@
 <!-- User Information -->
 <table>
 	<tr valign="top">
-		<td><img src="{{user.avatar(220)}}"></td>
+		<td><img src={{ url_for('static', filename='blobfish.png') }} height='220' width='220'></td>
 		<td>
 			<h2>{{user.nickname}}</h2>
 			{% if user.about_me %}<p>{{user.about_me}}</p>{% endif %}
@@ -23,23 +23,10 @@
 	</tr>
 </table>
 
-<!-- submit new post -->
-<div>
-	<h3>Submit a new post</h3>
-	<form action="/editpost" method="POST" name="add">
-			<!-- inclide csrf token in every form for security -->
-			{{ edit_form.csrf_token }} 
-			{% for error in edit_form.errors.post_body %}
-			<span style="color:red;">[{{error}}]</span> 
-			{% endfor %}<br>
-			{{ edit_form.post_body (style="margin: 1.80398px; width: 440px; height: 57px;") }}
-			<p>{{ edit_form.post_submit_btn(value="submit post")}}</p>
-			{{edit_form.hidden(value=1)}}
 
-	</form>
-</div>
 <hr>
 <!-- View and Delete Posts-->
+<div class="container-fluid">
 	<table>
 
 	{% for post in posts %}
@@ -47,17 +34,22 @@
 		<tr valign="top", id="{{count}}">
 			<td>
 					<form action="/deletepost" method="POST" name="delete">
-					{{ delete_form.post_id(value=post.id) }}
+					{{ delete_form.hidden_post_id(value=post.id) }}
 					{{ delete_form.post_delete_btn(value="X", id=post.id) }}
 					</form>
 			</td>
-			<td><img src="{{post.author.avatar(50)}}"></td><td><i>{{post.author.nickname}} says:</i><br>
-			{{post.body}}</td>
+			<td>
+				<img src={{ url_for('static', filename='blobfish.png') }} height='42' width='42'>
+			</td>
+			<td>
+				<i>{{post.author.nickname}} says:</i><br>
+				{{post.body}}
+			</td>
 		</tr>
 
 	{% endfor %}
 		
 	</table>
-
+</div>
 
 {% endblock %}
