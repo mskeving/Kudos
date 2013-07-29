@@ -36,7 +36,9 @@ class User(db.Model):
 			return new_nickname
 
 	def avatar(self, size):
-		return 'http://www.gravatar.com/avatar/' + md5(self.email).hexdigest() + '?d=mm&s=' + str(size)
+		return "Avatar"
+		#return "<img src={{ url_for('static', filename='missy.jpg') }} height='%d' width='%d'>" %(size, size)
+		#return 'http://www.gravatar.com/avatar/' + md5(self.email).hexdigest() + '?d=mm&s=' + str(size)
 			#d=mm determines what placehold image is return when user does not have gravatar account (mystery man)
 
 	def is_authenticated(self):
@@ -60,10 +62,32 @@ class Post(db.Model):
 
 	id = db.Column(db.Integer, primary_key = True)
 	body = db.Column(db.String(140))
+	parent_post_id = db.Column(db.Integer) #denotes that it's a reply
 	timestamp = db.Column(db.Date)
 	user_id = db.Column(db.Integer, db.ForeignKey('users.id')) #users is tablename
 	#Post.author (because of backref in User)
-	#relationship with user table?
+
+
+	
+	#replies = db.Column(db.Text)
+	#put dictionary in here with JSON dictionary
 
 	def __repr__(self):
 		return '<Post %r>' %(self.body)
+
+
+# class Reply(db.Model):
+# 	__tablename__ = "replies"
+
+# 	id = db.Column(db.Integer, primary_key = True)
+# 	reply_user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+# 	body = db.Column(db.String(140))
+# 	timestamp = db.Column(db.Date)
+# 	post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
+
+
+
+
+
+
+
