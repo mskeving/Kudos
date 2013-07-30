@@ -275,9 +275,18 @@ class HPost:
 				d[parent].children.append(h)
 		return ret
 
+
+	#create empty list to append to in calcIndentHelper
+	@staticmethod
+	def calcIndent(hposts):
+		posts_list = []
+		posts_list = HPost.calcIndentHelper(hposts, posts_list)
+		return posts_list
+
+		
 	#cls is HPost, so you can do cls.method instead of HPost.method
 	@classmethod
-	def calcIndent(cls, hposts, post_list = [], indent=0):
+	def calcIndentHelper(cls, hposts, posts_list, indent=0):
 		#returns a list of dictionaries. Each dictionary has properties of each post
 
 		d = {}
@@ -289,12 +298,13 @@ class HPost:
 			d['nickname'] = post.dbo.author.nickname
 			d['timestamp'] = post.dbo.timestamp
 
-			post_list.append(d)
+			posts_list.append(d)
 			d = {}
-			cls.calcIndent(post.children, post_list, indent+1)
+			cls.calcIndentHelper(post.children, posts_list, indent+1)
 		print "post_list in calcIndent"
-		print post_list
-		return post_list
+
+		return posts_list
+
 
 		
 	@classmethod

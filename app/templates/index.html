@@ -16,16 +16,25 @@
 				{{ new_post.csrf_token }} 
 
 				{% for error in new_post.errors.post_body %}
+
+
 				<span style="color:red;">[{{error}}]</span> 
 				{% endfor %}<br>
-
-				{{ new_post.post_body (style="margin: 1.80398px; width: 440px; height: 57px;") }}
-				<p>{{ new_post.post_submit_btn(value="submit post")}}</p>
-
+				<div class="row">
+					<div class="col-lg-6">
+	    				<div class="input-group">
+	    					<span class="form-control">{{ new_post.post_body (style="margin: 1.80398px; width: 440px; height: 57px;") }} </span>
+	    				</div>
+	    			
+		    			<span class="input-group-btn">
+								{{ new_post.post_submit_btn(value="submit post")}}
+						</span>
+					</div>
+				</div>
 			</form>
 
 		<!-- Display all posts -->
-		{{posts}}
+
 		{% for post in posts %}
 			<table>
 				
@@ -41,6 +50,10 @@
 							{{post.get('body')}}
 						{% elif post.get('indent') == 1 %}
 							<td style="color:red">
+								{{post.get('body')}}
+							</td>
+						{% elif post.get('indent') == 2 %}
+							<td style="color:blue">
 								{{post.get('body')}}
 							</td>
 						{% endif %}
