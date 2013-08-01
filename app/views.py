@@ -1,3 +1,4 @@
+import json
 from app import app, lm, db, oid
 from flask import render_template, flash, redirect, session, url_for, request, g 
 from flask.ext.login import login_user, logout_user, current_user, login_required 
@@ -15,6 +16,7 @@ def before_request():
 		db.session.add(g.user)
 		db.session.commit()
 
+
 @app.route('/')
 @app.route('/index')
 @login_required #this page is only seen by logged in users
@@ -22,31 +24,42 @@ def index():
 	print "starting index()"
 	user = g.user
 	posts = Post.query.all()
-	print posts
-		#group by parent_post_id to keep thread together
+	all_tags = db.session.query(User.nickname).all() #same as User.query.all()?
+	print "all_tags: "
+	print all_tags
+	tag_list = []
+	for tag in all_tags:
+		tag_list.append(tag[0])
+
+	tagstring = json.dumps(tag_list)
+
+	print "tags_list: "
+	print tag_list
+	print "tagstring: "
+	print tagstring
 	indented_posts=[]
 	new_post = EditPost() 
 	reply_form = NewReply()
 
+	#CREATE POST TREE
 	if posts != None:
 		#create parent/child list of all posts
 		hposts = HPost.build(posts)
-		print hposts
-
 		#indentend posts = list of (post body, indent) values
 		indented_posts = HPost.calcIndent(hposts)
 
 		#for debugging
 		#HPost.dump(hposts,0)
-	print "Indented posts: "
-	print indented_posts
+
+
 
 	return render_template("index.html", 
 		title='Home', 
 		user=user,
 		posts=indented_posts,
 		new_post=new_post,
-		reply_form=reply_form)
+		reply_form=reply_form,
+		tags=tagstring)
 
 
 #LOGIN 
@@ -249,6 +262,7 @@ class HPost:
 		self.dbo = dbo
 		self.children = []
 
+	#the representation 
 	def __repr__(self):
 		return "HPost(%d, %r)" % (self.dbo.id, self.children)
 
@@ -283,7 +297,7 @@ class HPost:
 		posts_list = HPost.calcIndentHelper(hposts, posts_list)
 		return posts_list
 
-		
+
 	#cls is HPost, so you can do cls.method instead of HPost.method
 	@classmethod
 	def calcIndentHelper(cls, hposts, posts_list, indent=0):
@@ -301,7 +315,7 @@ class HPost:
 			posts_list.append(d)
 			d = {}
 			cls.calcIndentHelper(post.children, posts_list, indent+1)
-		print "post_list in calcIndent"
+
 
 		return posts_list
 
