@@ -48,6 +48,7 @@ class EditPost(Form):
 	hidden = HiddenField('hidden')
 	post_body = TextAreaField('post_body', validators = [Required()])
 	post_submit_btn = SubmitField('post_submit_btn')
+	post_tags = TextField('post_tags')
 
 class DeletePost(Form):
 	hidden_post_id = HiddenField('post_id') #validator that this is number

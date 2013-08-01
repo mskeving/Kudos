@@ -11,7 +11,7 @@ db = SQLAlchemy(app)
 lm = LoginManager()
 lm.init_app(app)
 #once user is logged in, will go to login page ('/login')
-#Flask-login can protext views against non logged in users by added login_requred decorator
+#Flask-login can protect views against non logged in users by added login_requred decorator
 lm.login_view = 'login' 
 oid = OpenID(app, os.path.join(basedir, 'tmp'))
 

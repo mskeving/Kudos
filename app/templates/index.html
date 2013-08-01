@@ -1,14 +1,19 @@
 <html>
 	<head>
-		{% if title %}
-		<title>{{title}} - Kudos </title>
-		{% else %}
-		<title>Kudos</title>
-		{% endif %}
+		<div class="title">
+			{% if title %}
+			<title>{{title}} - Kudos </title>
+			{% else %}
+			<title>Kudos</title>
+			{% endif %}
+		</div>
 	</head>
 	<body>
 		{% extends "base.html" %}
 		{% block content %}
+	
+
+
 		<h3>Kudos!</h3>
 			<!-- Submit new Kudos -->
 			<form action="/editpost" method="POST" name="add">
@@ -22,66 +27,66 @@
 				{% endfor %}<br>
 				<div class="row">
 					<div class="col-lg-6">
-	    				<div class="input-group">
-	    					<span class="form-control">{{ new_post.post_body (style="margin: 1.80398px; width: 440px; height: 57px;") }} </span>
-	    				</div>
-	    			
-		    			<span class="input-group-btn">
-								{{ new_post.post_submit_btn(value="submit post")}}
-						</span>
+						<div class ="submit-kudos" style="padding: 0px; width: 476px; height: 200px;">
+		    				<div class="input-group">
+		    					<span class="form-control">{{ new_post.post_body (style="width: 440px; ") }} </span>
+		    				</div>
+		    				<div class="tags" id="tagsinput_tagsinput" style="width: 476px; padding: 5px;">
+								<input type="text" id="tag_input" value placeholder="tags" style="width: 450px; align: center; padding: 5px"/>
+							</div>
+
+			    			<button type="submit" class="btn btn-large btn-block btn-primary" value="submit" style="padding: 5px 0px; width: 90px; height: 30px;"> Submit </button>
+									<!-- {{ new_post.post_submit_btn(value="submit post")}} -->
+
+						</div>
 					</div>
 				</div>
 			</form>
 
 		<!-- Display all posts -->
-
 		{% for post in posts %}
-			<table>
-				
-				<tr>
-					<td style="padding:5px;">
-						<img src={{ url_for('static', filename='blobfish.png') }} height='42' width='42'>
-					</td>
-					<td>
-							<i> {{post.get('nickname')}} says:</i><br>
-						<!-- if parent post -->
-						<!-- post[0] is message, post[1] is indent level -->
-						{% if post.get('indent') == 0 %}
-							{{post.get('body')}}
-						{% elif post.get('indent') == 1 %}
-							<td style="color:red">
-								{{post.get('body')}}
-							</td>
-						{% elif post.get('indent') == 2 %}
-							<td style="color:blue">
-								{{post.get('body')}}
-							</td>
-						{% endif %}
-					</td>
-				</tr>
-				<tr>
-				
-					<table>
-			<!-- New Reply -->
-						<form action="/newreply" method="POST">
 
-							<td style="padding:5px">
+					<div class="display-post" style="padding: 5px 5px 5px {{ 30 * post.get('indent') + 5 }}px;">
+						<img src={{ url_for('static', filename='blobfish.png') }} height='42' width='42'>
+
+
+						<i> {{post.get('nickname')}} says:</i><br>
+						{{post.get('body')}}
+					</div>
+						<form action="/newreply" method="POST">
+							<div style="padding: 5px 5px 5px {{ 30 * post.get('indent') + 5 }}px;">
 								{{reply_form.reply_body (style="width: 200px; height: 25px;")}} 
-							</td>
-							<td>
-								{{ reply_form.reply_submit_btn(value="submit")}}
-							</td>
+
+								<button type="submit" class="btn btn-large btn-block btn-primary" value="submit" style="padding: 5px 0px; width: 90px; height: 30px;"> reply </button>
+
+								<!-- {{ reply_form.reply_submit_btn(value="submit")}} -->
+							</div>
 							<!-- Associate text box with specific post -->
 
 							{{ reply_form.hidden_post_id(value=post.get('post_id')) }}
 
 						</form>
-					</table>
-				</tr>
-			</table>
-
 		{% endfor %}
-		
+
+		<!-- Different from bootstrap typeahead -->
+		<script src="/static/js/typeahead.min.js"></script>
+		<script type="text/javascript">
+			// |safe tells flask that this input is okay and ignore any "'s or >'s. Otherwise flask doesn't trust anyone. 
+			var tags = {{tags|safe}};
+			// console.log(tags)
+			// $('#tag_input').typeahead({source: tags});
+
+			$('#tag_input').typeahead(
+			{
+				name:'tags', 
+				local: tags
+			});
+			// $('#tag_input').typeahead({source: tags})
+		</script>
 		{% endblock %}
+
+		
 	</body>
+
+	
 </html>
