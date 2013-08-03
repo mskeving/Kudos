@@ -1799,7 +1799,7 @@ textarea[class*="span"] {
   margin-right: 5px;
   margin-bottom: 5px;
   overflow: hidden;
-  line-height: 15px;
+  line-height: 5px;
   padding: 6px 13px 8px 19px;
   position: relative;
   vertical-align: middle;
