@@ -25,23 +25,20 @@ def index():
 	user = g.user
 	posts = Post.query.all()
 	all_tags = db.session.query(User.nickname).all() #same as User.query.all()?
-	print "all_tags: "
-	print all_tags
+
 	tag_list = []
 	for tag in all_tags:
 		tag_list.append(tag[0])
 
 	tagstring = json.dumps(tag_list)
 
-	print "tags_list: "
-	print tag_list
-	print "tagstring: "
-	print tagstring
-	indented_posts=[]
+	
+
 	new_post = EditPost() 
 	reply_form = NewReply()
 
 	#CREATE POST TREE
+	indented_posts=[]
 	if posts != None:
 		#create parent/child list of all posts
 		hposts = HPost.build(posts)
@@ -124,25 +121,32 @@ def load_user(id):
 def user(nickname):
 
 	user = User.query.filter_by(nickname = nickname).first()
-	print user
+	posts = Post.query.filter_by(user_id = user.id).all()
+
 	edit_form = EditPost()
 	delete_form = DeletePost()
+
 	if user == None:
 		flash('User ' + nickname + ' not found.')
 		return redirect(url_for('index'))
-	#posts = Post.query.filter_by(id = user.id).all()
-	posts = Post.query.filter_by(user_id = user.id).all()
 
-	#function for returning all posts in dictionary
-	#then go through dictionary and get only ones that match user_id 
+	#CREATE POST TREE
+	indented_posts=[]
+	if posts != None:
+		#create parent/child list of all posts
+		hposts = HPost.build(posts)
+		#indentend posts = list of (post body, indent) values
+		indented_posts = HPost.calcIndent(hposts)
 
+		#for debugging
+		#HPost.dump(hposts,0)
 
 	print "user before render_template: " + str(user)
 	return render_template('user.html', 
 		edit_form = edit_form,
 		delete_form = delete_form,
 		user = user, 
-		posts = posts)
+		posts = indented_posts)
 
 #EDIT PROFILE
 @app.route('/edit', methods = ['GET', 'POST'])

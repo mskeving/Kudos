@@ -27,29 +27,33 @@
 <hr>
 <!-- View and Delete Posts-->
 <div class="container-fluid">
-	<table>
+
 
 	{% for post in posts %}
 
-		<tr valign="top", id="{{count}}">
-			<td>
-					<form action="/deletepost" method="POST" name="delete">
-					{{ delete_form.hidden_post_id(value=post.id) }}
-					{{ delete_form.post_delete_btn(value="X", id=post.id) }}
-					</form>
-			</td>
-			<td>
+			<form action="/deletepost" method="POST" name="delete">
+				{{ delete_form.hidden_post_id(value=post.id) }}
+				<button type="submit" class="btn btn-large btn-block btn-primary" name="remove post" value="submit" style="padding: 5px 0px; width: 20px; height: 30px;"> X </button>
+			</form>
+
+			<div class="display-post" style="padding: 5px 5px 5px {{ 30 * post.get('indent') + 20 }}px;">
 				<img src={{ url_for('static', filename='blobfish.png') }} height='42' width='42'>
-			</td>
-			<td>
-				<i>{{post.author.nickname}} says:</i><br>
+
+
+				<i> {{post.get('nickname')}} says:</i><br>
+				{{post.get('body')}}
+			</div>
+				
+
+
+				<i>{{post.get('nickname')}} says:</i><br>
 				{{post.body}}
-			</td>
-		</tr>
+
+
 
 	{% endfor %}
 		
-	</table>
+
 </div>
 
 {% endblock %}
