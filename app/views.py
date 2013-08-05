@@ -114,6 +114,19 @@ def load_user(id):
 	#user ids in Flask-login are always unicode. Need to convert to int
 	return User.query.get(int(id))
 
+#TEAM PROFILE
+@app.route('/team/<team>')
+@login_required
+def team(team):
+	team_members = User.query.filter_by(team = team).all()
+	print "team: " + team
+	print "team members: "
+	print team_members
+
+	return render_template('team.html',
+		team = team,
+		team_members = team_members)
+
 
 #USER PROFILE
 @app.route('/user/<nickname>')

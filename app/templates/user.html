@@ -6,12 +6,12 @@
 <!-- User Information -->
 <table>
 	<tr valign="top">
-		<td><img src={{ url_for('static', filename='blobfish.png') }} height='220' width='220'></td>
+		<td><img src={{ user.photo }} height='220' width='220'></td>
 		<td>
 			<h2>{{user.nickname}}</h2>
 			{% if user.about_me %}<p>{{user.about_me}}</p>{% endif %}
 			<ul>
-				<li>Team: {{user.team}}</li>
+				<li>Team: <a href="{{ url_for('team', team=user.team) }}">{{user.team}}</a></li>
 				<li>{{user.email}}</li>
 				<li>{{user.phone}}</li>
 			</ul>
@@ -30,26 +30,30 @@
 
 
 	{% for post in posts %}
+	<!-- allow deletion of any comment user has authored
+		ex: if post.get('nickname') = g.user.nickname, show delete button -->
 
 			<form action="/deletepost" method="POST" name="delete">
 				{{ delete_form.hidden_post_id(value=post.id) }}
-				<button type="submit" class="btn btn-large btn-block btn-primary" name="remove post" value="submit" style="padding: 5px 0px; width: 20px; height: 30px;"> X </button>
+
+
+					<div class="display-post" style="padding: 5px 5px 5px {{ 30 * post.get('indent') + 20 }}px;">
+						<!-- <button type="submit" class="btn btn-large btn-block btn-primary" name="remove post" value="submit" style="padding: 5px 0px; width: 20px; height: 30px;"> X </button> -->
+					
+
+					
+						<img src={{ user.photo }} height='42' width='42'>
+
+
+						
+							<i> {{post.get('nickname')}} says:</i>
+							{{post.get('body')}}
+										
+					</div>
+
 			</form>
 
-			<div class="display-post" style="padding: 5px 5px 5px {{ 30 * post.get('indent') + 20 }}px;">
-				<img src={{ url_for('static', filename='blobfish.png') }} height='42' width='42'>
-
-
-				<i> {{post.get('nickname')}} says:</i><br>
-				{{post.get('body')}}
-			</div>
-				
-
-
-				<i>{{post.get('nickname')}} says:</i><br>
-				{{post.body}}
-
-
+			
 
 	{% endfor %}
 		
