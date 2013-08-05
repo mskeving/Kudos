@@ -2,8 +2,15 @@
 
 {% block content %}
 
+
+<!-- User Information -->
+<h2>{{team}}</h2>
+			
 <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0-rc1/css/bootstrap.min.css">
 <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0-rc1/js/bootstrap.min.js"></script>
+
+
+<div name="display_team_members">
 
 
 	<table class="table">
@@ -14,28 +21,29 @@
 			<td><u>Team</u></td>
 		</tr>
 
-		{% for user in all_users %}
+		{% for member in team_members %}
 
 		<tr>
 			<td>
-				{% if user.photo %}
-					<img class="allusers_pic" src="{{user.photo}}">
+				{% if member.photo %}
+					<img class="allusers_pic" src="{{member.photo}}">
 				{% else %}
 					<img class="allusers_pic" src="http://www.how-to-draw-funny-cartoons.com/image-files/how-to-make-an-outline-2.gif">
 				{% endif %}
 			</td>
-			{% if user.firstname %}
-				<td>{{user.firstname}} {{user.lastname}} </td>
+			{% if member.firstname %}
+				<td>{{member.firstname}} {{member.lastname}} </td>
 			{% else %}
-				<td>{{user.nickname}}</td>
+				<td>{{member.nickname}}</td>
 			{% endif %}
-			<td><a href="{{ url_for('user', nickname=user.nickname) }}">{{user.email}} </a> </td>
-			
-			{% if user.team %}
-				<td><a href="{{ url_for('team', team=user.team) }}"> {{user.team}} </a> </td>
+
+			{% if member.nickname %}
+				<td><a href="{{ url_for('user', nickname=member.nickname) }}">{{member.email}} </a> </td> 
 			{% else %}
-				<td> no team </td>
+				{{member.email}}
 			{% endif %}
+
+			<td>{{member.team}}  </td>
 		</tr>
 	
 
@@ -43,5 +51,11 @@
 
 	</table>
 
+
+	<!-- Display all tags for this team
+		Include entire thread if they are mentioned in replies -->
+		
+
+</div>
 
 {% endblock %}
