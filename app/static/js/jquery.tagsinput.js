@@ -77,14 +77,22 @@
 			options = jQuery.extend({focus:false,callback:true},options);
 			this.each(function() { 
 				var id = $(this).attr('id');
-
+				
+				
+				// var tag_id = $(this).options.tag_ids;
+				// console.log("tag_id: " + tag_id)
+				//can use options.tags, which includes all data for tag
 				var tagslist = $(this).val().split(delimiter[id]);
+				//var tagslist = JSON.parse($(this).val());
+				//tagslist needs tag object appended to it 
 				if (tagslist[0] == '') { 
 					tagslist = new Array();
 				}
 
 				value = jQuery.trim(value);
-		
+				//go through word list and find value's index. Then go through tag_objects list and find value at same index
+				//add that to html element as value 
+
 				if (options.unique) {
 					var skipTag = $(this).tagExist(value);
 					if(skipTag == true) {
@@ -95,8 +103,10 @@
 					var skipTag = false; 
 				}
 				
+				//add id to each new tag. id should be user id for person tagged?
+				//should this be in onAddTag? 
 				if (value !='' && skipTag != true) { 
-                    $('<span>').addClass('tag').append(
+                    $('<span>').attr('id','newID').addClass('tag').append(
                         $('<span>').text(value).append('&nbsp;&nbsp;'),
                         $('<a>', {
                             href  : '#',
@@ -174,6 +184,7 @@
 		$.fn.tagsInput.importTags(this,str);
 	}
 
+	//mine
 	$.fn.isAvailableTag = function(tag, tag_list) {
 		if (jQuery.inArray(tag, tag_list) < 0) {
 			console.log('not in list');
@@ -202,6 +213,9 @@
 	      inputPadding: 6*2
 		}
 	    var settings = jQuery.extend(default_settings, options);
+
+	    console.log(settings)
+
 		this.each(function() { 
 			if (settings.hide) { 
 				$(this).hide();				
