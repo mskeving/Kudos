@@ -10,15 +10,19 @@ class Team(db.Model):
 
 	id = db.Column(db.Integer, primary_key = True)
 	teamname = db.Column(db.String(120), index = True)
-	
+
 	teams = db.relationship('UserTeam', backref = 'team')
 
 class UserTeam(db.Model):
-	__tablename__ = "usersteams"
+	__tablename__ = "users_teams"
 
 	id = db.Column(db.Integer, primary_key = True)
 	user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 	team_id = db.Column(db.Integer, db.ForeignKey('teams.id'))
+
+	__table_args__ = (
+		db.UniqueConstraint('user_id', 'team_id'),
+		)
 
 class User(db.Model):
 	__tablename__ = "users"
@@ -83,6 +87,7 @@ class Post(db.Model):
 	parent_post_id = db.Column(db.Integer) #denotes that it's a reply
 	timestamp = db.Column(db.Date)
 	user_id = db.Column(db.Integer, db.ForeignKey('users.id')) #users is tablename
+	tags = db.Column(db.Text)
 	#tags - store as JSON db.Text
 
 

@@ -1,10 +1,12 @@
 import json
+
+
 from app import app, lm, db, oid
 from flask import render_template, flash, redirect, session, url_for, request, g 
 from flask.ext.login import login_user, logout_user, current_user, login_required 
 
 from forms import LoginForm, EditForm, EditPost, DeletePost, NewReply
-from models import User, Post, ROLE_USER, ROLE_ADMIN
+from models import User, Post, UserTeam, Team, ROLE_USER, ROLE_ADMIN
 from datetime import datetime
 
 @app.before_request
@@ -15,6 +17,8 @@ def before_request():
 		g.user.last_seen = datetime.utcnow()
 		db.session.add(g.user)
 		db.session.commit()
+		
+
 
 
 @app.route('/')
@@ -27,9 +31,10 @@ def index():
 
 	user_tags = db.session.query(User).all()
 	#team_tags = db.session.query(User).filter(User.team != None).all()
-	all_tags = user_tags #+ team_tags
+	team_tags = db.session.query(Team).all()
+	all_tags = user_tags + team_tags
 
-	print all_tags[0].team
+
 	print "all_tags: "
 	print all_tags
 	
@@ -41,19 +46,27 @@ def index():
 	tag_list = []
 	tag_list_ids = []
 	tag_id = 0
-	for tag in all_tags:
+
+	#Available Tags: full name, last name, nickname, teamname
+	for tag in user_tags:
+		if tag.firstname and tag.lastname:
+			full_name = tag.firstname + tag.lastname
+			tag_list.append(fullname)
+		elif tag.firstname:
+			tag_list.append(tag.firstname)
+
+		if tag.lastname:
+			tag_list.append(tag.lastname)
 		if tag.nickname:
 			nickname = str(tag.nickname)
 			tag_list.append(nickname)
 			tag_list_ids.append(tag_id)
 			tag_id += 1
+		else:
+			print "no name for user"
 
-		#TODO: check to see if team already in tag_list. Don't readd
-		if tag.team:
-			team = str(tag.team)
-			tag_list.append(team)
-			tag_list_ids.append(tag_id)
-			tag_id += 1
+	for tag in team_tags:
+		tag_list.append(tag.teamname)
 
 		
 		#create new list with user_ids to correspond with tag words
