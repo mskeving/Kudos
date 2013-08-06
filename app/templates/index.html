@@ -19,6 +19,9 @@
 		<div name="header">
 		<h3 id="header" name="home_title" style="padding: 5px">Kudos!</h3>
 		</div>
+
+
+
 		
 			<!-- Submit new Kudos -->
 			<form action="/editpost" method="POST" name="add">
@@ -38,7 +41,7 @@
 		    					<span class="form-control">{{ new_post.post_body (style="width: 440px; ") }} </span>
 		    				</div>
 		    				<div class="tags" id="tagsinput_tagsinput" name="tags_div" style="width: 476px; padding: 5px;">
-								<input type="text" id="tag_input" name="tag_input" value placeholder="tags" style="width: 450px; align: center; padding: 5px"/>
+								<input type="text" class="tag_input" id="tag_input" name="tag_input" value placeholder="tags" style="width: 450px; align: center; padding: 5px"/>
 							</div>
 
 			    			<button type="submit" class="btn btn-large btn-block btn-primary" name="new_post_btn" value="submit" style="padding: 5px 0px; width: 90px; height: 30px;"> Submit </button>
@@ -59,19 +62,25 @@
 				<i> <a href="{{ url_for('user', nickname=user.nickname) }}">{{post.get('nickname')}} </a> says:</i><br>
 				{{post.get('body')}}
 			</div>
+
 			<form action="/newreply" method="POST">
 				{{ new_post.csrf_token }}
-				<div style="padding: 5px 5px 5px {{ 30 * post.get('indent') + 20 }}px;">
-					<!-- {{reply_form.reply_body (style="width: 200px; height: 25px;")}}  -->
+				<div style="padding: 5px 5px 5px {{ 30 * post.get('indent') + 20 }}px; width: 515px">
+					<div name="reply-body">
+						{{reply_form.reply_body (style="width: 500px; height: 35px;")}}
 
-					<input type="text" name="reply_body"/>
+			
+						<div class="tags" id="tagsinput_tagsinput" name="tags_div" style="width: 476px; padding: 5px;">
+							<input type="text" class="tag_input" name="tag_input" value placeholder="tags" style="width: 450px; align: center; padding: 5px"/>
+						</div>
 
-					<button type="submit" class="btn btn-large btn-block btn-primary" name="new_reply_btn" value="submit" style="padding: 5px 0px; width: 90px; height: 30px;"> reply </button>
 
-					<!-- {{ reply_form.reply_submit_btn(value="submit")}} -->
+						<button type="submit" class="btn btn-large btn-block btn-primary" name="new_reply_btn" value="submit" style="padding: 5px 0px; width: 90px; height: 30px; float: right"> reply </button>
+
+					</div>
+
 				</div>
 				<!-- Associate text box with specific post -->
-
 				{{ reply_form.hidden_post_id(value=post.get('post_id')) }}
 
 			</form>
@@ -104,13 +113,17 @@
 
 			$(function() {
 
-				var words = {{tags|safe}}; //safe: tell flask that this input is okay
+				var tag_words = {{tags|safe}}; //safe: tell flask that this input is okay
+				var tag_ids = {{tag_ids|safe}}
+				
 
-				$('#tag_input').tagsInput({
+				$('.tag_input').tagsInput({
 					width: 'auto',
 					height: '30px',
-					autocomplete_list: words, 
+					autocomplete_list: tag_words, 
+					tag_ids:  tag_ids
 				});
+				
 
 			});
 

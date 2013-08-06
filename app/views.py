@@ -24,15 +24,51 @@ def index():
 	print "starting index()"
 	user = g.user
 	posts = Post.query.all()
-	all_tags = db.session.query(User.nickname).all() #same as User.query.all()?
+
+	user_tags = db.session.query(User).all()
+	#team_tags = db.session.query(User).filter(User.team != None).all()
+	all_tags = user_tags #+ team_tags
+
+	print all_tags[0].team
+	print "all_tags: "
+	print all_tags
+	
+
+	#create list of tag words
+	#then pass list of JSON tag objects
+	#all_tag_info = json.dumps(all_tags) <-- error: json object not iterable
 
 	tag_list = []
+	tag_list_ids = []
+	tag_id = 0
 	for tag in all_tags:
-		tag_list.append(tag[0])
+		if tag.nickname:
+			nickname = str(tag.nickname)
+			tag_list.append(nickname)
+			tag_list_ids.append(tag_id)
+			tag_id += 1
+
+		#TODO: check to see if team already in tag_list. Don't readd
+		if tag.team:
+			team = str(tag.team)
+			tag_list.append(team)
+			tag_list_ids.append(tag_id)
+			tag_id += 1
+
+		
+		#create new list with user_ids to correspond with tag words
 
 	tagstring = json.dumps(tag_list)
 
+
 	
+
+
+	print "tag_list: "
+	print tag_list
+
+	print "tag_list_ids: "
+	print tag_list_ids
 
 	new_post = EditPost() 
 	reply_form = NewReply()
@@ -48,15 +84,14 @@ def index():
 		#for debugging
 		#HPost.dump(hposts,0)
 
-
-
 	return render_template("index.html", 
 		title='Home', 
 		user=user,
 		posts=indented_posts,
 		new_post=new_post,
 		reply_form=reply_form,
-		tags=tagstring)
+		tags=tagstring,
+		tag_ids=tag_list_ids)
 
 
 #LOGIN 
@@ -201,6 +236,9 @@ def new_post():
 	if form.validate_on_submit():
 		# if there's text, submit post
 		post_text = form.post_body.data
+		# tags = request.form(["tag_input"]) 
+		# print "tags: "
+		# print tags
 		new_post = Post(body=post_text, timestamp=datetime.utcnow(), user_id=user_id) 
 		#don't include id value, primary key will automatically increment
 		db.session.add(new_post)

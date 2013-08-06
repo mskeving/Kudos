@@ -5,6 +5,21 @@ from hashlib import md5
 ROLE_USER = 0
 ROLE_ADMIN = 1
 
+class Team(db.Model):
+	__tablename__ = "teams"
+
+	id = db.Column(db.Integer, primary_key = True)
+	teamname = db.Column(db.String(120), index = True)
+	
+	teams = db.relationship('UserTeam', backref = 'team')
+
+class UserTeam(db.Model):
+	__tablename__ = "usersteams"
+
+	id = db.Column(db.Integer, primary_key = True)
+	user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+	team_id = db.Column(db.Integer, db.ForeignKey('teams.id'))
+
 class User(db.Model):
 	__tablename__ = "users"
 
@@ -16,10 +31,12 @@ class User(db.Model):
 	nickname = db.Column(db.String(64), index = True, unique = True)
 	email = db.Column(db.String(120), index = True, unique = True)
 	phone = db.Column(db.String(25), index = True)
-	team = db.Column(db.String(120), index = True)
 	about_me = db.Column(db.String(140))
 	last_seen = db.Column(db.Date)
+
 	posts = db.relationship('Post', backref = 'author', lazy = 'dynamic')
+	users = db.relationship('UserTeam', backref = 'user')
+
 	#backref is adding author to Post class
 	#lazy.. whether all posts are loaded at the same time as user. look up options
 
@@ -66,26 +83,14 @@ class Post(db.Model):
 	parent_post_id = db.Column(db.Integer) #denotes that it's a reply
 	timestamp = db.Column(db.Date)
 	user_id = db.Column(db.Integer, db.ForeignKey('users.id')) #users is tablename
+	#tags - store as JSON db.Text
+
+
 	#Post.author (because of backref in User)
 
 
-	
-	#replies = db.Column(db.Text)
-	#put dictionary in here with JSON dictionary
-
 	def __repr__(self):
 		return '<Post %r>' %(self.body)
-
-
-# class Reply(db.Model):
-# 	__tablename__ = "replies"
-
-# 	id = db.Column(db.Integer, primary_key = True)
-# 	reply_user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-# 	body = db.Column(db.String(140))
-# 	timestamp = db.Column(db.Date)
-# 	post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
-
 
 
 
