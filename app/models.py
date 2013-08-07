@@ -87,11 +87,18 @@ class Post(db.Model):
 	parent_post_id = db.Column(db.Integer) #denotes that it's a reply
 	timestamp = db.Column(db.Date)
 	user_id = db.Column(db.Integer, db.ForeignKey('users.id')) #users is tablename
-	tags = db.Column(db.Text)
+	tags = db.relationship('Tag', backref = 'user')
+	#tags = db.Column(db.Text)
 	#tags - store as JSON db.Text
 
-
 	#Post.author (because of backref in User)
+
+class Tag(db.Model):
+	__tablename__ = "tags"
+
+	id = db.Column(db.Integer, primary_key = True)
+	body = db.Column(db.String(500))
+	post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
 
 
 	def __repr__(self):

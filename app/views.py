@@ -19,13 +19,16 @@ def before_request():
 		db.session.commit()
 		
 
-
+@app.route('/nothing', methods = ['GET', 'POST'])
+def nothing():
+	print "in nothing"
+	return "True"
 
 @app.route('/')
 @app.route('/index')
 @login_required #this page is only seen by logged in users
 def index():
-	print "starting index()"
+
 	user = g.user
 	posts = Post.query.all()
 
@@ -35,53 +38,45 @@ def index():
 	all_tags = user_tags + team_tags
 
 
-	print "all_tags: "
-	print all_tags
-	
 
 	#create list of tag words
 	#then pass list of JSON tag objects
 	#all_tag_info = json.dumps(all_tags) <-- error: json object not iterable
 
+	tag_dict = {}
 	tag_list = []
 	tag_list_ids = []
-	tag_id = 0
 
 	#Available Tags: full name, last name, nickname, teamname
 	for tag in user_tags:
-		if tag.firstname and tag.lastname:
-			full_name = tag.firstname + tag.lastname
+		tag_id = "u" + str(tag.id)  #set tag_id based on user_id
+		if tag.firstname and tag.lastname and tag.nickname:
+			user_id = "u" + str(tag.id)
+			fullname = tag.firstname + " " + tag.lastname + " (" + tag.nickname + ")"
 			tag_list.append(fullname)
+			tag_dict[tag_id] = fullname
+
 		elif tag.firstname:
 			tag_list.append(tag.firstname)
-
-		if tag.lastname:
-			tag_list.append(tag.lastname)
-		if tag.nickname:
-			nickname = str(tag.nickname)
-			tag_list.append(nickname)
-			tag_list_ids.append(tag_id)
-			tag_id += 1
+			tag_dict[tag_id] = tag.firstname
+			
 		else:
-			print "no name for user"
+			print "no name for user: "
+
 
 	for tag in team_tags:
+		tag_id = "t" + str(tag.id)
 		tag_list.append(tag.teamname)
+		tag_dict[tag_id] = tag.teamname
 
-		
-		#create new list with user_ids to correspond with tag words
+	print tag_dict
 
-	tagstring = json.dumps(tag_list)
+	tag_words = tag_dict.values()
+	tag_ids = tag_dict.keys()
 
+	tagstring = json.dumps(tag_words)
+	tag_ids_string = json.dumps(tag_ids)
 
-	
-
-
-	print "tag_list: "
-	print tag_list
-
-	print "tag_list_ids: "
-	print tag_list_ids
 
 	new_post = EditPost() 
 	reply_form = NewReply()
@@ -104,7 +99,8 @@ def index():
 		new_post=new_post,
 		reply_form=reply_form,
 		tags=tagstring,
-		tag_ids=tag_list_ids)
+		tag_ids=tag_ids_string,
+		fullname = fullname)
 
 
 #LOGIN 
@@ -239,23 +235,25 @@ def edit():
 @login_required
 def new_post():
 	form = EditPost()
-	delete_form = DeletePost()
-	reply_form = NewReply()
 
 	user_id = g.user.id
-
 
 	#checks if new Post
 	if form.validate_on_submit():
 		# if there's text, submit post
 		post_text = form.post_body.data
-		# tags = request.form(["tag_input"]) 
-		# print "tags: "
-		# print tags
+		
 		new_post = Post(body=post_text, timestamp=datetime.utcnow(), user_id=user_id) 
 		#don't include id value, primary key will automatically increment
-		db.session.add(new_post)
-		db.session.commit()
+		print "adding new post: "
+		print db.session.add(new_post)
+		#db.session.commit()
+
+
+		tag_text = form.hidden_tag_info.data 
+		print "tag_text: "
+		print tag_text
+		#post_id = db.session.query(Post).filter_by(id=post_id).one()
 
 		return redirect(url_for('index'))
 
