@@ -2,39 +2,32 @@
 
 {% block content %}
 
-
-<h1>Sign In</h1>
+<h1>Welcome to Kudos</h1>
 
 <form action="" method="post" name="login">
 	{{login_form.hidden_tag()}} <!-- needs to be in all forms if you have CSRF enabled in config.py -->
 
 	<p>
-		Please enter your OpenID:<br>
-		{{login_form.openid(size=80)}}<br>
 		{% for error in login_form.errors.openid %}
-		<span style="xolor:red;">[{{error}}]</span> <!-- display errors in red for user -->
-		{% endfor %}<br>
+            <span style="xolor:red;">[{{error}}]</span> <!-- display errors in red for user -->
+        {% endfor %}<br>
 
-		| {% for pr in providers %}
-		<a href="javascript:set_openid('{{pr.url}}', '{{pr.name}}');">{{pr.name}}</a> |
+        <!-- Create a hidden form. At some point this should be cleaned up. -->
+        {{login_form.openid(size=80, style='display: none;', value='https://www.google.com/accounts/o8/id')}}
+        <input type="submit" value="Sign in with Google">
 
-		{% endfor %}
-
-	</p>
-	<p>{{login_form.remember_me}} Remember Me</p>
-	<p><input type="submit" value="sign In"></p>
 </form>
 
 <script type="text/javascript">
 function set_openid(openid, pr)
 {
-	u = openid.search('<username>') //where does username come from?
+	u = openid.search('<username>') // where does username come from?
 	if (u != -1){
 		//openid requres username
 		user = prompt('Enter your ' + pr + ' username:')
 		openid = openid.substr(0,u) + user
 	}
-	form = document.forms['login']; //returns list of all elements included in form login (above)
+	form = document.forms['login']; // returns list of all elements included in form login (above)
 	form.elements['openid'].value = openid 
 }
 </script>

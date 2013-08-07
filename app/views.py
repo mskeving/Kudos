@@ -1,6 +1,5 @@
 import json
 
-
 from app import app, lm, db, oid
 from flask import render_template, flash, redirect, session, url_for, request, g 
 from flask.ext.login import login_user, logout_user, current_user, login_required 
@@ -107,6 +106,7 @@ def index():
 @app.route('/login', methods = ['GET', 'POST'])
 @oid.loginhandler #tells Flask-OpenID that this is our login view function
 def login():
+	#return str(request.args['openid_complete'])
 	if g.user is not None and g.user.is_authenticated():
 		#if there's a logged in user already, will not do a second login on top
 		return redirect(url_for('index'))
@@ -121,7 +121,7 @@ def login():
 	return render_template('login.html', 
 		title = 'Sign In', 
 		login_form = login_form,
-		providers = app.config['OPENID_PROVIDERS']) #if validation fails, load login page them so they can resubmit 
+        ) #if validation fails, load login page them so they can resubmit 
 
 
 
@@ -139,12 +139,8 @@ def after_login(resp):
 		return redirect(url_for('login'))
 	user = User.query.filter_by(email = resp.email).first()
 	if user is None:
-		nickname = resp.nickname
-		if nickname is None or nickname == "":
-			nickname = resp.email.split('@')[0]
-		user = User(nickname = nickname, email = resp.email)
-		db.session.add(user)
-		db.session.commit()
+		flash('You must sign in with your @dropbox email address. Please try again.')
+		return redirect(url_for('login'))
 	remember_me = False 
 	if 'remember_me' in session:
 		remember_me = session['remember_me']
