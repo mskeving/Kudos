@@ -3,7 +3,6 @@
 import json
 import urllib2
 
-from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy 
 from flask import session 
 
@@ -20,6 +19,11 @@ def create_user(first_name, last_name, nickname, email, list_of_teams, mobile, p
     #When readding data - check to see if user already exists based on email. If yes, update columns, if no, insert new_user
 
     #for each user, iterate through list of teams and create entries in users_teams
+    new_users_teams=UserTeam(
+        user_id="",
+        team_id="",
+        )
+
 
     new_user=User(
         photo=photo,
@@ -28,12 +32,14 @@ def create_user(first_name, last_name, nickname, email, list_of_teams, mobile, p
         nickname = nickname,
         email = email, 
         phone = mobile,
-        about_me = bio
+        about_me = bio,
         )
 
 
-    db.session.add(new_user)
+    db.session.add(new_user) #maybe returns user
     db.session.commit()
+
+    #after submit new user, get id for users_teams
 
     if len(list_of_teams) == 0:
         print "%s %s has no teams" % (first_name, last_name)

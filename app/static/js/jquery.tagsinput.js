@@ -73,15 +73,18 @@
     input.css('width', minWidth);
   };
   
-	$.fn.addTag = function(value,options) {
+	$.fn.addTag = function(value,options,settings) {
 			options = jQuery.extend({focus:false,callback:true},options);
+			
 			this.each(function() { 
 				var id = $(this).attr('id');
 				
+				//get index of tag in autocomplete_list
+				var tag_position = jQuery.inArray(value, settings.autocomplete_list);
+				//find corresponding tag_id in tag_ids array
+				var tag_id = settings.tag_ids[tag_position];
 				
-				// var tag_id = $(this).options.tag_ids;
-				// console.log("tag_id: " + tag_id)
-				//can use options.tags, which includes all data for tag
+
 				var tagslist = $(this).val().split(delimiter[id]);
 				//var tagslist = JSON.parse($(this).val());
 				//tagslist needs tag object appended to it 
@@ -103,10 +106,9 @@
 					var skipTag = false; 
 				}
 				
-				//add id to each new tag. id should be user id for person tagged?
-				//should this be in onAddTag? 
+				//add id to each new tag, specific to person or team tagged
 				if (value !='' && skipTag != true) { 
-                    $('<span>').attr('id','newID').addClass('tag').append(
+                    $('<span>').attr('id',tag_id).addClass('tag').append(
                         $('<span>').text(value).append('&nbsp;&nbsp;'),
                         $('<a>', {
                             href  : '#',
@@ -214,7 +216,6 @@
 		}
 	    var settings = jQuery.extend(default_settings, options);
 
-	    console.log(settings)
 
 		this.each(function() { 
 			if (settings.hide) { 
@@ -286,7 +287,12 @@
 						tokentext = ui.item.value;
 						$.fn.isAvailableTag(tokentext, settings.autocomplete_list);
 						
-						$(event.data.real_input).addTag(tokentext,{focus:true,unique:(settings.unique)});
+						console.log("settings.unique: ")
+						console.log(settings.unique)
+						console.log("settings: ")
+						console.log(settings)
+
+						$(event.data.real_input).addTag(tokentext,{focus:true,unique:(settings.unique)}, settings);
 						return false;
 					});
 				} else {

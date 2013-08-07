@@ -24,7 +24,7 @@
 
 		
 			<!-- Submit new Kudos -->
-			<form action="/editpost" method="POST" name="add">
+			<form action='/editpost' method="POST" name="add" id="new_post_form">
 				<!-- inclide csrf token in every form for security -->
 				{{ new_post.csrf_token }} 
 
@@ -46,6 +46,8 @@
 
 			    			<button type="submit" class="btn btn-large btn-block btn-primary" name="new_post_btn" value="submit" style="padding: 5px 0px; width: 90px; height: 30px;"> Submit </button>
 									<!-- {{ new_post.post_submit_btn(value="submit post")}} -->
+
+							{{ new_post.hidden_tag_info (class="hidden_tags", id="hidden_tags") }}
 
 						</div>
 					</div>
@@ -94,8 +96,24 @@
 		<link rel="stylesheet" type="text/css" href="http://xoxco.com/projects/code/tagsinput/jquery.tagsinput.css" />
 
 		<script type="text/javascript">
-			$(document).ready(function(){
 
+			function collect_tags(){
+				var all_tags = $(this).find("span.tag"); //gives you all tags in form 
+				$.each(all_tags, function(){
+					var tag_text = $(this).children("span").text();
+					$(".hidden_tags").val($(".hidden_tags").val() + tag_text);
+
+				})
+
+				alert("hidden_tags: " + $('.hidden_tags').val());
+
+				//this is list, loop through and get value of each tag, and add to hidden field val
+				//put this into hidden field $(hiddenfield).val()
+
+			}
+
+			$(document).ready(function(){
+				$('#new_post_form').submit(collect_tags);
 			});
 
 
@@ -113,16 +131,17 @@
 			}
 
 			$(function() {
+				//same as document.ready
 
 				var tag_words = {{tags|safe}}; //safe: tell flask that this input is okay
-				var tag_ids = {{tag_ids|safe}}
+				var tag_ids = {{tag_ids|safe}} 
 				
 
 				$('.tag_input').tagsInput({
 					width: 'auto',
 					height: '30px',
 					autocomplete_list: tag_words, 
-					tag_ids:  tag_ids
+					tag_ids: tag_ids,
 				});
 				
 
