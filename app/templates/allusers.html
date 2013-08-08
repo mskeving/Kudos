@@ -29,7 +29,7 @@
 			{% else %}
 				<td>{{user.nickname}}</td>
 			{% endif %}
-			<td><a href="{{ url_for('user', nickname=user.nickname) }}">{{user.email}} </a> </td>
+			<td><a href="{{ url_for('user', username=user.username) }}">{{user.email}} </a> </td>
 			
 			{% if user.team %}
 				<td><a href="{{ url_for('team', team=user.team) }}"> {{user.team}} </a> </td>

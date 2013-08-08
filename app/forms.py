@@ -23,6 +23,7 @@ class EditForm(Form):
 		Form.__init__(self, *args, **kwargs)
 		self.original_nickname = original_nickname
 
+	#nicknames don't need to be unique
 	def validate(self):
 		#check to see if nickname has been used already
 		if not Form.validate(self):
@@ -56,5 +57,5 @@ class DeletePost(Form):
 	hidden_post_id = HiddenField('post_id') #validator that this is number
 	post_delete_btn = SubmitField('post_delete_btn')
 
-class SendThanks(Form):
+
 	

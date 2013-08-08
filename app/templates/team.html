@@ -33,12 +33,12 @@
 			</td>
 			{% if member.firstname %}
 				<td>{{member.firstname}} {{member.lastname}} </td>
-			{% else %}
+			{% elif %}
 				<td>{{member.nickname}}</td>
 			{% endif %}
 
-			{% if member.nickname %}
-				<td><a href="{{ url_for('user', nickname=member.nickname) }}">{{member.email}} </a> </td> 
+			{% if member.username %}
+				<td><a href="{{ url_for('user', username=member.username) }}">{{member.email}} </a> </td> 
 			{% else %}
 				{{member.email}}
 			{% endif %}

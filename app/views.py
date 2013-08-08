@@ -5,8 +5,13 @@ from flask import render_template, flash, redirect, session, url_for, request, g
 from flask.ext.login import login_user, logout_user, current_user, login_required 
 
 from forms import LoginForm, EditForm, EditPost, DeletePost, NewReply
-from models import User, Post, UserTeam, Team, Tag, ROLE_USER, ROLE_ADMIN
+from models import User, Post, UserTeam, Team, Tag, Thanks, ROLE_USER, ROLE_ADMIN
 from datetime import datetime
+
+from flask.ext.sqlalchemy import sqlalchemy
+from sqlalchemy import and_
+
+#from SQLAlchemy import and_
 
 @app.before_request
 def before_request():
@@ -29,23 +34,20 @@ def nothing():
 def index():
 
 	user = g.user
-	posts = Post.query.all()
+	new_post = EditPost() 
+	reply_form = NewReply()
+	posts = Post.query.filter(Post.parent_post_id==None).all()
 
+	#query for list of tags
 	user_tags = db.session.query(User).all()
-	#team_tags = db.session.query(User).filter(User.team != None).all()
 	team_tags = db.session.query(Team).all()
 	all_tags = user_tags + team_tags
 
 
-
-	#create list of tag words
-	#then pass list of JSON tag objects
-	#all_tag_info = json.dumps(all_tags) <-- error: json object not iterable
-
 	tag_dict = {}
 
 
-	#Available Tags: full name, last name, nickname, teamname
+	#Available User Tags: full name, last name, nickname, teamname
 	for tag in user_tags:
 		tag_user_id = "u" + str(tag.id)
 		if tag.firstname and tag.lastname and tag.nickname:
@@ -56,11 +58,13 @@ def index():
 			tag_dict[tag_user_id] = fullname
 		elif tag.firstname:
 			tag_dict[tag_user_id] = tag.firstname
+		elif tag.nickname:
+			tag_dict[tag_user_id] = tag.nickname
 			
 		else:
 			print "no name for user: "
 
-
+	#Team Tags - all teams
 	for tag in team_tags:
 		tag_team_id = "t" + str(tag.id)
 		tag_dict[tag_team_id] = tag.teamname
@@ -72,20 +76,43 @@ def index():
 	tagstring = json.dumps(tag_words)
 	tag_ids_string = json.dumps(tag_ids)
 
+	print "POSTS! : "
+	print posts
 
-	new_post = EditPost() 
-	reply_form = NewReply()
+	#TODO: separate into function. Used in '/user' as well
+	indented_posts = []
+	for p in posts:
+		d = {}
+		d['body'] = p.body
+		d['indent'] = 0
+		d['post_id'] = p.id
+		d['firstname'] = p.author.firstname
+		d['photo'] = p.author.photo
+		d['timestamp'] = p.timestamp
+		indented_posts.append(d)
+		for child in p.children:
+			d = {}
+			d['body'] = child.body
+			d['indent'] = 1
+			d['post_id'] = child.id
+			d['firstname'] = child.author.firstname
+			d['photo'] = child.author.photo
+			d['timestamp'] = child.timestamp
+			indented_posts.append(d)
+	
 
-	#CREATE POST TREE
-	indented_posts=[]
-	if posts != None:
-		#create parent/child list of all posts
-		hposts = HPost.build(posts)
-		#indentend posts = list of (post body, indent) values
-		indented_posts = HPost.calcIndent(hposts)
+	# #CREATE POST TREE
+	# indented_posts=[]
+	# if posts != None:
+	# 	#create parent/child list of all posts
+	# 	hposts = HPost.build(posts)
+	# 	#indentend posts = list of (post body, indent) values
+	# 	indented_posts = HPost.calcIndent(hposts)
 
-		#for debugging
-		#HPost.dump(hposts,0)
+	# 	#for debugging
+	# 	#HPost.dump(hposts,0)
+	# else:
+	# 	print "No posts to display"
 
 	return render_template("index.html", 
 		title='Home', 
@@ -133,6 +160,7 @@ def after_login(resp):
 	if resp.email is None or resp.email == "":
 		flash('Invalid login. Please try again.')
 		return redirect(url_for('login'))
+	print "EMAIL: %s" % resp.email
 	user = User.query.filter_by(email = resp.email).first()
 	if user is None:
 		flash('You must sign in with your @dropbox email address. Please try again.')
@@ -165,32 +193,54 @@ def team(team):
 
 
 #USER PROFILE
-@app.route('/user/<nickname>')
+@app.route('/user/<username>')
 @login_required
-def user(nickname):
+def user(username):
 
-	user = User.query.filter_by(nickname = nickname).first()
-	posts = Post.query.filter_by(user_id = user.id).all()
+	#user = User.query.filter_by(username = username).first()
+	user = g.user
+	tagged_posts = []
+	tags = Tag.query.filter(and_(Tag.user_tag_id==user.id, Post.parent_post_id==None)).all() 
+
+	indented_posts=[]
+
+	#TODO: create separate function
+	for t in tags:
+		d = {}
+		d['body'] = t.post.body
+		d['indent'] = 0
+		d['post_id'] = t.post.id
+		d['firstname'] = t.post.author.firstname
+		d['photo'] = t.post.author.photo
+		d['timestamp'] = t.post.timestamp
+		indented_posts.append(d)
+		for child in t.post.children:
+			d = {}
+			d['body'] = child.body
+			d['indent'] = 1
+			d['post_id'] = child.id
+			d['firstname'] = child.author.firstname
+			d['photo'] = child.author.photo
+			d['timestamp'] = child.timestamp
+			indented_posts.append(d)
+
+	print "indented_posts: "
+	print indented_posts
+
+
+	#posts = Post.query.filter_by(user_id = user.id).all()
 
 	edit_form = EditPost()
 	delete_form = DeletePost()
 
 	if user == None:
-		flash('User ' + nickname + ' not found.')
+		flash('User ' + username + ' not found.')
 		return redirect(url_for('index'))
 
-	#CREATE POST TREE
-	indented_posts=[]
-	if posts != None:
-		#create parent/child list of all posts
-		hposts = HPost.build(posts)
-		#indentend posts = list of (post body, indent) values
-		indented_posts = HPost.calcIndent(hposts)
+	
 
-		#for debugging
-		#HPost.dump(hposts,0)
 
-	print "user before render_template: " + str(user)
+
 	return render_template('user.html', 
 		edit_form = edit_form,
 		delete_form = delete_form,
@@ -201,7 +251,7 @@ def user(nickname):
 @app.route('/edit', methods = ['GET', 'POST'])
 @login_required
 def edit():
-	form = EditForm(g.user.nickname) #pass in nickname to make sure it's unique
+	form = EditForm(g.user.username) #pass in nickname to make sure it's unique
 		#EditForm is in forms.py
 	if form.validate_on_submit():
 		#is there a more succinct way of doing this? Looping through form elements?
@@ -214,7 +264,7 @@ def edit():
 		g.user.about_me = form.about_me.data
 		db.session.add(g.user)
 		db.session.commit()
-		return redirect(url_for('user', nickname=g.user.nickname))
+		return redirect(url_for('user', username=g.user.username))
 	else:
 		form.nickname.data = g.user.nickname
 		form.about_me.data = g.user.about_me
@@ -269,7 +319,17 @@ def new_post():
 		#no text for post. display error message??
 		return redirect(url_for('index'))
 
+#SEND THANKS
+@app.route('/sendthanks', methods=['POST'])
+def send_thanks():
 
+	post_id=request.form["send-thanks"] #button id=post_id in form 
+
+	new_thanks = Thanks(thanks_sender=g.user.id, post_id=post_id, timestamp=datetime.utcnow())
+	db.session.add(new_thanks)
+	db.session.commit()
+
+	return redirect(url_for('index'))
 
 #ADD NEW REPLY
 @app.route('/newreply', methods=['POST'])
@@ -310,7 +370,7 @@ def delete_post():
 	db.session.delete(delete_post)
 	db.session.commit()
 	print "committed to database"
-	return redirect(url_for('user', nickname=g.user.nickname))
+	return redirect(url_for('user', username=g.user.username))
 
 
 
@@ -385,7 +445,8 @@ class HPost:
 			d['body'] = post.dbo.body
 			d['indent'] = indent
 			d['post_id'] = post.dbo.id
-			d['nickname'] = post.dbo.author.nickname
+			d['firstname'] = post.dbo.author.firstname
+			d['photo'] = post.dbo.author.photo
 			d['timestamp'] = post.dbo.timestamp
 
 			posts_list.append(d)

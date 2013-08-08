@@ -36,6 +36,7 @@ class User(db.Model):
 	email = db.Column(db.String(120), index = True, unique = True)
 	phone = db.Column(db.String(25), index = True)
 	about_me = db.Column(db.String(140))
+	username = db.Column(db.String(68))
 	last_seen = db.Column(db.Date)
 
 	posts = db.relationship('Post', backref = 'author', lazy = 'dynamic')
@@ -84,13 +85,15 @@ class Post(db.Model):
 
 	id = db.Column(db.Integer, primary_key = True)
 	body = db.Column(db.String(140))
-	parent_post_id = db.Column(db.Integer) #denotes that it's a reply
+	parent_post_id = db.Column(db.Integer, db.ForeignKey('posts.id')) #denotes that it's a reply
 	timestamp = db.Column(db.Date)
 	user_id = db.Column(db.Integer, db.ForeignKey('users.id')) #users is tablename
-	tags = db.relationship('Tag', backref = 'user')
-	thanks = db.relationship('Thanks', backref = 'user')
+	tags = db.relationship('Tag', backref='post')
+	thanks = db.relationship('Thanks', backref='post')
+	children = db.relationship('Post')
 
 
+	#rename user_id to author_id to match backref
 	#Post.author (because of backref in User)
 
 	def __repr__(self):
@@ -99,8 +102,8 @@ class Post(db.Model):
 class Thanks(db.Model):
 	__tablename__ = "thanks"
 
-	id = db.Column(db.Integer, primary_key = True)
-	thanks_author = db.Column(db.Integer)
+	id = db.Column(db.Integer, primary_key=True)
+	thanks_sender = db.Column(db.Integer, db.ForeignKey('users.id'))
 	post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
 	timestamp = db.Column(db.Date)
 
@@ -108,12 +111,12 @@ class Thanks(db.Model):
 class Tag(db.Model):
 	__tablename__ = "tags"
 
-	id = db.Column(db.Integer, primary_key = True)
-	team_tag_id = db.Column(db.Integer, index = True)
-	user_tag_id = db.Column(db.Integer, index = True)
+	id = db.Column(db.Integer, primary_key=True)
+	team_tag_id = db.Column(db.Integer, index=True)
+	user_tag_id = db.Column(db.Integer, index=True)
 	body = db.Column(db.String(200)) #just for readability in DB store string of tag
 	post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
-	tag_author = db.Column(db.Integer) 
+	tag_author = db.Column(db.Integer, db.ForeignKey('users.id')) 
 	timestamp = db.Column(db.Date)
 
 	

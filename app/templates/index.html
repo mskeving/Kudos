@@ -59,10 +59,10 @@
 		{% for post in posts %}
 
 			<div class="display-post" style="padding: 5px 5px 5px {{ 30 * post.get('indent') + 20 }}px;">
-				<img src={{ user.photo }} height='42' width='42'>
+				<img src={{ post.get('photo') }} height='42' width='42'>
 
 
-				<i> <a href="{{ url_for('user', nickname=user.nickname) }}">{{post.get('nickname')}} </a> says:</i><br>
+				<i> <a href="{{ url_for('user', username=user.username) }}">{{post.get('firstname')}} </a> says:</i><br>
 				{{post.get('body')}}
 			</div>
 
@@ -92,8 +92,11 @@
 			<br>
 
 			<div style="padding: 5px 5px 5px {{ 30 * post.get('indent') + 20 }}px; width: 515px">
+		<!-- Send Thanks -->
+
 				<form action="/sendthanks" method="POST">
-					<button class="btn btn-large btn-block btn-primary" id="send-thanks" value={{post.get('post_id')}} style="padding: 5px 5px; width: 90px; height: 30px; float: right"> thanks! </button>
+					{{ new_post.csrf_token }}
+					<button class="btn btn-large btn-block btn-primary" name="send-thanks" id="send-thanks" value={{post.get('post_id')}} style="padding: 5px 5px; width: 90px; height: 30px; float: right"> thanks! </button>
 				</form>
 			</div>
 		{% endfor %}
@@ -124,9 +127,6 @@
 				$('#new_post_form').submit(collect_tags);
 			});
 
-			$('#send-thanks').onClick(function(){
-				//call fnc in views to submit to db
-			});
 
 
 			function onAddTag(tag) {
