@@ -8,7 +8,7 @@ from models import User, Post, UserTeam, Team, Tag, Thanks, ROLE_USER, ROLE_ADMI
 from datetime import datetime
 from flask.ext.sqlalchemy import sqlalchemy
 from sqlalchemy import and_
-from lib import emailsender
+from app.lib import emailsender
 
 @app.before_request
 def before_request():
