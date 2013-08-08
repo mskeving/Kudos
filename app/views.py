@@ -3,15 +3,12 @@ import json
 from app import app, lm, db, oid
 from flask import render_template, flash, redirect, session, url_for, request, g 
 from flask.ext.login import login_user, logout_user, current_user, login_required 
-
 from forms import LoginForm, EditForm, EditPost, DeletePost, NewReply
 from models import User, Post, UserTeam, Team, Tag, Thanks, ROLE_USER, ROLE_ADMIN
 from datetime import datetime
-
 from flask.ext.sqlalchemy import sqlalchemy
 from sqlalchemy import and_
-
-#from SQLAlchemy import and_
+from lib import emailsender
 
 @app.before_request
 def before_request():
@@ -311,10 +308,8 @@ def new_post():
 				new_tag = Tag(team_tag_id=tag_id, body=tag_text[i], post_id=new_post.id, tag_author=user_id, timestamp = datetime.utcnow())
 				db.session.add(new_tag)
 				db.session.commit()
-
-
+		emailsender.send_email('rk@dropbox.com')
 		return redirect(url_for('index'))
-
 	else:
 		#no text for post. display error message??
 		return redirect(url_for('index'))
