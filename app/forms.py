@@ -46,7 +46,8 @@ class NewReply(Form):
 class EditPost(Form):
 	# hidden field to tell whether submit button should go to ('/') or user profile. value=0 goes home, value=1 goes to profile
 	hidden = HiddenField('hidden')
-	hidden_tag_info = HiddenField('hidden_tag_info')
+	hidden_tag_ids = HiddenField('hidden_tag_ids')
+	hidden_tag_text = HiddenField('hidden_tag_text')
 	post_body = TextAreaField('post_body', validators = [Required()])
 	post_submit_btn = SubmitField('post_submit_btn')
 	post_tags = TextField('post_tags')
@@ -55,3 +56,5 @@ class DeletePost(Form):
 	hidden_post_id = HiddenField('post_id') #validator that this is number
 	post_delete_btn = SubmitField('post_delete_btn')
 
+class SendThanks(Form):
+	

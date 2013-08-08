@@ -5,7 +5,7 @@ from flask import render_template, flash, redirect, session, url_for, request, g
 from flask.ext.login import login_user, logout_user, current_user, login_required 
 
 from forms import LoginForm, EditForm, EditPost, DeletePost, NewReply
-from models import User, Post, UserTeam, Team, ROLE_USER, ROLE_ADMIN
+from models import User, Post, UserTeam, Team, Tag, ROLE_USER, ROLE_ADMIN
 from datetime import datetime
 
 @app.before_request
@@ -43,32 +43,28 @@ def index():
 	#all_tag_info = json.dumps(all_tags) <-- error: json object not iterable
 
 	tag_dict = {}
-	tag_list = []
-	tag_list_ids = []
+
 
 	#Available Tags: full name, last name, nickname, teamname
 	for tag in user_tags:
-		tag_id = "u" + str(tag.id)  #set tag_id based on user_id
+		tag_user_id = "u" + str(tag.id)
 		if tag.firstname and tag.lastname and tag.nickname:
-			user_id = "u" + str(tag.id)
 			fullname = tag.firstname + " " + tag.lastname + " (" + tag.nickname + ")"
-			tag_list.append(fullname)
-			tag_dict[tag_id] = fullname
-
+			tag_dict[tag_user_id] = fullname
+		elif tag.firstname and tag.lastname:
+			fullname = tag.firstname + " " + tag.lastname 
+			tag_dict[tag_user_id] = fullname
 		elif tag.firstname:
-			tag_list.append(tag.firstname)
-			tag_dict[tag_id] = tag.firstname
+			tag_dict[tag_user_id] = tag.firstname
 			
 		else:
 			print "no name for user: "
 
 
 	for tag in team_tags:
-		tag_id = "t" + str(tag.id)
-		tag_list.append(tag.teamname)
-		tag_dict[tag_id] = tag.teamname
+		tag_team_id = "t" + str(tag.id)
+		tag_dict[tag_team_id] = tag.teamname
 
-	print tag_dict
 
 	tag_words = tag_dict.values()
 	tag_ids = tag_dict.keys()
@@ -230,9 +226,10 @@ def edit():
 @app.route('/editpost', methods=['POST'])
 @login_required
 def new_post():
+	#TODO: commit everything (posts and tags) at end
 	form = EditPost()
-
 	user_id = g.user.id
+
 
 	#checks if new Post
 	if form.validate_on_submit():
@@ -240,22 +237,39 @@ def new_post():
 		post_text = form.post_body.data
 		
 		new_post = Post(body=post_text, timestamp=datetime.utcnow(), user_id=user_id) 
-		#don't include id value, primary key will automatically increment
-		print "adding new post: "
-		print db.session.add(new_post)
-		#db.session.commit()
+		db.session.add(new_post)
+		db.session.commit()
+	
 
+		#Submit tags
+		print "hidden data: "
+		print form.hidden_tag_ids.data
+		tag_ids = form.hidden_tag_ids.data.split('|')
+		tag_text = form.hidden_tag_text.data.split('|')
 
-		tag_text = form.hidden_tag_info.data 
-		print "tag_text: "
 		print tag_text
-		#post_id = db.session.query(Post).filter_by(id=post_id).one()
+
+
+		for i in range(len(tag_ids)-1): #last index will be "" because of delimiters 
+			if tag_ids[i][0] == 'u':
+				tag_id = int(tag_ids[i][1:]) #remove leading 'u' to convert back to int user_id
+				new_tag = Tag(user_tag_id=tag_id, body=tag_text[i], post_id=new_post.id, tag_author=user_id, timestamp = datetime.utcnow())
+				db.session.add(new_tag)
+				db.session.commit()
+			elif tag_ids[i][0] == 't':
+				tag_id = int(tag_ids[i][1:]) #remove leading 't' to convert back to int team_id
+				new_tag = Tag(team_tag_id=tag_id, body=tag_text[i], post_id=new_post.id, tag_author=user_id, timestamp = datetime.utcnow())
+				db.session.add(new_tag)
+				db.session.commit()
+
 
 		return redirect(url_for('index'))
 
 	else:
 		#no text for post. display error message??
 		return redirect(url_for('index'))
+
+
 
 #ADD NEW REPLY
 @app.route('/newreply', methods=['POST'])
