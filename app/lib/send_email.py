@@ -9,8 +9,8 @@ SMTP_SERVER = 'smtp.gmail.com'
 SMTP_PORT = 587
 
 sender = 'bobmahoney1234@gmail.com'
-password = 'this_is_not_the_real_password_because_were_hosting_this_on_github_and_that_would_be_cray'
-subject = 'Testing'
+password = 'norfolkislandpine'
+subject = 'Someone sent you kudos!'
 message = """
 <html>
     <body>
