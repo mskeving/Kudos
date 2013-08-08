@@ -1,2 +1,4 @@
 *.pyc
 tmp/
+db_repository/
+app.db

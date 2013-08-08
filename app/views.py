@@ -36,9 +36,8 @@ def index():
 	user = g.user
 	new_post = EditPost() 
 	reply_form = NewReply()
-	posts = Post.query.filter(Post.parent_post_id==None).all()
-
-	#query for list of tags
+	
+	#query for list of available tag words
 	user_tags = db.session.query(User).all()
 	team_tags = db.session.query(Team).all()
 	all_tags = user_tags + team_tags
@@ -76,12 +75,28 @@ def index():
 	tagstring = json.dumps(tag_words)
 	tag_ids_string = json.dumps(tag_ids)
 
+	posts = Post.query.filter(Post.parent_post_id==None).all()
+
 	print "POSTS! : "
 	print posts
 
 	#TODO: separate into function. Used in '/user' as well
 	indented_posts = []
+	#users_tagged = []
+	#teams_tagged = []
+	tagged_users_teams = []
 	for p in posts:
+		#query for all tags with this p.id
+		tags_for_post = []
+		for tag in p.tags:
+			print "individual tag:"
+			tags_for_post.append(tag.user_tag.firstname)
+			# if tag.user_tag_id:
+			# 	users_tagged.append(team_user.user_tag_id)
+			# if tag.team_tag_id:
+			# 	teams_tagged.append(team_user.team_tag_id)
+
+
 		d = {}
 		d['body'] = p.body
 		d['indent'] = 0
@@ -89,6 +104,7 @@ def index():
 		d['firstname'] = p.author.firstname
 		d['photo'] = p.author.photo
 		d['timestamp'] = p.timestamp
+		d['list_of_tags'] = tags_for_post
 		indented_posts.append(d)
 		for child in p.children:
 			d = {}
@@ -98,6 +114,7 @@ def index():
 			d['firstname'] = child.author.firstname
 			d['photo'] = child.author.photo
 			d['timestamp'] = child.timestamp
+			d['list_of_tags'] = []
 			indented_posts.append(d)
 	
 
@@ -122,7 +139,8 @@ def index():
 		reply_form=reply_form,
 		tags=tagstring,
 		tag_ids=tag_ids_string,
-		fullname = fullname)
+		fullname = fullname,
+		)
 
 
 #LOGIN 

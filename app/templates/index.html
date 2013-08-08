@@ -63,7 +63,10 @@
 
 
 				<i> <a href="{{ url_for('user', username=user.username) }}">{{post.get('firstname')}} </a> says:</i><br>
-				{{post.get('body')}}
+				{{post.get('body')}}<br>
+				{% for tag in post.get('list_of_tags') %}
+					tags: {{tag}}
+				{% endfor %}
 			</div>
 
 		<!-- Add Reply -->
