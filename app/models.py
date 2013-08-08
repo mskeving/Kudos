@@ -88,21 +88,35 @@ class Post(db.Model):
 	timestamp = db.Column(db.Date)
 	user_id = db.Column(db.Integer, db.ForeignKey('users.id')) #users is tablename
 	tags = db.relationship('Tag', backref = 'user')
-	#tags = db.Column(db.Text)
-	#tags - store as JSON db.Text
+	thanks = db.relationship('Thanks', backref = 'user')
+
 
 	#Post.author (because of backref in User)
+
+	def __repr__(self):
+		return '<Post %r>' %(self.body)
+
+class Thanks(db.Model):
+	__tablename__ = "thanks"
+
+	id = db.Column(db.Integer, primary_key = True)
+	thanks_author = db.Column(db.Integer)
+	post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
+	timestamp = db.Column(db.Date)
+
 
 class Tag(db.Model):
 	__tablename__ = "tags"
 
 	id = db.Column(db.Integer, primary_key = True)
-	body = db.Column(db.String(500))
+	team_tag_id = db.Column(db.Integer, index = True)
+	user_tag_id = db.Column(db.Integer, index = True)
+	body = db.Column(db.String(200)) #just for readability in DB store string of tag
 	post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
+	tag_author = db.Column(db.Integer) 
+	timestamp = db.Column(db.Date)
 
-
-	def __repr__(self):
-		return '<Post %r>' %(self.body)
+	
 
 
 
