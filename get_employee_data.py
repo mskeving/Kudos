@@ -13,16 +13,13 @@ db = app.db
 
 ABOUT_PAGE_JSON_URL = "http://about.corp.dropbox.com/?output=json"
 
-def create_user(first_name, last_name, nickname, email, list_of_teams, mobile, photo, bio):
+def create_user(first_name, last_name, nickname, email, list_of_teams, mobile, photo, bio, username):
     # You'd remove the rest of this method and add the user to your database here
 
     #When readding data - check to see if user already exists based on email. If yes, update columns, if no, insert new_user
 
     #for each user, iterate through list of teams and create entries in users_teams
-    new_users_teams=UserTeam(
-        user_id="",
-        team_id="",
-        )
+   
 
 
     new_user=User(
@@ -33,13 +30,24 @@ def create_user(first_name, last_name, nickname, email, list_of_teams, mobile, p
         email = email, 
         phone = mobile,
         about_me = bio,
+        username = username,
         )
 
 
-    db.session.add(new_user) #maybe returns user
+    db.session.add(new_user) 
     db.session.commit()
 
-    #after submit new user, get id for users_teams
+    user_id = new_user.id
+
+    for team in list_of_teams:
+        new_users_teams=UserTeam(
+            user_id=user_id,
+            team_id=team,
+            )
+        db.session.add(new_users_teams)
+        db.session.commit()
+
+
 
     if len(list_of_teams) == 0:
         print "%s %s has no teams" % (first_name, last_name)
@@ -79,6 +87,7 @@ def main():
         user_mobile_phone = user['mobile_phone']
         user_photo = user['picture']
         user_bio = user['bio']
+        username = user['username']
 
         for team in user_list_of_teams:
             if team not in all_teams:
@@ -93,8 +102,20 @@ def main():
             user_mobile_phone, 
             user_photo,
             user_bio,
+            username,
         )
 
+    create_user(
+        "melissa", 
+        "skevington",
+        "missy",
+        "melissaskevington@gmail.com",
+        ["kudos"],
+        "5182655596",
+        "http://about/media/badges/abhishek.thumb.jpg",
+        "hi", 
+        "mskeving",
+        )
     create_teams(all_teams)
 
     print "Done."
