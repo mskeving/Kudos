@@ -309,7 +309,12 @@ def new_post():
 				# TODO - Right now, we send an email with:
 				# - A button that links to www.gooogle.com - this should be the permalink of the kudos in future
 				# - To rk@dropbox.com - we should change this to the kudos recipient
-				email_sender.send_email('www.google.com', post_text, kudos_recip.email)
+				email_sender.send_email(
+					'www.google.com',
+					kudos_recip.email,
+					message = post_text,
+					sender_name = "%s %s" % (g.user.firstname, g.user.lastname)
+					)
 
 			elif tag_ids[i][0] == 't':
 				tag_id = int(tag_ids[i][1:]) #remove leading 't' to convert back to int team_id

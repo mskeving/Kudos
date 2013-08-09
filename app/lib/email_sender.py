@@ -15,7 +15,7 @@ sender = 'bobmahoney1234@gmail.com'
 password = 'norfolkislandpine'
 subject = 'Someone sent you kudos!'
 
-def send_email(link, message, recipient):
+def send_email(href, recipient, **kw):
     """
     Sends an email with a button in it
 
@@ -23,7 +23,7 @@ def send_email(link, message, recipient):
     @param - message - the message that the kudos-giver attaches to the post
     @param - recipient - an email address, or comma-separated list of email addresses
     """
-    email_body = email_string.gen_email_string(link, message)
+    email_body = email_string.gen_email_string(href, **kw)
 
     msg = MIMEMultipart()
     msg['Subject'] = subject

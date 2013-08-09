@@ -33,7 +33,7 @@ email_string = """<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.
                                                                             <td>
                                                                                 <center>
 																					<div style="font-size: 26px; padding-bottom: 20px;">
-																						Someone sent you kudos!
+																						%(sender_name)s sent you kudos!
 																					</div>
                                                                                </center>
                                                                             </td>
@@ -181,14 +181,23 @@ def perform_subs(string_to_sub, subs_dict):
 		to_return = to_return.replace('%(' + key + ')s', value)
 	return to_return
 
-def gen_email_string(href, message):
+def gen_email_string(href, **kw):
 	""" @param href - the url that the button in the email should take the user to
 		@param message - the message from the kudos-giver to the kudos-receiver """
-	subs = {
+	default_subs = {
 		'href': href,
-		'message': message,
+		'message': '',
+		'sender_name': 'Someone'
 	}
-	return perform_subs(email_string, subs)
+
+	for key, value in kw.iteritems():
+		default_subs[key] = value
+
+	# Center the mssage if it's too short
+	if default_subs['message'] and len(default_subs['message']) < 80:
+		default_subs['message'] = "<center>%s</center>" % default_subs['message']
+
+	return perform_subs(email_string, default_subs)
 
 if __name__ == '__main__':
 	""" print out the result of gen_email_string for some example input"""
