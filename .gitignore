@@ -1,3 +1,5 @@
+*.swp
+app.db
 *.pyc
 tmp/
 flask/*

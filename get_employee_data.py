@@ -19,7 +19,9 @@ def create_user(first_name, last_name, nickname, email, list_of_teams, mobile, p
     #When readding data - check to see if user already exists based on email. If yes, update columns, if no, insert new_user
 
     #for each user, iterate through list of teams and create entries in users_teams
-   
+    print email,
+    if not email:
+        return
 
 
     new_user=User(
@@ -47,18 +49,16 @@ def create_user(first_name, last_name, nickname, email, list_of_teams, mobile, p
         db.session.add(new_users_teams)
         db.session.commit()
 
-
-
-    if len(list_of_teams) == 0:
-        print "%s %s has no teams" % (first_name, last_name)
-    elif len(list_of_teams) == 1:
-        print "%s %s with email %s is a member of 'Team %s'" % (first_name, last_name, email, list_of_teams[0])
-    elif len(list_of_teams) > 1:
-        team_names_prepended_with_team = ("'Team %s'" % team for team in list_of_teams)
-        team_names = ', '.join(team_names_prepended_with_team)
-        print "%s %s with email %s is a member of the following teams:%s" % (first_name, last_name, email, team_names)
-    else:
-        assert False, "Should never get here"
+    #if len(list_of_teams) == 0:
+    #    print "%s %s has no teams" % (first_name, last_name)
+    #elif len(list_of_teams) == 1:
+    #    print "%s %s with email %s is a member of 'Team %s'" % (first_name, last_name, email, list_of_teams[0])
+    #elif len(list_of_teams) > 1:
+    #    team_names_prepended_with_team = ("'Team %s'" % team for team in list_of_teams)
+    #    team_names = ', '.join(team_names_prepended_with_team)
+    #    print "%s %s with email %s is a member of the following teams:%s" % (first_name, last_name, email, team_names)
+    #else:
+    #    assert False, "Should never get here"
 
 def create_teams(all_teams):
     teams = all_teams.keys()
@@ -68,12 +68,11 @@ def create_teams(all_teams):
         db.session.commit()
 
 def main():
-    print "Fetching data..."
     raw_data = urllib2.urlopen(ABOUT_PAGE_JSON_URL)
     users = json.load(raw_data)['users']
 
-    print "Populating thumbs for %s users..." % len(users)
-    
+    print "Creating users with emails:",
+
     all_teams = {}
     for user in users:
         # Below we use the user['r_first_name'] property. There's also a user['first_name']
