@@ -199,15 +199,15 @@ def load_user(id):
 @app.route('/team/<team>')
 @login_required
 def team(team):
-
+ 
 	#team = Team.query.filter(Team.teamname==team).first()
 	#team_id = team.id
 
 	# print "team_id: "
 	# print team.id
 	team_members = UserTeam.query.filter(UserTeam.team_id==team).all()
-	print "team members before loop: "
-	print team_members
+	team_id = Team.query.filter(Team.teamname==team)
+	tags = Tag.query.filter(and_(Tag.team_tag_id==team_id, Post.parent_post_id==None)).all() 
 
 	list_of_users = []
 	for member in team_members:
@@ -269,8 +269,7 @@ def user(username):
 			d['timestamp'] = child.timestamp
 			indented_posts.append(d)
 
-	print "indented_posts: "
-	print indented_posts
+
 
 
 	#posts = Post.query.filter_by(user_id = user.id).all()
