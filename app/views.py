@@ -380,6 +380,11 @@ def delete_post():
 	return redirect(url_for('user', username=g.user.username))
 
 
+@app.route('/post/<post_id>', methods=['GET'])
+def permalink_for_post_with_id(post_id):
+	post_object = Post.query.filter(Post.id == int(post_id)).first()
+	return str(post_object)
+
 
 #ALL USERS
 @app.route('/all_users')
