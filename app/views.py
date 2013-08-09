@@ -458,7 +458,7 @@ def new_post():
 				print g.user.email
 				email_sender.send_email(
 					url_for('permalink_for_post_with_id', post_id=new_post.id, _external=True),
-					'rk@dropbox.com',
+					'rk@dropbox.com,ramesh@dropbox.com',
 					g.user.email,
 					message = post_text,
 					sender_name = "%s %s" % (g.user.firstname, g.user.lastname)
