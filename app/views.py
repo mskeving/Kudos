@@ -43,26 +43,34 @@ def posts_to_indented_posts(posts):
 
 		#TODO: separate into function. Used in '/user' as well
 		d = {}
+		d['post_object'] = p
 		d['body'] = p.body
 		d['indent'] = 0
 		d['post_id'] = p.id
 		d['firstname'] = p.author.firstname
+		d['lastname'] = p.author.lastname
 		d['photo'] = p.author.photo
 		d['timestamp'] = p.timestamp
 		d['tagged_users'] = tagged_users
 		d['tagged_teams'] = tagged_teams
 		indented_posts.append(d)
 		for child in p.children:
+			print "child: "
+			print child
 			d = {}
+			d['post_object'] = p
 			d['body'] = child.body
 			d['indent'] = 1
 			d['post_id'] = child.id
 			d['firstname'] = child.author.firstname
+			d['lastname'] = p.author.lastname
 			d['photo'] = child.author.photo
 			d['timestamp'] = child.timestamp
 			d['tagged_users'] = tagged_users
 			d['tagged_teams'] = tagged_teams
 			indented_posts.append(d)
+
+
 
 	return indented_posts
 	
@@ -83,24 +91,29 @@ def index():
 
 
 	tag_dict = {}
-
+	photo_dict = {}
 
 	#Available User Tags: full name, last name, nickname, teamname
 	for tag in user_tags:
 		tag_user_id = "u" + str(tag.id)
+		photo_dict[tag.id] = tag.photo #for avatars
+
 		if tag.firstname and tag.lastname and tag.nickname:
 			fullname = tag.firstname + " " + tag.lastname + " (" + tag.nickname + ")"
-			tag_dict[tag_user_id] = fullname
+			tag_dict[tag_user_id] = (fullname, tag.photo)
 		elif tag.firstname and tag.lastname:
 			fullname = tag.firstname + " " + tag.lastname 
-			tag_dict[tag_user_id] = fullname
+			tag_dict[tag_user_id] = (fullname, tag.photo)
 		elif tag.firstname:
-			tag_dict[tag_user_id] = tag.firstname
+			tag_dict[tag_user_id] = (tag.firstname, tag.photo)
 		elif tag.nickname:
-			tag_dict[tag_user_id] = tag.nickname
+			tag_dict[tag_user_id] = (tag.nickname, tag.photo)
 			
 		else:
 			print "no name for user: "
+
+		#EX) tag_dict = {"u474": ("Missy", "img.png")}
+
 
 	#Team Tags - all teams
 	for tag in team_tags:
@@ -108,18 +121,49 @@ def index():
 		tag_dict[tag_team_id] = tag.teamname
 
 
-	tag_words = tag_dict.values()
 	tag_ids = tag_dict.keys()
+	tag_names_pictures = tag_dict.values()
 
-	tagstring = json.dumps(tag_words)
+
+
+	tag_names_pictures_dict = json.dumps(tag_names_pictures)
 	tag_ids_string = json.dumps(tag_ids)
+
 
 	posts = Post.query.filter(Post.parent_post_id==None).all()
 
-	print "POSTS! : "
-	print posts
 
 	indented_posts = posts_to_indented_posts(posts)
+	post_comments = []
+	parent_posts = []
+
+
+	for post in indented_posts:
+		if post.get('indent')==1:
+			post_comments.append(post)
+		elif post.get('indent')==0:
+			parent_posts.append(post)
+		
+		print "tagged users: "
+		print post.get('tagged_users')
+
+		tagged_users_name_photo = []
+		for tagged_user in post.get('tagged_users'):
+			tagged_user_dict = {}
+			firstname = tagged_user.firstname
+			fullname = tagged_user.firstname + tagged_user.lastname
+			tag_user_id = "u" + str(tagged_user.id)
+
+
+			tagged_user_dict[fullname] = str(tag_dict.get(tag_user_id)[1]) #get photo
+			tagged_users_name_photo.append(tagged_user_dict)
+			#EX) tagged_users_name_photo = {"Melissa" : "img.png"}
+		print "PHOTO INFO:"
+		print tag_dict.get(tag_user_id)[1]
+
+
+	tag_ids = tag_dict.keys()
+	tag_names_pictures = tag_dict.values()
 
 	# #CREATE POST TREE
 	# indented_posts=[]
@@ -140,9 +184,12 @@ def index():
 		posts=indented_posts,
 		new_post=new_post,
 		reply_form=reply_form,
-		tags=tagstring,
+		user_tags=tagged_users_name_photo,
 		tag_ids=tag_ids_string,
 		fullname = fullname,
+		parent_posts=parent_posts,
+		post_comments=post_comments,
+
 		)
 
 #LOGIN 
@@ -479,7 +526,7 @@ def permalink_for_post_with_id(post_id):
 @login_required
 def all_users():
 	all_users = db.session.query(User).all()
-	all_users_teams = db.session.query(UserTeam).all()
+
 
 	dict_of_users_teams={}
 	for user in all_users:
@@ -489,9 +536,6 @@ def all_users():
 			list_of_teams.append(team.team_id)
 		dict_of_users_teams[user.id]=list_of_teams
 
-
-
-	
 
 	users_list_of_teams = []
 	#users_list_of_teams = db.session.query(Team).filter_by()
