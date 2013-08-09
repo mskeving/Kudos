@@ -11,8 +11,8 @@ import email_string
 SMTP_SERVER = 'smtp.gmail.com'
 SMTP_PORT = 587
 
-sender = 'bobmahoney1234@gmail.com'
-password = 'norfolkislandpine'
+sender = 'dropbox.kudos@gmail.com'
+password = 'wepartyandgivethanks'
 subject = 'Someone sent you kudos!'
 
 def send_email(href, recipient, **kw):
