@@ -134,7 +134,14 @@ a.avatar img {
   width: 100%;
   border: 0;
   margin: 0;
-  border-radius: 50%; /* read above */
+  margin-top: -10px;
+}
+
+a.avatar .cropper {
+	border-radius: 50%; /* read above */
+	width: 60px;
+	height: 60px;
+	overflow: hidden;
 }
 
 /* user-inputted blurb */

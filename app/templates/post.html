@@ -9,7 +9,9 @@
 	      {% set name = tag.keys() %}
 	      {% set photo = tag.values() %}
 	      <a class="avatar" href="{{ url_for('user', username=name[0]) }}">
-	        <img src="{{photo[0]}}" alt="{{name[0]}}" />
+		  	<div class="cropper">
+		        <img src="{{photo[0]}}" alt="{{name[0]}}" />
+			</div>
 	      </a>
 	    {% endfor %}
 	      <a class="avatar" href="#">
@@ -33,7 +35,7 @@
     <blockquote>
 
       {{post.get('body')}}
-    
+
     </blockquote>
     <div class="post-author">
       <a href="{{ url_for('user', username=post.get('username')) }}" class="author-name">{{post.get('firstname')}} {{post.get('lastname')}}</a>, 
