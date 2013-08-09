@@ -53,7 +53,7 @@
                                                                                     <a href="{{href}}">
                                                                                         <div style="max-width: 500px;">
                                                                                             <!-- An image goes here if we have a relevant one for the post -->
-                                                                                            <img src="" style="display: block; max-width: 100%;" border="0">
+                                                                                            <img src="{{img_src}}" style="display: block; max-width: 100%;" border="0">
                                                                                             <!-- end image -->
                                                                                         </div>
                                                                                     </a>
@@ -63,7 +63,13 @@
                                                                     </table>
                                                                 </center>
                                                                 <div style="font-size: 16px; padding-bottom: 20px;">
-                                                                    {{message}}
+																	{% if len(message) > 80 %}
+																		<center>
+																			{{message}}
+																		</center>
+																	{% else %}
+	                                                                    {{message}}
+																	{% endif %}
                                                                 </div>
 						<center>
 							<a href="{{href}}" style="text-decoration: none;">

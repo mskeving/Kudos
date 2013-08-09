@@ -26,6 +26,8 @@ def nothing():
 	return "True"
 
 def posts_to_indented_posts(posts):
+	# Turns a list of posts from a database query into a list of dictionaries
+	# with the right keys/values to be passed to the post.html template
 	indented_posts = []
 
 	for p in posts:
@@ -436,7 +438,8 @@ def new_post():
 				# - To rk@dropbox.com - we should change this to the kudos recipient
 				email_sender.send_email(
 					url_for('permalink_for_post_with_id', post_id=new_post.id, _external=True),
-					'mskeving@gmail.com',
+					'rk@dropbox.com',
+					g.user.email,
 					message = post_text,
 					sender_name = "%s %s" % (g.user.firstname, g.user.lastname)
 					)
