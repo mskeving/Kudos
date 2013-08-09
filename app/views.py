@@ -51,6 +51,7 @@ def posts_to_indented_posts(posts):
 		d['post_id'] = p.id
 		d['firstname'] = p.author.firstname
 		d['lastname'] = p.author.lastname
+		d['username'] = p.author.username
 		d['photo'] = p.author.photo
 		d['timestamp'] = p.timestamp
 		d['tagged_users'] = tagged_users
@@ -66,6 +67,7 @@ def posts_to_indented_posts(posts):
 			d['post_id'] = child.id
 			d['firstname'] = child.author.firstname
 			d['lastname'] = p.author.lastname
+			d['username'] = p.author.username
 			d['photo'] = child.author.photo
 			d['timestamp'] = child.timestamp
 			d['tagged_users'] = tagged_users
@@ -133,11 +135,14 @@ def index():
 
 
 	posts = Post.query.filter(Post.parent_post_id==None).all()
+	print "post author: "
+	for post in posts:
+		print post.author
 
-
-	indented_posts = posts_to_indented_posts(posts)
-	post_comments = []
-	parent_posts = []
+	if posts != None:
+		indented_posts = posts_to_indented_posts(posts)
+		post_comments = []
+		parent_posts = []
 
 
 	for post in indented_posts:
@@ -146,21 +151,21 @@ def index():
 		elif post.get('indent')==0:
 			parent_posts.append(post)
 
-		
-		print "tagged users: "
-		print post.get('tagged_users')
+
+
 
 		tagged_users_name_photo = []
 		for tagged_user in post.get('tagged_users'):
 			tagged_user_dict = {}
 			firstname = tagged_user.firstname
+			username = tagged_user.username
 			fullname = tagged_user.firstname + tagged_user.lastname
 			tag_user_id = "u" + str(tagged_user.id)
 
 
-			tagged_user_dict[fullname] = str(tag_dict.get(tag_user_id)[1]) #get photo
+			tagged_user_dict[username] = str(tag_dict.get(tag_user_id)[1]) #get photo
 			tagged_users_name_photo.append(tagged_user_dict)
-			#EX) tagged_users_name_photo = {"Melissa" : "img.png"}
+			#EX) tagged_users_name_photo = {"mskeving" : "img.png"}
 		print "PHOTO INFO:"
 		print tag_dict.get(tag_user_id)[1]
 
@@ -180,6 +185,8 @@ def index():
 	# 	#HPost.dump(hposts,0)
 	# else:
 	# 	print "No posts to display"
+
+
 
 	return render_template("index2.html", 
 		title='Home', 
@@ -269,8 +276,8 @@ def team(team):
 	#TODO: create separate function
 	indented_posts = []
 	for t in tags:
-		print "t.post"
-		print t.post
+		print "t.post.author: "
+		print t.post.author.username
 		d = {}
 		d['body'] = t.post.body
 		d['indent'] = 0
@@ -278,6 +285,7 @@ def team(team):
 		d['firstname'] = t.post.author.firstname
 		d['photo'] = t.post.author.photo
 		d['timestamp'] = t.post.timestamp
+		d['username'] = t.post.author.username
 		indented_posts.append(d)
 		for child in t.post.children:
 			d = {}
@@ -287,6 +295,7 @@ def team(team):
 			d['firstname'] = child.author.firstname
 			d['photo'] = child.author.photo
 			d['timestamp'] = child.timestamp
+			d['username'] = t.post.author.username
 			indented_posts.append(d)
 
 

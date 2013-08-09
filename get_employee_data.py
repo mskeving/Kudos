@@ -84,7 +84,7 @@ def main():
         user_email = user['email']
         user_list_of_teams = user['teams']
         user_mobile_phone = user['mobile_phone']
-        user_photo = user['picture']
+        user_photo = user['thumbnail']
         user_bio = user['bio']
         username = user['username']
 
@@ -108,7 +108,7 @@ def main():
         "Melissa", 
         "Skevington",
         "Missy",
-        "melissaskevington@gmail.com",
+        "mskeving@gmail.com",
         ["kudos"],
         "5182655596",
         "http://about/media/badges/abhishek.thumb.jpg",

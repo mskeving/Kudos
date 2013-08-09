@@ -1,46 +1,58 @@
-<div class="display-post" style="padding: 5px 5px 5px {{ 30 * post.get('indent') + 20 }}px;">
-	<img src={{ post.get('photo') }} height='42' width='42'>
 
 
-	<i> <a href="{{ url_for('user', username=user.username) }}">{{post.get('firstname')}} </a> says:</i><br>
-	{{post.get('body')}}<br>
+    <div id="main-column">
 
-	<!-- user tags will always display before teams -->
-	tags:
-	{% for tag in post.get('tagged_users') %}
-		<span style="background-color: #eee;"><a href="{{ url_for('user', username=tag.username) }}">{{tag.firstname}}</a></span>
-	{% endfor %}
-	{% for tag in post.get('tagged_teams') %}
-		<span style="background-color: #eee;"><a href="{{ url_for('team', team=tag.teamname)}}">{{tag.teamname}}</a></span>
-	{% endfor %}
-</div>
+    <div class="post" id="{{post.get('post_id')}}">
+      <div class="taggees">
+      <div class="avatars">
+	    {% for tag in user_tags %}
+	      {% set name = tag.keys() %}
+	      {% set photo = tag.values() %}
+	      <a class="avatar" href="{{ url_for('user', username=name[0]) }}">
+	        <img src="{{photo[0]}}" alt="{{name[0]}}" />
+	      </a>
+	    {% endfor %}
+	      <a class="avatar" href="#">
+	        <img src="avatars/molly.jpg" alt="Molly Strong" />
+	      </a>
+	      <a class="avatar" href="#">
+	        <img src="avatars/glara.jpg" alt="Glara Ahn" />
+	      </a>
+	      <a class="avatar" href="#">
+	        <img src="avatars/jon.jpg" alt="Jon Ying" />
+	      </a>
+      </div>
+    </div>
 
-<!-- Add Reply -->
-<form action="/newreply" method="POST">
-	{{ new_post.csrf_token }}
-	<div style="padding: 5px 5px 5px {{ 30 * post.get('indent') + 20 }}px; width: 515px">
-		<div name="reply-body">
-			{{reply_form.reply_body (style="width: 500px; height: 35px;")}}
+  <div class="white-card">
 
-			<div class="tags" id="tagsinput_tagsinput" name="tags_div" style="width: 476px; padding: 5px;">
-				<input type="text" class="tag_input" name="tag_input" value placeholder="tags" style="width: 450px; align: center; padding: 5px"/>
-			</div>
-				
-				<button type="submit" class="btn btn-large btn-block btn-primary" name="new_reply_btn" value="submit" style="padding: 5px 5px; width: 90px; height: 30px; float: right"> reply </button>
+<!--     <div class="photo-thumb">
+      <a href="#"><img src="img/example-photo.jpg" /></a>
+    </div>
+ -->    
+    <blockquote>
 
-		</div>
-	</div>
-	<!-- Associate text box with specific post -->
-	{{ reply_form.hidden_post_id(value=post.get('post_id')) }}
+      {{post.get('body')}}
+    
+    </blockquote>
+    <div class="post-author">
+      <a href="{{ url_for('user', username=post.get('username')) }}" class="author-name">{{post.get('firstname')}} {{post.get('lastname')}}</a>, 
+      <a href="#" class="team-name">Platform</a> 
+    </div>
+    <div class="post-metadata">
+      <a href="#" class="comment-count">{{num_comments}} Comments</a>
+    </div>
+    {% for post in post_comments %}
+      {{post.get('body')}}
+    {% endfor %}
+  </div>
 
-</form>
-<br>
+  <div class="toolbar">
+    <a class="toolbar-button thank-button" href="#">Thank</a>
+    <a class="toolbar-button comment-button" href="#">Comment</a>
+    <a class="toolbar-button addtag-button" href="#">Add Tag</a>
+  </div>
 
-<div style="padding: 5px 5px 5px {{ 30 * post.get('indent') + 20 }}px; width: 515px">
-<!-- Send Thanks -->
+  </div>
+  </div>
 
-	<form action="/sendthanks" method="POST">
-		{{ new_post.csrf_token }}
-		<button class="btn btn-large btn-block btn-primary" name="send-thanks" id="send-thanks" value={{post.get('post_id')}} style="padding: 5px 5px; width: 90px; height: 30px; float: right"> thanks! </button>
-	</form>
-</div>
