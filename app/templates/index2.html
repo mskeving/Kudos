@@ -7,12 +7,46 @@
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js" type="text/javascript" charset="utf-8"></script>
 
-<title>Kudos by Dropbox</title>
+	<title>Kudos by Dropbox</title>
 
 </head>
 <body>
+		<div id="post-modal" style="display: none; position: absolute; left: 0; top: 0; width: 100%; height: 100%; text-align: center;">
+			<!-- Submit new Kudos -->
+			<form action='/editpost' method="POST" name="add" id="new_post_form">
+				<!-- inclide csrf token in every form for security -->
+				{{ new_post.csrf_token }} 
+
+				{% for error in new_post.errors.post_body %}
+
+				<span style="color:red;">[{{error}}]</span> 
+				{% endfor %}<br />
+				<div class="row">
+					<div class="col-lg-6">
+						<div class ="submit-kudos" style="padding: 20px; width: 300px; height: 120px; margin: auto; background: #e2d7d8; padding: 10px;">
+		    				<div class="tags" id="tagsinput_tagsinput" name="tags_div" style="width: 300px;">
+								<input type="text" class="tag_input" id="tag_input" name="tag_input" value placeholder="tags" style="width: 300px; align: center; border: none;"/>
+							</div>
+		    				<div class="input-group">
+		    					<span class="form-control">{{ new_post.post_body (style="width: 300px; ") }} </span>
+		    				</div>
+
+			    			<button type="submit" class="btn btn-large btn-block btn-primary" name="new_post_btn" value="submit" style="padding: 5px 0px; width: 90px; height: 30px; margin-top: 10px;"> Submit </button>
+									<!-- {{ new_post.post_submit_btn(value="submit post")}} -->
+
+							{{ new_post.hidden_tag_ids (class="hidden_tag_ids", id="hidden_tag_ids") }}
+							{{ new_post.hidden_tag_text (class="hidden_tag_text", id="hidden_tag_text") }}
+
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+
+
 	<div id="main-column">
-		<a href="#" onclick="showPostModal(); return false;">
+
+		<a href="#" onclick="$('#post-modal').show(); return false;">
 			<div id="post-button">
 				<div class="depth" title="Give Kudos">
 					Give Kudos
@@ -24,6 +58,61 @@
 		  {% include 'post.html' with context %}
 		{% endfor %}
 	</div>
+
+		<script type="text/javascript">
+
+			function collect_tags(){
+				var all_tags = $(this).find("span.tag"); //gives you all tags in form 
+				$.each(all_tags, function(){
+					var tag_id = $(this).attr('id');
+					$(".hidden_tag_ids").val($(".hidden_tag_ids").val() + tag_id + "|");
+					var tag_text = $(this).children("span").text();
+					$(".hidden_tag_text").val($(".hidden_tag_text").val() + tag_text + "|");
+
+				});
+
+
+			}
+
+			$(document).ready(function(){
+				$('#new_post_form').submit(collect_tags);
+			});
+
+
+
+			function onAddTag(tag) {
+				//add link to tag 
+				console.log("added tag: " + tag);
+				
+			}
+			function onRemoveTag(tag) {
+				console.log("Removed a tag: " + tag);
+			}
+
+			function onChangeTag(input,tag) {
+				console.log("Changed a tag: " + tag);
+			}
+
+			$(function() {
+				//same as document.ready
+
+				var tag_words = {{tags|safe}}; //safe: tell flask that this input is okay
+				var tag_ids = {{tag_ids|safe}};
+				console.log(tag_words);
+				console.log(tag_ids);
+				console.log("hii");
+				$('.tag_input').tagsInput({
+					width: 'auto',
+					height: '30px',
+					autocomplete_list: tag_words, 
+					tag_ids: tag_ids,
+				});
+				
+
+			});
+
+		</script>
+
 
 </body>
 </html>

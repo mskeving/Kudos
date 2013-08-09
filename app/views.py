@@ -413,7 +413,6 @@ def new_post():
 	form = EditPost()
 	user_id = g.user.id
 
-
 	#checks if new Post
 	if form.validate_on_submit():
 		# if there's text, submit post
@@ -425,13 +424,13 @@ def new_post():
 	
 
 		#Submit tags
-		print "hidden data: "
-		print form.hidden_tag_ids.data
+		#print "hidden data: "
+		#print form.hidden_tag_ids.data
 		tag_ids = form.hidden_tag_ids.data.split('|')
 		tag_text = form.hidden_tag_text.data.split('|')
 
-		print tag_text
-
+		#print tag_text
+		print "TAG IDS: %s" % tag_ids
 		for i in range(len(tag_ids)-1): #last index will be "" because of delimiters 
 			if tag_ids[i][0] == 'u':
 				tag_id = int(tag_ids[i][1:]) #remove leading 'u' to convert back to int user_id
@@ -447,6 +446,8 @@ def new_post():
 				# TODO - Right now, we send an email with:
 				# - A button that links to www.gooogle.com - this should be the permalink of the kudos in future
 				# - To rk@dropbox.com - we should change this to the kudos recipient
+				print "HEREEEEE\n\n\sdnf\adsnf\asdnf\ansdf\ndasf"
+				print g.user.email
 				email_sender.send_email(
 					url_for('permalink_for_post_with_id', post_id=new_post.id, _external=True),
 					'rk@dropbox.com',

@@ -85,6 +85,10 @@ body {
   text-align: center;
 }
 
+body textarea {
+	border: none;
+}
+
 a {
   text-decoration: none;
 }
