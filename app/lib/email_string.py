@@ -66,7 +66,7 @@ email_string = """<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.
                                                                     %(message)s
                                                                 </div>
 						<center>
-							<a href="%(href)">
+							<a href="%(href)s">
 								<div style="-webkit-align-items: flex-start;
 								-webkit-appearance: none;
 								-webkit-background-clip: border-box;
