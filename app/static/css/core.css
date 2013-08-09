@@ -93,7 +93,7 @@ a {
 #main-column {
   background: #f8eeef;
   margin: 0 auto;
-  padding: 140px 0px 100px 0px;
+  padding: 30px 0px 100px 0px;
   text-align: left;
   width: 320px;
 }
@@ -101,7 +101,7 @@ a {
 .post {
   background: #e2d7d8;
   clear: both;
-  margin: 0px 10px 10px 10px;
+  margin: 50px 10px 10px 10px;
   padding-top: 1px;
   width: 300px;
 }
@@ -236,7 +236,23 @@ a.avatar .cropper {
   background: url(img/addtag-button.png) no-repeat 6px 12px;
 }
 
+#post-button {
+	width: 80%;
+	background: rgb(241, 150, 150);
+	height: 16px;
+	margin: 0 auto;
+	border-radius: 10px;
+	font-family: 'museo_sans_700regular';
+	font-size: 15px;
+	text-align: center;
+	padding: 10px;
 
 
+}
 
-
+.depth {
+	background: #615C5C;
+    -webkit-background-clip: text;
+    color: transparent;
+    text-shadow: rgba(255,255,255,3.5) 0px 1px 0px;
+}

@@ -11,10 +11,19 @@
 
 </head>
 <body>
+	<div id="main-column">
+		<a href="#" onclick="showPostModal(); return false;">
+			<div id="post-button">
+				<div class="depth" title="Give Kudos">
+					Give Kudos
+				</div>
+			</div>
+		</a>
 
-    {% for post in parent_posts %}
-      {% include 'post.html' with context %}
-    {% endfor %}
+		{% for post in parent_posts %}
+		  {% include 'post.html' with context %}
+		{% endfor %}
+	</div>
 
 </body>
 </html>
