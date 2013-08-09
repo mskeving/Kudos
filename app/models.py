@@ -1,6 +1,4 @@
 from app import db
-from datetime import datetime
-from hashlib import md5
 
 ROLE_USER = 0
 ROLE_ADMIN = 1
@@ -32,7 +30,7 @@ class User(db.Model):
 	firstname = db.Column(db.String(64), index = True)
 	lastname = db.Column(db.String(64), index = True)
 	#change nickname unique=false
-	nickname = db.Column(db.String(64), index = True, unique = True)
+	nickname = db.Column(db.String(64), index = True)
 	email = db.Column(db.String(120), index = True, unique = True)
 	phone = db.Column(db.String(25), index = True)
 	about_me = db.Column(db.String(140))

@@ -1,4 +1,9 @@
+*.swp
+app.db
 *.pyc
 tmp/
 db_repository/
 app.db
+=======
+flask/*
+

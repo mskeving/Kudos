@@ -3,15 +3,12 @@ import json
 from app import app, lm, db, oid
 from flask import render_template, flash, redirect, session, url_for, request, g 
 from flask.ext.login import login_user, logout_user, current_user, login_required 
-
 from forms import LoginForm, EditForm, EditPost, DeletePost, NewReply
 from models import User, Post, UserTeam, Team, Tag, Thanks, ROLE_USER, ROLE_ADMIN
 from datetime import datetime
-
 from flask.ext.sqlalchemy import sqlalchemy
 from sqlalchemy import and_
-
-#from SQLAlchemy import and_
+from app.lib import email_sender
 
 @app.before_request
 def before_request():
@@ -349,22 +346,32 @@ def new_post():
 
 		print tag_text
 
-
 		for i in range(len(tag_ids)-1): #last index will be "" because of delimiters 
 			if tag_ids[i][0] == 'u':
 				tag_id = int(tag_ids[i][1:]) #remove leading 'u' to convert back to int user_id
 				new_tag = Tag(user_tag_id=tag_id, body=tag_text[i], post_id=new_post.id, tag_author=user_id, timestamp = datetime.utcnow())
 				db.session.add(new_tag)
 				db.session.commit()
+
+				# Get the recipient user, so that we know who to send the email to
+				kudos_recip = User.query.filter(User.id == tag_id).first()
+				assert kudos_recip, "Missing kudos recipient"
+				# TODO - Right now, we send an email with:
+				# - A button that links to www.gooogle.com - this should be the permalink of the kudos in future
+				# - To rk@dropbox.com - we should change this to the kudos recipient
+				email_sender.send_email(
+					'www.google.com',
+					kudos_recip.email,
+					message = post_text,
+					sender_name = "%s %s" % (g.user.firstname, g.user.lastname)
+					)
+
 			elif tag_ids[i][0] == 't':
 				tag_id = int(tag_ids[i][1:]) #remove leading 't' to convert back to int team_id
 				new_tag = Tag(team_tag_id=tag_id, body=tag_text[i], post_id=new_post.id, tag_author=user_id, timestamp = datetime.utcnow())
 				db.session.add(new_tag)
 				db.session.commit()
-
-
 		return redirect(url_for('index'))
-
 	else:
 		#no text for post. display error message??
 		return redirect(url_for('index'))
@@ -422,6 +429,11 @@ def delete_post():
 	print "committed to database"
 	return redirect(url_for('user', username=g.user.username))
 
+
+@app.route('/post/<post_id>', methods=['GET'])
+def permalink_for_post_with_id(post_id):
+	post_object = Post.query.filter(Post.id == int(post_id)).first()
+	return str(post_object)
 
 
 #ALL USERS
