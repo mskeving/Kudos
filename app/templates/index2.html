@@ -11,58 +11,72 @@
 
 </head>
 <body>
-sdfsdf
-<div id="main-column">
 
-<div class="post" id="$post-id">
 
-<div class="taggees">
-  <div class="avatars">
-  <a class="avatar" href="#">
-    <img src="avatars/ilya.jpg" alt="Ilya Fushman" />
-  </a>
-  <a class="avatar" href="#">
-    <img src="avatars/molly.jpg" alt="Molly Strong" />
-  </a>
-  <a class="avatar" href="#">
-    <img src="avatars/glara.jpg" alt="Glara Ahn" />
-  </a>
-  <a class="avatar" href="#">
-    <img src="avatars/jon.jpg" alt="Jon Ying" />
-  </a>
+{% for post in parent_posts %}
+
+    <div id="main-column">
+
+    <div class="post" id="$post-id">
+    {% for tag in user_tags %}
+      {% set name = tag.keys() %}
+      {% set photo = tag.values() %}
+      <div class="taggees">
+      <div class="avatars">
+      <a class="avatar" href="#">
+        <img src="{{photo[0]}}" alt="{{name[0]}}" />
+      </a>
+    {% endfor %}
+
+
+      <a class="avatar" href="#">
+        <img src="avatars/molly.jpg" alt="Molly Strong" />
+      </a>
+      <a class="avatar" href="#">
+        <img src="avatars/glara.jpg" alt="Glara Ahn" />
+      </a>
+      <a class="avatar" href="#">
+        <img src="avatars/jon.jpg" alt="Jon Ying" />
+      </a>
+      </div>
+    </div>
+
+  <div class="white-card">
+
+    <div class="photo-thumb">
+      <a href="#"><img src="img/example-photo.jpg" /></a>
+    </div>
+    
+    <blockquote>
+
+      {{post.get('body')}}
+    
+    </blockquote>
+    <div class="post-author">
+      <a href="{{ url_for('user', username=user.username) }}" class="author-name">{{post.get('firstname')}} {{post.get('lastname')}}</a>, 
+      <a href="#" class="team-name">Platform</a> 
+    </div>
+    <div class="post-metadata">
+      <a href="#" class="comment-count">13 Comments</a>
+    </div>
+    {% for post in post_comments %}
+      {{post.get('body')}}
+    {% endfor %}
   </div>
-</div>
 
-<div class="white-card">
-
-  <div class="photo-thumb">
-    <a href="#"><img src="img/example-photo.jpg" /></a>
+  <div class="toolbar">
+    <a class="toolbar-button thank-button" href="#">Thank</a>
+    <a class="toolbar-button comment-button" href="#">Comment</a>
+    <a class="toolbar-button addtag-button" href="#">Add Tag</a>
   </div>
-  
-  <blockquote>
-    The Dropbox platform meet-up last night was incredibly fun. Wanted to give props to the folks who did such a great job of bringing together our favorite developers.
-  </blockquote>
-  <div class="post-author">
-    <a href="#" class="author-name">Dan Levine</a>, 
-    <a href="#" class="team-name">Platform</a>
+
   </div>
-  <div class="post-metadata">
-    <a href="#" class="comment-count">13 Comments</a>
+
+
+
   </div>
-  hello world - put comments here
-</div>
 
-<div class="toolbar">
-  <a class="toolbar-button thank-button" href="#">Thank</a>
-  <a class="toolbar-button comment-button" href="#">Comment</a>
-  <a class="toolbar-button addtag-button" href="#">Add Tag</a>
-</div>
-
-</div>
-
-
-
-</div>
+{% endfor %}
 
 </body>
 </html>
