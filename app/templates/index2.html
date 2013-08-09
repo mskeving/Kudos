@@ -30,15 +30,15 @@
 				{% endfor %}<br />
 				<div class="row">
 					<div class="col-lg-6">
-						<div class ="submit-kudos" style="padding: 20px; width: 300px; height: 120px; margin: auto; background: #e2d7d8; padding: 10px;">
-		    				<div class="tags" id="tagsinput_tagsinput" name="tags_div" style="width: 300px;">
-								<input type="text" class="tag_input" id="tag_input" name="tag_input" value placeholder="tags" style="width: 300px; align: center; border: none;"/>
+						<div class ="submit-kudos" style="padding: 20px; width: 290px; height: 158px; margin: auto; background: #e2d7d8; padding: 10px;">
+		    				<div class="tags" id="tagsinput_tagsinput" name="tags_div" style="width: 290px;">
+								<input type="text" class="tag_input" id="tag_input" name="tag_input" value placeholder="tags" style="width: 290px; align: center; border: none;"/>
 							</div>
 		    				<div class="input-group">
-		    					<span class="form-control">{{ new_post.post_body (style="width: 300px; ") }} </span>
+		    					<span class="form-control">{{ new_post.post_body (style="width: 284px; height: 70px;") }} </span>
 		    				</div>
 
-			    			<button type="submit" class="btn btn-large btn-block btn-primary" name="new_post_btn" value="submit" style="padding: 5px 0px; width: 90px; height: 30px; margin-top: 10px;"> Submit </button>
+			    			<button type="submit"  name="new_post_btn" value="submit" style="color: white; font-weight:700; background: rgb(241, 150, 150); width: 80px; height: 25px; margin-top: 14px;"> Submit </button>
 									<!-- {{ new_post.post_submit_btn(value="submit post")}} -->
 
 							{{ new_post.hidden_tag_ids (class="hidden_tag_ids", id="hidden_tag_ids") }}
