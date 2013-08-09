@@ -80,10 +80,12 @@
 				var id = $(this).attr('id');
 				
 				//get index of tag in autocomplete_list
-				var tag_position = jQuery.inArray(value, settings.autocomplete_list);
+				// var tag_position = jQuery.inArray(value, settings.autocomplete_list);
 				//find corresponding tag_id in tag_ids array
-				var tag_id = settings.tag_ids[tag_position];
-				
+				// var tag_id = settings.tag_ids[tag_position];
+
+				console.log(settings);
+				var tag_id = settings.autocomplete_dict[value];				
 
 				var tagslist = $(this).val().split(delimiter[id]);
 				//var tagslist = JSON.parse($(this).val());
@@ -276,7 +278,7 @@
 					$(event.data.fake_input).css('color','#000000');		
 				});
 						
-				if (settings.autocomplete_list != undefined) {
+				if (settings.autocomplete_dict != undefined) {
 					autocomplete_options = jQuery.extend(
 						{source: settings.autocomplete_list},
 						settings.autocomplete

@@ -96,6 +96,7 @@ def index():
 
 	tag_dict = {}
 	photo_dict = {}
+	name_to_tag_id = {}
 
 	#Available User Tags: full name, last name, nickname, teamname
 	for tag in user_tags:
@@ -105,14 +106,17 @@ def index():
 		if tag.firstname and tag.lastname and tag.nickname:
 			fullname = tag.firstname + " " + tag.lastname + " (" + tag.nickname + ")"
 			tag_dict[tag_user_id] = (fullname, tag.photo)
+			name_to_tag_id[fullname] = tag_user_id
 		elif tag.firstname and tag.lastname:
 			fullname = tag.firstname + " " + tag.lastname 
 			tag_dict[tag_user_id] = (fullname, tag.photo)
+			name_to_tag_id[fullname] = tag_user_id
 		elif tag.firstname:
 			tag_dict[tag_user_id] = (tag.firstname, tag.photo)
+			name_to_tag_id[tag.firstname] = tag_user_id
 		elif tag.nickname:
 			tag_dict[tag_user_id] = (tag.nickname, tag.photo)
-			
+			name_to_tag_id[tag.nickname] = tag_user_id
 		else:
 			print "no name for user: "
 
@@ -123,15 +127,17 @@ def index():
 	for tag in team_tags:
 		tag_team_id = "t" + str(tag.id)
 		tag_dict[tag_team_id] = tag.teamname
+		name_to_tag_id[tag.teamname] = tag_team_id
 
 
 	tag_ids = tag_dict.keys()
 	tag_names_pictures = tag_dict.values()
 
-
-
 	tag_names_pictures_dict = json.dumps(tag_names_pictures)
 	tag_ids_string = json.dumps(tag_ids)
+	tag_json = json.dumps(name_to_tag_id)
+	tag_list = json.dumps(name_to_tag_id.keys())
+	tagged_users_name_photo = []
 
 
 	posts = Post.query.filter(Post.parent_post_id==None).all()
@@ -195,6 +201,8 @@ def index():
 		new_post=new_post,
 		reply_form=reply_form,
 		user_tags=tagged_users_name_photo,
+		tag_name_to_id=tag_json,
+		tag_names=tag_list,
 		tag_ids=tag_ids_string,
 		fullname = fullname,
 		parent_posts=parent_posts,

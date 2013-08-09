@@ -20,7 +20,7 @@ def gen_email_body(href, **kw):
         'href': href,
         'message': '',
         'sender_name': 'Someone',
-        img_src: '',
+        'img_src': '',
     }
     subs.update(kw)
     return render_template('email.html', **subs)

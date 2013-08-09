@@ -5,7 +5,14 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<link rel="stylesheet" href="/static/css/core.css" type="text/css" charset="utf-8" />
 
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+	  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+		<!-- // <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js"></script> -->
+		<script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/jquery-ui.min.js'></script>
+				<link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/themes/start/jquery-ui.css" />
+		<script type="text/javascript" src="/static/js/jquery.tagsinput.js"></script>
+		<link rel="stylesheet" type="text/css" href="http://xoxco.com/projects/code/tagsinput/jquery.tagsinput.css" />
+
+	<script type="text/javascript" src="/static/js/jquery.tagsinput.js"></script>
 
 	<title>Kudos by Dropbox</title>
 
@@ -96,15 +103,14 @@
 			$(function() {
 				//same as document.ready
 
-				var tag_words = {{tags|safe}}; //safe: tell flask that this input is okay
+				var tag_names = {{tag_names|safe}}; //safe: tell flask that this input is okay
+				var tag_name_to_id = {{tag_name_to_id|safe}}; //safe: tell flask that this input is okay
 				var tag_ids = {{tag_ids|safe}};
-				console.log(tag_words);
-				console.log(tag_ids);
-				console.log("hii");
 				$('.tag_input').tagsInput({
 					width: 'auto',
 					height: '30px',
-					autocomplete_list: tag_words, 
+					autocomplete_list: tag_names,
+					autocomplete_dict: tag_name_to_id, 
 					tag_ids: tag_ids,
 				});
 				

@@ -149,14 +149,16 @@
 			$(function() {
 				//same as document.ready
 
-				var tag_words = {{tags|safe}}; //safe: tell flask that this input is okay
+				var tag_dict = {{tags|safe}}; //safe: tell flask that this input is okay
 				var tag_ids = {{tag_ids|safe}} 
-				
+				var tag_words = {{tag_list|safe}}
+				console.log(tag_dict, tag_words);
 
 				$('.tag_input').tagsInput({
 					width: 'auto',
 					height: '30px',
-					autocomplete_list: tag_words, 
+					autocomplete_dict: {{tags|safe}}, 
+					autocomplete_list: {{tag_words|safe}}, 
 					tag_ids: tag_ids,
 				});
 				
