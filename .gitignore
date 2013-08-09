@@ -6,4 +6,4 @@ db_repository/
 app.db
 =======
 flask/*
-
+.DS_Store
