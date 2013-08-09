@@ -10,7 +10,7 @@ class Team(db.Model):
 
 	id = db.Column(db.Integer, primary_key = True)
 	teamname = db.Column(db.String(120), index = True)
-
+	tagged_in = db.relationship('Tag', backref='team_tag')
 	teams = db.relationship('UserTeam', backref = 'team')
 
 class UserTeam(db.Model):
@@ -40,8 +40,8 @@ class User(db.Model):
 	last_seen = db.Column(db.Date)
 
 	posts = db.relationship('Post', backref = 'author', lazy = 'dynamic')
-	users = db.relationship('UserTeam', backref = 'user')
-	tagged_in = db.relationship('Tag', backref='user_tag', primaryjoin="User.id==Tag.user_tag_id")
+	users = db.relationship('UserTeam', backref = 'user', primaryjoin="User.id==UserTeam.user_id")
+	tagged_in = db.relationship('Tag', backref='user_tag', primaryjoin="User.id==Tag.user_tag_id", lazy="dynamic'")
 	#backref is adding author to Post class
 	#lazy.. whether all posts are loaded at the same time as user. look up options
 
@@ -112,12 +112,14 @@ class Tag(db.Model):
 	__tablename__ = "tags"
 
 	id = db.Column(db.Integer, primary_key=True)
-	team_tag_id = db.Column(db.Integer, index=True)
+	team_tag_id = db.Column(db.Integer, db.ForeignKey('teams.id'), index=True)
 	user_tag_id = db.Column(db.Integer, db.ForeignKey('users.id'), index=True)
 	body = db.Column(db.String(200)) #just for readability in DB store string of tag
 	post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
 	tag_author = db.Column(db.Integer, db.ForeignKey('users.id')) 
 	timestamp = db.Column(db.Date)
+
+
 
 	
 

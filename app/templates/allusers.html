@@ -16,27 +16,27 @@
 
 		{% for user in all_users %}
 
-		<tr>
-			<td>
-				{% if user.photo %}
-					<img class="allusers_pic" src="{{user.photo}}">
+			<tr>
+				<td>
+					{% if user.photo %}
+						<img class="allusers_pic" src="{{user.photo}}">
+					{% else %}
+						<img class="allusers_pic" src="http://www.how-to-draw-funny-cartoons.com/image-files/how-to-make-an-outline-2.gif">
+					{% endif %}
+				</td>
+				{% if user.firstname %}
+					<td><a href="{{ url_for('user', username=user.username) }}">{{user.firstname}} {{user.lastname}} </a></td>
 				{% else %}
-					<img class="allusers_pic" src="http://www.how-to-draw-funny-cartoons.com/image-files/how-to-make-an-outline-2.gif">
+					<td>{{user.nickname}}</td>
 				{% endif %}
-			</td>
-			{% if user.firstname %}
-				<td>{{user.firstname}} {{user.lastname}} </td>
-			{% else %}
-				<td>{{user.nickname}}</td>
-			{% endif %}
-			<td><a href="{{ url_for('user', username=user.username) }}">{{user.email}} </a> </td>
-			
-			{% if user.team %}
-				<td><a href="{{ url_for('team', team=user.team) }}"> {{user.team}} </a> </td>
-			{% else %}
-				<td> no team </td>
-			{% endif %}
-		</tr>
+				<td>{{user.email}} </td>
+				
+				{% if user.team %}
+					<td><a href="{{ url_for('team', team=user.team) }}"> {{user.team}} </a> </td>
+				{% else %}
+					<td> no team </td>
+				{% endif %}
+			</tr>
 	
 
 		{% endfor %}

@@ -18,7 +18,6 @@
 			<td></td>
 			<td><u>Name</u></td>
 			<td><u>Email</u></td>
-			<td><u>Team</u></td>
 		</tr>
 
 		{% for member in team_members %}
@@ -33,7 +32,7 @@
 			</td>
 			{% if member.firstname %}
 				<td>{{member.firstname}} {{member.lastname}} </td>
-			{% elif %}
+			{% elif member.nickname %}
 				<td>{{member.nickname}}</td>
 			{% endif %}
 
@@ -43,7 +42,6 @@
 				{{member.email}}
 			{% endif %}
 
-			<td>{{member.team}}  </td>
 		</tr>
 	
 

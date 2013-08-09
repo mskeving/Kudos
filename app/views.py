@@ -80,23 +80,23 @@ def index():
 	print "POSTS! : "
 	print posts
 
-	#TODO: separate into function. Used in '/user' as well
+	
 	indented_posts = []
-	#users_tagged = []
-	#teams_tagged = []
-	tagged_users_teams = []
+
 	for p in posts:
 		#query for all tags with this p.id
-		tags_for_post = []
+		tagged_users = []
+		tagged_teams = []
 		for tag in p.tags:
 			print "individual tag:"
-			tags_for_post.append(tag.user_tag.firstname)
-			# if tag.user_tag_id:
-			# 	users_tagged.append(team_user.user_tag_id)
-			# if tag.team_tag_id:
-			# 	teams_tagged.append(team_user.team_tag_id)
+			if tag.user_tag_id:
+				tagged_users.append(tag.user_tag) #send in all user information
+			if tag.team_tag_id:
+				tagged_teams.append(tag.team_tag) #just teamname
+			else:
+				print "no tags for this post"
 
-
+		#TODO: separate into function. Used in '/user' as well
 		d = {}
 		d['body'] = p.body
 		d['indent'] = 0
@@ -104,7 +104,8 @@ def index():
 		d['firstname'] = p.author.firstname
 		d['photo'] = p.author.photo
 		d['timestamp'] = p.timestamp
-		d['list_of_tags'] = tags_for_post
+		d['tagged_users'] = tagged_users
+		d['tagged_teams'] = tagged_teams
 		indented_posts.append(d)
 		for child in p.children:
 			d = {}
@@ -114,7 +115,8 @@ def index():
 			d['firstname'] = child.author.firstname
 			d['photo'] = child.author.photo
 			d['timestamp'] = child.timestamp
-			d['list_of_tags'] = []
+			d['tagged_users'] = tagged_users
+			d['tagged_teams'] = tagged_teams
 			indented_posts.append(d)
 	
 
@@ -175,11 +177,11 @@ def logout():
 @oid.after_login
 #resp has info returned by OpenID provider
 def after_login(resp):
-	if resp.email is None or resp.email == "":
+	if resp.email is None or resp.email=="":
 		flash('Invalid login. Please try again.')
 		return redirect(url_for('login'))
 	print "EMAIL: %s" % resp.email
-	user = User.query.filter_by(email = resp.email).first()
+	user = User.query.filter_by(email=resp.email).first()
 	if user is None:
 		flash('You must sign in with your @dropbox email address. Please try again.')
 		return redirect(url_for('login'))
@@ -188,7 +190,7 @@ def after_login(resp):
 		remember_me = session['remember_me']
 		session.pop('remember_me', None) #?
 	#register as valid login
-	login_user(user, remember = remember_me)
+	login_user(user, remember=remember_me)
 	return redirect(request.args.get('next') or url_for('index'))
 
 @lm.user_loader
@@ -200,14 +202,29 @@ def load_user(id):
 @app.route('/team/<team>')
 @login_required
 def team(team):
-	team_members = User.query.filter_by(team = team).all()
-	print "team: " + team
-	print "team members: "
+
+	#team = Team.query.filter(Team.teamname==team).first()
+	#team_id = team.id
+
+	# print "team_id: "
+	# print team.id
+	team_members = UserTeam.query.filter(UserTeam.team_id==team).all()
+	print "team members before loop: "
 	print team_members
 
+	list_of_users = []
+	for member in team_members:
+		print "member_id: "
+		print member.user.firstname
+
+		list_of_users.append(member.user) #send all user info over
+
+	print "list of users: "
+	print list_of_users
+
 	return render_template('team.html',
-		team = team,
-		team_members = team_members)
+		team=team,
+		team_members=list_of_users)
 
 
 #USER PROFILE
@@ -215,8 +232,8 @@ def team(team):
 @login_required
 def user(username):
 
-	#user = User.query.filter_by(username = username).first()
-	user = g.user
+	user = User.query.filter_by(username = username).first()
+	#user = g.user
 	tagged_posts = []
 	tags = Tag.query.filter(and_(Tag.user_tag_id==user.id, Post.parent_post_id==None)).all() 
 
