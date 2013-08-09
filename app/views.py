@@ -143,6 +143,7 @@ def index():
 			post_comments.append(post)
 		elif post.get('indent')==0:
 			parent_posts.append(post)
+
 		
 		print "tagged users: "
 		print post.get('tagged_users')
@@ -161,7 +162,7 @@ def index():
 		print "PHOTO INFO:"
 		print tag_dict.get(tag_user_id)[1]
 
-
+	num_comments = len(post_comments)
 	tag_ids = tag_dict.keys()
 	tag_names_pictures = tag_dict.values()
 
@@ -189,6 +190,7 @@ def index():
 		fullname = fullname,
 		parent_posts=parent_posts,
 		post_comments=post_comments,
+		num_comments=num_comments
 
 		)
 
