@@ -25,6 +25,48 @@ def nothing():
 	print "in nothing"
 	return "True"
 
+def posts_to_indented_posts(posts):
+	indented_posts = []
+
+	for p in posts:
+		#query for all tags with this p.id
+		tagged_users = []
+		tagged_teams = []
+		for tag in p.tags:
+			print "individual tag:"
+			if tag.user_tag_id:
+				tagged_users.append(tag.user_tag) #send in all user information
+			if tag.team_tag_id:
+				tagged_teams.append(tag.team_tag) #just teamname
+			else:
+				print "no tags for this post"
+
+		#TODO: separate into function. Used in '/user' as well
+		d = {}
+		d['body'] = p.body
+		d['indent'] = 0
+		d['post_id'] = p.id
+		d['firstname'] = p.author.firstname
+		d['photo'] = p.author.photo
+		d['timestamp'] = p.timestamp
+		d['tagged_users'] = tagged_users
+		d['tagged_teams'] = tagged_teams
+		indented_posts.append(d)
+		for child in p.children:
+			d = {}
+			d['body'] = child.body
+			d['indent'] = 1
+			d['post_id'] = child.id
+			d['firstname'] = child.author.firstname
+			d['photo'] = child.author.photo
+			d['timestamp'] = child.timestamp
+			d['tagged_users'] = tagged_users
+			d['tagged_teams'] = tagged_teams
+			indented_posts.append(d)
+
+	return indented_posts
+	
+
 @app.route('/')
 @app.route('/index')
 @login_required #this page is only seen by logged in users
@@ -77,45 +119,7 @@ def index():
 	print "POSTS! : "
 	print posts
 
-	
-	indented_posts = []
-
-	for p in posts:
-		#query for all tags with this p.id
-		tagged_users = []
-		tagged_teams = []
-		for tag in p.tags:
-			print "individual tag:"
-			if tag.user_tag_id:
-				tagged_users.append(tag.user_tag) #send in all user information
-			if tag.team_tag_id:
-				tagged_teams.append(tag.team_tag) #just teamname
-			else:
-				print "no tags for this post"
-
-		#TODO: separate into function. Used in '/user' as well
-		d = {}
-		d['body'] = p.body
-		d['indent'] = 0
-		d['post_id'] = p.id
-		d['firstname'] = p.author.firstname
-		d['photo'] = p.author.photo
-		d['timestamp'] = p.timestamp
-		d['tagged_users'] = tagged_users
-		d['tagged_teams'] = tagged_teams
-		indented_posts.append(d)
-		for child in p.children:
-			d = {}
-			d['body'] = child.body
-			d['indent'] = 1
-			d['post_id'] = child.id
-			d['firstname'] = child.author.firstname
-			d['photo'] = child.author.photo
-			d['timestamp'] = child.timestamp
-			d['tagged_users'] = tagged_users
-			d['tagged_teams'] = tagged_teams
-			indented_posts.append(d)
-	
+	indented_posts = posts_to_indented_posts(posts)
 
 	# #CREATE POST TREE
 	# indented_posts=[]
@@ -140,7 +144,6 @@ def index():
 		tag_ids=tag_ids_string,
 		fullname = fullname,
 		)
-
 
 #LOGIN 
 @app.route('/login', methods = ['GET', 'POST'])
@@ -359,7 +362,7 @@ def new_post():
 				# - A button that links to www.gooogle.com - this should be the permalink of the kudos in future
 				# - To rk@dropbox.com - we should change this to the kudos recipient
 				email_sender.send_email(
-					'www.google.com',
+					url_for('permalink_for_post_with_id', post_id=new_post.id, _external=True),
 					kudos_recip.email,
 					message = post_text,
 					sender_name = "%s %s" % (g.user.firstname, g.user.lastname)
@@ -430,9 +433,19 @@ def delete_post():
 
 
 @app.route('/post/<post_id>', methods=['GET'])
+@login_required
 def permalink_for_post_with_id(post_id):
-	post_object = Post.query.filter(Post.id == int(post_id)).first()
-	return str(post_object)
+	new_post = EditPost() 
+	reply_form = NewReply()
+	posts = Post.query.filter(Post.id==int(post_id)).all()
+	post = posts_to_indented_posts(posts)[0]
+
+	return render_template('postpage.html',
+		user=g.user,
+		post=post,
+		new_post=new_post,
+		reply_form=reply_form,
+		)
 
 
 #ALL USERS
