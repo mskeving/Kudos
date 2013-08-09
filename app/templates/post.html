@@ -8,10 +8,10 @@
 	<!-- user tags will always display before teams -->
 	tags:
 	{% for tag in post.get('tagged_users') %}
-		<span><a href="{{ url_for('user', username=tag.username) }}">{{tag.firstname}} </a></span>
+		<span style="background-color: #eee;"><a href="{{ url_for('user', username=tag.username) }}">{{tag.firstname}}</a></span>
 	{% endfor %}
 	{% for tag in post.get('tagged_teams') %}
-		<span><a href="{{ url_for('team', team=tag.teamname)}}">{{tag.teamname}} </a></span>
+		<span style="background-color: #eee;"><a href="{{ url_for('team', team=tag.teamname)}}">{{tag.teamname}}</a></span>
 	{% endfor %}
 </div>
 
@@ -22,17 +22,13 @@
 		<div name="reply-body">
 			{{reply_form.reply_body (style="width: 500px; height: 35px;")}}
 
-
 			<div class="tags" id="tagsinput_tagsinput" name="tags_div" style="width: 476px; padding: 5px;">
 				<input type="text" class="tag_input" name="tag_input" value placeholder="tags" style="width: 450px; align: center; padding: 5px"/>
 			</div>
-
-
 				
 				<button type="submit" class="btn btn-large btn-block btn-primary" name="new_reply_btn" value="submit" style="padding: 5px 5px; width: 90px; height: 30px; float: right"> reply </button>
 
 		</div>
-
 	</div>
 	<!-- Associate text box with specific post -->
 	{{ reply_form.hidden_post_id(value=post.get('post_id')) }}

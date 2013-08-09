@@ -21,38 +21,44 @@
 		</tr>
 
 		{% for member in team_members %}
-
-		<tr>
-			<td>
-				{% if member.photo %}
-					<img class="allusers_pic" src="{{member.photo}}">
-				{% else %}
-					<img class="allusers_pic" src="http://www.how-to-draw-funny-cartoons.com/image-files/how-to-make-an-outline-2.gif">
+			<tr>
+				<td>
+					{% if member.photo %}
+						<img class="allusers_pic" src="{{member.photo}}">
+					{% else %}
+						<img class="allusers_pic" src="http://www.how-to-draw-funny-cartoons.com/image-files/how-to-make-an-outline-2.gif">
+					{% endif %}
+				</td>
+				{% if member.firstname %}
+					<td><a href="{{ url_for('user', username=member.username) }}">{{member.firstname}} {{member.lastname}}</a> </td>
+				{% elif member.nickname %}
+					<td>{{member.nickname}}</td>
 				{% endif %}
-			</td>
-			{% if member.firstname %}
-				<td><a href="{{ url_for('user', username=member.username) }}">{{member.firstname}} {{member.lastname}}</a> </td>
-			{% elif member.nickname %}
-				<td>{{member.nickname}}</td>
-			{% endif %}
 
-			{% if member.username %}
-				<td>{{member.email}} </td> 
-			{% else %}
-				{{member.email}}
-			{% endif %}
-
-		</tr>
-	
-
+				{% if member.username %}
+					<td>{{member.email}} </td> 
+				{% else %}
+					{{member.email}}
+				{% endif %}
+			</tr>
 		{% endfor %}
-
 	</table>
 
 
-	<!-- Display all tags for this team
-		Include entire thread if they are mentioned in replies -->
+
+<div class="container-fluid">
+
+		{% for post in posts %}
+			<div class="display-post" style="padding: 5px 5px 5px {{ 30 * post.get('indent') + 20 }}px;">
 		
+				<img src={{ post.get('photo') }} height='42' width='42'>
+
+				<i> {{post.get('firstname')}} says:</i>
+					{{post.get('body')}}
+								
+			</div>
+		{% endfor %}
+</div>
 
 </div>
 

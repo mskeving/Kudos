@@ -134,7 +134,7 @@ def index():
 	# else:
 	# 	print "No posts to display"
 
-	return render_template("index.html", 
+	return render_template("index2.html", 
 		title='Home', 
 		user=user,
 		posts=indented_posts,
@@ -209,22 +209,46 @@ def team(team):
 	# print "team_id: "
 	# print team.id
 	team_members = UserTeam.query.filter(UserTeam.team_id==team).all()
-	team_id = Team.query.filter(Team.teamname==team)
-	tags = Tag.query.filter(and_(Tag.team_tag_id==team_id, Post.parent_post_id==None)).all() 
+	team = Team.query.filter_by(teamname=team).first()
+	tags = Tag.query.filter(and_(Tag.team_tag_id==team.id, Post.parent_post_id==None)).all() 
+
+	print "tags: "
+	print tags
+
+	#TODO: create separate function
+	indented_posts = []
+	for t in tags:
+		print "t.post"
+		print t.post
+		d = {}
+		d['body'] = t.post.body
+		d['indent'] = 0
+		d['post_id'] = t.post.id
+		d['firstname'] = t.post.author.firstname
+		d['photo'] = t.post.author.photo
+		d['timestamp'] = t.post.timestamp
+		indented_posts.append(d)
+		for child in t.post.children:
+			d = {}
+			d['body'] = child.body
+			d['indent'] = 1
+			d['post_id'] = child.id
+			d['firstname'] = child.author.firstname
+			d['photo'] = child.author.photo
+			d['timestamp'] = child.timestamp
+			indented_posts.append(d)
+
 
 	list_of_users = []
 	for member in team_members:
-		print "member_id: "
-		print member.user.firstname
-
 		list_of_users.append(member.user) #send all user info over
 
-	print "list of users: "
-	print list_of_users
 
 	return render_template('team.html',
-		team=team,
-		team_members=list_of_users)
+		team=team.teamname,
+		team_members=list_of_users,
+		posts=indented_posts,
+		)
 
 
 #USER PROFILE
@@ -357,13 +381,15 @@ def new_post():
 
 				# Get the recipient user, so that we know who to send the email to
 				kudos_recip = User.query.filter(User.id == tag_id).first()
+
+				#switch kudos_recip.email for mskeving@gmail.com 
 				assert kudos_recip, "Missing kudos recipient"
 				# TODO - Right now, we send an email with:
 				# - A button that links to www.gooogle.com - this should be the permalink of the kudos in future
 				# - To rk@dropbox.com - we should change this to the kudos recipient
 				email_sender.send_email(
 					url_for('permalink_for_post_with_id', post_id=new_post.id, _external=True),
-					kudos_recip.email,
+					'mskeving@gmail.com',
 					message = post_text,
 					sender_name = "%s %s" % (g.user.firstname, g.user.lastname)
 					)

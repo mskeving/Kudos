@@ -1,0 +1,234 @@
+/*  
+  CSS Reset by Eric Meyer - Released under Public Domain
+  http://meyerweb.com/eric/tools/css/reset/
+*/
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, font, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center, dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend, table, 
+caption, tbody, tfoot, thead, tr, th, td 
+                  {margin: 0;padding: 0;border: 0;outline: 0;
+                  font-size: 100%;vertical-align: baseline;
+                  background: transparent;}
+body              {line-height: 1;}
+ol, ul            {list-style: none;}
+blockquote, q     {quotes: none;}
+blockquote:before, blockquote:after,
+q:before, q:after {content: '';	content: none;}
+:focus            {outline: 0;}
+ins               {text-decoration: none;}
+del               {text-decoration: line-through;}
+table             {border-collapse: collapse;border-spacing: 0;}
+
+
+/*  
+	Museo Sans 100
+  http://www.exljbris.com/museosans.html
+*/
+@font-face {
+    font-family: 'museo_sans_100regular';
+    src: url('fonts/MuseoSans_100-webfont.eot');
+    src: url('fonts/MuseoSans_100-webfont.eot?#iefix') format('embedded-opentype'),
+         url('fonts/MuseoSans_100-webfont.woff') format('woff'),
+         url('fonts/MuseoSans_100-webfont.ttf') format('truetype'),
+         url('fonts/MuseoSans_100-webfont.svg#museo_sans_100regular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/*  
+	Museo Sans 300
+  http://www.exljbris.com/museosans.html
+*/
+@font-face {
+    font-family: 'museo_sans_300regular';
+    src: url('fonts/MuseoSans_300-webfont.eot');
+    src: url('fonts/MuseoSans_300-webfont.eot?#iefix') format('embedded-opentype'),
+         url('fonts/MuseoSans_300-webfont.woff') format('woff'),
+         url('fonts/MuseoSans_300-webfont.ttf') format('truetype'),
+         url('fonts/MuseoSans_300-webfont.svg#museo_sans_300regular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+/*  
+	Museo Sans 700
+  http://www.exljbris.com/museosans.html
+*/
+@font-face {
+    font-family: 'museo_sans_700regular';
+    src: url('fonts/MuseoSans_700-webfont.eot');
+    src: url('fonts/MuseoSans_700-webfont.eot?#iefix') format('embedded-opentype'),
+         url('fonts/MuseoSans_700-webfont.woff') format('woff'),
+         url('fonts/MuseoSans_700-webfont.ttf') format('truetype'),
+         url('fonts/MuseoSans_700-webfont.svg#museo_sans_700regular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+
+
+/*  
+	Core stylesheet
+  http://kudos.dropbox.com
+*/
+
+body {
+  margin: 0;
+  padding: 0;
+  font-size: 10px;
+  font-family: Courier;
+  text-align: center;
+}
+
+a {
+  text-decoration: none;
+}
+
+
+#main-column {
+  background: #f8eeef;
+  margin: 0 auto;
+  padding: 140px 0px 100px 0px;
+  text-align: left;
+  width: 320px;
+}
+
+.post {
+  background: #e2d7d8;
+  clear: both;
+  margin: 0px 10px 10px 10px;
+  padding-top: 1px;
+  width: 300px;
+}
+
+.taggees {}
+
+.avatars {
+  float: left;
+  margin: -30px 0px -30px 10px;
+  position: relative;
+}
+
+/* circular avatars */
+a.avatar {
+  float: left;
+  background: none;
+  width: 60px; 
+  height: 60px;
+  margin: 0px 5px;
+  padding: 0px;
+  border: 0px;
+  border-radius: 50%;
+  /* border-radius is equal to 50 percent of a general width,
+     actually 30 pixels, here and a circle was got
+     (there is also with prefix - moz and - o) */
+}
+
+a.avatar img {
+  display: block;
+  width: 100%;
+  border: 0;
+  margin: 0;
+  border-radius: 50%; /* read above */
+}
+
+/* user-inputted blurb */
+.post blockquote {
+  color: #000;
+  font-size: 21px;
+  font-family: 'museo_sans_300regular';
+  line-height: 25px;
+}
+
+.post .photo-thumb {
+  margin-bottom: 12px;
+}
+
+.post .photo-thumb img {
+  display: block;
+  margin: 0px 0px 0px 0px;
+  max-width: 262px;
+}
+
+.post .white-card {
+  background: white;
+  clear: both;
+  margin: 5px 4px 0px 4px;
+  overflow: hidden;
+  padding: 35px 15px 15px 15px;
+}
+
+.post .white-card a {
+  color: #a6b1bb;
+}
+
+.post .white-card a:hover {
+  text-decoration: underline;
+}
+
+.post .post-author {
+  color: #aaa;
+  float: left;
+  font-size: 12px;
+  font-family: 'museo_sans_700regular';
+  padding-top: 10px;
+  width: 160px;
+}
+
+.post .post-metadata {
+  float: right;
+  font-size: 12px;
+  font-family: 'museo_sans_700regular';
+  padding: 12px 0px 2px 0px;
+  text-align: right;
+  width: 100px;
+}
+
+.post .toolbar {
+  overflow: hidden;
+  font-size: 13px;
+  font-family: 'museo_sans_700regular';
+}
+
+.post a.toolbar-button {
+  background: none;
+  color: #8b8e98;
+  display: block;
+  float: left;
+  font-color: #8b8e98;
+  height: 40px;
+  line-height: 40px;
+  margin: 0px;
+  padding: 0px;
+  text-align: center;
+  width: 100px;
+}
+
+.post a.toolbar-button:hover {
+  color: #787b86;
+}
+
+/* toolbar button placement */
+.post a.thank-button {
+  background: url(img/thank-button.png) no-repeat 12px 12px;
+  padding-left: 8px;
+  width: 92px;
+}
+
+.post a.comment-button {
+  background: url(img/comment-button.png) no-repeat 0px 13px;
+}
+
+.post a.addtag-button {
+  background: url(img/addtag-button.png) no-repeat 6px 12px;
+}
+
+
+
+
+
