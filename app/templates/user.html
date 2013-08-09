@@ -10,10 +10,14 @@
 
 
 		<td>
-			<h2>{{user.firstname}}</h2>
+			<h2>{{user.firstname}} {{user.lastname}}</h2>
 			{% if user.about_me %}<p>{{user.about_me}}</p>{% endif %}
 			<ul>
-				<li>Team: <a href="{{ url_for('team', team=user.team) }}">{{user.team}}</a></li>
+				<li>Team: 
+					{% for team in list_of_teams %}
+						<a href="{{ url_for('team', team=team) }}">{{team}} </a>
+					{% endfor %}
+				</li>
 				<li>{{user.email}}</li>
 				<li>{{user.phone}}</li>
 			</ul>

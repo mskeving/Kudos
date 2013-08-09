@@ -106,9 +106,9 @@ def main():
         )
 
     create_user(
-        "melissa", 
-        "skevington",
-        "missy",
+        "Melissa", 
+        "Skevington",
+        "Missy",
         "melissaskevington@gmail.com",
         ["kudos"],
         "5182655596",

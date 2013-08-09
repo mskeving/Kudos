@@ -31,8 +31,11 @@
 				{% endif %}
 				<td>{{user.email}} </td>
 				
-				{% if user.team %}
-					<td><a href="{{ url_for('team', team=user.team) }}"> {{user.team}} </a> </td>
+				{% if user_teams.get(user.id) %}
+					{% for team in user_teams.get(user.id) %}
+						<td><a href="{{ url_for('team', team=team) }}">{{team}}</a></td>
+					{% endfor %}
+
 				{% else %}
 					<td> no team </td>
 				{% endif %}

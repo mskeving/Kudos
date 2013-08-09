@@ -232,13 +232,26 @@ def team(team):
 @login_required
 def user(username):
 
-	user = User.query.filter_by(username = username).first()
+	user = User.query.filter_by(username=username).first()
 	#user = g.user
 	tagged_posts = []
 	tags = Tag.query.filter(and_(Tag.user_tag_id==user.id, Post.parent_post_id==None)).all() 
 
-	indented_posts=[]
 
+	dict_of_users_teams={}
+
+	list_of_teams = []
+	teams = db.session.query(UserTeam).filter_by(user_id=user.id).all()
+	for team in teams:
+		list_of_teams.append(team.team_id)
+	dict_of_users_teams[user.id]=list_of_teams
+
+	print "user's list of teams: "
+	print list_of_teams
+
+
+
+	indented_posts=[]
 	#TODO: create separate function
 	for t in tags:
 		d = {}
@@ -277,10 +290,12 @@ def user(username):
 
 
 	return render_template('user.html', 
-		edit_form = edit_form,
-		delete_form = delete_form,
-		user = user, 
-		posts = indented_posts)
+		edit_form=edit_form,
+		delete_form=delete_form,
+		user=user, 
+		posts=indented_posts,
+		list_of_teams=list_of_teams,
+		)
 
 #EDIT PROFILE
 @app.route('/edit', methods = ['GET', 'POST'])
@@ -414,7 +429,26 @@ def delete_post():
 @login_required
 def all_users():
 	all_users = db.session.query(User).all()
-	return render_template('allusers.html', all_users=all_users)
+	all_users_teams = db.session.query(UserTeam).all()
+
+	dict_of_users_teams={}
+	for user in all_users:
+		list_of_teams = []
+		teams = db.session.query(UserTeam).filter_by(user_id=user.id).all()
+		for team in teams:
+			list_of_teams.append(team.team_id)
+		dict_of_users_teams[user.id]=list_of_teams
+
+
+
+	
+
+	users_list_of_teams = []
+	#users_list_of_teams = db.session.query(Team).filter_by()
+	return render_template('allusers.html', 
+		all_users=all_users,
+		user_teams=dict_of_users_teams,
+		)
 
 
 

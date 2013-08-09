@@ -9,7 +9,7 @@ class Team(db.Model):
 	__tablename__ = "teams"
 
 	id = db.Column(db.Integer, primary_key = True)
-	teamname = db.Column(db.String(120), index = True)
+	teamname = db.Column(db.String(120), db.ForeignKey('users.id'), index = True)
 	tagged_in = db.relationship('Tag', backref='team_tag')
 	teams = db.relationship('UserTeam', backref = 'team')
 
@@ -42,6 +42,7 @@ class User(db.Model):
 	posts = db.relationship('Post', backref = 'author', lazy = 'dynamic')
 	users = db.relationship('UserTeam', backref = 'user', primaryjoin="User.id==UserTeam.user_id")
 	tagged_in = db.relationship('Tag', backref='user_tag', primaryjoin="User.id==Tag.user_tag_id", lazy="dynamic'")
+
 	#backref is adding author to Post class
 	#lazy.. whether all posts are loaded at the same time as user. look up options
 
