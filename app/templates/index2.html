@@ -33,7 +33,10 @@
 	    					<span class="form-control">{{ new_post.post_body (style="width: 284px; height: 70px;") }} </span>
 	    				</div>
 
+	    				<button id="no_new_post_btn" value="cancel" onclick="hide_post_modal()" style="color: white; font-weight:700; background: rgb(241, 150, 150); width: 80px; height: 25px; margin-top: 14px;">Cancel</button>
+
 		    			<button type="submit"  name="new_post_btn" value="submit" style="color: white; font-weight:700; background: rgb(241, 150, 150); width: 80px; height: 25px; margin-top: 14px;"> Submit </button>
+		    			
 								<!-- {{ new_post.post_submit_btn(value="submit post")}} -->
 
 						{{ new_post.hidden_tag_ids (class="hidden_tag_ids", id="hidden_tag_ids") }}
@@ -48,19 +51,20 @@
 
 	<div id="main-column">
 
-		<a href="#" onclick="$('#post-modal').show(); return false;">
+		<a href="#" onclick="show_post_modal()">
 			<div id="post-button">
 				<div class="depth" title="Give Kudos">
 					Give Kudos
 				</div>
 			</div>
 		</a>
-
+		<div id="post-column" style="margin: 0px 0px 10px 10px;">
 <!-- Display posts -->
-		{% for post in parent_posts %}
-		  {% include 'post.html' with context %}
-		{% endfor %}
+			{% for post in parent_posts %}
+			  {% include 'post.html' with context %}
+			{% endfor %}
 
+		</div>
 	</div>
 		<script type="text/javascript">
 
@@ -79,8 +83,20 @@
 
 			$(document).ready(function(){
 				$('#new_post_form').submit(collect_tags);
+				
 			});
 
+			function show_post_modal(){
+				$('#post-modal').show();
+				$('#post-column').css('margin', '175px 0px 100px 0px');
+
+			}
+
+			function hide_post_modal(){
+				$('#post-modal').hide();
+				$('#post-column').css('margin', '0px 0px 10px 10px');
+
+			}
 
 
 			function onAddTag(tag) {

@@ -401,7 +401,7 @@ def edit():
 @app.route('/editpost', methods=['POST'])
 @login_required
 def new_post():
-	#TODO: commit everything (posts and tags) at end
+	#TODO: commit everything (posts and tags) at end. Not individual commits
 	form = EditPost()
 	user_id = g.user.id
 

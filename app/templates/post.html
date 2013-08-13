@@ -1,42 +1,39 @@
 
 
 
-    <div class="post" id="{{post.get('post_id')}}">
-      <div class="taggees">
-      <div class="avatars">
-	    {% for tag in user_tags.get(post.get('post_id')) %}
-	      {% set name = tag.keys() %}
-	      {% set photo = tag.values() %}
-	      <a class="avatar" href="{{ url_for('user', username=name[0]) }}">
-		  	<div class="cropper">
-		        <img src="{{photo[0]}}" alt="{{name[0]}}" />
-			  </div>
-	      </a>
-	    {% endfor %}
-      </div>
+<div class="post" id="{{post.get('post_id')}}">
+  <div class="taggees">
+    <div class="avatars">
+    {% for tag in user_tags.get(post.get('post_id')) %}
+      {% set name = tag.keys() %}
+      {% set photo = tag.values() %}
+      <a class="avatar" href="{{ url_for('user', username=name[0]) }}">
+    	<div class="cropper">
+          <img src="{{photo[0]}}" alt="{{name[0]}}" />
+  	  </div>
+      </a>
+    {% endfor %}
     </div>
+  </div>
 
   <div class="white-card">
 
-<!--     <div class="photo-thumb">
-      <a href="#"><img src="img/example-photo.jpg" /></a>
-    </div>
- -->    
+
     <blockquote>
-
       {{post.get('body')}}
-
     </blockquote>
+    
     <div class="post-author">
       <a href="{{ url_for('user', username=post.get('username')) }}" class="author-name">{{post.get('firstname')}} {{post.get('lastname')}}</a>, 
       <a href="#" class="team-name">Kudos</a> 
     </div>
     <div class="post-metadata">
-      <a href="#" class="comment-count">{{num_comments}} Comments</a>
+      {% if num_comments == 1 %}
+        <a href="#" class="comment-count">{{num_comments}} Comment</a>
+      {% else %}
+        <a href="#" class="comment-count">{{num_comments}} Comments</a>
+      {% endif %}
     </div>
-    {% for post in post_comments %}
-      {{post.get('body')}}
-    {% endfor %}
   </div>
 
   <div class="toolbar">
@@ -44,16 +41,11 @@
     <a class="toolbar-button comment-button" href="#">Comment</a>
     <a class="toolbar-button thank-button" href="#">Thank</a>
     <a class="toolbar-button removepost-button" href="{{ url_for('delete_post', postid=post.get('post_id')) }}">Remove Kudos</a>
-    <!-- <form action="/deletepost" method="POST">
-      {{ delete_form.hidden_post_id(value=post.get('post_id'))}}
-      <input type="submit" class="toolbar-button removepost-button" style="display: none;"/>
-        <div id="removepost-button">
-          <div title="Remove Kudos">
-            Remove Kudos
-          </div>
-        </div>
-    </form> -->
   </div>
 
+  <div class="comment" id="{{post.get('post_id')}}">
+
   </div>
+
+</div>
 

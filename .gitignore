@@ -4,6 +4,8 @@ app.db
 tmp/
 db_repository/
 app.db
+css help.rtf
+user_data.rtf
 =======
 flask/*
 .DS_Store
