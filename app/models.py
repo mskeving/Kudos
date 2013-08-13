@@ -89,7 +89,7 @@ class Post(db.Model):
 	user_id = db.Column(db.Integer, db.ForeignKey('users.id')) #users is tablename
 	tags = db.relationship('Tag', backref='post')
 	thanks = db.relationship('Thanks', backref='post')
-	children = db.relationship('Post')
+	children = db.relationship('Post') #when query for posts, post.children will be available
 
 
 	#rename user_id to author_id to match backref

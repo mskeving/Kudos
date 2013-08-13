@@ -7,7 +7,7 @@ from forms import LoginForm, EditForm, EditPost, DeletePost, NewReply
 from models import User, Post, UserTeam, Team, Tag, Thanks, ROLE_USER, ROLE_ADMIN
 from datetime import datetime
 from flask.ext.sqlalchemy import sqlalchemy
-from sqlalchemy import and_
+from sqlalchemy import and_, or_
 from app.lib import email_sender
 
 @app.before_request
@@ -35,13 +35,12 @@ def posts_to_indented_posts(posts):
 		tagged_users = []
 		tagged_teams = []
 		for tag in p.tags:
-			print "individual tag:"
 			if tag.user_tag_id:
 				tagged_users.append(tag.user_tag) #send in all user information
-			if tag.team_tag_id:
+			elif tag.team_tag_id:
 				tagged_teams.append(tag.team_tag) #just teamname
 			else:
-				print "no tags for this post"
+				print "no tags for this post.id: %r" % p.id 
 
 		#TODO: separate into function. Used in '/user' as well
 		d = {}
@@ -58,8 +57,6 @@ def posts_to_indented_posts(posts):
 		d['tagged_teams'] = tagged_teams
 		indented_posts.append(d)
 		for child in p.children:
-			print "child: "
-			print child
 			d = {}
 			d['post_object'] = p
 			d['body'] = child.body
@@ -87,6 +84,7 @@ def index():
 	user = g.user
 	new_post = EditPost() 
 	reply_form = NewReply()
+	delete_form = DeletePost()
 	
 	#query for list of available tag words
 	user_tags = db.session.query(User).all()
@@ -141,9 +139,6 @@ def index():
 
 
 	posts = Post.query.filter(Post.parent_post_id==None).all()
-	print "post author: "
-	for post in posts:
-		print post.author
 
 	if posts != None:
 		indented_posts = posts_to_indented_posts(posts)
@@ -151,14 +146,12 @@ def index():
 		parent_posts = []
 
 
+	post_photo_tags = {}
 	for post in indented_posts:
 		if post.get('indent')==1:
 			post_comments.append(post)
 		elif post.get('indent')==0:
 			parent_posts.append(post)
-
-
-
 
 		tagged_users_name_photo = []
 		for tagged_user in post.get('tagged_users'):
@@ -172,8 +165,7 @@ def index():
 			tagged_user_dict[username] = str(tag_dict.get(tag_user_id)[1]) #get photo
 			tagged_users_name_photo.append(tagged_user_dict)
 			#EX) tagged_users_name_photo = {"mskeving" : "img.png"}
-		print "PHOTO INFO:"
-		print tag_dict.get(tag_user_id)[1]
+		post_photo_tags[post.get('post_id')] = tagged_users_name_photo
 
 	num_comments = len(post_comments)
 	tag_ids = tag_dict.keys()
@@ -192,15 +184,14 @@ def index():
 	# else:
 	# 	print "No posts to display"
 
-
-
 	return render_template("index2.html", 
 		title='Home', 
 		user=user,
 		posts=indented_posts,
 		new_post=new_post,
 		reply_form=reply_form,
-		user_tags=tagged_users_name_photo,
+		delete_form=delete_form,
+		user_tags=post_photo_tags,
 		tag_name_to_id=tag_json,
 		tag_names=tag_list,
 		tag_ids=tag_ids_string,
@@ -365,19 +356,12 @@ def user(username):
 			indented_posts.append(d)
 
 
-
-
-	#posts = Post.query.filter_by(user_id = user.id).all()
-
 	edit_form = EditPost()
 	delete_form = DeletePost()
 
 	if user == None:
 		flash('User ' + username + ' not found.')
 		return redirect(url_for('index'))
-
-	
-
 
 
 	return render_template('user.html', 
@@ -432,8 +416,6 @@ def new_post():
 	
 
 		#Submit tags
-		#print "hidden data: "
-		#print form.hidden_tag_ids.data
 		tag_ids = form.hidden_tag_ids.data.split('|')
 		tag_text = form.hidden_tag_text.data.split('|')
 
@@ -458,7 +440,7 @@ def new_post():
 				print g.user.email
 				email_sender.send_email(
 					url_for('permalink_for_post_with_id', post_id=new_post.id, _external=True),
-					'rk@dropbox.com,ramesh@dropbox.com',
+					'mskeving@gmail.com',
 					g.user.email,
 					message = post_text,
 					sender_name = "%s %s" % (g.user.firstname, g.user.lastname)
@@ -511,21 +493,34 @@ def add_reply():
 		#add redirect to include error message that no text was included
 
 #DELETE POSTS
-@app.route('/deletepost', methods=['POST'])
+@app.route('/deletepost/<postid>', methods=['GET','POST'])
 @login_required
-def delete_post():
-	print "in /deletepost"
-	form = DeletePost()
+def delete_post(postid):
+	#post_id = request.form['hidden_post_id'] #hidden value in DeletePost form
+	print "in delete post"
+	
+	delete_post = db.session.query(Post).filter_by(id=postid).one()
 
-	post_id = request.form['hidden_post_id'] #hidden value in DeletePost form
-	user_id = g.user.id
+	#delete post, replies, associatated tags, and thanks 
+	to_delete_list = []
+	to_delete_list.append(delete_post)
+	for tag in delete_post.tags:
+		print tag.id
+		to_delete_list.append(tag)
+	for child in delete_post.children:
+		print child.id
+		to_delete_list.append(child)
+	for thank in delete_post.thanks:
+		print thank.id
+		to_delete_list.append(thank)
 
-	delete_post = db.session.query(Post).filter_by(id=post_id).one()
+	for obj_to_delete in to_delete_list: #delete everything associated with post
+		print "obj to delete: %r" % obj_to_delete
+		db.session.delete(obj_to_delete)
 
-	db.session.delete(delete_post)
 	db.session.commit()
-	print "committed to database"
-	return redirect(url_for('user', username=g.user.username))
+
+	return redirect(url_for('index'))
 
 
 @app.route('/post/<post_id>', methods=['GET'])

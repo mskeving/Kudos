@@ -4,13 +4,13 @@
     <div class="post" id="{{post.get('post_id')}}">
       <div class="taggees">
       <div class="avatars">
-	    {% for tag in user_tags %}
+	    {% for tag in user_tags.get(post.get('post_id')) %}
 	      {% set name = tag.keys() %}
 	      {% set photo = tag.values() %}
 	      <a class="avatar" href="{{ url_for('user', username=name[0]) }}">
 		  	<div class="cropper">
 		        <img src="{{photo[0]}}" alt="{{name[0]}}" />
-			</div>
+			  </div>
 	      </a>
 	    {% endfor %}
       </div>
@@ -40,9 +40,19 @@
   </div>
 
   <div class="toolbar">
-    <a class="toolbar-button thank-button" href="#">Thank</a>
-    <a class="toolbar-button comment-button" href="#">Comment</a>
     <a class="toolbar-button addtag-button" href="#">Add Tag</a>
+    <a class="toolbar-button comment-button" href="#">Comment</a>
+    <a class="toolbar-button thank-button" href="#">Thank</a>
+    <a class="toolbar-button removepost-button" href="{{ url_for('delete_post', postid=post.get('post_id')) }}">Remove Kudos</a>
+    <!-- <form action="/deletepost" method="POST">
+      {{ delete_form.hidden_post_id(value=post.get('post_id'))}}
+      <input type="submit" class="toolbar-button removepost-button" style="display: none;"/>
+        <div id="removepost-button">
+          <div title="Remove Kudos">
+            Remove Kudos
+          </div>
+        </div>
+    </form> -->
   </div>
 
   </div>

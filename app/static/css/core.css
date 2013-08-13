@@ -180,7 +180,7 @@ a.avatar .cropper {
   clear: both;
   margin: 5px 4px 0px 4px;
   overflow: hidden;
-  padding: 35px 15px 15px 15px;
+  padding: 0px 15px 15px 15px;
 }
 
 .post .white-card a {
@@ -219,7 +219,7 @@ a.avatar .cropper {
   background: none;
   color: #8b8e98;
   display: block;
-  float: left;
+  float: right;
   font-color: #8b8e98;
   height: 40px;
   line-height: 40px;
@@ -246,6 +246,10 @@ a.avatar .cropper {
 
 .post a.addtag-button {
   background: url(img/addtag-button.png) no-repeat 6px 12px;
+}
+
+.post a.removepost-button {
+  /*background: url(img/addtag-button.png) no-repeat 6px 12px;*/
 }
 
 #post-button {

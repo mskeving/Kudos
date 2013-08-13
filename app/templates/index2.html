@@ -2,53 +2,48 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<link rel="stylesheet" href="/static/css/core.css" type="text/css" charset="utf-8" />
-
-	  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js" type="text/javascript" charset="utf-8"></script>
-		<!-- // <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js"></script> -->
-		<script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/jquery-ui.min.js'></script>
-				<link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/themes/start/jquery-ui.css" />
-		<script type="text/javascript" src="/static/js/jquery.tagsinput.js"></script>
-		<!-- <link rel="stylesheet" type="text/css" href="http://xoxco.com/projects/code/tagsinput/jquery.tagsinput.css" /> -->
-
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+	<script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/jquery-ui.min.js'></script>
+	<link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/themes/start/jquery-ui.css" />
 	<script type="text/javascript" src="/static/js/jquery.tagsinput.js"></script>
+
 
 	<title>Kudos by Dropbox</title>
 
 </head>
 <body>
-		<div id="post-modal" style="display: none; position: absolute; left: 0; top: 0; width: 100%; height: 100%; text-align: center;">
-			<!-- Submit new Kudos -->
-			<form action='/editpost' method="POST" name="add" id="new_post_form">
-				<!-- inclide csrf token in every form for security -->
-				{{ new_post.csrf_token }} 
-
-				{% for error in new_post.errors.post_body %}
-
+	<div id="post-modal" style="display: none; position: absolute; left: 0; top: 0; width: 100%; height: 100%; text-align: center;">
+		<!-- Submit new Kudos -->
+		<form action='/editpost' method="POST" name="add" id="new_post_form">
+			<!-- inclide csrf token in every form for security -->
+			{{ new_post.csrf_token }} 
+			{% for error in new_post.errors.post_body %}
 				<span style="color:red;">[{{error}}]</span> 
-				{% endfor %}<br />
-				<div class="row">
-					<div class="col-lg-6">
-						<div class ="submit-kudos" style="padding: 20px; width: 290px; height: 158px; margin: auto; background: #e2d7d8; padding: 10px;">
-		    				<div class="tags" id="tagsinput_tagsinput" name="tags_div" style="width: 290px;">
+			{% endfor %}<br />
+
+			<div class="row">
+				<div class="col-lg-6">
+					<div class ="submit-kudos" style="padding: 20px; width: 290px; height: 158px; margin: auto; background: #e2d7d8; padding: 10px;">
+	    				<div class="tags" id="tagsinput_tagsinput" name="tags_div" style="width: 290px;">
 								<input type="text" class="tag_input" id="tag_input" name="tag_input" value placeholder="tags" style="width: 290px; align: center; border: none;"/>
 							</div>
-		    				<div class="input-group">
-		    					<span class="form-control">{{ new_post.post_body (style="width: 284px; height: 70px;") }} </span>
-		    				</div>
+	    				<div class="input-group">
+	    					<span class="form-control">{{ new_post.post_body (style="width: 284px; height: 70px;") }} </span>
+	    				</div>
 
-			    			<button type="submit"  name="new_post_btn" value="submit" style="color: white; font-weight:700; background: rgb(241, 150, 150); width: 80px; height: 25px; margin-top: 14px;"> Submit </button>
-									<!-- {{ new_post.post_submit_btn(value="submit post")}} -->
+		    			<button type="submit"  name="new_post_btn" value="submit" style="color: white; font-weight:700; background: rgb(241, 150, 150); width: 80px; height: 25px; margin-top: 14px;"> Submit </button>
+								<!-- {{ new_post.post_submit_btn(value="submit post")}} -->
 
-							{{ new_post.hidden_tag_ids (class="hidden_tag_ids", id="hidden_tag_ids") }}
-							{{ new_post.hidden_tag_text (class="hidden_tag_text", id="hidden_tag_text") }}
+						{{ new_post.hidden_tag_ids (class="hidden_tag_ids", id="hidden_tag_ids") }}
+						{{ new_post.hidden_tag_text (class="hidden_tag_text", id="hidden_tag_text") }}
 
-						</div>
 					</div>
 				</div>
-			</form>
-		</div>
+			</div>
+		</form>
+	</div>
 
 
 	<div id="main-column">
@@ -61,11 +56,12 @@
 			</div>
 		</a>
 
+<!-- Display posts -->
 		{% for post in parent_posts %}
 		  {% include 'post.html' with context %}
 		{% endfor %}
-	</div>
 
+	</div>
 		<script type="text/javascript">
 
 			function collect_tags(){
