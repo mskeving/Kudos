@@ -31,7 +31,10 @@ def posts_to_indented_posts(posts):
 	indented_posts = []
 
 	for p in posts:
-		#query for all tags with this p.id
+		print "post body: %r " % p.body
+
+
+		#get all tags for each post
 		tagged_users = []
 		tagged_teams = []
 		for tag in p.tags:
@@ -42,7 +45,6 @@ def posts_to_indented_posts(posts):
 			else:
 				print "no tags for this post.id: %r" % p.id 
 
-		#TODO: separate into function. Used in '/user' as well
 		d = {}
 		d['post_object'] = p
 		d['body'] = p.body

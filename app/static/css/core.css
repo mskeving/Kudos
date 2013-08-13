@@ -273,6 +273,10 @@ a.avatar .cropper {
     text-shadow: rgba(255,255,255,3.5) 0px 1px 0px;
 }
 
+.comment {
+  margin: 40px 10px 150px 0px;
+}
+
 div.tagsinput { border:1px solid #CCC; background: #FFF; padding:5px; width:300px; height:100px; overflow-y: auto;}
 div.tagsinput span.tag { border: 1px solid rgb(250,150,150); -moz-border-radius:2px; -webkit-border-radius:2px; display: block; float: left; padding: 5px; text-decoration:none; background: rgb(250,150,150); color: #fff; margin-right: 5px; margin-bottom:5px;font-family: helvetica;  font-size:13px;}
 div.tagsinput span.tag a { font-weight: bold; color: #fff; text-decoration:none; font-size: 11px;  } 
