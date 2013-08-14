@@ -1,15 +1,15 @@
 
 
+{% set post_object = post.get('post_object') %}
+<!-- user post_object.author to get user info on that post -->
 
 <div class="post" id="{{post.get('post_id')}}">
   <div class="taggees">
     <div class="avatars">
-    {% for tag in user_tags.get(post.get('post_id')) %}
-      {% set name = tag.keys() %}
-      {% set photo = tag.values() %}
-      <a class="avatar" href="{{ url_for('user', username=name[0]) }}">
+    {% for user_tag in post.get('tagged_users') %}
+      <a class="avatar" href="{{ url_for('user', username=user_tag.username) }}">
     	<div class="cropper">
-          <img src="{{photo[0]}}" alt="{{name[0]}}" />
+          <img src="{{user_tag.photo}}" alt="{{user_tag.username}}" />
   	  </div>
       </a>
     {% endfor %}
@@ -20,11 +20,11 @@
 
 
     <blockquote>
-      {{post.get('body')}}
+      {{post_object.body}}
     </blockquote>
 
     <div class="post-author">
-      <a href="{{ url_for('user', username=post.get('username')) }}" class="author-name">{{post.get('firstname')}} {{post.get('lastname')}}</a>, 
+      <a href="{{ url_for('user', username=post_object.author.username) }}" class="author-name">{{post_object.author.firstname}} {{post_object.author.lastname}}</a>, 
       <a href="#" class="team-name">Kudos</a> 
     </div>
     <div class="post-metadata">
@@ -40,21 +40,24 @@
     <a class="toolbar-button addtag-button" href="#">Add Tag</a>
     <a class="toolbar-button comment-button" href="#">Comment</a>
     <a class="toolbar-button thank-button" href="#">Thank</a>
-    <a class="toolbar-button removepost-button" href="{{ url_for('delete_post', postid=post.get('post_id')) }}">Remove Kudos</a>
+    <a class="toolbar-button removepost-button" href="{{ url_for('delete_post', postid=post_object.id) }}">Remove Kudos</a>
   </div>
 </div>
 
-<div class="comment" id="{{post.get('post_id')}}">
-  {% for post in post_comments %}
+<!-- Display comments on post -->
+<div class="comment" id="{{post_object.id}}">
+  {% for post_comment in post.get('children_objects') %}
     <div class="avatars">
-      <a class="avatar" href="{{ url_for('user', username='mskeving') }}">
+      <a class="avatar" href="{{ url_for('user', username=post_comment.author.username) }}">
         <div class="cropper">
-            <img src="/static/avatars/missy.jpg" alt="missy" />
+            <img src="{{post_comment.author.photo}}" alt="{{post_comment.author.username}}" />
         </div>
       </a>
       <span>
-      {{post.get('body')}}
+      {{post_comment.body}}
       </span>
+      <br>
+      <a href="{{ url_for('user', username=post_comment.author.username) }}" class="author-name">{{post_comment.author.firstname}} {{post_comment.author.lastname}}</a>
     </div>
 
   {% endfor %}

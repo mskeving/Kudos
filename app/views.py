@@ -33,8 +33,15 @@ def posts_to_indented_posts(posts):
 	for p in posts:
 		print "post body: %r " % p.body
 
+		d = {}
+		d['post_object'] = p
+		d['indent'] = 0
 
-		#get all tags for each post
+		children = []
+		for child in p.children:
+			children.append(child)
+		d['children_objects'] = children
+
 		tagged_users = []
 		tagged_teams = []
 		for tag in p.tags:
@@ -44,37 +51,13 @@ def posts_to_indented_posts(posts):
 				tagged_teams.append(tag.team_tag) #just teamname
 			else:
 				print "no tags for this post.id: %r" % p.id 
-
-		d = {}
-		d['post_object'] = p
-		d['body'] = p.body
-		d['indent'] = 0
-		d['post_id'] = p.id
-		d['firstname'] = p.author.firstname
-		d['lastname'] = p.author.lastname
-		d['username'] = p.author.username
-		d['photo'] = p.author.photo
-		d['timestamp'] = p.timestamp
 		d['tagged_users'] = tagged_users
 		d['tagged_teams'] = tagged_teams
+
 		indented_posts.append(d)
-		for child in p.children:
-			d = {}
-			d['post_object'] = p
-			d['body'] = child.body
-			d['indent'] = 1
-			d['post_id'] = child.id
-			d['firstname'] = child.author.firstname
-			d['lastname'] = p.author.lastname
-			d['username'] = p.author.username
-			d['photo'] = child.author.photo
-			d['timestamp'] = child.timestamp
-			d['tagged_users'] = tagged_users
-			d['tagged_teams'] = tagged_teams
-			indented_posts.append(d)
 
 
-
+	print "indented_posts: %r" % indented_posts
 	return indented_posts
 	
 
@@ -94,67 +77,50 @@ def index():
 	all_tags = user_tags + team_tags
 
 
+
 	tag_dict = {}
-	photo_dict = {}
-	name_to_tag_id = {}
 
 	#Available User Tags: full name, last name, nickname, teamname
 	for tag in user_tags:
 		tag_user_id = "u" + str(tag.id)
-		photo_dict[tag.id] = tag.photo #for avatars
 
 		if tag.firstname and tag.lastname and tag.nickname:
 			fullname = tag.firstname + " " + tag.lastname + " (" + tag.nickname + ")"
-			tag_dict[tag_user_id] = (fullname, tag.photo)
-			name_to_tag_id[fullname] = tag_user_id
+			tag_dict[fullname] = tag_user_id
 		elif tag.firstname and tag.lastname:
 			fullname = tag.firstname + " " + tag.lastname 
-			tag_dict[tag_user_id] = (fullname, tag.photo)
-			name_to_tag_id[fullname] = tag_user_id
+			tag_dict[fullname] = tag_user_id
 		elif tag.firstname:
-			tag_dict[tag_user_id] = (tag.firstname, tag.photo)
-			name_to_tag_id[tag.firstname] = tag_user_id
+			tag_dict[tag.firstname] = tag_user_id
 		elif tag.nickname:
-			tag_dict[tag_user_id] = (tag.nickname, tag.photo)
-			name_to_tag_id[tag.nickname] = tag_user_id
+			tag_dict[tag.nickname] = tag_user_id
 		else:
 			print "no name for user: "
-
-		#EX) tag_dict = {"u474": ("Missy", "img.png")}
 
 
 	#Team Tags - all teams
 	for tag in team_tags:
 		tag_team_id = "t" + str(tag.id)
-		tag_dict[tag_team_id] = tag.teamname
-		name_to_tag_id[tag.teamname] = tag_team_id
+		tag_dict[tag_team_id] = tag_team_id
 
 
-	tag_ids = tag_dict.keys()
-	tag_names_pictures = tag_dict.values()
-
-	tag_names_pictures_dict = json.dumps(tag_names_pictures)
-	tag_ids_string = json.dumps(tag_ids)
-	tag_json = json.dumps(name_to_tag_id)
-	tag_list = json.dumps(name_to_tag_id.keys())
-	tagged_users_name_photo = []
+	tag_words_string = json.dumps(tag_dict.keys())
+	tag_ids_string = json.dumps(tag_dict.values())
+	tag_json = json.dumps(tag_dict)
 
 
+	#query for all parent posts
 	posts = Post.query.filter(Post.parent_post_id==None).all()
 
 	if posts != None:
 		indented_posts = posts_to_indented_posts(posts)
-		post_comments = []
-		parent_posts = []
 
 
 	post_photo_tags = {}
 	for post in indented_posts:
-		if post.get('indent')==1:
-			post_comments.append(post)
-		elif post.get('indent')==0:
-			parent_posts.append(post)
-
+		for child in post.get('children_objects'):
+			print "child author: "
+			print child.author.firstname
 		tagged_users_name_photo = []
 		for tagged_user in post.get('tagged_users'):
 			tagged_user_dict = {}
@@ -163,28 +129,10 @@ def index():
 			fullname = tagged_user.firstname + tagged_user.lastname
 			tag_user_id = "u" + str(tagged_user.id)
 
+	num_comments = 0
+	#TODO: change to actual length of post.children
+	#num_comments = len(post_comments)
 
-			tagged_user_dict[username] = str(tag_dict.get(tag_user_id)[1]) #get photo
-			tagged_users_name_photo.append(tagged_user_dict)
-			#EX) tagged_users_name_photo = {"mskeving" : "img.png"}
-		post_photo_tags[post.get('post_id')] = tagged_users_name_photo
-
-	num_comments = len(post_comments)
-	tag_ids = tag_dict.keys()
-	tag_names_pictures = tag_dict.values()
-
-	# #CREATE POST TREE
-	# indented_posts=[]
-	# if posts != None:
-	# 	#create parent/child list of all posts
-	# 	hposts = HPost.build(posts)
-	# 	#indentend posts = list of (post body, indent) values
-	# 	indented_posts = HPost.calcIndent(hposts)
-
-	# 	#for debugging
-	# 	#HPost.dump(hposts,0)
-	# else:
-	# 	print "No posts to display"
 
 	return render_template("index2.html", 
 		title='Home', 
@@ -193,14 +141,11 @@ def index():
 		new_post=new_post,
 		reply_form=reply_form,
 		delete_form=delete_form,
-		user_tags=post_photo_tags,
-		tag_name_to_id=tag_json,
-		tag_names=tag_list,
+		tag_words=tag_words_string,
 		tag_ids=tag_ids_string,
+		tag_json=tag_json,
 		fullname = fullname,
-		parent_posts=parent_posts,
-		post_comments=post_comments,
-		num_comments=num_comments
+		num_comments=num_comments,
 
 		)
 

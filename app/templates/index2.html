@@ -58,9 +58,9 @@
 				</div>
 			</div>
 		</a>
-		<div id="post-column" style="margin: 0px 0px 10px 10px;">
+		<div id="post-column">
 <!-- Display posts -->
-			{% for post in parent_posts %}
+			{% for post in posts %}
 			  {% include 'post.html' with context %}
 			{% endfor %}
 
@@ -88,13 +88,13 @@
 
 			function show_post_modal(){
 				$('#post-modal').show();
-				$('#post-column').css('margin', '175px 0px 100px 0px');
+				$('#post-column').css('margin', '175px 0px 0px 0px');
 
 			}
 
 			function hide_post_modal(){
 				$('#post-modal').hide();
-				$('#post-column').css('margin', '0px 0px 10px 10px');
+				$('#post-column').css('margin', '0px 0px 0px 0px');
 
 			}
 
@@ -115,14 +115,14 @@
 			$(function() {
 				//same as document.ready
 
-				var tag_names = {{tag_names|safe}}; //safe: tell flask that this input is okay
-				var tag_name_to_id = {{tag_name_to_id|safe}}; //safe: tell flask that this input is okay
+				var tag_words = {{tag_words|safe}}; //safe: tell flask that this input is okay
+				var tag_json = {{tag_json|safe}}; 
 				var tag_ids = {{tag_ids|safe}};
 				$('.tag_input').tagsInput({
 					width: 'auto',
 					height: '30px',
-					autocomplete_list: tag_names,
-					autocomplete_dict: tag_name_to_id, 
+					autocomplete_list: tag_words,
+					autocomplete_dict: tag_json, 
 					tag_ids: tag_ids,
 				});
 				
