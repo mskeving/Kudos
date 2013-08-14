@@ -14,12 +14,13 @@
 
 </head>
 <body>
+
+<!-- Submit new Kudos -->
 	<div id="post-modal" style="display: none; position: absolute; left: 0; top: 0; width: 100%; height: 100%; text-align: center;">
-		<!-- Submit new Kudos -->
 		<form action='/editpost' method="POST" name="add" id="new_post_form">
-			<!-- inclide csrf token in every form for security -->
-			{{ new_post.csrf_token }} 
-			{% for error in new_post.errors.post_body %}
+			<!-- inclide csrf token in every form for security --> 
+			{{ new_post_form.csrf_token }} 
+			{% for error in new_post_form.errors.post_body %}
 				<span style="color:red;">[{{error}}]</span> 
 			{% endfor %}<br />
 
@@ -30,17 +31,15 @@
 								<input type="text" class="tag_input" id="tag_input" name="tag_input" value placeholder="tags" style="width: 290px; align: center; border: none;"/>
 							</div>
 	    				<div class="input-group">
-	    					<span class="form-control">{{ new_post.post_body (style="width: 284px; height: 70px;") }} </span>
+	    					<span class="form-control">{{ new_post_form.post_body (style="width: 284px; height: 70px;") }} </span>
 	    				</div>
 
-	    				<button id="no_new_post_btn" value="cancel" onclick="hide_post_modal()" style="color: white; font-weight:700; background: rgb(241, 150, 150); width: 80px; height: 25px; margin-top: 14px;">Cancel</button>
+	    				<button class="post_button" id="no_new_post_btn" value="cancel" onclick="hide_post_modal()" style="color: white; font-weight:700; background: rgb(241, 150, 150); width: 80px; height: 25px; margin-top: 14px;">Cancel</button>
 
-		    			<button type="submit"  name="new_post_btn" value="submit" style="color: white; font-weight:700; background: rgb(241, 150, 150); width: 80px; height: 25px; margin-top: 14px;"> Submit </button>
-		    			
-								<!-- {{ new_post.post_submit_btn(value="submit post")}} -->
+		    			<button class="post_button" type="submit"  name="new_post_btn" value="submit" style="color: white; font-weight:700; background: rgb(241, 150, 150); width: 80px; height: 25px; margin-top: 14px;"> Submit </button>
 
-						{{ new_post.hidden_tag_ids (class="hidden_tag_ids", id="hidden_tag_ids") }}
-						{{ new_post.hidden_tag_text (class="hidden_tag_text", id="hidden_tag_text") }}
+						{{ new_post_form.hidden_tag_ids (class="hidden_tag_ids", id="hidden_tag_ids") }}
+						{{ new_post_form.hidden_tag_text (class="hidden_tag_text", id="hidden_tag_text") }}
 
 					</div>
 				</div>
@@ -52,7 +51,7 @@
 	<div id="main-column">
 
 		<a href="#" onclick="show_post_modal()">
-			<div id="post-button">
+			<div id="new-kudos-button">
 				<div class="depth" title="Give Kudos">
 					Give Kudos
 				</div>

@@ -3,7 +3,7 @@
 {% set post_object = post.get('post_object') %}
 <!-- user post_object.author to get user info on that post -->
 
-<div class="post" id="{{post.get('post_id')}}">
+<div class="post" id="{{post_object.id}}">
   <div class="taggees">
     <div class="avatars">
     {% for user_tag in post.get('tagged_users') %}
@@ -38,28 +38,59 @@
 
   <div class="toolbar">
     <a class="toolbar-button addtag-button" href="#">Add Tag</a>
-    <a class="toolbar-button comment-button" href="#">Comment</a>
+    <a class="toolbar-button comment-button" href="javascript:show_comment_modal()">Comment</a>
     <a class="toolbar-button thank-button" href="#">Thank</a>
     <a class="toolbar-button removepost-button" href="{{ url_for('delete_post', postid=post_object.id) }}">Remove Kudos</a>
+  </div>
+
+<!-- new comment -->
+  <div class="new_comment" id="comment-modal" style="display: none;">
+    <form action="/newreply" method="POST">
+      {{new_post_form.csrf_token}}
+      <div style="width: 200px">
+        <div name="comment_body" id="comment_body">
+          {{reply_form.reply_body (style="width: 284px; height: 70px; margin: 10px;")}}
+          <button class="post_button" id="no_new_comment_btn" value="cancel" onclick="hide_post_modal()" style="color: white; font-weight:700; background: rgb(241, 150, 150); width: 80px; height: 25px; margin-top: 14px;">Cancel</button>
+          <button type="submit" class="post-button" name="new_reply_btn" value="submit" style="color: white; font-weight:700; background: rgb(241, 150, 150); width: 80px; height: 25px; margin: 14px;"> reply </button>
+          
+        </div>
+      </div>
+      <!-- Associate text box with specific post -->
+      {{ reply_form.hidden_post_id(value=post_object.id) }}
+    </form>
   </div>
 </div>
 
 <!-- Display comments on post -->
 <div class="comment" id="{{post_object.id}}">
   {% for post_comment in post.get('children_objects') %}
-    <div class="avatars">
-      <a class="avatar" href="{{ url_for('user', username=post_comment.author.username) }}">
-        <div class="cropper">
-            <img src="{{post_comment.author.photo}}" alt="{{post_comment.author.username}}" />
-        </div>
-      </a>
-      <span>
-      {{post_comment.body}}
-      </span>
-      <br>
-      <a href="{{ url_for('user', username=post_comment.author.username) }}" class="author-name">{{post_comment.author.firstname}} {{post_comment.author.lastname}}</a>
-    </div>
-
+    <div id="{{post_comment.id}}">
+      <div class="avatars">
+        <a class="avatar" href="{{ url_for('user', username=post_comment.author.username) }}">
+          <div class="cropper">
+              <img src="{{post_comment.author.photo}}" alt="{{post_comment.author.username}}" />
+          </div>
+        </a>
+        <span>
+          {{post_comment.body}}
+        </span>
+        <br>
+        <a href="{{ url_for('user', username=post_comment.author.username) }}" class="author-name">{{post_comment.author.firstname}} {{post_comment.author.lastname}}</a>
+      </div>
+    </div> 
   {% endfor %}
 </div>
 
+<script type="text/javascript">
+    function show_comment_modal(){
+        $('#comment-modal').toggle();
+
+
+      }
+
+      function hide_comment_modal(){
+        $('#comment-modal').hide();
+
+
+      }
+</script>

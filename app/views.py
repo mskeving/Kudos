@@ -67,7 +67,7 @@ def posts_to_indented_posts(posts):
 def index():
 
 	user = g.user
-	new_post = EditPost() 
+	new_post_form = EditPost() 
 	reply_form = NewReply()
 	delete_form = DeletePost()
 	
@@ -116,19 +116,6 @@ def index():
 		indented_posts = posts_to_indented_posts(posts)
 
 
-	post_photo_tags = {}
-	for post in indented_posts:
-		for child in post.get('children_objects'):
-			print "child author: "
-			print child.author.firstname
-		tagged_users_name_photo = []
-		for tagged_user in post.get('tagged_users'):
-			tagged_user_dict = {}
-			firstname = tagged_user.firstname
-			username = tagged_user.username
-			fullname = tagged_user.firstname + tagged_user.lastname
-			tag_user_id = "u" + str(tagged_user.id)
-
 	num_comments = 0
 	#TODO: change to actual length of post.children
 	#num_comments = len(post_comments)
@@ -138,7 +125,7 @@ def index():
 		title='Home', 
 		user=user,
 		posts=indented_posts,
-		new_post=new_post,
+		new_post_form=new_post_form,
 		reply_form=reply_form,
 		delete_form=delete_form,
 		tag_words=tag_words_string,
@@ -266,10 +253,19 @@ def user(username):
 	#user = g.user
 	tagged_posts = []
 	tags = Tag.query.filter(and_(Tag.user_tag_id==user.id, Post.parent_post_id==None)).all() 
+		#get all parent posts that user is tagged in 
 
+	tagged_posts = []
+	for tag in tags:
+		tagged_posts.append(tag.post)
+		print "tag_post: %r" % tag.post
+
+	if len(tagged_posts) != 0:
+		indented_posts = posts_to_indented_posts(tagged_posts)
 
 	dict_of_users_teams={}
 
+	#also display tagged posts for the user's teams
 	list_of_teams = []
 	teams = db.session.query(UserTeam).filter_by(user_id=user.id).all()
 	for team in teams:
@@ -280,31 +276,8 @@ def user(username):
 	print list_of_teams
 
 
-
-	indented_posts=[]
-	#TODO: create separate function
-	for t in tags:
-		d = {}
-		d['body'] = t.post.body
-		d['indent'] = 0
-		d['post_id'] = t.post.id
-		d['firstname'] = t.post.author.firstname
-		d['photo'] = t.post.author.photo
-		d['timestamp'] = t.post.timestamp
-		indented_posts.append(d)
-		for child in t.post.children:
-			d = {}
-			d['body'] = child.body
-			d['indent'] = 1
-			d['post_id'] = child.id
-			d['firstname'] = child.author.firstname
-			d['photo'] = child.author.photo
-			d['timestamp'] = child.timestamp
-			indented_posts.append(d)
-
-
-	edit_form = EditPost()
-	delete_form = DeletePost()
+	reply_form = NewReply()
+	new_post_form = EditPost()
 
 	if user == None:
 		flash('User ' + username + ' not found.')
@@ -312,8 +285,8 @@ def user(username):
 
 
 	return render_template('user.html', 
-		edit_form=edit_form,
-		delete_form=delete_form,
+		new_post_form=new_post_form,
+		reply_form=reply_form,
 		user=user, 
 		posts=indented_posts,
 		list_of_teams=list_of_teams,

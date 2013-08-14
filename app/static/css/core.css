@@ -252,7 +252,7 @@ a.avatar .cropper {
   /*background: url(img/addtag-button.png) no-repeat 6px 12px;*/
 }
 
-#post-button {
+#new-kudos-button {
 	width: 80%;
 	background: rgb(241, 150, 150);
 	height: 16px;
@@ -264,6 +264,15 @@ a.avatar .cropper {
 	padding: 10px;
 
 
+}
+
+#post-button {
+  color: white; 
+  font-weight:700; 
+  background: rgb(241, 150, 150); 
+  width: 80px; 
+  height: 25px; 
+  margin-top: 14px;
 }
 
 .depth {
