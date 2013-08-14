@@ -39,14 +39,20 @@
 
 <hr>
 
-<div class="container-fluid">
+<div name="display_posts">
+	<div class="container-fluid">
 
+		<div id="main-column">
 
-	{% for post in posts %}	
-		{% include 'post.html' with context %}
-	{% endfor %}
-		
+			<div id="post-column">
+	<!-- Display posts -->
+				{% for post in posts %}
+				  {% include 'post.html' with context %}
+				{% endfor %}
 
+			</div>
+		</div>
+
+	</div>
 </div>
-
 {% endblock %}

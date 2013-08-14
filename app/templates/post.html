@@ -6,13 +6,15 @@
 <div class="post" id="{{post_object.id}}">
   <div class="taggees">
     <div class="avatars">
-    {% for user_tag in post.get('tagged_users') %}
-      <a class="avatar" href="{{ url_for('user', username=user_tag.username) }}">
-    	<div class="cropper">
-          <img src="{{user_tag.photo}}" alt="{{user_tag.username}}" />
-  	  </div>
-      </a>
-    {% endfor %}
+    {% if post.get('tagged_users') %}
+      {% for user_tag in post.get('tagged_users') %}
+        <a class="avatar" href="{{ url_for('user', username=user_tag.username) }}">
+      	<div class="cropper">
+            <img src="{{user_tag.photo}}" alt="{{user_tag.username}}" />
+    	  </div>
+        </a>
+      {% endfor %}
+    {% endif %}
     </div>
   </div>
 
@@ -80,6 +82,10 @@
     </div> 
   {% endfor %}
 </div>
+
+
+
+
 
 <script type="text/javascript">
     function show_comment_modal(){

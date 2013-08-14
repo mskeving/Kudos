@@ -52,27 +52,25 @@
 		{% endfor %}
 	</table>
 
-
-
-<div class="container-fluid">
-	<h2>Kudos for {{team}}</h2>
-		{% for post in posts %}
-
-
-      		{% include 'post.html' with context %}
-
-
-<!-- 			<div class="display-post" style="padding: 5px 5px 5px {{ 30 * post.get('indent') + 20 }}px;">
-		
-				<img src={{ post.get('photo') }} height='42' width='42'>
-
-				<i> {{post.get('firstname')}} says:</i>
-					{{post.get('body')}}
-								
-			</div> -->
-		{% endfor %}
 </div>
 
+<div name="display_posts">
+	<div class="container-fluid">
+		<h2>Kudos for {{team}}</h2>
+
+		<div id="main-column">
+
+			<div id="post-column">
+	<!-- Display posts -->
+				{% for post in posts %}
+				  {% include 'post.html' with context %}
+				{% endfor %}
+
+			</div>
+		</div>
+
+	</div>
 </div>
+
 
 {% endblock %}

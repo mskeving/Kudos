@@ -31,7 +31,6 @@ def posts_to_indented_posts(posts):
 	indented_posts = []
 
 	for p in posts:
-		print "post body: %r " % p.body
 
 		d = {}
 		d['post_object'] = p
@@ -56,8 +55,6 @@ def posts_to_indented_posts(posts):
 
 		indented_posts.append(d)
 
-
-	print "indented_posts: %r" % indented_posts
 	return indented_posts
 	
 
@@ -101,11 +98,12 @@ def index():
 	#Team Tags - all teams
 	for tag in team_tags:
 		tag_team_id = "t" + str(tag.id)
-		tag_dict[tag_team_id] = tag_team_id
+		tag_dict[tag.teamname] = tag_team_id
 
 
 	tag_words_string = json.dumps(tag_dict.keys())
 	tag_ids_string = json.dumps(tag_dict.values())
+
 	tag_json = json.dumps(tag_dict)
 
 
@@ -193,51 +191,29 @@ def load_user(id):
 @app.route('/team/<team>')
 @login_required
 def team(team):
- 
-	#team = Team.query.filter(Team.teamname==team).first()
-	#team_id = team.id
+ 	reply_form = NewReply()
+	new_post_form = EditPost()
 
-	# print "team_id: "
-	# print team.id
+	#team_id is actually teamname, not int
 	team_members = UserTeam.query.filter(UserTeam.team_id==team).all()
 	team = Team.query.filter_by(teamname=team).first()
 	tags = Tag.query.filter(and_(Tag.team_tag_id==team.id, Post.parent_post_id==None)).all() 
 
-	print "tags: "
-	print tags
+	tagged_posts = []
+	for tag in tags:
+		tagged_posts.append(tag.post)
 
-	#TODO: create separate function
-	indented_posts = []
-	for t in tags:
-		print "t.post.author: "
-		print t.post.author.username
-		d = {}
-		d['body'] = t.post.body
-		d['indent'] = 0
-		d['post_id'] = t.post.id
-		d['firstname'] = t.post.author.firstname
-		d['photo'] = t.post.author.photo
-		d['timestamp'] = t.post.timestamp
-		d['username'] = t.post.author.username
-		indented_posts.append(d)
-		for child in t.post.children:
-			d = {}
-			d['body'] = child.body
-			d['indent'] = 1
-			d['post_id'] = child.id
-			d['firstname'] = child.author.firstname
-			d['photo'] = child.author.photo
-			d['timestamp'] = child.timestamp
-			d['username'] = t.post.author.username
-			indented_posts.append(d)
+	if len(tagged_posts) != 0:
+		indented_posts = posts_to_indented_posts(tagged_posts)
 
 
 	list_of_users = []
 	for member in team_members:
 		list_of_users.append(member.user) #send all user info over
 
-
 	return render_template('team.html',
+		new_post_form=new_post_form,
+		reply_form=reply_form,
 		team=team.teamname,
 		team_members=list_of_users,
 		posts=indented_posts,
@@ -248,6 +224,8 @@ def team(team):
 @app.route('/user/<username>')
 @login_required
 def user(username):
+	reply_form = NewReply()
+	new_post_form = EditPost()
 
 	user = User.query.filter_by(username=username).first()
 	#user = g.user
@@ -258,14 +236,14 @@ def user(username):
 	tagged_posts = []
 	for tag in tags:
 		tagged_posts.append(tag.post)
-		print "tag_post: %r" % tag.post
 
+	indented_posts = []
 	if len(tagged_posts) != 0:
 		indented_posts = posts_to_indented_posts(tagged_posts)
 
 	dict_of_users_teams={}
 
-	#also display tagged posts for the user's teams
+	#TODO: also display tagged posts for the user's teams
 	list_of_teams = []
 	teams = db.session.query(UserTeam).filter_by(user_id=user.id).all()
 	for team in teams:
@@ -275,9 +253,6 @@ def user(username):
 	print "user's list of teams: "
 	print list_of_teams
 
-
-	reply_form = NewReply()
-	new_post_form = EditPost()
 
 	if user == None:
 		flash('User ' + username + ' not found.')
