@@ -6,6 +6,8 @@ db_repository/
 app.db
 css help.rtf
 user_data.rtf
+dropbox to hackbright.rtf
+/app/static/hackbright_users.txt
 =======
 flask/*
 .DS_Store

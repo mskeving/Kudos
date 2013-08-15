@@ -113,6 +113,11 @@ def index():
 	if posts != None:
 		indented_posts = posts_to_indented_posts(posts)
 
+	for post in indented_posts:
+		x = True
+		#get list of teams that a post.author is a member of 
+
+
 
 	num_comments = 0
 	#TODO: change to actual length of post.children
@@ -172,7 +177,7 @@ def after_login(resp):
 	print "EMAIL: %s" % resp.email
 	user = User.query.filter_by(email=resp.email).first()
 	if user is None:
-		flash('You must sign in with your @dropbox email address. Please try again.')
+		flash('You must sign in with Hackbright email address. Please try again.')
 		return redirect(url_for('login'))
 	remember_me = False 
 	if 'remember_me' in session:
@@ -203,6 +208,7 @@ def team(team):
 	for tag in tags:
 		tagged_posts.append(tag.post)
 
+	indented_posts = []
 	if len(tagged_posts) != 0:
 		indented_posts = posts_to_indented_posts(tagged_posts)
 

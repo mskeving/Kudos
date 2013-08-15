@@ -35,7 +35,10 @@ class User(db.Model):
 	phone = db.Column(db.String(25), index = True)
 	about_me = db.Column(db.String(140))
 	username = db.Column(db.String(68))
-	last_seen = db.Column(db.Date)
+	facebook = db.Column(db.String(140))
+	twitter = db.Column(db.String(140))
+	github = db.Column(db.String(40))
+	linkedin = db.Column(db.String(140))
 
 	posts = db.relationship('Post', backref = 'author', lazy = 'dynamic')
 	users = db.relationship('UserTeam', backref = 'user', primaryjoin="User.id==UserTeam.user_id")
