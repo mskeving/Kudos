@@ -50,6 +50,9 @@
     <div class="tags" id="tagsinput_tagsinput" name="tags_div" style="width: 290px;">
       <input type="text" class="tag_input" id="tag_input" name="tag_input" value placeholder="tags" style="width: 290px; align: center; border: none;"/>
     </div>
+    <button class="post_button" id="no_new_post_btn" value="cancel" onclick="show_tag_modal()" style="color: white; font-weight:700; background: rgb(241, 150, 150); width: 80px; height: 25px; margin-top: 14px;">Cancel</button>
+
+    <button class="post_button" onclick="show_tag_modal()" name="new_post_btn" value="submit" style="color: white; font-weight:700; background: rgb(241, 150, 150); width: 80px; height: 25px; margin-top: 14px;"> Submit </button>
   </div>
 
 
@@ -90,7 +93,6 @@
     </div> 
   {% endfor %}
 </div>
-
 
 
 <script type="text/javascript">
