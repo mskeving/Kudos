@@ -68,6 +68,22 @@
 	
 		<script type="text/javascript">
 
+			$(document).ready(function(){
+				$('#new_post_form').submit(collect_tags);
+				$('#new_tag_form').submit(collect_tags);
+
+				var tag_words = {{tag_words|safe}}; //safe: tell flask that this input is okay
+				var tag_json = {{tag_json|safe}}; 
+				var tag_ids = {{tag_ids|safe}};
+				$('.tag_input').tagsInput({
+					width: 'auto',
+					height: '30px',
+					autocomplete_list: tag_words,
+					autocomplete_dict: tag_json, 
+					tag_ids: tag_ids,
+				});
+			});
+
 			function collect_tags(){
 				console.log("collecting tags");
 				var all_tags = $(this).find("span.tag"); //gives you all tags in form 
@@ -76,14 +92,21 @@
 					$(".hidden_tag_ids").val($(".hidden_tag_ids").val() + tag_id + "|");
 					var tag_text = $(this).children("span").text();
 					$(".hidden_tag_text").val($(".hidden_tag_text").val() + tag_text + "|");
-
 				});
 			}
+			function onAddTag(tag) {
+				console.log("added tag: " + tag);
+				
+			}
+			function onRemoveTag(tag) {
+				console.log("Removed a tag: " + tag);
+			}
 
-			$(document).ready(function(){
-				$('#new_post_form').submit(collect_tags);
-				$('#new_tag_form').submit(collect_tags);
-			});
+			function onChangeTag(input,tag) {
+				console.log("Changed a tag: " + tag);
+			}
+
+		
 
 
 			//AJAX FOR NEW POST
@@ -129,7 +152,14 @@
 				})
 			});
 
+		  	$('.toolbar-button addtag-button').click(function(e){
+		  		console.log('here');
+		  		e.preventDefault;
+      			$('.tag-modal').toggle();
 
+			});
+
+  	
 			function show_post_modal(){
 				$('#post-modal').show();
 				$('#post-column').css('margin', '175px 0px 0px 0px');
@@ -140,38 +170,10 @@
 				e.preventDefault();
 				console.log('hiding');
 				$('#post-modal').hide();
-				$('#post-column').css('margin', '0px 0px 0px 0px');
+				$('#post-column').css('margin', '0px');
 			});
 
-			function onAddTag(tag) {
-				//add link to tag 
-				console.log("added tag: " + tag);
-				
-			}
-			function onRemoveTag(tag) {
-				console.log("Removed a tag: " + tag);
-			}
-
-			function onChangeTag(input,tag) {
-				console.log("Changed a tag: " + tag);
-			}
-
-			$(function() {
-				//same as document.ready
-
-				var tag_words = {{tag_words|safe}}; //safe: tell flask that this input is okay
-				var tag_json = {{tag_json|safe}}; 
-				var tag_ids = {{tag_ids|safe}};
-				$('.tag_input').tagsInput({
-					width: 'auto',
-					height: '30px',
-					autocomplete_list: tag_words,
-					autocomplete_dict: tag_json, 
-					tag_ids: tag_ids,
-				});
-				
-
-			});
+			
 		</script>
 
 	</body>

@@ -30,28 +30,29 @@
       <a href="{{ url_for('team', team='Hackbright')}}" class="team-name">Hackbright</a> 
     </div>
     <div class="post-metadata">
-      {% if num_comments == 1 %}
-        <a href="#" class="comment-count">{{num_comments}} Comment</a>
+      {% set comments = post.get('children_objects')|length %}
+      {% if comments == 1 %}
+        <a href="#" class="comment-count">{{comments}} Comment</a>
       {% else %}
-        <a href="#" class="comment-count">{{num_comments}} Comments</a>
+        <a href="#" class="comment-count">{{comments}} Comments</a>
       {% endif %}
     </div>
   </div>
 
   <div class="toolbar">
-    <a class="toolbar-button addtag-button" href="javascript:show_tag_modal()">Add Tag</a>
+    <a class="toolbar-button addtag-button" href="#">Add Tag</a>
     <a class="toolbar-button comment-button" href="javascript:show_comment_modal()">Comment</a>
     <a class="toolbar-button thank-button" href="#" name="send-thanks" id="{{post_object.id}}">Thank</a>
     <a class="toolbar-button removepost-button" href="{{ url_for('delete_post', postid=post_object.id) }}">Remove Kudos</a>
   </div>
 
 <!-- new tag -->
-  <div class="new_tag" id="tag-modal" style="display: none;">
+  <div class="tag-modal" id="{{post_object.id}}" style="display: none;">
     <form action="/newtag" method="POST" class="new-tag" id="new_tag_form">  
       <div class="tags" id="tagsinput_tagsinput" name="tags_div" style="width: 290px;">
         <input type="text" class="tag_input" id="tag_input" name="tag_input" value placeholder="tags" style="width: 290px; align: center; border: none;"/>
       </div>
-      <button class="post_button" id="no_new_tag_btn" value="cancel" onclick="show_tag_modal()" style="color: white; font-weight:700; background: rgb(241, 150, 150); width: 80px; height: 25px; margin-top: 14px;">Cancel</button>
+      <button class="post_button" id="no_new_tag_btn" value="cancel" style="color: white; font-weight:700; background: rgb(241, 150, 150); width: 80px; height: 25px; margin-top: 14px;">Cancel</button>
 
       <button class="new_tag_btn" onclick="show_tag_modal()" name="new_tag_btn" id="{{post_object.id}}" value="submit" style="color: white; font-weight:700; background: rgb(241, 150, 150); width: 80px; height: 25px; margin-top: 14px;"> Submit </button>
       {{ reply_form.hidden_post_id(value=post_object.id) }}
@@ -68,7 +69,9 @@
       <div style="width: 200px">
         <div name="comment_body" id="comment_body">
           {{reply_form.reply_body (style="width: 284px; height: 70px; margin: 10px;")}}
+
           <button class="post_button" id="no_new_comment_btn" value="cancel" onclick="hide_post_modal()" style="color: white; font-weight:700; background: rgb(241, 150, 150); width: 80px; height: 25px; margin-top: 14px;">Cancel</button>
+
           <button type="submit" class="post-button" name="new_reply_btn" value="submit" style="color: white; font-weight:700; background: rgb(241, 150, 150); width: 80px; height: 25px; margin: 14px;"> reply </button>
           
         </div>
@@ -80,34 +83,35 @@
 </div>
 
 <!-- Display comments on post -->
-<div class="comment" id="{{post_object.id}}">
+<div class="comments" id="{{post_object.id}}">
+
   {% for post_comment in post.get('children_objects') %}
-    <div id="{{post_comment.id}}" class="clearfix">
+    <div class="one-comment">
+      <div id="{{post_comment.id}}" class="clearfix">
+
         <a class="avatar" href="{{ url_for('user', username=post_comment.author.username) }}">
           <div class="cropper">
               <img src="{{post_comment.author.photo}}" alt="{{post_comment.author.username}}" />
           </div>
         </a>
-        <span>
+          <span class="comment-body">
           {{post_comment.body}}
         </span>
         <br>
-        <a href="{{ url_for('user', username=post_comment.author.username) }}" class="author-name">{{post_comment.author.firstname}} {{post_comment.author.lastname}}</a>
+        <a href="{{ url_for('user', username=post_comment.author.username) }}" class="comment-author">{{post_comment.author.firstname}} {{post_comment.author.lastname}}</a>
+         
       </div>
+    </div>
   {% endfor %}
 </div>
 
 
 <script type="text/javascript">
+
     function show_comment_modal(){
         $('#comment-modal').toggle();
 
       }
-
-    function show_tag_modal(){
-        $('#tag-modal').toggle();
-      }
-
 
 
 </script>

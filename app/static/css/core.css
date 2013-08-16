@@ -117,7 +117,7 @@ a {
 .post {
   background: #e2d7d8;
   clear: both;
-  margin: 50px 10px 10px 10px;
+  margin: 50px 10px 0px 10px;
   padding-top: 1px;
   width: 300px;
 }
@@ -287,9 +287,36 @@ a.avatar .cropper {
     text-shadow: rgba(255,255,255,3.5) 0px 1px 0px;
 }
 
-.comment {
-  margin: 40px 10px 150px 0px;
+.comments {
+  margin: 0px 10px 10px 10px;
+  width: 300px;
+  background: #e2d7d8;
+  padding-bottom: 1px;
 }
+
+.one-comment {
+  margin: 0px 0px 8px 3px;
+}
+
+.one-comment .clearfix {
+  position: relative;
+}
+
+.comment-body {
+  position: absolute;
+  top: 20%;
+  left: 26%;
+  font-family: 'museo_sans_300regular';
+  font-size: 15px;
+} 
+
+.comment-author {
+  position: absolute;
+  top: 52%;
+  left: 26%;
+  font-family: 'museo_sans_700regular';
+  color: #8b8e98;
+} 
 
 div.tagsinput { border:1px solid #CCC; background: #FFF; padding:5px; width:300px; height:100px; overflow-y: auto;}
 div.tagsinput span.tag { border: 1px solid rgb(250,150,150); -moz-border-radius:2px; -webkit-border-radius:2px; display: block; float: left; padding: 5px; text-decoration:none; background: rgb(250,150,150); color: #fff; margin-right: 5px; margin-bottom:5px;font-family: helvetica;  font-size:13px;}

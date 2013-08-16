@@ -114,14 +114,13 @@ def index():
 		indented_posts = posts_to_indented_posts(posts)
 
 	for post in indented_posts:
+		children = post.get('children_objects')
+		print "children for posts: %r" % children
 		x = True
 		#get list of teams that a post.author is a member of 
 
 
 
-	num_comments = 0
-	#TODO: change to actual length of post.children
-	#num_comments = len(post_comments)
 
 
 	return render_template("index2.html", 
@@ -135,7 +134,6 @@ def index():
 		tag_ids=tag_ids_string,
 		tag_json=tag_json,
 		fullname = fullname,
-		num_comments=num_comments,
 
 		)
 
