@@ -361,6 +361,7 @@ def new_post():
 
 #SEND THANKS
 @app.route('/sendthanks', methods=['POST'])
+@login_required
 def send_thanks():
 
 	post_id=request.form["post_id"]  
@@ -372,7 +373,35 @@ def send_thanks():
 
 	return post_id
 
+#ADD NEW TAG
+@app.route('/newtag', methods=['POST'])
+@login_required
+def add_tag():	
 
+	post_id = int(request.form["post_id"])
+
+	print "post_id: %r " % post_id
+
+	tag_ids = request.form['hidden_tag_ids', ''].split('|')
+	tag_text = request.form['hidden_tag_text', ''].split('|')
+
+	print "tag_ids: %r" % tag_ids
+	print "tag_text: %r" % tag_text
+ 
+
+	print "TAG IDS: %s" % tag_ids
+	for i in range(len(tag_ids)-1): #last index will be "" because of delimiters 
+		print "in for loop"
+		if tag_ids[i][0] == 'u':
+			tag_id = int(tag_ids[i][1:]) #remove leading 'u' to convert back to int user_id
+			new_tag = Tag(user_tag_id=tag_id, body=tag_text[i], post_id=new_post.id, tag_author=user_id, timestamp = datetime.utcnow())
+			print "created new_tag"
+			#db.session.add(new_tag)
+	
+
+	# db.session.commit()
+
+	return "success"
 
 
 #ADD NEW REPLY
@@ -382,22 +411,16 @@ def add_reply():
 	print "in add_reply"
 	reply_form = NewReply()
 
-	print "body: " + reply_form.reply_body.data
-	#if reply_form.validate_on_submit():
+	#TODO: Validate data
 	body = reply_form.reply_body.data
-	print "body: " + body
 	post_id = request.form['hidden_post_id']
 	
-	new_reply = Post(body = body, parent_post_id = post_id, timestamp = datetime.utcnow(), user_id = g.user.id)
-	print str(new_reply) + " ready to be added"
+	new_reply = Post(body=body, parent_post_id=post_id, timestamp=datetime.utcnow(), user_id=g.user.id)
 	db.session.add(new_reply)
 	db.session.commit()
 
 	return redirect(url_for('index'))
-	# else:
-	# 	print "not validated"
-	# 	return redirect(url_for('index'))
-		#add redirect to include error message that no text was included
+
 
 #DELETE POSTS
 @app.route('/deletepost/<postid>', methods=['GET','POST'])

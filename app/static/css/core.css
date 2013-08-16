@@ -75,7 +75,11 @@ button {
     font-style: normal;
 }
 
-
+.clearfix:after {
+  content: "";
+  display: table;
+  clear: both;
+}
 
 /*  
 	Core stylesheet
@@ -129,26 +133,20 @@ a {
 /* circular avatars */
 a.avatar {
   float: left;
-  background: none;
-  width: 60px; 
-  height: 60px;
   margin: 0px 5px;
-  padding: 0px;
-  border: 0px;
-  border-radius: 50%;
-  /* border-radius is equal to 50 percent of a general width,
-     actually 30 pixels, here and a circle was got
-     (there is also with prefix - moz and - o) */
 }
 
 a.avatar img {
   display: block;
-  width: 100%;
+  height: 80px;
   border: 0;
   margin: 0;
-  margin-top: -10px;
+  margin-left: -30px;
+  margin-top: -4px;
 }
-
+ /* border-radius is equal to 50 percent of a general width,
+     actually 30 pixels, here and a circle was got
+     (there is also with prefix - moz and - o) */
 a.avatar .cropper {
 	border-radius: 50%; /* read above */
 	width: 60px;

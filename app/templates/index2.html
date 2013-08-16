@@ -34,7 +34,7 @@
 	    					<span class="form-control">{{ new_post_form.post_body (style="width: 284px; height: 70px;", id="new_post_body") }} </span>
 	    				</div>
 
-	    				<button class="post_button" id="no_new_post_btn" value="cancel" onclick="hide_post_modal()" style="color: white; font-weight:700; background: rgb(241, 150, 150); width: 80px; height: 25px; margin-top: 14px;">Cancel</button>
+	    				<button class="post_button" id="no_new_post_btn" value="cancel" style="color: white; font-weight:700; background: rgb(241, 150, 150); width: 80px; height: 25px; margin-top: 14px;">Cancel</button>
 
 		    			<button class="post_button" type="submit" id="new_post_button" name="new_post_btn" value="submit" style="color: white; font-weight:700; background: rgb(241, 150, 150); width: 80px; height: 25px; margin-top: 14px;"> Submit </button>
 
@@ -69,7 +69,8 @@
 		<script type="text/javascript">
 
 			function collect_tags(){
-				var all_tags = $('#new_post_form').find("span.tag"); //gives you all tags in form 
+				console.log("collecting tags");
+				var all_tags = $(this).find("span.tag"); //gives you all tags in form 
 				$.each(all_tags, function(){
 					var tag_id = $(this).attr('id');
 					$(".hidden_tag_ids").val($(".hidden_tag_ids").val() + tag_id + "|");
@@ -81,8 +82,7 @@
 
 			$(document).ready(function(){
 				$('#new_post_form').submit(collect_tags);
-				console.log("WHAT");	
-				$('#no_new_post_btn').click(hide_post_modal());
+				$('#new_tag_form').submit(collect_tags);
 			});
 
 
@@ -102,18 +102,32 @@
 
 			// });
 
+
 			 $('.thank-button').click(function(e){
 		        e.preventDefault();
 		        console.log('clicked' + this.id);
 		        var data = {
 		          post_id: this.id
 		        };
-		        $.post('/sendthanks', data, function(post_id){
+		        $.post('/sendthanks', data, function(){
 		        	//add class that changes color of heart symbol
 		        	$('.post a.thank-button').css('background', 'url(/static/img/thank-button-pressed.png) no-repeat 12px 12px;')
 
 		        })
 		      });
+
+			$('.new_tag_btn').click(function(e){
+				e.preventDefault();
+				console.log('clicked' + this.id);
+				var data = {
+					post_id: this.id,
+					hidden_tag_ids: $('.hidden_tag_ids').val(),
+					hidden_tag_text: $('.new_hidden_tag_text').val()
+				};
+				$.post('/newtag', data, function(response){
+					console.log(response);
+				})
+			});
 
 
 			function show_post_modal(){
@@ -122,12 +136,12 @@
 
 			}
 
-			function hide_post_modal(){
+			$('#no_new_post_btn').click(function(e) {
+				e.preventDefault();
+				console.log('hiding');
 				$('#post-modal').hide();
 				$('#post-column').css('margin', '0px 0px 0px 0px');
-
-			}
-
+			});
 
 			function onAddTag(tag) {
 				//add link to tag 
