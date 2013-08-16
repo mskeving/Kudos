@@ -240,6 +240,13 @@ a.avatar .cropper {
   width: 92px;
 }
 
+.thank-button-pressed {
+  background: url(img/thank-button-pressed.png) no-repeat 12px 12px;
+  padding-left: 8px;
+  width: 92px;
+  background: rgb(241, 150, 150);
+}
+
 .post a.comment-button {
   background: url(img/comment-button.png) no-repeat 0px 13px;
 }

@@ -27,7 +27,7 @@
 
     <div class="post-author">
       <a href="{{ url_for('user', username=post_object.author.username) }}" class="author-name">{{post_object.author.firstname}} {{post_object.author.lastname}}</a>,  
-      <a href="#" class="team-name">Hackbright</a> 
+      <a href="{{ url_for('team', team='Hackbright')}}" class="team-name">Hackbright</a> 
     </div>
     <div class="post-metadata">
       {% if num_comments == 1 %}
@@ -41,7 +41,7 @@
   <div class="toolbar">
     <a class="toolbar-button addtag-button" href="javascript:show_tag_modal()">Add Tag</a>
     <a class="toolbar-button comment-button" href="javascript:show_comment_modal()">Comment</a>
-    <a class="toolbar-button thank-button" href="#">Thank</a>
+    <a class="toolbar-button thank-button" href="#" name="send-thanks" id="{{post_object.id}}">Thank</a>
     <a class="toolbar-button removepost-button" href="{{ url_for('delete_post', postid=post_object.id) }}">Remove Kudos</a>
   </div>
 
@@ -99,12 +99,12 @@
     function show_comment_modal(){
         $('#comment-modal').toggle();
 
-
       }
 
     function show_tag_modal(){
         $('#tag-modal').toggle();
-
-
       }
+
+
+
 </script>

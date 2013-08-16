@@ -199,6 +199,8 @@ def team(team):
  	reply_form = NewReply()
 	new_post_form = EditPost()
 
+	print "team: %r" % team
+
 	#team_id is actually teamname, not int
 	team_members = UserTeam.query.filter(UserTeam.team_id==team).all()
 	team = Team.query.filter_by(teamname=team).first()
@@ -302,23 +304,23 @@ def edit():
 @app.route('/editpost', methods=['POST'])
 @login_required
 def new_post():
-	#TODO: commit everything (posts and tags) at end. Not individual commits
-	form = EditPost()
+	print "in edit post"
+	form = request.form
 	user_id = g.user.id
 
-	#checks if new Post
-	if form.validate_on_submit():
-		# if there's text, submit post
-		post_text = form.post_body.data
+
+	post_text = form.get('post_body')
+	if post_text:
 		
 		new_post = Post(body=post_text, timestamp=datetime.utcnow(), user_id=user_id) 
 		db.session.add(new_post)
 		db.session.commit()
-	
+		db.session.refresh(new_post)
+
 
 		#Submit tags
-		tag_ids = form.hidden_tag_ids.data.split('|')
-		tag_text = form.hidden_tag_text.data.split('|')
+		tag_ids = form.get('hidden_tag_ids', '').split('|')
+		tag_text = form.get('hidden_tag_text', '').split('|')
 
 		#print tag_text
 		print "TAG IDS: %s" % tag_ids
@@ -327,7 +329,7 @@ def new_post():
 				tag_id = int(tag_ids[i][1:]) #remove leading 'u' to convert back to int user_id
 				new_tag = Tag(user_tag_id=tag_id, body=tag_text[i], post_id=new_post.id, tag_author=user_id, timestamp = datetime.utcnow())
 				db.session.add(new_tag)
-				db.session.commit()
+				
 
 				# Get the recipient user, so that we know who to send the email to
 				kudos_recip = User.query.filter(User.id == tag_id).first()
@@ -351,23 +353,27 @@ def new_post():
 				tag_id = int(tag_ids[i][1:]) #remove leading 't' to convert back to int team_id
 				new_tag = Tag(team_tag_id=tag_id, body=tag_text[i], post_id=new_post.id, tag_author=user_id, timestamp = datetime.utcnow())
 				db.session.add(new_tag)
-				db.session.commit()
+		db.session.commit()
 		return redirect(url_for('index'))
 	else:
-		#no text for post. display error message??
 		return redirect(url_for('index'))
+
 
 #SEND THANKS
 @app.route('/sendthanks', methods=['POST'])
 def send_thanks():
 
-	post_id=request.form["send-thanks"] #button id=post_id in form 
+	post_id=request.form["post_id"]  
+	print "post_id: %r" % post_id
 
 	new_thanks = Thanks(thanks_sender=g.user.id, post_id=post_id, timestamp=datetime.utcnow())
 	db.session.add(new_thanks)
 	db.session.commit()
 
-	return redirect(url_for('index'))
+	return post_id
+
+
+
 
 #ADD NEW REPLY
 @app.route('/newreply', methods=['POST'])

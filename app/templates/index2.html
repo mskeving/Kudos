@@ -1,20 +1,14 @@
-{% extends "base.html" %}
-
-{% block content %}
-
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<link rel="stylesheet" href="/static/css/core.css" type="text/css" charset="utf-8" />
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
 	<script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/jquery-ui.min.js'></script>
 	<link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/themes/start/jquery-ui.css" />
 	<script type="text/javascript" src="/static/js/jquery.tagsinput.js"></script>
-
 
 	<title>Kudos by Dropbox</title>
 
@@ -37,12 +31,12 @@
 								<input type="text" class="tag_input" id="tag_input" name="tag_input" value placeholder="tags" style="width: 290px; align: center; border: none;"/>
 							</div>
 	    				<div class="input-group">
-	    					<span class="form-control">{{ new_post_form.post_body (style="width: 284px; height: 70px;") }} </span>
+	    					<span class="form-control">{{ new_post_form.post_body (style="width: 284px; height: 70px;", id="new_post_body") }} </span>
 	    				</div>
 
 	    				<button class="post_button" id="no_new_post_btn" value="cancel" onclick="hide_post_modal()" style="color: white; font-weight:700; background: rgb(241, 150, 150); width: 80px; height: 25px; margin-top: 14px;">Cancel</button>
 
-		    			<button class="post_button" type="submit"  name="new_post_btn" value="submit" style="color: white; font-weight:700; background: rgb(241, 150, 150); width: 80px; height: 25px; margin-top: 14px;"> Submit </button>
+		    			<button class="post_button" type="submit" id="new_post_button" name="new_post_btn" value="submit" style="color: white; font-weight:700; background: rgb(241, 150, 150); width: 80px; height: 25px; margin-top: 14px;"> Submit </button>
 
 						{{ new_post_form.hidden_tag_ids (class="hidden_tag_ids", id="hidden_tag_ids") }}
 						{{ new_post_form.hidden_tag_text (class="hidden_tag_text", id="hidden_tag_text") }}
@@ -71,10 +65,11 @@
 
 		</div>
 	</div>
+	
 		<script type="text/javascript">
 
 			function collect_tags(){
-				var all_tags = $(this).find("span.tag"); //gives you all tags in form 
+				var all_tags = $('#new_post_form').find("span.tag"); //gives you all tags in form 
 				$.each(all_tags, function(){
 					var tag_id = $(this).attr('id');
 					$(".hidden_tag_ids").val($(".hidden_tag_ids").val() + tag_id + "|");
@@ -82,14 +77,44 @@
 					$(".hidden_tag_text").val($(".hidden_tag_text").val() + tag_text + "|");
 
 				});
-
-
 			}
 
 			$(document).ready(function(){
 				$('#new_post_form').submit(collect_tags);
-				
+				console.log("WHAT");	
+				$('#no_new_post_btn').click(hide_post_modal());
 			});
+
+
+			//AJAX FOR NEW POST
+			// $('#new_post_button').click(function(e){
+			// 	e.preventDefault();
+			// 	collect_tags();
+			// 	var data = {
+			// 		post_body: $('#new_post_body').val(),
+			// 		hidden_tag_ids: $('.hidden_tag_ids').val(),
+			// 		hidden_tag_text: $('.hidden_tag_text').val()
+			// 	};
+			// 	$.post('/editpost', data, function(response){
+			// 		console.log(response);
+			// 		//recreate post.html using javascript for the new post and display it at the bottom
+			// 	})
+
+			// });
+
+			 $('.thank-button').click(function(e){
+		        e.preventDefault();
+		        console.log('clicked' + this.id);
+		        var data = {
+		          post_id: this.id
+		        };
+		        $.post('/sendthanks', data, function(post_id){
+		        	//add class that changes color of heart symbol
+		        	$('.post a.thank-button').css('background', 'url(/static/img/thank-button-pressed.png) no-repeat 12px 12px;')
+
+		        })
+		      });
+
 
 			function show_post_modal(){
 				$('#post-modal').show();
@@ -133,11 +158,9 @@
 				
 
 			});
-
 		</script>
-
 
 	</body>
 </html>
 
-{% endblock %}
+
