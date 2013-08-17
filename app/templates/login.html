@@ -1,22 +1,27 @@
 {% extends "base.html" %}
 
 {% block content %}
+<link rel="stylesheet" href="/static/css/core.css" type="text/css" charset="utf-8" />
 
-<h1>Welcome to Kudos</h1>
+<div name="login-screen" style='position:relative;'>
 
-<form action="" method="post" name="login">
-	{{login_form.hidden_tag()}} <!-- needs to be in all forms if you have CSRF enabled in config.py -->
+	<img src='/static/img/kudos-artwork-salmon.jpg' class='kudos-home-art'>
 
-	<p>
-		{% for error in login_form.errors.openid %}
-            <span style="xolor:red;">[{{error}}]</span> <!-- display errors in red for user -->
-        {% endfor %}<br>
+	<form action="" method="post" name="login">
+		{{login_form.hidden_tag()}} <!-- needs to be in all forms if you have CSRF enabled in config.py -->
 
-        <!-- Create a hidden form. At some point this should be cleaned up. -->
-        {{login_form.openid(size=80, style='display: none;', value='https://www.google.com/accounts/o8/id')}}
-        <input type="submit" value="Sign in with Google">
+		<p>
+			<!-- {% for error in login_form.errors.openid %}
+	            <span style="xolor:red;">[{{error}}]</span> 
+	        {% endfor %}<br> -->
 
-</form>
+	        <!-- Create a hidden form. At some point this should be cleaned up. -->
+	        {{login_form.openid(size=80, style='display: none;', value='https://www.google.com/accounts/o8/id')}}
+	        <input type="submit" value="Enter" style='position:absolute; height:80%'>
+
+	</form>
+
+</div>
 
 <script type="text/javascript">
 function set_openid(openid, pr)

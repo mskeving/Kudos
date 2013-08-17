@@ -17,7 +17,7 @@
 
 <!-- Submit new Kudos -->
 	<div id="post-modal" style="display: none; position: absolute; left: 0; top: 0; width: 100%; height: 100%; text-align: center;">
-		<form action='/editpost' method="POST" name="add" id="new_post_form">
+		<form action='/editpost' method="POST" name="add" class="new_post_form">
 			<!-- inclide csrf token in every form for security --> 
 			{{ new_post_form.csrf_token }} 
 			{% for error in new_post_form.errors.post_body %}
@@ -69,8 +69,7 @@
 		<script type="text/javascript">
 
 			$(document).ready(function(){
-				$('#new_post_form').submit(collect_tags);
-				$('#new_tag_form').submit(collect_tags);
+				$('.new_post_form').submit(call_collect_tags);
 
 				var tag_words = {{tag_words|safe}}; //safe: tell flask that this input is okay
 				var tag_json = {{tag_json|safe}}; 
@@ -84,15 +83,21 @@
 				});
 			});
 
-			function collect_tags(){
+			function call_collect_tags(){
+				collect_tags(this)
+			}
+
+			function collect_tags(form){
 				console.log("collecting tags");
-				var all_tags = $(this).find("span.tag"); //gives you all tags in form 
+
+				var all_tags = form.find("span.tag"); //gives you all tags in form 
 				$.each(all_tags, function(){
 					var tag_id = $(this).attr('id');
 					$(".hidden_tag_ids").val($(".hidden_tag_ids").val() + tag_id + "|");
 					var tag_text = $(this).children("span").text();
 					$(".hidden_tag_text").val($(".hidden_tag_text").val() + tag_text + "|");
 				});
+				console.log($(".hidden_tag_ids").val());
 			}
 			function onAddTag(tag) {
 				console.log("added tag: " + tag);
@@ -106,8 +111,80 @@
 				console.log("Changed a tag: " + tag);
 			}
 
-		
 
+
+			 $('.thank-button').click(function(e){
+		        e.preventDefault();
+		        console.log('clicked' + this.id);
+		        var data = {
+		          post_id: this.id
+		        };
+		        $.post('/sendthanks', data, function(){
+		        	//add class that changes color of heart symbol
+		        	$('.post a.thank-button').css('background', 'url(/static/img/thank-button-pressed.png) no-repeat 12px 12px;')
+		        	//create avatar on post 
+
+		        })
+		      });
+
+			$('.submit-new-tag-btn').click(function(e) {
+				e.preventDefault();
+				console.log('clicked to add tags for: ' + this.id);
+				var form = $(this).parent()
+				collect_tags(form);
+				var tag_ids = $('.hidden_tag_ids').val();
+				var tag_text = $('.hidden_tag_text').val();
+
+				if (tag_ids != ""){
+					var data = {
+					post_id: this.id,
+					tag_ids: tag_ids,
+					tag_text: tag_text
+					};
+
+					$.post('/newtag', data, function(response){
+						$('.tag-modal').toggle();
+						console.log(response);
+					})
+				}
+				else{
+					$(this).add("<span> No new tags </span>");
+					e.preventDefault();
+					console.log('no new tags');
+				}
+
+				
+			});
+
+		  	$('.addtag-button').click(function(e){
+		  		e.preventDefault();
+		  		$(this).parent().parent().children(".tag-modal").toggle();
+
+			});
+
+			$('.comment-button').click(function(e){
+				e.preventDefault
+				$(this).parent().parent().children(".comment-modal").toggle();
+			});
+
+			$('#no_new_tag_btn').click(function(e){
+				e.preventDefault();
+				$('.tag-modal').toggle();
+			})
+
+
+			$('#no_new_post_btn').click(function(e) {
+				e.preventDefault();
+				console.log('hiding');
+				$('#post-modal').hide();
+				$('#post-column').css('margin', '0px');
+			});
+
+			function show_post_modal(){
+				$('#post-modal').show();
+				$('#post-column').css('margin', '175px 0px 0px 0px');
+
+			}
 
 			//AJAX FOR NEW POST
 			// $('#new_post_button').click(function(e){
@@ -124,55 +201,6 @@
 			// 	})
 
 			// });
-
-
-			 $('.thank-button').click(function(e){
-		        e.preventDefault();
-		        console.log('clicked' + this.id);
-		        var data = {
-		          post_id: this.id
-		        };
-		        $.post('/sendthanks', data, function(){
-		        	//add class that changes color of heart symbol
-		        	$('.post a.thank-button').css('background', 'url(/static/img/thank-button-pressed.png) no-repeat 12px 12px;')
-
-		        })
-		      });
-
-			$('.new_tag_btn').click(function(e){
-				e.preventDefault();
-				console.log('clicked' + this.id);
-				var data = {
-					post_id: this.id,
-					hidden_tag_ids: $('.hidden_tag_ids').val(),
-					hidden_tag_text: $('.new_hidden_tag_text').val()
-				};
-				$.post('/newtag', data, function(response){
-					console.log(response);
-				})
-			});
-
-		  	$('.toolbar-button addtag-button').click(function(e){
-		  		console.log('here');
-		  		e.preventDefault;
-      			$('.tag-modal').toggle();
-
-			});
-
-  	
-			function show_post_modal(){
-				$('#post-modal').show();
-				$('#post-column').css('margin', '175px 0px 0px 0px');
-
-			}
-
-			$('#no_new_post_btn').click(function(e) {
-				e.preventDefault();
-				console.log('hiding');
-				$('#post-modal').hide();
-				$('#post-column').css('margin', '0px');
-			});
-
 			
 		</script>
 

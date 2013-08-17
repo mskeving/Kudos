@@ -40,37 +40,37 @@
   </div>
 
   <div class="toolbar">
-    <a class="toolbar-button addtag-button" href="#">Add Tag</a>
-    <a class="toolbar-button comment-button" href="javascript:show_comment_modal()">Comment</a>
+    <a class="toolbar-button addtag-button" id="addtag-button" href="#">Add Tag</a>
+    <a class="toolbar-button comment-button" id="addcomment-button" href="javascript:show_comment_modal()">Comment</a>
     <a class="toolbar-button thank-button" href="#" name="send-thanks" id="{{post_object.id}}">Thank</a>
     <a class="toolbar-button removepost-button" href="{{ url_for('delete_post', postid=post_object.id) }}">Remove Kudos</a>
   </div>
 
 <!-- new tag -->
   <div class="tag-modal" id="{{post_object.id}}" style="display: none;">
-    <form action="/newtag" method="POST" class="new-tag" id="new_tag_form">  
+    <form action="/newtag" method="POST" class="new-tag-form" id="{{post_object.id}}">  
       <div class="tags" id="tagsinput_tagsinput" name="tags_div" style="width: 290px;">
         <input type="text" class="tag_input" id="tag_input" name="tag_input" value placeholder="tags" style="width: 290px; align: center; border: none;"/>
       </div>
       <button class="post_button" id="no_new_tag_btn" value="cancel" style="color: white; font-weight:700; background: rgb(241, 150, 150); width: 80px; height: 25px; margin-top: 14px;">Cancel</button>
 
-      <button class="new_tag_btn" onclick="show_tag_modal()" name="new_tag_btn" id="{{post_object.id}}" value="submit" style="color: white; font-weight:700; background: rgb(241, 150, 150); width: 80px; height: 25px; margin-top: 14px;"> Submit </button>
+      <button type="submit" class="submit-new-tag-btn" name="submit-new_tag_btn" id="{{post_object.id}}" value="submit" style="color: white; font-weight:700; background: rgb(241, 150, 150); width: 80px; height: 25px; margin-top: 14px;"> Submit </button>
       {{ reply_form.hidden_post_id(value=post_object.id) }}
-      {{ new_post_form.hidden_tag_ids (class="hidden_tag_ids", id="new_hidden_tag_ids") }}
-      {{ new_post_form.hidden_tag_text (class="hidden_tag_text", id="new_hidden_tag_text") }}
+      {{ new_post_form.hidden_tag_ids (class="hidden_tag_ids") }}
+      {{ new_post_form.hidden_tag_text (class="hidden_tag_text") }}
     </form>
   </div>
 
 
 <!-- new comment -->
-  <div class="new_comment" id="comment-modal" style="display: none;">
+  <div class="comment-modal" id="{{post_object.id}}" style="display: none;">
     <form action="/newreply" method="POST">
       {{new_post_form.csrf_token}}
       <div style="width: 200px">
         <div name="comment_body" id="comment_body">
           {{reply_form.reply_body (style="width: 284px; height: 70px; margin: 10px;")}}
 
-          <button class="post_button" id="no_new_comment_btn" value="cancel" onclick="hide_post_modal()" style="color: white; font-weight:700; background: rgb(241, 150, 150); width: 80px; height: 25px; margin-top: 14px;">Cancel</button>
+          <button class="post_button" id="no_new_comment_btn" value="cancel" style="color: white; font-weight:700; background: rgb(241, 150, 150); width: 80px; height: 25px; margin-top: 14px;">Cancel</button>
 
           <button type="submit" class="post-button" name="new_reply_btn" value="submit" style="color: white; font-weight:700; background: rgb(241, 150, 150); width: 80px; height: 25px; margin: 14px;"> reply </button>
           
@@ -108,10 +108,7 @@
 
 <script type="text/javascript">
 
-    function show_comment_modal(){
-        $('#comment-modal').toggle();
 
-      }
 
 
 </script>

@@ -312,11 +312,28 @@ a.avatar .cropper {
 
 .comment-author {
   position: absolute;
-  top: 52%;
+  top: 55%;
   left: 26%;
   font-family: 'museo_sans_700regular';
   color: #8b8e98;
 } 
+.comment-author:hover {
+  text-decoration: underline;
+}
+
+.tag-modal {
+  padding-left: 4px;
+}
+
+.tag-modal .tags {
+  width: 293px;
+}
+
+
+.kudos-home-art {
+  height: 100%;
+  width: 100%;
+}
 
 div.tagsinput { border:1px solid #CCC; background: #FFF; padding:5px; width:300px; height:100px; overflow-y: auto;}
 div.tagsinput span.tag { border: 1px solid rgb(250,150,150); -moz-border-radius:2px; -webkit-border-radius:2px; display: block; float: left; padding: 5px; text-decoration:none; background: rgb(250,150,150); color: #fff; margin-right: 5px; margin-bottom:5px;font-family: helvetica;  font-size:13px;}
