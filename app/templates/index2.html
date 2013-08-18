@@ -155,10 +155,20 @@
 					//turn tag_info into usable array
 					tag_array = jQuery.parseJSON(tag_info);
 
-					for(var i = 0; i<tag_array.tags.length; i++){
-						var username = tag_array.tags[i].username;
-						var photo = tag_array.tags[i].photo;
+					//DISPLAY USER AVATARS
+					for(var i = 0; i<tag_array.user_tags.length; i++){
+						var username = tag_array.user_tags[i].username;
+						var photo = tag_array.user_tags[i].photo;
 						var new_avatar = $('<a class="avatar" href="{{ url_for("user", username=' + username + ') }}"><div class="cropper"><img src=' + photo +' alt=' + username + '>');
+						console.log("this" + this)
+						form.parent().parent().children(".taggees").children(".avatars").append(new_avatar);
+
+					}
+					//DISPLAY TEAM AVATARS
+					for(var i = 0; i<tag_array.team_tags.length; i++){
+						var teamname = tag_array.team_tags[i].teamname;
+						var photo = tag_array.team_tags[i].photo;
+						var new_avatar = $('<a class="avatar" href="{{ url_for("team", team=' + teamname + ') }}"><div class="cropper"><img src=' + photo +' alt=' + teamname + '>');
 						console.log("this" + this)
 						form.parent().parent().children(".taggees").children(".avatars").append(new_avatar);
 

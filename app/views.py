@@ -388,10 +388,12 @@ def add_tag():
 
 
 	new_tag_list={}
-	tag_info = []
+	user_tag_info = []
+	team_tag_info = []
 
 	for i in range(len(tag_ids)-1): #last index will be "" because of delimiters 
 		print "in for loop"
+		#USER TAGS
 		if tag_ids[i][0] == 'u':
 			tag_id = int(tag_ids[i][1:]) #remove leading 'u' to convert back to int user_id
 			new_tag = Tag(user_tag_id=tag_id, body=tag_text[i], post_id=post_id, tag_author=user_id, timestamp = datetime.utcnow())
@@ -400,12 +402,26 @@ def add_tag():
 			user = {}
 			user['photo'] = tagged_user.photo
 			user['username'] = tagged_user.username
-			tag_info.append(user)
-			db.session.add(new_tag)		
+			user_tag_info.append(user)
+			db.session.add(new_tag)
+		#TEAM TAGS
+		if tag_ids[i][0] == 't':
+			tag_id = int(tag_ids[i][1:]) #remove leading 'u' to convert back to int user_id
+			new_tag = Tag(team_tag_id=tag_id, body=tag_text[i], post_id=post_id, tag_author=user_id, timestamp = datetime.utcnow())
+
+			tagged_team = Team.query.filter_by(id=tag_id).first()
+			team = {}
+			team['photo'] = tagged_team.photo
+			team['teamname'] = tagged_team.teamname
+			team_tag_info.append(team)
+			db.session.add(new_tag)	
+
+	new_tag_list['user_tags'] = user_tag_info	
+	new_tag_list['team_tags'] = team_tag_info
+
+
+
 	db.session.commit()
-	new_tag_list['tags'] = tag_info	
-
-
 	tag_info_json = json.dumps(new_tag_list)
 	print "tag_info_json"
 	print tag_info_json
