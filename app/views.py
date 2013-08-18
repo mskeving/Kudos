@@ -31,6 +31,8 @@ def posts_to_indented_posts(posts):
 	indented_posts = []
 
 	for p in posts:
+		print "timestamp: "
+		print p.timestamp
 
 		d = {}
 		d['post_object'] = p
@@ -108,7 +110,8 @@ def index():
 
 
 	#query for all parent posts
-	posts = Post.query.filter(Post.parent_post_id==None).all()
+	posts = Post.query.filter(Post.parent_post_id==None).order_by(Post.timestamp.desc())
+
 
 	if posts != None:
 		indented_posts = posts_to_indented_posts(posts)
@@ -116,7 +119,6 @@ def index():
 	for post in indented_posts:
 		children = post.get('children_objects')
 		print "children for posts: %r" % children
-		x = True
 		#get list of teams that a post.author is a member of 
 
 
@@ -306,11 +308,13 @@ def new_post():
 	form = request.form
 	user_id = g.user.id
 
+	print "datetime.utcnow(): "
+	time = str(datetime.utcnow())
 
 	post_text = form.get('post_body')
 	if post_text:
 		
-		new_post = Post(body=post_text, timestamp=datetime.utcnow(), user_id=user_id) 
+		new_post = Post(body=post_text, timestamp=time, user_id=user_id) 
 		db.session.add(new_post)
 		db.session.commit()
 		db.session.refresh(new_post)

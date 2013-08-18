@@ -34,7 +34,7 @@
 	    					<span class="form-control">{{ new_post_form.post_body (style="width: 284px; height: 70px;", id="new_post_body") }} </span>
 	    				</div>
 
-	    				<button class="post_button" id="no_new_post_btn" value="cancel" style="color: white; font-weight:700; background: rgb(241, 150, 150); width: 80px; height: 25px; margin-top: 14px;">Cancel</button>
+	    				<button class="post_button" type="button" id="no_new_post_btn" value="cancel" style="color: white; font-weight:700; background: rgb(241, 150, 150); width: 80px; height: 25px; margin-top: 14px;">Cancel</button>
 
 		    			<button class="post_button" type="submit" id="new_post_button" name="new_post_btn" value="submit" style="color: white; font-weight:700; background: rgb(241, 150, 150); width: 80px; height: 25px; margin-top: 14px;"> Submit </button>
 
@@ -191,15 +191,17 @@
 
 		});
 
+	 	$('.no_new_tag_btn').click(function(e){
+			e.preventDefault();
+			$(this).parent().toggle();
+		})
+
 		$('.comment-button').click(function(e){
 			e.preventDefault
 			$(this).parent().parent().children(".comment-modal").toggle();
 		});
 
-		$('#no_new_tag_btn').click(function(e){
-			e.preventDefault();
-			$('.tag-modal').toggle();
-		})
+		
 
 
 		$('#no_new_post_btn').click(function(e) {
