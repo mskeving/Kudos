@@ -56,8 +56,8 @@
 
       <button type="submit" class="submit-new-tag-btn" name="submit-new_tag_btn" id="{{post_object.id}}" value="submit" style="color: white; font-weight:700; background: rgb(241, 150, 150); width: 80px; height: 25px; margin-top: 14px;"> Submit </button>
       {{ reply_form.hidden_post_id(value=post_object.id) }}
-      {{ new_post_form.hidden_tag_ids (class="hidden_tag_ids") }}
-      {{ new_post_form.hidden_tag_text (class="hidden_tag_text") }}
+      {{ new_post_form.hidden_tag_ids (class="hidden_tag_ids", id=post_object.id) }}
+      {{ new_post_form.hidden_tag_text (class="hidden_tag_text", id=post_object.id) }}
     </form>
   </div>
 

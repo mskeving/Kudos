@@ -379,29 +379,39 @@ def add_tag():
 	user_id = g.user.id
 	post_id = request.form["post_id"]
 
-	print "post_id: %r " % post_id
-
 	tag_ids = request.form['tag_ids'].split('|')
-	print "tag_ids: %r" % tag_ids
 	tag_text = request.form['tag_text'].split('|')
 
 	print "tag_ids: %r" % tag_ids
 	print "tag_text: %r" % tag_text
  
 
-	print "TAG IDS: %s" % tag_ids
+
+	new_tag_list={}
+	tag_info = []
+
 	for i in range(len(tag_ids)-1): #last index will be "" because of delimiters 
 		print "in for loop"
 		if tag_ids[i][0] == 'u':
 			tag_id = int(tag_ids[i][1:]) #remove leading 'u' to convert back to int user_id
 			new_tag = Tag(user_tag_id=tag_id, body=tag_text[i], post_id=post_id, tag_author=user_id, timestamp = datetime.utcnow())
-			print "created new_tag"
-			db.session.add(new_tag)
-	
 
+			tagged_user = User.query.filter_by(id=tag_id).first()
+			user = {}
+			user['photo'] = tagged_user.photo
+			user['username'] = tagged_user.username
+			tag_info.append(user)
+			db.session.add(new_tag)		
 	db.session.commit()
+	new_tag_list['tags'] = tag_info	
 
-	return "success"
+
+	tag_info_json = json.dumps(new_tag_list)
+	print "tag_info_json"
+	print tag_info_json
+
+	return tag_info_json
+
 
 
 #ADD NEW REPLY
