@@ -308,13 +308,13 @@ def new_post():
 	form = request.form
 	user_id = g.user.id
 
-	print "datetime.utcnow(): "
-	time = str(datetime.utcnow())
+	print "datetime.today(): "
+	print datetime.today()
 
 	post_text = form.get('post_body')
 	if post_text:
 		
-		new_post = Post(body=post_text, timestamp=time, user_id=user_id) 
+		new_post = Post(body=post_text, timestamp=datetime.utcnow(), user_id=user_id) 
 		db.session.add(new_post)
 		db.session.commit()
 		db.session.refresh(new_post)

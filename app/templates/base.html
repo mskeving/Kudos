@@ -1,6 +1,7 @@
 <html>
 	<head>
-
+	<link rel="stylesheet" href="/static/css/core.css" type="text/css" charset="utf-8" />
+	<link rel="stylesheet" href="/static/css/bootstrap32.css" type="text/css" charset="utf-8" />
 
 		{% if title %}
 		<title>Kudos - {{title}}</title>
@@ -12,7 +13,7 @@
 
 		<div class="navbar" name="navigation">
 			<ul class="nav navbar-nav">
-				<li class="active"><a href="{{ url_for('index') }}">Home</a></li>
+				<li class="active"><a href="{{ url_for('index') }}">Kudos</a></li>
 				{% if g.user.is_authenticated() %}
 				<!-- If user is logged in, allow them to logout -->
 				<li><a href="{{ url_for('user', username = g.user.username) }}">Your Profile</a></li>

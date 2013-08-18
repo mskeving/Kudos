@@ -2,40 +2,75 @@
 
 {% block content %}
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
-<head>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<link rel="stylesheet" href="/static/css/core.css" type="text/css" charset="utf-8" />
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js" type="text/javascript" charset="utf-8"></script>
-	<script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/jquery-ui.min.js'></script>
-	<link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/themes/start/jquery-ui.css" />
-	<script type="text/javascript" src="/static/js/jquery.tagsinput.js"></script>
+
+
+
+<div class="post" id="user_info">
+  <div class="taggees">
+    <div class="avatars">
+      <!-- will always display user tags before team tags -->
+      	<a class="avatar" href="#">
+	      	<div class="cropper">
+	        	<img src="{{user.photo}}" alt="{{user.username}}" />
+		 	</div>
+	 	</a>
+      
+    </div>
+  </div>
+
+  <div class="white-card">
+  	<h2>{{user.firstname}} {{user.lastname}}</h2>
+  	<ul>
+		<li>
+			{% for team in list_of_teams %}
+				<a href="{{ url_for('team', team=team) }}">{{team}} </a>
+			{% endfor %}
+		</li>
+		<li>{{user.email}}</li>
+		<li>{{user.phone}}</li>
+	</ul>
+
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
 
  
 <!-- User Information -->
-<table>
-	<tr valign="top">
-		<td><img src={{ user.photo }} height='220' width='220'></td>
+<div class="user-info" style="position: relative">
+	<table style="position: absolute; width: 50%">
+		<!-- <tr>
+			<td><img src={{ user.photo }}></td>
+		</tr> -->
+		<tr>
+			<td>
+				<h2>{{user.firstname}} {{user.lastname}}</h2>
+				{% if user.about_me %}
+					<p>{{user.about_me}}</p>
+				{% endif %}
+				<ul>
+					<li>Team: 
+						{% for team in list_of_teams %}
+							<a href="{{ url_for('team', team=team) }}">{{team}} </a>
+						{% endfor %}
+					</li>
+					<li>{{user.email}}</li>
+					<li>{{user.phone}}</li>
+				</ul>
+			</td>
+		</tr>
+	</table>
 
-
-		<td>
-			<h2>{{user.firstname}} {{user.lastname}}</h2>
-			{% if user.about_me %}<p>{{user.about_me}}</p>{% endif %}
-			<ul>
-				<li>Team: 
-					{% for team in list_of_teams %}
-						<a href="{{ url_for('team', team=team) }}">{{team}} </a>
-					{% endfor %}
-				</li>
-				<li>{{user.email}}</li>
-				<li>{{user.phone}}</li>
-			</ul>
-		</td>
-	</tr>
-</table>
-
+</div>
 
 <hr>
 

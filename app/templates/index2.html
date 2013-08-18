@@ -1,62 +1,64 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<html>
+{% extends "base.html" %}
+
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<link rel="stylesheet" href="/static/css/core.css" type="text/css" charset="utf-8" />
+
 
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
 	<script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/jquery-ui.min.js'></script>
 	<link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/themes/start/jquery-ui.css" />
 	<script type="text/javascript" src="/static/js/jquery.tagsinput.js"></script>
 
-	<title>Kudos by Dropbox</title>
+	<title>Kudos</title>
 
 </head>
 <body>
+	{% block content %}
 
-<!-- Submit new Kudos -->
-	<div id="post-modal" style="display: none; position: absolute; left: 0; top: 0; width: 100%; height: 100%; text-align: center;">
-		<form action='/editpost' method="POST" name="add" class="new_post_form">
-			<!-- inclide csrf token in every form for security --> 
-			{{ new_post_form.csrf_token }} 
-			{% for error in new_post_form.errors.post_body %}
-				<span style="color:red;">[{{error}}]</span> 
-			{% endfor %}<br />
+	<div id="main-column" style="position: relative">
 
-			<div class="row">
-				<div class="col-lg-6">
-					<div class ="submit-kudos" style="padding: 20px; width: 290px; height: 158px; margin: auto; background: #e2d7d8; padding: 10px;">
-	    				<div class="tags" id="tagsinput_tagsinput" name="tags_div" style="width: 290px;">
-								<input type="text" class="tag_input" id="tag_input" name="tag_input" value placeholder="tags" style="width: 290px; align: center; border: none;"/>
-							</div>
-	    				<div class="input-group">
-	    					<span class="form-control">{{ new_post_form.post_body (style="width: 284px; height: 70px;", id="new_post_body") }} </span>
-	    				</div>
-
-	    				<button class="post_button" type="button" id="no_new_post_btn" value="cancel" style="color: white; font-weight:700; background: rgb(241, 150, 150); width: 80px; height: 25px; margin-top: 14px;">Cancel</button>
-
-		    			<button class="post_button" type="submit" id="new_post_button" name="new_post_btn" value="submit" style="color: white; font-weight:700; background: rgb(241, 150, 150); width: 80px; height: 25px; margin-top: 14px;"> Submit </button>
-
-						{{ new_post_form.hidden_tag_ids (class="hidden_tag_ids", id="hidden_tag_ids") }}
-						{{ new_post_form.hidden_tag_text (class="hidden_tag_text", id="hidden_tag_text") }}
-
+		<div class="new_post" style="position: relative">
+			<a href="#" id="new-post-modal-btn">
+				<div id="new-kudos-button">
+					<div class="depth" title="Give Kudos">
+						Give Kudos
 					</div>
 				</div>
+			</a>
+
+			<!-- Submit new Kudos -->
+			<div id="post-modal" style="display: none; position: absolute; left: 0; width: 100%; height: 100%; text-align: center;">
+				<form action='/editpost' method="POST" name="add" class="new_post_form">
+					<!-- inclide csrf token in every form for security --> 
+					{{ new_post_form.csrf_token }} 
+					{% for error in new_post_form.errors.post_body %}
+						<span style="color:red;">[{{error}}]</span> 
+					{% endfor %}<br />
+
+					<div class="row">
+						<div class="col-lg-6">
+							<div class ="submit-kudos" style="padding: 20px; width: 290px; height: 158px; margin: auto; background: #e2d7d8; padding: 10px;">
+			    				<div class="tags" id="tagsinput_tagsinput" name="tags_div" style="width: 290px;">
+										<input type="text" class="tag_input" id="tag_input" name="tag_input" value placeholder="tags" style="width: 290px; align: center; border: none;"/>
+									</div>
+			    				<div class="input-group">
+			    					<span class="form-control">{{ new_post_form.post_body (style="width: 284px; height: 70px;", id="new_post_body") }} </span>
+			    				</div>
+
+			    				<button class="post_button" type="button" id="no_new_post_btn" value="cancel" style="color: white; font-weight:700; background: rgb(241, 150, 150); width: 80px; height: 25px; margin-top: 14px;">Cancel</button>
+
+				    			<button class="post_button" type="submit" id="new_post_button" name="new_post_btn" value="submit" style="color: white; font-weight:700; background: rgb(241, 150, 150); width: 80px; height: 25px; margin-top: 14px;"> Submit </button>
+
+								{{ new_post_form.hidden_tag_ids (class="hidden_tag_ids", id="hidden_tag_ids") }}
+								{{ new_post_form.hidden_tag_text (class="hidden_tag_text", id="hidden_tag_text") }}
+
+							</div>
+						</div>
+					</div>
+				</form>
 			</div>
-		</form>
-	</div>
+		</div>
 
-
-	<div id="main-column">
-
-		<a href="#" onclick="show_post_modal()">
-			<div id="new-kudos-button">
-				<div class="depth" title="Give Kudos">
-					Give Kudos
-				</div>
-			</div>
-		</a>
 		<div id="post-column">
 <!-- Display posts -->
 			{% for post in posts %}
@@ -206,16 +208,20 @@
 
 		$('#no_new_post_btn').click(function(e) {
 			e.preventDefault();
-			console.log('hiding');
 			$('#post-modal').hide();
 			$('#post-column').css('margin', '0px');
 		});
 
-		function show_post_modal(){
-			$('#post-modal').show();
-			$('#post-column').css('margin', '175px 0px 0px 0px');
-
-		}
+		$('#new-post-modal-btn').click(function(e) {
+			$('#post-modal').toggle();
+			if($('#post-modal').css('display')=='none'){
+				$('#post-column').css('margin', '0px');
+			}
+			else{
+				console.log("display not none");
+				$('#post-column').css('margin', '240px 0px 0px 0px');
+			};
+		});
 
 		//AJAX FOR NEW POST
 		// $('#new_post_button').click(function(e){
@@ -234,8 +240,9 @@
 		// });
 		
 	</script>
-
+	{% endblock %}
 	</body>
+
 </html>
 
 
