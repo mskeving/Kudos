@@ -320,9 +320,10 @@ def new_post():
 		tag_ids = form.get('hidden_tag_ids', '').split('|')
 		tag_text = form.get('hidden_tag_text', '').split('|')
 
-		#print tag_text
+
 		print "TAG IDS: %s" % tag_ids
 		for i in range(len(tag_ids)-1): #last index will be "" because of delimiters 
+			#USER TAG
 			if tag_ids[i][0] == 'u':
 				tag_id = int(tag_ids[i][1:]) #remove leading 'u' to convert back to int user_id
 				new_tag = Tag(user_tag_id=tag_id, body=tag_text[i], post_id=new_post.id, tag_author=user_id, timestamp = datetime.utcnow())
@@ -346,7 +347,7 @@ def new_post():
 					message = post_text,
 					sender_name = "%s %s" % (g.user.firstname, g.user.lastname)
 					)
-
+			#TEAM TAGS
 			elif tag_ids[i][0] == 't':
 				tag_id = int(tag_ids[i][1:]) #remove leading 't' to convert back to int team_id
 				new_tag = Tag(team_tag_id=tag_id, body=tag_text[i], post_id=new_post.id, tag_author=user_id, timestamp = datetime.utcnow())

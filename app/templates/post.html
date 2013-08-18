@@ -6,12 +6,22 @@
 <div class="post" id="{{post_object.id}}">
   <div class="taggees">
     <div class="avatars">
+      <!-- will always display user tags before team tags -->
     {% if post.get('tagged_users') %}
       {% for user_tag in post.get('tagged_users') %}
         <a class="avatar" href="{{ url_for('user', username=user_tag.username) }}">
       	<div class="cropper">
             <img src="{{user_tag.photo}}" alt="{{user_tag.username}}" />
     	  </div>
+        </a>
+      {% endfor %}
+    {% endif %}
+    {% if post.get('tagged_teams') %}
+      {% for team_tag in post.get('tagged_teams') %}
+        <a class="avatar" href="{{ url_for('team', team=team_tag.teamname) }}">
+        <div class="cropper">
+            <img src="{{team_tag.photo}}" alt="{{team_tag.teamname}}" />
+        </div>
         </a>
       {% endfor %}
     {% endif %}
