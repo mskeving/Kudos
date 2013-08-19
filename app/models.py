@@ -89,7 +89,7 @@ class Post(db.Model):
 	id = db.Column(db.Integer, primary_key = True)
 	body = db.Column(db.String(140))
 	parent_post_id = db.Column(db.Integer, db.ForeignKey('posts.id')) #denotes that it's a reply
-	timestamp = db.Column(db.Date)
+	time = db.Column(db.DateTime)
 	user_id = db.Column(db.Integer, db.ForeignKey('users.id')) #users is tablename
 	tags = db.relationship('Tag', backref='post')
 	thanks = db.relationship('Thanks', backref='post')
@@ -108,7 +108,7 @@ class Thanks(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	thanks_sender = db.Column(db.Integer, db.ForeignKey('users.id'))
 	post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
-	timestamp = db.Column(db.Date)
+	time = db.Column(db.DateTime)
 
 
 class Tag(db.Model):
@@ -120,7 +120,7 @@ class Tag(db.Model):
 	body = db.Column(db.String(200)) #just for readability in DB store string of tag
 	post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
 	tag_author = db.Column(db.Integer, db.ForeignKey('users.id')) 
-	timestamp = db.Column(db.Date)
+	time = db.Column(db.DateTime)
 
 
 

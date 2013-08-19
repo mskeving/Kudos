@@ -31,8 +31,7 @@ def posts_to_indented_posts(posts):
 	indented_posts = []
 
 	for p in posts:
-		print "timestamp: "
-		print p.timestamp
+
 
 		d = {}
 		d['post_object'] = p
@@ -110,7 +109,7 @@ def index():
 
 
 	#query for all parent posts
-	posts = Post.query.filter(Post.parent_post_id==None).order_by(Post.timestamp.desc())
+	posts = Post.query.filter(Post.parent_post_id==None).order_by(Post.time.desc())
 
 
 	if posts != None:
@@ -308,13 +307,11 @@ def new_post():
 	form = request.form
 	user_id = g.user.id
 
-	print "datetime.today(): "
-	print datetime.today()
 
 	post_text = form.get('post_body')
 	if post_text:
 		
-		new_post = Post(body=post_text, timestamp=datetime.utcnow(), user_id=user_id) 
+		new_post = Post(body=post_text, time=datetime.utcnow(), user_id=user_id) 
 		db.session.add(new_post)
 		db.session.commit()
 		db.session.refresh(new_post)
@@ -330,7 +327,7 @@ def new_post():
 			#USER TAG
 			if tag_ids[i][0] == 'u':
 				tag_id = int(tag_ids[i][1:]) #remove leading 'u' to convert back to int user_id
-				new_tag = Tag(user_tag_id=tag_id, body=tag_text[i], post_id=new_post.id, tag_author=user_id, timestamp = datetime.utcnow())
+				new_tag = Tag(user_tag_id=tag_id, body=tag_text[i], post_id=new_post.id, tag_author=user_id, time=datetime.utcnow())
 				db.session.add(new_tag)
 				
 
@@ -348,13 +345,13 @@ def new_post():
 					url_for('permalink_for_post_with_id', post_id=new_post.id, _external=True),
 					'mskeving@gmail.com',
 					g.user.email,
-					message = post_text,
-					sender_name = "%s %s" % (g.user.firstname, g.user.lastname)
+					message=post_text,
+					sender_name="%s %s" % (g.user.firstname, g.user.lastname)
 					)
 			#TEAM TAGS
 			elif tag_ids[i][0] == 't':
 				tag_id = int(tag_ids[i][1:]) #remove leading 't' to convert back to int team_id
-				new_tag = Tag(team_tag_id=tag_id, body=tag_text[i], post_id=new_post.id, tag_author=user_id, timestamp = datetime.utcnow())
+				new_tag = Tag(team_tag_id=tag_id, body=tag_text[i], post_id=new_post.id, tag_author=user_id, time=datetime.utcnow())
 				db.session.add(new_tag)
 		db.session.commit()
 		return redirect(url_for('index'))
@@ -370,7 +367,7 @@ def send_thanks():
 	post_id=request.form["post_id"]  
 	print "post_id: %r" % post_id
 
-	new_thanks = Thanks(thanks_sender=g.user.id, post_id=post_id, timestamp=datetime.utcnow())
+	new_thanks = Thanks(thanks_sender=g.user.id, post_id=post_id, time=datetime.utcnow())
 	db.session.add(new_thanks)
 	db.session.commit()
 
@@ -401,7 +398,7 @@ def add_tag():
 		#USER TAGS
 		if tag_ids[i][0] == 'u':
 			tag_id = int(tag_ids[i][1:]) #remove leading 'u' to convert back to int user_id
-			new_tag = Tag(user_tag_id=tag_id, body=tag_text[i], post_id=post_id, tag_author=user_id, timestamp = datetime.utcnow())
+			new_tag = Tag(user_tag_id=tag_id, body=tag_text[i], post_id=post_id, tag_author=user_id, time=datetime.utcnow())
 
 			tagged_user = User.query.filter_by(id=tag_id).first()
 			user = {}
@@ -412,7 +409,7 @@ def add_tag():
 		#TEAM TAGS
 		if tag_ids[i][0] == 't':
 			tag_id = int(tag_ids[i][1:]) #remove leading 'u' to convert back to int user_id
-			new_tag = Tag(team_tag_id=tag_id, body=tag_text[i], post_id=post_id, tag_author=user_id, timestamp = datetime.utcnow())
+			new_tag = Tag(team_tag_id=tag_id, body=tag_text[i], post_id=post_id, tag_author=user_id, time=datetime.utcnow())
 
 			tagged_team = Team.query.filter_by(id=tag_id).first()
 			team = {}
@@ -446,7 +443,7 @@ def add_reply():
 	body = reply_form.reply_body.data
 	post_id = request.form['hidden_post_id']
 	
-	new_reply = Post(body=body, parent_post_id=post_id, timestamp=datetime.utcnow(), user_id=g.user.id)
+	new_reply = Post(body=body, parent_post_id=post_id, time=datetime.utcnow(), user_id=g.user.id)
 	db.session.add(new_reply)
 	db.session.commit()
 
@@ -589,7 +586,7 @@ class HPost:
 			d['post_id'] = post.dbo.id
 			d['firstname'] = post.dbo.author.firstname
 			d['photo'] = post.dbo.author.photo
-			d['timestamp'] = post.dbo.timestamp
+			d['timestamp'] = post.dbo.time
 
 			posts_list.append(d)
 			d = {}
