@@ -546,7 +546,7 @@ canvas,
   border-bottom-color: #ffffff;
 }
 
-@media screen and (min-width: 768px) {
+@media screen and (min-width: 400px) {
   .navbar-brand {
     float: left;
     margin-right: 5px;

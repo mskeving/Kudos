@@ -2,8 +2,6 @@
 {% extends "base.html" %}
 
 <head>
-
-
 	
 	<title>Kudos</title>
 
@@ -33,12 +31,12 @@
 
 					<div class="row">
 						<div class="col-lg-6">
-							<div class ="submit-kudos" style="padding: 20px; width: 290px; height: 158px; margin: auto; background: #e2d7d8; padding: 10px;">
-			    				<div class="tags" id="tagsinput_tagsinput" name="tags_div" style="width: 290px;">
-										<input type="text" class="tag_input" id="tag_input" name="tag_input" value placeholder="tags" style="width: 290px; align: center; border: none;"/>
+							<div class ="submit-kudos" style="padding: 20px; width: 280px; height: 158px; margin: 0 10px; background: #e2d7d8; padding: 10px;">
+			    				<div class="tags" id="tagsinput_tagsinput" name="tags_div" style="width: 280px;">
+										<input type="text" class="tag_input" id="tag_input" name="tag_input" value placeholder="tags" style="width: 280px; align: center; border: none;"/>
 									</div>
 			    				<div class="input-group">
-			    					<span class="form-control">{{ new_post_form.post_body (style="width: 288px; height: 70px;", id="new_post_body") }} </span>
+			    					<span class="form-control">{{ new_post_form.post_body (style="width: 279px; height: 70px;", id="new_post_body") }} </span>
 			    				</div>
 
 			    				<button class="post_button" type="button" id="no_new_post_btn" value="cancel" style="color: white; font-weight:700; background: rgb(241, 150, 150); width: 80px; height: 25px; margin-top: 14px;">Cancel</button>
@@ -201,7 +199,7 @@
 		})
 
 		$('.comment-button').click(function(e){
-			e.preventDefault
+			e.preventDefault();
 			$(this).parent().parent().children(".comment-modal").toggle();
 		});
 

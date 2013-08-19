@@ -115,11 +115,6 @@ def index():
 	if posts != None:
 		indented_posts = posts_to_indented_posts(posts)
 
-	for post in indented_posts:
-		children = post.get('children_objects')
-		print "children for posts: %r" % children
-		#get list of teams that a post.author is a member of 
-
 
 
 
@@ -335,19 +330,19 @@ def new_post():
 				kudos_recip = User.query.filter(User.id == tag_id).first()
 
 				#switch kudos_recip.email for mskeving@gmail.com 
-				assert kudos_recip, "Missing kudos recipient"
+				#assert kudos_recip, "Missing kudos recipient"
 				# TODO - Right now, we send an email with:
 				# - A button that links to www.gooogle.com - this should be the permalink of the kudos in future
 				# - To rk@dropbox.com - we should change this to the kudos recipient
 				print "HEREEEEE\n\n\sdnf\adsnf\asdnf\ansdf\ndasf"
 				print g.user.email
-				email_sender.send_email(
-					url_for('permalink_for_post_with_id', post_id=new_post.id, _external=True),
-					'mskeving@gmail.com',
-					g.user.email,
-					message=post_text,
-					sender_name="%s %s" % (g.user.firstname, g.user.lastname)
-					)
+				# email_sender.send_email(
+				# 	url_for('permalink_for_post_with_id', post_id=new_post.id, _external=True),
+				# 	'mskeving@gmail.com',
+				# 	g.user.email,
+				# 	message=post_text,
+				# 	sender_name="%s %s" % (g.user.firstname, g.user.lastname)
+				# 	)
 			#TEAM TAGS
 			elif tag_ids[i][0] == 't':
 				tag_id = int(tag_ids[i][1:]) #remove leading 't' to convert back to int team_id
