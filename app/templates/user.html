@@ -5,17 +5,17 @@
 
 
 
-<div class="post" id="user_info">
-  <div class="taggees">
-    <div class="avatars">
-      <!-- will always display user tags before team tags -->
-      	<a class="avatar" href="#">
+<div class="user-info" id="user_info">
+
+	<div class="user-page-avatars">
+	  <!-- will always display user tags before team tags -->
+	  	<a class="user-page-avatar" href="#">
 	      	<div class="cropper">
 	        	<img src="{{user.photo}}" alt="{{user.username}}" />
 		 	</div>
 	 	</a>
-      
-    </div>
+	  
+
   </div>
 
   <div class="white-card">
@@ -28,6 +28,26 @@
 		</li>
 		<li>{{user.email}}</li>
 		<li>{{user.phone}}</li>
+		<li>
+			{% if user.linkedin %}
+				<a href={{user.linkedin}}>LinkedIn</a>
+			{% endif %}
+		</li>
+		<li>
+			{% if user.facebook %}
+				<a href={{user.facebook}}>Facebook</a>
+			{% endif %}
+		</li>
+		<li>
+			{% if user.twitter %}
+				<a href=http://www.twitter.com/{{user.twitter}}>Twitter</a>
+			{% endif %}
+		</li>
+		<li>
+			{% if user.github %}
+				<a href={{user.github}}>Github</a>
+			{% endif %}
+		</li>
 	</ul>
 
   </div>
@@ -35,42 +55,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
- 
-<!-- User Information -->
-<div class="user-info" style="position: relative">
-	<table style="position: absolute; width: 50%">
-		<!-- <tr>
-			<td><img src={{ user.photo }}></td>
-		</tr> -->
-		<tr>
-			<td>
-				<h2>{{user.firstname}} {{user.lastname}}</h2>
-				{% if user.about_me %}
-					<p>{{user.about_me}}</p>
-				{% endif %}
-				<ul>
-					<li>Team: 
-						{% for team in list_of_teams %}
-							<a href="{{ url_for('team', team=team) }}">{{team}} </a>
-						{% endfor %}
-					</li>
-					<li>{{user.email}}</li>
-					<li>{{user.phone}}</li>
-				</ul>
-			</td>
-		</tr>
-	</table>
-
-</div>
 
 <hr>
 
