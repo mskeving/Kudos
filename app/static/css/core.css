@@ -14,7 +14,7 @@ caption, tbody, tfoot, thead, tr, th, td, nav
                   font-size: 100%;vertical-align: baseline;
                   background: transparent;}
 body              {line-height: 1;}
-ol, ul            {list-style: none;}
+ol, ul            {list-style: none; padding: 5px;}
 blockquote, q     {quotes: none;}
 blockquote:before, blockquote:after,
 q:before, q:after {content: '';	content: none;}
@@ -257,7 +257,7 @@ a.avatar .cropper {
   /*background: url(img/addtag-button.png) no-repeat 6px 12px;*/
 }
 
-#new-kudos-button {
+.new-kudos-button {
 	width: 80%;
 	background: rgb(241, 150, 150);
 	height: 16px;
@@ -335,6 +335,12 @@ a.avatar .cropper {
   width: 100%;
 }
 
+.team-title{
+  font-size: 30;
+  font-family: 'museo_sans_700regular';
+  margin-top: 50px;
+}
+
 .user-info {
   background: #e2d7d8;
   margin: 50px auto;
@@ -352,6 +358,7 @@ a.avatar .cropper {
 
 .user-info .white-card a {
   color: #a6b1bb;
+
 }
 
 .user-info .white-card a:hover {
@@ -375,6 +382,19 @@ a.user-page-avatar .cropper {
   width: 270px;
   overflow: hidden;
 }
+
+.user-info .white-card ul {
+  font-family: 'museo_sans_300regular';
+  font-size: 14px;
+
+}
+
+.user-info .white-card h2 {
+  font-family: 'museo_sans_300regular';
+  font-size: 26px;
+}
+
+
 
 div.tagsinput { border-bottom:1px solid #CCC; background: #FFF; padding:5px; width:300px; height:100px; overflow-y: auto;}
 div.tagsinput span.tag { border: 1px solid rgb(250,150,150); -moz-border-radius:2px; -webkit-border-radius:2px; display: block; float: left; padding: 5px; text-decoration:none; background: rgb(250,150,150); color: #fff; margin-right: 5px; margin-bottom:5px;font-family: helvetica;  font-size:13px;}

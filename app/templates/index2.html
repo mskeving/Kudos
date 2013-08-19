@@ -13,7 +13,7 @@
 
 		<div class="new_post" style="position: relative">
 			<a href="#" id="new-post-modal-btn">
-				<div id="new-kudos-button">
+				<div class="new-kudos-button">
 					<div class="depth" title="Give Kudos">
 						Give Kudos
 					</div>
@@ -122,12 +122,13 @@
 		 $('.thank-button').click(function(e){
 	        e.preventDefault();
 	        console.log('clicked' + this.id);
+	        var button = $(this);
 	        var data = {
 	          post_id: this.id
 	        };
 	        $.post('/sendthanks', data, function(){
-	        	//add class that changes color of heart symbol
-	        	$('.post a.thank-button').css('background', 'url(/static/img/thank-button-pressed.png) no-repeat 12px 12px;')
+	        	console.log("this: " + this);
+	        	button.css('background', 'url(/static/css/img/thank-button-pressed22.png) no-repeat 12px 12px');
 	        	//create avatar on post 
 
 	        })
