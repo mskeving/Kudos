@@ -2,45 +2,58 @@
 
 {% block content %}
 
-	<table class="table">
-		<tr width="25px">
-			<td></td>
-			<td><u>Name</u></td>
-			<td><u>Email</u></td>
-			<td><u>Team</u></td>
-		</tr>
-
-		{% for user in all_users %}
-
-			<tr>
-				<td>
-					{% if user.photo %}
-						<img class="allusers_pic" src="{{user.photo}}">
-					{% else %}
-						<img class="allusers_pic" src="http://www.how-to-draw-funny-cartoons.com/image-files/how-to-make-an-outline-2.gif">
-					{% endif %}
-				</td>
-				{% if user.firstname %}
-					<td><a href="{{ url_for('user', username=user.username) }}">{{user.firstname}} {{user.lastname}} </a></td>
-				{% else %}
-					<td>{{user.nickname}}</td>
-				{% endif %}
-				<td>{{user.email}} </td>
-				
-				{% if user_teams.get(user.id) %}
-					{% for team in user_teams.get(user.id) %}
-						<td><a href="{{ url_for('team', team=team) }}">{{team}}</a></td>
-					{% endfor %}
-
-				{% else %}
-					<td> no team </td>
-				{% endif %}
-			</tr>
 	
 
-		{% endfor %}
+{% for user in all_users %}
 
-	</table>
+<div class="user-info" id="user_info">
+	<div class="user-page-avatars">
+	  	<a class="user-page-avatar" href="#">
+	      	<div class="cropper">
+	        	<img src="{{user.photo}}" alt="{{user.username}}" />
+		 	</div>
+	 	</a>
+	 </div>
+
+	<div class="white-card">
+		<h2>{{user.firstname}} {{user.lastname}}</h2>
+		<ul>
+		<li>
+			{% for team in list_of_teams %}
+				<a href="{{ url_for('team', team=team) }}">{{team}} </a>
+			{% endfor %}
+		</li>
+		<li>{{user.email}}</li>
+		<li>{{user.phone}}</li>
+		<li>
+			{% if user.linkedin %}
+				<a href={{user.linkedin}}>LinkedIn</a>
+			{% endif %}
+		</li>
+		<li>
+			{% if user.facebook %}
+				<a href={{user.facebook}}>Facebook</a>
+			{% endif %}
+		</li>
+		<li>
+			{% if user.twitter %}
+				<a href=http://www.twitter.com/{{user.twitter}}>Twitter</a>
+			{% endif %}
+		</li>
+		<li>
+			{% if user.github %}
+				<a href={{user.github}}>Github</a>
+			{% endif %}
+		</li>
+	</ul>
+
+	</div>
+</div>
+	
+
+{% endfor %}
+
+
 
 
 {% endblock %}
