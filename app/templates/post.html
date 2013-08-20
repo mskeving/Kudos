@@ -57,14 +57,14 @@
   </div>
 
 <!-- new tag -->
-  <div class="tag-modal" id="{{post_object.id}}" style="display: none;">
+  <div class="tag-modal clearfix" id="{{post_object.id}}" style="display: none;">
     <form action="/newtag" method="POST" class="new-tag-form" id="{{post_object.id}}">  
       <div class="tags" id="tagsinput_tagsinput" name="tags_div" style="width: 290px;">
         <input type="text" class="tag_input" id="tag_input" name="tag_input" value placeholder="tags" style="width: 290px; align: center; border: none;"/>
       </div>
      <!--  <button class="no_new_tag_btn" id="{{post_object.id}}" value="cancel" style="color: white; font-weight:700; background: rgb(241, 150, 150); width: 80px; height: 25px; margin-top: 14px;">Cancel</button>
  -->
-      <button type="submit" class="submit-new-tag-btn" name="submit-new_tag_btn" id="{{post_object.id}}" value="submit" style="color: white; font-weight:700; background: rgb(241, 150, 150); width: 80px; height: 25px; margin-top: 14px; float: right;"> Submit </button>
+      <button type="submit" class="submit-new-tag-btn" name="submit-new_tag_btn" id="{{post_object.id}}" value="submit" style="color: white; font-weight:700; background: rgb(241, 150, 150); width: 80px; height: 25px; margin: 8px; float: right;"> Submit </button>
       {{ reply_form.hidden_post_id(value=post_object.id) }}
       {{ new_post_form.hidden_tag_ids (class="hidden_tag_ids", id=post_object.id) }}
       {{ new_post_form.hidden_tag_text (class="hidden_tag_text", id=post_object.id) }}

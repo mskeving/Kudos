@@ -14,7 +14,7 @@ caption, tbody, tfoot, thead, tr, th, td, nav
                   font-size: 100%;vertical-align: baseline;
                   background: transparent;}
 body              {line-height: 1;}
-ol, ul            {list-style: none; padding: 5px;}
+ol, ul            {list-style: none;}
 blockquote, q     {quotes: none;}
 blockquote:before, blockquote:after,
 q:before, q:after {content: '';	content: none;}
@@ -109,7 +109,7 @@ a {
 #main-column {
   background: #f8eeef;
   margin: 0 auto;
-  padding: 30px 0px 100px 0px;
+  padding: 30px 0px 30px 0px;
   text-align: left;
   width: 320px;
 }
@@ -304,7 +304,7 @@ a.avatar .cropper {
 
 .comment-body {
   position: absolute;
-  top: 20%;
+  top: 35%;
   left: 26%;
   font-family: 'museo_sans_300regular';
   font-size: 15px;
@@ -386,12 +386,16 @@ a.user-page-avatar .cropper {
 .user-info .white-card ul {
   font-family: 'museo_sans_300regular';
   font-size: 14px;
+}
 
+.user-info .white-card ul li {
+  padding-bottom: 2px;
 }
 
 .user-info .white-card h2 {
   font-family: 'museo_sans_300regular';
   font-size: 26px;
+  padding-bottom: 18px;
 }
 
 
