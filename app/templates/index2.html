@@ -26,7 +26,7 @@
 					<!-- inclide csrf token in every form for security --> 
 					{{ new_post_form.csrf_token }} 
 					{% for error in new_post_form.errors.post_body %}
-						<span style="color:red;">[{{error}}]</span> 
+						<!-- <span style="color:red;">[{{error}}]</span>  -->
 					{% endfor %}<br />
 
 					<div class="row">
@@ -160,7 +160,9 @@
 
 					//DISPLAY USER AVATARS
 					for(var i = 0; i<tag_array.user_tags.length; i++){
-						var username = tag_array.user_tags[i].username;
+						var username = $.trim(tag_array.user_tags[i].username);
+						console.log("tag_array.user_tags: " + tag_array.user_tags);
+						console.log("username: " + username)
 						var photo = tag_array.user_tags[i].photo;
 						var new_avatar = $('<a class="avatar" href="{{ url_for("user", username=' + username + ') }}"><div class="cropper"><img src=' + photo +' alt=' + username + '>');
 						console.log("this" + this)

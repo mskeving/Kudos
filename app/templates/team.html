@@ -14,7 +14,7 @@
 
 		<div class="user-info" id="user_info">
 			<div class="user-page-avatars">
-			  	<a class="user-page-avatar" href="#">
+			  	<a class="user-page-avatar" href="{{ url_for('user', username=user.username) }}">
 			      	<div class="cropper">
 			        	<img src="{{user.photo}}" alt="{{user.username}}" />
 				 	</div>

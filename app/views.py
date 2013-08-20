@@ -317,7 +317,7 @@ def new_post():
 		tag_text = form.get('hidden_tag_text', '').split('|')
 
 
-		print "TAG IDS: %s" % tag_ids
+		#print "TAG IDS: %s" % tag_ids
 		for i in range(len(tag_ids)-1): #last index will be "" because of delimiters 
 			#USER TAG
 			if tag_ids[i][0] == 'u':
@@ -329,13 +329,14 @@ def new_post():
 				# Get the recipient user, so that we know who to send the email to
 				kudos_recip = User.query.filter(User.id == tag_id).first()
 
-				#switch kudos_recip.email for mskeving@gmail.com 
+				#SENDING EMAIL NOTIFICATIONS
+
 				#assert kudos_recip, "Missing kudos recipient"
 				# TODO - Right now, we send an email with:
 				# - A button that links to www.gooogle.com - this should be the permalink of the kudos in future
 				# - To rk@dropbox.com - we should change this to the kudos recipient
-				print "HEREEEEE\n\n\sdnf\adsnf\asdnf\ansdf\ndasf"
-				print g.user.email
+				#print "HEREEEEE\n\n\sdnf\adsnf\asdnf\ansdf\ndasf"
+				#print g.user.email
 				# email_sender.send_email(
 				# 	url_for('permalink_for_post_with_id', post_id=new_post.id, _external=True),
 				# 	'mskeving@gmail.com',
