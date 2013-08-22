@@ -19,3 +19,6 @@ Databases (models.py)
 The SQLite database includes 6 tables to store information for users, teams, and data related to created posts. SQLAlchemy is used as the ORM to map the tables their respective classes in models.py. 
 
 
+Front End
+=====
+The front is done using jQuery, Flask WTForms, HTML, custom CSS (core.css) with a touch of Bootstrap (navbar.css). The HTML files are stored in the templates folder. 
