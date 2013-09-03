@@ -14,7 +14,6 @@ db = app.db
 HACKBRIGHT_DATA_JSON_URL = "app/static/hackbright_users.txt"
 
 def create_user(first_name, last_name, nickname, email, list_of_teams, mobile, photo, bio, username,twitter,facebook,github,linkedin):
-    # You'd remove the rest of this method and add the user to your database here
 
     #When readding data - check to see if user already exists based on email. If yes, update columns, if no, insert new_user
 
@@ -38,6 +37,7 @@ def create_user(first_name, last_name, nickname, email, list_of_teams, mobile, p
     db.session.add(new_user) 
     db.session.commit()
     #need to commit first to get new_user.id
+    
     user_id = new_user.id
 
     for team in list_of_teams:

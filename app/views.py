@@ -327,16 +327,16 @@ def new_post():
 				
 
 				# Get the recipient user, so that we know who to send the email to
-				kudos_recip = User.query.filter(User.id == tag_id).first()
+				# kudos_recip = User.query.filter(User.id == tag_id).first()
 
-				#SENDING EMAIL NOTIFICATIONS
+				# #SENDING EMAIL NOTIFICATIONS
 
-				#assert kudos_recip, "Missing kudos recipient"
-				# TODO - Right now, we send an email with:
-				# - A button that links to www.gooogle.com - this should be the permalink of the kudos in future
-				# - To rk@dropbox.com - we should change this to the kudos recipient
-				#print "HEREEEEE\n\n\sdnf\adsnf\asdnf\ansdf\ndasf"
-				#print g.user.email
+				# assert kudos_recip, "Missing kudos recipient"
+				# # TODO - Right now, we send an email with:
+				# # - A button that links to www.gooogle.com - this should be the permalink of the kudos in future
+				# # - To rk@dropbox.com - we should change this to the kudos recipient
+				# #print "HEREEEEE\n\n\sdnf\adsnf\asdnf\ansdf\ndasf"
+				# #print g.user.email
 				# email_sender.send_email(
 				# 	url_for('permalink_for_post_with_id', post_id=new_post.id, _external=True),
 				# 	'mskeving@gmail.com',
