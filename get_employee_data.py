@@ -104,17 +104,7 @@ def main():
             username,
         )
 
-    create_user(
-        "Melissa", 
-        "Skevington",
-        "Missy",
-        "mskeving@gmail.com",
-        ["kudos"],
-        "5182655596",
-        "http://about/media/badges/abhishek.thumb.jpg",
-        "hi", 
-        "mskeving",
-        )
+
     create_teams(all_teams)
 
     print "Done."
