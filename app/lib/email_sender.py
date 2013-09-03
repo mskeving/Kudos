@@ -9,6 +9,7 @@ from email.mime.text import MIMEText
 SMTP_SERVER = 'smtp.gmail.com'
 SMTP_PORT = 587
 
+#add email and password here
 subject = 'Someone sent you kudos!'
 
 
