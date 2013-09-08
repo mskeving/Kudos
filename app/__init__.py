@@ -1,6 +1,6 @@
 
-import newrelic.agent
-newrelic.agent.initialize('newrelic.ini')
+#import newrelic.agent
+#newrelic.agent.initialize('newrelic.ini')
 
 from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy 
