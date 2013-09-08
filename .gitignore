@@ -7,6 +7,12 @@ app.db
 css help.rtf
 user_data.rtf
 dropbox to hackbright.rtf
+install_instructions.rtf
+
+newrelic.ini
+requirements.txt
+
+/env
 /app/static/hackbright_users.txt
 /app/static/avatars_db
 /app/static/avatars_hb
