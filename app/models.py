@@ -7,7 +7,7 @@ class Team(db.Model):
 	__tablename__ = "teams"
 
 	id = db.Column(db.Integer, primary_key = True)
-	teamname = db.Column(db.String(120), db.ForeignKey('users.id'), index = True)
+	teamname = db.Column(db.String(120), index = True)
 	photo = db.Column(db.String(120))
 	tagged_in = db.relationship('Tag', backref='team_tag')
 	teams = db.relationship('UserTeam', backref = 'team')
