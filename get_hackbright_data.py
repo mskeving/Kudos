@@ -13,7 +13,7 @@ db = app.db
 
 HACKBRIGHT_DATA_JSON_URL = "app/static/hackbright_users.txt"
 
-def create_user(first_name, last_name, nickname, email, list_of_teams, mobile, photo, bio, username,twitter,facebook,github,linkedin):
+def create_user(first_name, last_name, nickname, email, list_of_team_ids, mobile, photo, bio, username,twitter,facebook,github,linkedin):
 
     #When readding data - check to see if user already exists based on email. If yes, update columns, if no, insert new_user
 
@@ -40,21 +40,21 @@ def create_user(first_name, last_name, nickname, email, list_of_teams, mobile, p
     
     user_id = new_user.id
 
-    for team in list_of_teams:
+    for team_id in list_of_team_ids:
         new_users_teams=UserTeam(
             user_id=user_id,
-            team_id=team,
+            team_id=team_id,
             )
         db.session.add(new_users_teams)
         db.session.commit()
 
 
-def create_teams(all_teams):
-    teams = all_teams.keys()
-    for team in teams:
-        new_team=Team(teamname=team)
-        db.session.add(new_team)
-        db.session.commit()
+def create_team(teamname):
+
+    new_team=Team(teamname=teamname)
+    db.session.add(new_team)
+    db.session.commit()
+    return new_team.id
 
 def main():
     raw_data = open(HACKBRIGHT_DATA_JSON_URL).read()
@@ -68,6 +68,7 @@ def main():
     print "Creating users with emails:",
 
     all_teams = {}
+    team_id = 1
     for user in users:
 
         user_first_name = user['first_name']
@@ -83,18 +84,23 @@ def main():
         user_facebook = user['facebook']
         user_github = user['github']
         user_linkedin = user['linkedin']
+        user_list_of_team_ids = []
 
 
         for team in user_list_of_teams:
             if team not in all_teams:
-                all_teams[team] = 1
+
+            #add users_teams mapping for that user and team will be in dictionary
+                all_teams[team] = create_team(team)
+            user_list_of_team_ids.append(all_teams[team])
+
 
         create_user(
             user_first_name,
             user_last_name,
             user_nickname,
             user_email,
-            user_list_of_teams,
+            user_list_of_team_ids,
             user_mobile_phone, 
             user_photo,
             user_bio,
@@ -106,7 +112,7 @@ def main():
         )
 
     
-    create_teams(all_teams)
+    #create_teams(all_teams)
 
     print "Done."
 

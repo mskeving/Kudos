@@ -38,7 +38,7 @@ class User(db.Model):
 	username = db.Column(db.String(68))
 	facebook = db.Column(db.String(140))
 	twitter = db.Column(db.String(140))
-	github = db.Column(db.String(40))
+	github = db.Column(db.String(255))
 	linkedin = db.Column(db.String(140))
 
 	posts = db.relationship('Post', backref = 'author', lazy = 'dynamic')
