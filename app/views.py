@@ -116,10 +116,7 @@ def index():
 		indented_posts = posts_to_indented_posts(posts)
 
 
-
-
-
-	return render_template("index2.html", 
+	return render_template("index.html", 
 		title='Home', 
 		user=user,
 		posts=indented_posts,
