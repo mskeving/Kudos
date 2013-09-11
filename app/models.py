@@ -6,11 +6,11 @@ ROLE_ADMIN = 1
 class Team(db.Model):
 	__tablename__ = "teams"
 
-	id = db.Column(db.Integer, primary_key = True)
-	teamname = db.Column(db.String(120), index = True)
+	id = db.Column(db.Integer, primary_key=True)
+	teamname = db.Column(db.String(120), index=True)
 	photo = db.Column(db.String(120))
 	tagged_in = db.relationship('Tag', backref='team_tag')
-	teams = db.relationship('UserTeam', backref = 'team')
+	teams = db.relationship('UserTeam', backref='team')
 	# ex) query results from UserTeam: 
 	# for team in userteams:
 	# 	team.team.teamname
@@ -18,7 +18,7 @@ class Team(db.Model):
 class UserTeam(db.Model):
 	__tablename__ = "users_teams"
 
-	id = db.Column(db.Integer, primary_key = True)
+	id = db.Column(db.Integer, primary_key=True)
 	user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 	team_id = db.Column(db.Integer, db.ForeignKey('teams.id'))
 
@@ -29,14 +29,14 @@ class UserTeam(db.Model):
 class User(db.Model):
 	__tablename__ = "users"
 
-	id = db.Column(db.Integer, primary_key = True)
+	id = db.Column(db.Integer, primary_key=True)
 	photo = db.Column(db.String(120))
-	firstname = db.Column(db.String(64), index = True)
-	lastname = db.Column(db.String(64), index = True)
+	firstname = db.Column(db.String(64), index=True)
+	lastname = db.Column(db.String(64), index=True)
 	#change nickname unique=false
-	nickname = db.Column(db.String(64), index = True)
-	email = db.Column(db.String(120), index = True, unique = True)
-	phone = db.Column(db.String(25), index = True)
+	nickname = db.Column(db.String(64), index=True)
+	email = db.Column(db.String(120), index=True, unique=True)
+	phone = db.Column(db.String(25), index=True)
 	about_me = db.Column(db.String(140))
 	username = db.Column(db.String(68))
 	facebook = db.Column(db.String(140))
@@ -44,8 +44,8 @@ class User(db.Model):
 	github = db.Column(db.String(255))
 	linkedin = db.Column(db.String(140))
 
-	posts = db.relationship('Post', backref = 'author', lazy = 'dynamic')
-	users = db.relationship('UserTeam', backref = 'user', primaryjoin="User.id==UserTeam.user_id")
+	posts = db.relationship('Post', backref='author', lazy='dynamic')
+	users = db.relationship('UserTeam', backref='user', primaryjoin="User.id==UserTeam.user_id")
 	tagged_in = db.relationship('Tag', backref='user_tag', primaryjoin="User.id==Tag.user_tag_id", lazy="dynamic'")
 
 	#backref is adding author to Post class
@@ -54,12 +54,12 @@ class User(db.Model):
 
 	@staticmethod
 	def make_unique_nickname(nickname):
-		if User.query.filter_by(nickname = nickname).first() == None:
+		if User.query.filter_by(nickname=nickname).first() == None:
 			return nickname
 			version = 2
 			while True:
 				new_nickname = nickname + str(version)
-				if User.query.filter_by(nickname = new_nickname).first() == None:
+				if User.query.filter_by(nickname=new_nickname).first() == None:
 					break
 				version += 1
 			return new_nickname
@@ -89,7 +89,7 @@ class User(db.Model):
 class Post(db.Model):
 	__tablename__ = "posts"
 
-	id = db.Column(db.Integer, primary_key = True)
+	id = db.Column(db.Integer, primary_key=True)
 	body = db.Column(db.String(140))
 	parent_post_id = db.Column(db.Integer, db.ForeignKey('posts.id')) #denotes that it's a reply
 	time = db.Column(db.DateTime)

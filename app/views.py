@@ -190,12 +190,9 @@ def team(team):
  	reply_form = NewReply()
 	new_post_form = EditPost()
 
-	print "team: %r" % team
-
-	#team_id is actually teamname, not int
-	team_members = UserTeam.query.filter(UserTeam.team_id==team).all()
-	team = Team.query.filter_by(teamname=team).first()
-	tags = Tag.query.filter(and_(Tag.team_tag_id==team.id, Post.parent_post_id==None)).all() 
+	this_team = Team.query.filter(Team.teamname==team).first()
+	team_members = UserTeam.query.filter(UserTeam.team_id==this_team.id).all()
+	tags = Tag.query.filter(and_(Tag.team_tag_id==this_team.id, Post.parent_post_id==None)).all() 
 
 	tagged_posts = []
 	for tag in tags:
@@ -205,17 +202,29 @@ def team(team):
 	if len(tagged_posts) != 0:
 		indented_posts = posts_to_indented_posts(tagged_posts)
 
-
+	dict_of_users_teams = {}
 	list_of_users = []
+	#get list of teams each member is a part of
 	for member in team_members:
-		list_of_users.append(member.user) #send all user info over
+		list_of_users.append(member.user)
+		list_of_teams = []
+		teams = UserTeam.query.filter(UserTeam.user_id==member.user.id).all()
+		for team in teams:
+			#using DB relationship to get teamname
+			list_of_teams.append(team.team.teamname) 
+		print "list_of_teams: %r" % list_of_teams
+		#keep all user info 
+		dict_of_users_teams[member.user] = list_of_teams 
+
+	print "dict_of_users_teams %r" % dict_of_users_teams
 
 	return render_template('team.html',
 		new_post_form=new_post_form,
 		reply_form=reply_form,
-		team=team.teamname,
+		team=this_team.teamname,
 		team_members=list_of_users,
 		posts=indented_posts,
+		dict_of_users_teams=dict_of_users_teams,
 		)
 
 
@@ -225,9 +234,7 @@ def team(team):
 def user(username):
 	reply_form = NewReply()
 	new_post_form = EditPost()
-	print "username: %r" % username
 	user = User.query.filter_by(username=username).first()
-	print "user %r " % user
 	#user = g.user
 	tagged_posts = []
 	tags = Tag.query.filter(and_(Tag.user_tag_id==user.id, Post.parent_post_id==None)).all() 
