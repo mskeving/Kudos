@@ -225,8 +225,9 @@ def team(team):
 def user(username):
 	reply_form = NewReply()
 	new_post_form = EditPost()
-
+	print "username: %r" % username
 	user = User.query.filter_by(username=username).first()
+	print "user %r " % user
 	#user = g.user
 	tagged_posts = []
 	tags = Tag.query.filter(and_(Tag.user_tag_id==user.id, Post.parent_post_id==None)).all() 
@@ -240,30 +241,30 @@ def user(username):
 	if len(tagged_posts) != 0:
 		indented_posts = posts_to_indented_posts(tagged_posts)
 
-	dict_of_users_teams={}
+	dict_of_users_teams = {}
 
 	#TODO: also display tagged posts for the user's teams
-	list_of_teams = []
+	list_of_team_names = []
 	teams = db.session.query(UserTeam).filter_by(user_id=user.id).all()
 	for team in teams:
-		list_of_teams.append(team.team_id)
-	dict_of_users_teams[user.id]=list_of_teams
+		list_of_team_names.append(team.team.teamname)
+	dict_of_users_teams[user.id]=list_of_team_names
 
 	print "user's list of teams: "
-	print list_of_teams
+	print list_of_team_names
 
 
 	if user == None:
 		flash('User ' + username + ' not found.')
 		return redirect(url_for('index'))
 
-
+	print "user before rendering template: %r " % user
 	return render_template('user.html', 
 		new_post_form=new_post_form,
 		reply_form=reply_form,
 		user=user, 
 		posts=indented_posts,
-		list_of_teams=list_of_teams,
+		list_of_team_names=list_of_team_names,
 		)
 
 #EDIT PROFILE

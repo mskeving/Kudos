@@ -11,6 +11,9 @@ class Team(db.Model):
 	photo = db.Column(db.String(120))
 	tagged_in = db.relationship('Tag', backref='team_tag')
 	teams = db.relationship('UserTeam', backref = 'team')
+	# ex) query results from UserTeam: 
+	# for team in userteams:
+	# 	team.team.teamname
 
 class UserTeam(db.Model):
 	__tablename__ = "users_teams"

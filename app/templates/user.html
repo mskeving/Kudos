@@ -22,7 +22,7 @@
   	<h2>{{user.firstname}} {{user.lastname}}</h2>
   	<ul>
 		<li>
-			{% for team in list_of_teams %}
+			{% for team in list_of_team_names %}
 				<a href="{{ url_for('team', team=team) }}">{{team}} </a>
 			{% endfor %}
 		</li>
