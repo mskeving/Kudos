@@ -53,7 +53,10 @@
     <a class="toolbar-button addtag-button" id="addtag-button" href="#">Add Tag</a>
     <a class="toolbar-button comment-button" id="addcomment-button" href="#">Comment</a>
     <a class="toolbar-button thank-button" href="#" name="send-thanks" id="{{post_object.id}}">Thank</a>
-    <a class="toolbar-button removepost-button" href="{{ url_for('delete_post', postid=post_object.id) }}">Remove Kudos</a>
+    
+    {% if g.user.username == post_object.author.username %}
+      <a class="toolbar-button removepost-button" href="{{ url_for('delete_post', postid=post_object.id) }}">Remove Kudos</a>
+    {% endif %}
   </div>
 
 <!-- new tag -->

@@ -20,10 +20,6 @@ def before_request():
 		db.session.commit()
 		
 
-@app.route('/nothing', methods = ['GET', 'POST'])
-def nothing():
-	print "in nothing"
-	return "True"
 
 def posts_to_indented_posts(posts):
 	# Turns a list of posts from a database query into a list of dictionaries
@@ -63,6 +59,7 @@ def posts_to_indented_posts(posts):
 @app.route('/index')
 @login_required #this page is only seen by logged in users
 def index():
+
 
 	user = g.user
 	new_post_form = EditPost() 
@@ -134,7 +131,10 @@ def index():
 @app.route('/login', methods = ['GET', 'POST'])
 @oid.loginhandler #tells Flask-OpenID that this is our login view function
 def login():
-	#return str(request.args['openid_complete'])
+
+	email_input = request.args.get("email_login")
+	print "email_input: %r" % email_input
+
 	if g.user is not None and g.user.is_authenticated():
 		#if there's a logged in user already, will not do a second login on top
 		return redirect(url_for('index'))
