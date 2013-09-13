@@ -3,7 +3,11 @@
 {% block content %}
 
 
-
+{% if g.user.username == user.username %}
+	{{g.user.firstname}}
+{% else %}
+	Not this user
+{% endif %}
 
 <div class="user-info clearfix" id="user_info">
 
@@ -45,7 +49,7 @@
 		</li>
 		<li>
 			{% if user.github %}
-				<a href={{user.github}}>Github</a>
+				<a href=http://www.github.com/{{user.github}}>Github</a>
 			{% endif %}
 		</li>
 	</ul>

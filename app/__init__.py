@@ -10,6 +10,8 @@ from flask.ext.openid import OpenID
 from config import basedir, ADMINS, MAIL_SERVER, MAIL_PORT, MAIL_USERNAME, MAIL_PASSWORD
 app = Flask(__name__)
 app.config.from_object('config') #use config.py for web apps
+app.jinja_env.add_extension('jinja2.ext.do')
+
 db = SQLAlchemy(app)
 lm = LoginManager()
 lm.init_app(app)
