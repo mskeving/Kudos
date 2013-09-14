@@ -7,28 +7,41 @@
   <div class="taggees">
     <div class="avatars">
       <!-- will always display user tags before team tags -->
-    {% set g_user_in_post = [] %}
+    {% set g_user_tagged_in_post = [] %}
     {% if post.get('tagged_users') %}
-      {% for user_tag in post.get('tagged_users') %}
+      {% for tag in post.get('tagged_users') %}
         <!-- check if current_user is tagged in post -->
-        {% if user_tag.username == g.user.username %}
-          {% do g_user_in_post.append(1) %}
-          {{g_user_in_post}}
+        {% if tag.user_tag.username == g.user.username %}
+          {% do g_user_tagged_in_post.append(1) %}
         {% endif %}
-        <a class="avatar" href="{{ url_for('user', username=user_tag.username) }}">
-      	<div class="cropper">
-            <img src="{{user_tag.photo}}" alt="{{user_tag.username}}" />
-    	  </div>
-        </a>
+        <div class="avatar-container">
+          <a class="avatar" href="{{ url_for('user', username=tag.user_tag.username) }}">
+          	<div class="cropper">
+                <img src="{{tag.user_tag.photo}}" alt="{{tag.username}}" />
+        	  </div>
+          </a>
+
+          <div class="remove-tag">
+            <a href="{{ url_for('delete_tag', tagid=tag.id) }}">
+              remove {{tag.id}}
+            </a>
+
+          </div>
+        </div>
       {% endfor %}
     {% endif %}
     {% if post.get('tagged_teams') %}
-      {% for team_tag in post.get('tagged_teams') %}
-        <a class="avatar" href="{{ url_for('team', team=team_tag.teamname) }}">
-        <div class="cropper">
-            <img src="{{team_tag.photo}}" alt="{{team_tag.teamname}}" />
-        </div>
+      {% for tag in post.get('tagged_teams') %}
+        <a class="avatar" href="{{ url_for('team', team=tag.team_tag.teamname) }}">
+          <div class="cropper">
+              <img src="{{tag.team_tag.photo}}" alt="{{tag.team_tag.teamname}}" />
+          </div>
         </a>
+        <div class="remove-tag">
+            <a href="{{ url_for('delete_tag', tagid=tag.id) }}">
+              remove {{tag.id}}
+            </a>
+        </div>
       {% endfor %}
     {% endif %}
     </div>
@@ -53,10 +66,13 @@
         <a href="#" class="comment-count">{{comments}} Comments</a>
       {% endif %}
 
-      {% if g_user_in_post %}
-        thanks received
+      <!-- show # thanks received if you're tagged in post or you're author -->
+      {% if g_user_tagged_in_post or g.user.username == post_object.author.username%}
+        {% for sender in post.get('thanks_senders') %}
+          {{sender.firstname}}
+        {% endfor %}
       {% else %}
-        no thanks
+        you're not tagged in this
       {% endif %}
     </div>
   </div>
@@ -68,6 +84,7 @@
     
     {% if g.user.username == post_object.author.username %}
       <a class="toolbar-button removepost-button" href="{{ url_for('delete_post', postid=post_object.id) }}">Remove Kudos</a>
+
     {% endif %}
   </div>
 

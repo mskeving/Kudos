@@ -47,6 +47,8 @@ class User(db.Model):
 	posts = db.relationship('Post', backref='author', lazy='dynamic')
 	users = db.relationship('UserTeam', backref='user', primaryjoin="User.id==UserTeam.user_id")
 	tagged_in = db.relationship('Tag', backref='user_tag', primaryjoin="User.id==Tag.user_tag_id", lazy="dynamic'")
+	thanker = db.relationship('Thanks', backref='user')
+
 
 	#backref is adding author to Post class
 	#lazy.. whether all posts are loaded at the same time as user. look up options

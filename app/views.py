@@ -42,13 +42,19 @@ def posts_to_indented_posts(posts):
 		tagged_teams = []
 		for tag in p.tags:
 			if tag.user_tag_id:
-				tagged_users.append(tag.user_tag) #send in all user information
+				tagged_users.append(tag) #send in all user information
 			elif tag.team_tag_id:
-				tagged_teams.append(tag.team_tag) #just teamname
+				tagged_teams.append(tag) #just teamname
 			else:
 				print "no tags for this post.id: %r" % p.id 
 		d['tagged_users'] = tagged_users
 		d['tagged_teams'] = tagged_teams
+
+		#list of users giving thanks for post
+		thanks_senders = []
+		for thank in p.thanks:
+			thanks_senders.append(thank.user)
+		d['thanks_senders'] = thanks_senders
 
 		indented_posts.append(d)
 
@@ -481,7 +487,19 @@ def delete_post(postid):
 
 	return redirect(url_for('index'))
 
+#DELETE TAGS
+@app.route('/deletetag/<tagid>', methods=['GET','POST'])
+@login_required
+def delete_tag(tagid):
+	
+	delete_tag = db.session.query(Tag).filter_by(id=tagid).one()
 
+	db.session.delete(delete_tag)
+	db.session.commit()
+
+	return redirect(url_for('index'))
+
+#POST PAGE
 @app.route('/post/<post_id>', methods=['GET'])
 @login_required
 def permalink_for_post_with_id(post_id):

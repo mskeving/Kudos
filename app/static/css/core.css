@@ -75,6 +75,7 @@ button {
     font-style: normal;
 }
 
+/*Use when floated element is larger than container box*/
 .clearfix:after {
   content: "";
   display: table;
@@ -127,7 +128,10 @@ a {
 .avatars {
   float: left;
   margin: -30px 0px -30px 10px;
-  position: relative;
+}
+
+.avatar-container {
+  float: left;
 }
 
 /* circular avatars */
@@ -152,6 +156,12 @@ a.avatar .cropper {
 	width: 60px;
 	height: 60px;
 	overflow: hidden;
+}
+
+.remove-tag {
+  margin: 0px 17px;
+  bottom: 0;
+  left: 0;
 }
 
 /* user-inputted blurb */
