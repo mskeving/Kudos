@@ -23,7 +23,7 @@
 
           <div class="remove-tag">
             <a href="{{ url_for('delete_tag', tagid=tag.id) }}">
-              remove {{tag.id}}
+              <!-- remove {{tag.id}} -->
             </a>
 
           </div>
@@ -39,7 +39,7 @@
         </a>
         <div class="remove-tag">
             <a href="{{ url_for('delete_tag', tagid=tag.id) }}">
-              remove {{tag.id}}
+              <!-- remove {{tag.id}} -->
             </a>
         </div>
       {% endfor %}
@@ -72,7 +72,7 @@
           {{sender.firstname}}
         {% endfor %}
       {% else %}
-        you're not tagged in this
+        <!-- you're not tagged in this -->
       {% endif %}
     </div>
   </div>
