@@ -132,6 +132,7 @@ a {
 
 .avatar-container {
   float: left;
+  min-height: 80px;
 }
 
 /* circular avatars */
@@ -159,14 +160,14 @@ a.avatar .cropper {
 }
 
 .remove-tag {
-  margin: 0px 17px;
+  text-align: center;
   bottom: 0;
   left: 0;
   display: none;
 }
 
 .avatar-container:hover .remove-tag {
-  display: inline;
+  display: block;
 }
 
 /* user-inputted blurb */
