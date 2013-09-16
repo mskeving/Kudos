@@ -66,6 +66,7 @@ def posts_to_indented_posts(posts):
 @login_required #this page is only seen by logged in users
 def index():
 
+	#new tags branch
 
 	user = g.user
 	new_post_form = EditPost() 
