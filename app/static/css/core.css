@@ -162,6 +162,11 @@ a.avatar .cropper {
   margin: 0px 17px;
   bottom: 0;
   left: 0;
+  display: none;
+}
+
+.avatar-container:hover .remove-tag {
+  display: inline;
 }
 
 /* user-inputted blurb */

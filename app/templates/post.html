@@ -23,7 +23,7 @@
 
           <div class="remove-tag">
             <a href="{{ url_for('delete_tag', tagid=tag.id) }}">
-              <!-- remove {{tag.id}} -->
+              remove 
             </a>
 
           </div>
@@ -68,9 +68,13 @@
 
       <!-- show # thanks received if you're tagged in post or you're author -->
       {% if g_user_tagged_in_post or g.user.username == post_object.author.username%}
-        {% for sender in post.get('thanks_senders') %}
-          {{sender.firstname}}
-        {% endfor %}
+        {% if post.get('thanks_senders')|length != 0 %}
+          <a href="#">{{post.get('thanks_senders')|length}} Thanks</a>
+        {% elif post.get('thanks_senders')|length == 1 %}
+          <a href="#">{{post.get('thanks_senders')|length}} Thank</a>
+        {% else %}
+          <a href="#">No Thanks</a>
+        {% endif %}
       {% else %}
         <!-- you're not tagged in this -->
       {% endif %}
