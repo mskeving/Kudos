@@ -440,6 +440,19 @@ def add_tag():
 
 	return tag_info_json
 
+#DELETE TAGS
+@app.route('/deletetag/<tagid>', methods=['GET','POST'])
+@login_required
+def delete_tag(tagid):
+	
+	delete_tag = db.session.query(Tag).filter_by(id=tagid).one()
+
+	db.session.delete(delete_tag)
+	db.session.commit()
+
+	status = "complete"
+
+	return status
 
 
 #ADD NEW REPLY
@@ -490,17 +503,6 @@ def delete_post(postid):
 
 	return redirect(url_for('index'))
 
-#DELETE TAGS
-@app.route('/deletetag/<tagid>', methods=['GET','POST'])
-@login_required
-def delete_tag(tagid):
-	
-	delete_tag = db.session.query(Tag).filter_by(id=tagid).one()
-
-	db.session.delete(delete_tag)
-	db.session.commit()
-
-	return redirect(url_for('index'))
 
 #POST PAGE
 @app.route('/post/<post_id>', methods=['GET'])

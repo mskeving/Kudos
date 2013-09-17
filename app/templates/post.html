@@ -14,15 +14,15 @@
         {% if tag.user_tag.username == g.user.username %}
           {% do g_user_tagged_in_post.append(1) %}
         {% endif %}
-        <div class="avatar-container">
-          <a class="avatar" id={{tag.user_tag.id}} href="{{ url_for('user', username=tag.user_tag.username) }}">
+        <div class="avatar-container" id="{{tag.id}}">
+          <a class="avatar" id="{{tag.id}}" href="{{ url_for('user', username=tag.user_tag.username) }}">
           	<div class="cropper">
                 <img src="{{tag.user_tag.photo}}" alt="{{tag.username}}" />
         	  </div>
           </a>
 
           <div class="remove-tag">
-            <a href="{{ url_for('delete_tag', tagid=tag.id) }}">
+            <a href="#">
               remove 
             </a>
 
@@ -32,15 +32,17 @@
     {% endif %}
     {% if post.get('tagged_teams') %}
       {% for tag in post.get('tagged_teams') %}
-        <a class="avatar" href="{{ url_for('team', team=tag.team_tag.teamname) }}">
-          <div class="cropper">
-              <img src="{{tag.team_tag.photo}}" alt="{{tag.team_tag.teamname}}" />
+        <div class="avatar-container" id="{{tag.id}}">
+          <a class="avatar" id="{{tag.id}}" href="{{ url_for('team', team=tag.team_tag.teamname) }}">
+            <div class="cropper">
+                <img src="{{tag.team_tag.photo}}" alt="{{tag.team_tag.teamname}}" />
+            </div>
+          </a>
+          <div class="remove-tag">
+              <a href="#">
+                remove
+              </a>
           </div>
-        </a>
-        <div class="remove-tag">
-            <a href="{{ url_for('delete_tag', tagid=tag.id) }}">
-              remove
-            </a>
         </div>
       {% endfor %}
     {% endif %}

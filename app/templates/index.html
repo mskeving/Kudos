@@ -113,9 +113,7 @@
 			console.log("added tag: " + tag);
 			
 		}
-		function onRemoveTag(tag) {
-			console.log("Removed a tag: " + tag);
-		}
+
 
 		function onChangeTag(input,tag) {
 			console.log("Changed a tag: " + tag);
@@ -137,6 +135,32 @@
 
 	        })
 	      });
+
+		$('.remove-tag').click(function(e) {
+			e.preventDefault();
+			var avatar = $(this).parent();
+			var tagid = avatar.attr('id')
+			console.log("tagid: " + tagid)
+			var data = {
+				tagid: tagid
+			}
+
+
+			$.ajax({
+				type: "POST",
+				url: '/deletetag/' + tagid,
+				data: data,
+				success: function(status){
+					console.log("success")
+					e.preventDefault();
+					avatar.remove();
+				},
+				error: function(){
+					console.log("error");
+				}
+			});
+			
+		});
 
 		$('.submit-new-tag-btn').click(function(e) {
 			e.preventDefault();
