@@ -412,6 +412,7 @@ def add_tag():
 			user = {}
 			user['photo'] = tagged_user.photo
 			user['username'] = tagged_user.username
+			user['user_id'] = tagged_user.id
 			user_tag_info.append(user)
 			db.session.add(new_tag)
 		#TEAM TAGS
@@ -423,6 +424,7 @@ def add_tag():
 			team = {}
 			team['photo'] = tagged_team.photo
 			team['teamname'] = tagged_team.teamname
+			team['team_id'] = tagged_team.id
 			team_tag_info.append(team)
 			db.session.add(new_tag)	
 

@@ -15,7 +15,7 @@
           {% do g_user_tagged_in_post.append(1) %}
         {% endif %}
         <div class="avatar-container">
-          <a class="avatar" href="{{ url_for('user', username=tag.user_tag.username) }}">
+          <a class="avatar" id={{tag.user_tag.id}} href="{{ url_for('user', username=tag.user_tag.username) }}">
           	<div class="cropper">
                 <img src="{{tag.user_tag.photo}}" alt="{{tag.username}}" />
         	  </div>
@@ -39,7 +39,7 @@
         </a>
         <div class="remove-tag">
             <a href="{{ url_for('delete_tag', tagid=tag.id) }}">
-              <!-- remove {{tag.id}} -->
+              remove
             </a>
         </div>
       {% endfor %}
