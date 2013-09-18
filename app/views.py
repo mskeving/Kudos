@@ -1,7 +1,8 @@
 import json
+import os
 
 from app import app, lm, db, oid
-from flask import render_template, flash, redirect, session, url_for, request, g 
+from flask import send_from_directory, render_template, flash, redirect, session, url_for, request, g 
 from flask.ext.login import login_user, logout_user, current_user, login_required 
 from forms import LoginForm, EditForm, EditPost, DeletePost, NewReply
 from models import User, Post, UserTeam, Team, Tag, Thanks, ROLE_USER, ROLE_ADMIN
@@ -20,6 +21,10 @@ def before_request():
 		db.session.commit()
 		
 
+@app.route('/static/img/<path:filename>')
+def serve_image(filename):
+	image_path = os.path.join(app.root_path, 'static','img')
+	return send_from_directory(image_path, filename)
 
 def posts_to_indented_posts(posts):
 	# Turns a list of posts from a database query into a list of dictionaries

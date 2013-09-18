@@ -1,8 +1,30 @@
 import os
+from boto.s3.connection import S3Connection
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 CSRF_ENABLED = True #CROSS-SITE REQUEST FORGERY
 SECRET_KEY = 'you-will-never-guess'
+
+try:
+	raise Exception('No AWS')
+	AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
+	AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
+	S3_BUCKET = os.environ.get('S3_BUCKET')
+	if AWS_ACCESS_KEY_ID == None or AWS_SECRET_ACCESS_KEY == None or S3_BUCKET is None:
+		msg = (
+			"You must configure the environment variables AWS_ACCESS_KEY_ID, "
+			"AWS_SECRET_ACCESS_KEY and S3_BUCKET. Please see "
+			"https://devcenter.heroku.com/articles/s3"
+			)
+		raise Exception(msg)
+
+
+	conn = S3Connection(AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY)
+	S3_BUCKET = conn.get_bucket(S3_BUCKET)
+	USE_S3 = True
+except Exception, e:
+	USE_S3 = False
+	print e
 
 if os.environ.get('DATABASE_URL') is None:
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'app.db')
@@ -12,14 +34,6 @@ else:
 SQLALCHEMY_MIGRATE_REPO = os.path.join(basedir, 'db_repository')
 #folder where we store sqlalchemy migrate data files
 
-# We don't use this anymore
-#OPENID_PROVIDERS = [
-#    { 'name': 'Google', 'url': 'https://www.google.com/accounts/o8/id' },
-#    { 'name': 'Yahoo', 'url': 'https://me.yahoo.com' },
-#    { 'name': 'AOL', 'url': 'http://openid.aol.com/<username>' },
-#    { 'name': 'Flickr', 'url': 'http://www.flickr.com/<username>' },
-#    { 'name': 'MyOpenID', 'url': 'https://www.myopenid.com' },
-#    ]
 
 #mail server settings
 MAIL_SERVER = 'localhost'

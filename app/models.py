@@ -1,4 +1,9 @@
-from app import db
+from app import app, db
+
+import os
+
+from boto.s3.connection import S3Connection
+from boto.s3.key import Key
 
 ROLE_USER = 0
 ROLE_ADMIN = 1
@@ -41,7 +46,6 @@ class User(db.Model):
 	username = db.Column(db.String(68))
 	facebook = db.Column(db.String(140))
 	twitter = db.Column(db.String(140))
-	github = db.Column(db.String(255))
 	linkedin = db.Column(db.String(140))
 
 	posts = db.relationship('Post', backref='author', lazy='dynamic')
@@ -52,6 +56,20 @@ class User(db.Model):
 
 	#backref is adding author to Post class
 	#lazy.. whether all posts are loaded at the same time as user. look up options
+
+	def generate_photo_url(self, expires_in=300):
+		#url should be everything after bucket name (dropboxkudos)
+		if app.config['USE_S3']:
+			if self.photo:
+				s3_path = "/avatars_hb/" + os.path.basename(self.photo)
+			else:
+				s3_path = "/avatars_hb/generic_photo.jpg"
+			key = app.config['S3_BUCKET'].new_key(s3_path)
+			return key.generate_url(expires_in=expires_in)
+		else:
+			if self.photo:
+				return "/static/img/" + os.path.basename(self.photo)
+			return "/static/img/generic_photo.jpg"
 
 
 	@staticmethod
