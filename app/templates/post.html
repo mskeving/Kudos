@@ -67,7 +67,9 @@
       {% else %}
         <a href="#" class="comment-count">{{comments}} Comments</a>
       {% endif %}
-
+          
+      <br> 
+      
       <!-- show # thanks received if you're tagged in post or you're author -->
       {% if g_user_tagged_in_post or g.user.username == post_object.author.username%}
         {% if post.get('thanks_senders')|length != 0 %}

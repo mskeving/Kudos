@@ -223,6 +223,10 @@ a.avatar .cropper {
   width: 100px;
 }
 
+.post .post-metadata .comment-count {
+  float: right;
+}
+
 .post .toolbar {
   overflow: hidden;
   font-size: 13px;
@@ -249,24 +253,24 @@ a.avatar .cropper {
 
 /* toolbar button placement */
 .post a.thank-button {
-  background: url(img/thank-button.png) no-repeat 12px 12px;
+  background: url(../img/thank-button.png) no-repeat 12px 12px;
   padding-left: 8px;
   width: 92px;
 }
 
 .thank-button-pressed {
-  background: url(img/thank-button-pressed.png) no-repeat 12px 12px;
+  background: url(../img/thank-button-pressed.png) no-repeat 12px 12px;
   padding-left: 8px;
   width: 92px;
   background: rgb(241, 150, 150);
 }
 
 .post a.comment-button {
-  background: url(img/comment-button.png) no-repeat 0px 13px;
+  background: url(../img/comment-button.png) no-repeat 0px 13px;
 }
 
 .post a.addtag-button {
-  background: url(img/addtag-button.png) no-repeat 6px 12px;
+  background: url(../img/addtag-button.png) no-repeat 6px 12px;
 }
 
 .post a.removepost-button {
