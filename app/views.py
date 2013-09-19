@@ -286,30 +286,6 @@ def user(username):
 		list_of_team_names=list_of_team_names,
 		)
 
-#EDIT PROFILE
-@app.route('/edit', methods = ['GET', 'POST'])
-@login_required
-def edit():
-	form = EditForm(g.user.username) #pass in nickname to make sure it's unique
-		#EditForm is in forms.py
-	if form.validate_on_submit():
-		#is there a more succinct way of doing this? Looping through form elements?
-		g.user.nickname = form.nickname.data
-		g.user.firstname = form.firstname.data
-		g.user.lastname = form.lastname.data
-		g.user.team = form.team.data
-		g.user.email = form.email.data
-		g.user.phone = form.phone.data
-		g.user.about_me = form.about_me.data
-		db.session.add(g.user)
-		db.session.commit()
-		return redirect(url_for('user', username=g.user.username))
-	else:
-		form.nickname.data = g.user.nickname
-		form.about_me.data = g.user.about_me
-
-	return render_template('edit.html', 
-		form=form, user=g.user)
 
 #ADD NEW POST
 @app.route('/editpost', methods=['POST'])
@@ -402,7 +378,7 @@ def add_tag():
  
 
 
-	new_tag_list={}
+	new_tag_dict={}
 	user_tag_info = []
 	team_tag_info = []
 
@@ -433,15 +409,13 @@ def add_tag():
 			team_tag_info.append(team)
 			db.session.add(new_tag)	
 
-	new_tag_list['user_tags'] = user_tag_info	
-	new_tag_list['team_tags'] = team_tag_info
+	new_tag_dict['user_tags'] = user_tag_info	
+	new_tag_dict['team_tags'] = team_tag_info
 
 
 
 	db.session.commit()
-	tag_info_json = json.dumps(new_tag_list)
-	print "tag_info_json"
-	print tag_info_json
+	tag_info_json = json.dumps(new_tag_dict)
 
 	return tag_info_json
 
@@ -464,18 +438,26 @@ def delete_tag(tagid):
 @app.route('/newreply', methods=['POST'])
 @login_required
 def add_reply():
-	print "in add_reply"
-	reply_form = NewReply()
 
-	#TODO: Validate data
-	body = reply_form.reply_body.data
-	post_id = request.form['hidden_post_id']
+	body = request.form['body']
+	post_id = request.form['post_id']
 	
 	new_reply = Post(body=body, parent_post_id=post_id, time=datetime.utcnow(), user_id=g.user.id)
 	db.session.add(new_reply)
 	db.session.commit()
 
-	return redirect(url_for('index'))
+	reply_info = {}
+	reply_info["comment_id"] = new_reply.id
+	print new_reply.id
+	reply_info["author_username"] = new_reply.author.username
+	print new_reply.author.username
+	reply_info["author_photo"] = str(new_reply.author.photo)
+	print new_reply.author.photo
+
+	reply_info_json = json.dumps(reply_info)
+
+
+	return reply_info_json
 
 
 #DELETE POSTS

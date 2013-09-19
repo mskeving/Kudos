@@ -10,8 +10,6 @@
 	{% block content %}
 
 
-
-
 	<div id="main-column" style="position: relative">
 
 		<div class="new_post" style="position: relative">
@@ -151,8 +149,7 @@
 				url: '/deletetag/' + tagid,
 				data: data,
 				success: function(status){
-					console.log("success")
-					e.preventDefault();
+					console.log(status);
 					avatar.remove();
 				},
 				error: function(){
@@ -183,7 +180,7 @@
 					form.children(".hidden_tag_ids").val(""); //and clear hidden values
 					form.children(".hidden_tag_text").val("");
 					console.log("tag_dict: " + tag_info);
-					//turn tag_info into usable array
+					//turn tag_info json into usable array - avoidable if specify it's json datatype
 					tag_array = jQuery.parseJSON(tag_info);
 
 					//DISPLAY USER AVATARS
@@ -224,6 +221,9 @@
 	  	$('.addtag-button').click(function(e){
 	  		e.preventDefault();
 	  		$(this).parent().parent().children(".tag-modal").toggle();
+	  		if ($(this).parents().siblings('.comment-modal').css('display') != 'none') {
+	  			$(this).parent().parent().children('.comment-modal').toggle();
+	  		};
 
 		});
 
@@ -232,9 +232,13 @@
 			$(this).parent().toggle();
 		})
 
+	 	//show comment modal
 		$('.comment-button').click(function(e){
 			e.preventDefault();
 			$(this).parent().parent().children(".comment-modal").toggle();
+			if ($(this).parents().siblings('.tag-modal').css('display') != 'none') {
+	  			$(this).parent().parent().children('.tag-modal').toggle();
+	  		};
 		});
 
 		
@@ -252,26 +256,73 @@
 				$('#post-column').css('margin', '0px');
 			}
 			else{
-				console.log("display not none");
 				$('#post-column').css('margin', '240px 0px 0px 0px');
 			};
 		});
 
-		//AJAX FOR NEW POST
-		// $('#new_post_button').click(function(e){
-		// 	e.preventDefault();
-		// 	collect_tags();
-		// 	var data = {
-		// 		post_body: $('#new_post_body').val(),
-		// 		hidden_tag_ids: $('.hidden_tag_ids').val(),
-		// 		hidden_tag_text: $('.hidden_tag_text').val()
-		// 	};
-		// 	$.post('/editpost', data, function(response){
-		// 		console.log(response);
-		// 		//recreate post.html using javascript for the new post and display it at the bottom
-		// 	})
+		//NEW POST
+		$('#new_post_button').click(function(e){
+			e.preventDefault();
+			collect_tags($('.new_post_form'))
+			var data = {
+				post_body: $('#new_post_body').val(),
+				hidden_tag_ids: $('.hidden_tag_ids').val(),
+				hidden_tag_text: $('.hidden_tag_text').val()
+			};
+			console.log(data);
+			$.ajax({
+				type: 'POST',
+				url: '/editpost',
+				data: data,
+				success: function(e){
+					console.log("success - new comment submitted");
+				},
+				error: function(e){
+					console.log('error creating new post');
+				}
+			});
+			
 
-		// });
+		});
+
+		//NEW COMMENT
+		$('.new_comment_button').click(function(e){
+			e.preventDefault();
+
+			var data = {
+				post_id: $('.comment_body').attr('id'),
+				body: $(this).siblings('.reply_body').val()
+			}
+			console.log(data)
+			var comment_display=$(this).parent().parent().parent().parent().siblings('"' + data['post_id'] + '.comments');
+
+			$.ajax({
+				type: "POST",
+				url: '/newreply',
+				data: data, 
+				success: function(reply_info){
+					console.log("sucess - new comment submitted");
+
+					var username = reply_info.author_username
+					var photo = reply_info.author_photo
+					var id = reply_info.comment_id
+					var new_avatar = '<a class="avatar" href="{{url_for("user", username="' + username + '")}}"><div class="cropper"><img src=' + photo +' alt=' + username + '>';
+					var new_comment = $('<div class="one-comment" id="' + id + '"><div class="clearfix">' + new_avatar) 
+
+					comment_display.append(new_comment);
+					//two separate appends to close <a> tag? DOESN'T WORK! 
+					new_comment=$('"#' + id + '.one-comment');
+
+					new_comment.append($('<span class="comment-body">' + data["body"] + '<br>'));
+
+
+				},
+				error: function(e){
+					console.log('error creating new reply')
+				},
+				dataType: "json"
+			});
+		})
 		
 	</script>
 	{% endblock %}
