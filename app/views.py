@@ -58,7 +58,7 @@ def posts_to_indented_posts(posts):
 		#list of users giving thanks for post
 		thanks_senders = []
 		for thank in p.thanks:
-			thanks_senders.append(thank.user)
+			thanks_senders.append(thank.user.username)
 		d['thanks_senders'] = thanks_senders
 
 		indented_posts.append(d)

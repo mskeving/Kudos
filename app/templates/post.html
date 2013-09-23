@@ -74,6 +74,9 @@
       <br> 
       
       <!-- show # thanks received if you're tagged in post or you're author -->
+
+
+
       {% if g_user_tagged_in_post or g.user.username == post_object.author.username%}
         {% if post.get('thanks_senders')|length != 0 %}
           <a href="#">{{post.get('thanks_senders')|length}} Thanks</a>
@@ -95,9 +98,17 @@
     <a class="toolbar-button comment-button" id="addcomment-button" href="#">
       Comment
     </a>
-    <a class="toolbar-button thank-button" href="#" name="send-thanks" id="{{post_object.id}}">
-      Thank
-    </a>
+      {% if g.user.username in post.get('thanks_senders') %}
+        <a class="toolbar-button thank-button-pressed" href="#" name="send-thanks" id="{{post_object.id}}">
+          Thank
+        </a>
+      {% else %}
+        <a class="toolbar-button thank-button" href="#" name="send-thanks" id="{{post_object.id}}">
+          Thank
+        </a>
+      {% endif %}
+
+   
     
     {% if g.user.username == post_object.author.username %}
       <a class="toolbar-button removepost-button" href="{{ url_for('delete_post', postid=post_object.id) }}">
