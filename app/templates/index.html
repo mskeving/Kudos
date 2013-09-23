@@ -21,8 +21,8 @@
 				</div>
 			</a>
 			<!-- Submit new Kudos -->
-			<div id="post-modal" style="display: none; position: absolute; left: 0; width: 100%; height: 100%; text-align: center;">
-				<form action='/editpost' method="POST" name="add" class="new_post_form">
+			<div class="post-modal">
+				<form action='/editpost' class="new_post_form" method="POST" name="add" >
 					<!-- inclide csrf token in every form for security --> 
 					{{ new_post_form.csrf_token }} 
 					{% for error in new_post_form.errors.post_body %}
@@ -31,17 +31,17 @@
 
 					<div class="row">
 						<div class="col-lg-6">
-							<div class ="submit-kudos" style="padding: 20px; width: 280px; height: 158px; margin: 0 10px; background: #e2d7d8; padding: 10px;">
-			    				<div class="tags" id="tagsinput_tagsinput" name="tags_div" style="width: 280px;">
-										<input type="text" class="tag_input" id="tag_input" name="tag_input" value placeholder="tags" style="width: 280px; align: center; border: none;"/>
+							<div class ="submit-kudos">
+			    				<div class="tags" id="tagsinput_tagsinput" name="tags_div">
+										<input type="text" class="tag_input" id="tag_input" name="tag_input" value placeholder="tags"/>
 									</div>
 			    				<div class="input-group">
-			    					<span class="form-control">{{ new_post_form.post_body (style="width: 279px; height: 70px;", id="new_post_body") }} </span>
+			    					<span class="form-control">{{ new_post_form.post_body (class="new-post-body") }} </span>
 			    				</div>
 
-			    				<button class="post_button" type="button" id="no_new_post_btn" value="cancel" style="color: white; font-weight:700; background: rgb(241, 150, 150); width: 80px; height: 25px; margin-top: 14px;">Cancel</button>
+			    				<button class="post_button" type="button" id="post-button" value="cancel">Cancel</button>
 
-				    			<button class="post_button" type="submit" id="new_post_button" name="new_post_btn" value="submit" style="color: white; font-weight:700; background: rgb(241, 150, 150); width: 80px; height: 25px; margin-top: 14px;"> Submit </button>
+				    			<button class="post_button" type="submit" id="post-button" name="new_post_btn" value="submit"> Submit </button>
 
 								{{ new_post_form.hidden_tag_ids (class="hidden_tag_ids", id="hidden_tag_ids") }}
 								{{ new_post_form.hidden_tag_text (class="hidden_tag_text", id="hidden_tag_text") }}
@@ -62,9 +62,9 @@
 		</div>
 	</div>
 
-	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
-	<script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/jquery-ui.min.js'></script>
-	<link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/themes/start/jquery-ui.css" />
+	<script type="text/javascript" src="/static/js/jquery1_4_4.min.js"></script>
+	<script type='text/javascript' src="/static/js/jquery-ui.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="/static/css/jquery-ui.css" />
 	<script type="text/javascript" src="/static/js/jquery.tagsinput.js"></script>
 
 
@@ -107,33 +107,26 @@
 			console.log($(".hidden_tag_ids").val());
 		}
 		
-		function onAddTag(tag) {
-			console.log("added tag: " + tag);
-			
-		}
+	
+
+		//GIVE THANKS
+	 	$('.thank-button').click(function(e){
+        e.preventDefault();
+        console.log('clicked' + this.id);
+        var button = $(this);
+        var data = {
+          post_id: this.id
+        };
+        $.post('/sendthanks', data, function(){
+        	console.log("this: " + this);
+        	button.css('background', 'url(/static/img/thank-button-pressed.png) no-repeat 12px 12px');
+        	//create avatar on post 
+
+        })
+      });
 
 
-		function onChangeTag(input,tag) {
-			console.log("Changed a tag: " + tag);
-		}
-
-
-
-		 $('.thank-button').click(function(e){
-	        e.preventDefault();
-	        console.log('clicked' + this.id);
-	        var button = $(this);
-	        var data = {
-	          post_id: this.id
-	        };
-	        $.post('/sendthanks', data, function(){
-	        	console.log("this: " + this);
-	        	button.css('background', 'url(/static/img/thank-button-pressed.png) no-repeat 12px 12px');
-	        	//create avatar on post 
-
-	        })
-	      });
-
+		//REMOVE TAG
 		$('.remove-tag').click(function(e) {
 			e.preventDefault();
 			var avatar = $(this).parent();
@@ -159,6 +152,8 @@
 			
 		});
 
+
+		//ADD NEW TAG
 		$('.submit-new-tag-btn').click(function(e) {
 			e.preventDefault();
 			console.log('clicked to add tags for: ' + this.id);
@@ -232,7 +227,7 @@
 			$(this).parent().toggle();
 		})
 
-	 	//show comment modal
+	 	//SHOW COMMENT MODAL
 		$('.comment-button').click(function(e){
 			e.preventDefault();
 			$(this).parent().parent().children(".comment-modal").toggle();
@@ -285,6 +280,29 @@
 
 		});
 
+		//REMOVE COMMENT
+		$('.remove-comment').click(function(e){
+			e.preventDefault();
+			var post_id = $(this).attr('id');
+			var comment = $(this).parent().parent()
+			var data = {
+
+			}
+
+			$.ajax({
+				type: "POST",
+				url: '/deletepost/' + post_id,
+				data: data,
+				success: function(response){
+					comment.remove();
+					console.log("success");
+				}, 
+				error: function(){
+					console.log("error");
+				}
+			})
+		})
+
 		//NEW COMMENT
 		$('.new_comment_button').click(function(e){
 			e.preventDefault();
@@ -298,14 +316,14 @@
 
 			$.ajax({
 				type: "POST",
-				url: '/newreply',
+				url: '/newcomment',
 				data: data, 
-				success: function(reply_info){
+				success: function(comment_info){
 					console.log("sucess - new comment submitted");
 
-					var username = reply_info.author_username
-					var photo = reply_info.author_photo
-					var id = reply_info.comment_id
+					var username = comment_info.author_username
+					var photo = comment_info.author_photo
+					var id = comment_info.comment_id
 					var new_avatar = '<a class="avatar" href="{{url_for("user", username="' + username + '")}}"><div class="cropper"><img src=' + photo +' alt=' + username + '>';
 					var new_comment = $('<div class="one-comment" id="' + id + '"><div class="clearfix">' + new_avatar) 
 

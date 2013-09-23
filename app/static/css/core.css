@@ -103,10 +103,37 @@ a {
   text-decoration: none;
 }
 
-#post-modal .row {
+.post-modal {
+  display: none;
+  position: absolute;
+  left: 0;
+  width: 100%;
+  text-align: center;
+}
+
+.post-modal .row {
   position: relative;
   z-index: 1000;
 }
+
+.submit-kudos {
+  padding: 20px;
+  width: 200px;
+  height: 158px;
+  margin: 0px 10px;
+  background: #e2d7d8;
+  padding: 10px;
+}
+
+.post_button {
+  color: white;
+  font-weight: 700;
+  background: rgb(241, 150, 150);
+  width: 80px;
+  height: 25px;
+  margin-top: 14px;
+}
+
 #main-column {
   background: #f8eeef;
   margin: 0 auto;
@@ -300,6 +327,11 @@ a.avatar .cropper {
   margin-top: 14px;
 }
 
+.new-post-body {
+  width: 279px;
+  height: 70px;
+}
+
 .depth {
 	background: #615C5C;
     -webkit-background-clip: text;
@@ -332,7 +364,7 @@ a.avatar .cropper {
 
 .comment-author {
   position: absolute;
-  top: 55%;
+  top: 65%;
   left: 26%;
   font-family: 'museo_sans_700regular';
   color: #8b8e98;
@@ -349,6 +381,34 @@ a.avatar .cropper {
   width: 293px;
 }
 
+.tag-input {
+  width: 290px;
+}
+
+.new-tag-btn {
+  color: white;
+  font-weight: 700;
+  background: rgb(241, 150, 150);
+  width: 80px;
+  height: 25px;
+  margin: 8px;
+  float: right;
+}
+
+.new-comment-btn{
+  color: white;
+  font-weight: 700;
+  background: rgb(241, 150, 150);
+  width: 80px;
+  height: 25px;
+  margin: 5px 5px 5px 215px;
+}
+
+.reply-body {
+  width: 292px;
+  height: 70px;
+  margin: 10px 4px 5px 4px;
+}
 
 .kudos-home-art {
   height: 100%;

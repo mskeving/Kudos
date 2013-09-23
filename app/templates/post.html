@@ -49,16 +49,19 @@
     </div>
   </div>
 
+
   <div class="white-card">
-
-
     <blockquote>
       {{post_object.body}}
     </blockquote>
 
     <div class="post-author">
-      <a href="{{ url_for('user', username=post_object.author.username) }}" class="author-name">{{post_object.author.firstname}} {{post_object.author.lastname}}</a>,  
-      <a href="{{ url_for('team', team='Hackbright')}}" class="team-name">Hackbright</a> 
+      <a href="{{ url_for('user', username=post_object.author.username) }}" class="author-name">
+        {{post_object.author.firstname}} {{post_object.author.lastname}}
+      </a>,  
+      <a href="{{ url_for('team', team='Hackbright')}}" class="team-name">
+        Hackbright
+      </a> 
     </div>
     <div class="post-metadata">
       {% set comments = post.get('children_objects')|length %}
@@ -86,12 +89,20 @@
   </div>
 
   <div class="toolbar">
-    <a class="toolbar-button addtag-button" id="addtag-button" href="#">Add Tag</a>
-    <a class="toolbar-button comment-button" id="addcomment-button" href="#">Comment</a>
-    <a class="toolbar-button thank-button" href="#" name="send-thanks" id="{{post_object.id}}">Thank</a>
+    <a class="toolbar-button addtag-button" id="addtag-button" href="#">
+      Add Tag
+    </a>
+    <a class="toolbar-button comment-button" id="addcomment-button" href="#">
+      Comment
+    </a>
+    <a class="toolbar-button thank-button" href="#" name="send-thanks" id="{{post_object.id}}">
+      Thank
+    </a>
     
     {% if g.user.username == post_object.author.username %}
-      <a class="toolbar-button removepost-button" href="{{ url_for('delete_post', postid=post_object.id) }}">Remove Kudos</a>
+      <a class="toolbar-button removepost-button" href="{{ url_for('delete_post', postid=post_object.id) }}">
+        Remove Kudos
+      </a>
 
     {% endif %}
   </div>
@@ -99,11 +110,13 @@
 <!-- new tag -->
   <div class="tag-modal clearfix" id="{{post_object.id}}" style="display: none;">
     <form action="/newtag" method="POST" class="new-tag-form" id="{{post_object.id}}">  
-      <div class="tags" id="tagsinput_tagsinput" name="tags_div" style="width: 290px;">
-        <input type="text" class="tag_input" id="tag_input" name="tag_input" value placeholder="tags" style="width: 290px; align: center; border: none;"/>
+      <div class="tags">
+        <input type="text" class="tag-input" value placeholder="tags"/>
       </div>
      
-      <button type="submit" class="submit-new-tag-btn" name="submit-new_tag_btn" id="{{post_object.id}}" value="submit" style="color: white; font-weight:700; background: rgb(241, 150, 150); width: 80px; height: 25px; margin: 8px; float: right;"> Submit </button>
+      <button type="submit" class="new-tag-btn" id="{{post_object.id}}" value="submit"> 
+        Submit 
+      </button>
       {{ reply_form.hidden_post_id(value=post_object.id) }}
       {{ new_post_form.hidden_tag_ids (class="hidden_tag_ids", id=post_object.id) }}
       {{ new_post_form.hidden_tag_text (class="hidden_tag_text", id=post_object.id) }}
@@ -113,14 +126,14 @@
 
 <!-- new comment -->
   <div class="comment-modal" id="{{post_object.id}}" style="display: none;">
-    <form action="/newreply" method="POST">
+    <form action="/newcomment" method="POST">
       {{new_post_form.csrf_token}}
 
         <div class="comment_body" id="{{post_object.id}}">
-          {{reply_form.reply_body (class="reply_body", id="{{post_object.id}}", style="width: 292px; height: 70px; margin: 10px 4px 5px 4px;")}}
+          {{reply_form.reply_body (class="reply-body", id="{{post_object.id}}")}}
 
           
-          <button type="submit" class="new_comment_button" name="new_reply_btn" id="{{post_object.id}}" value="submit" style="color: white; font-weight:700; background: rgb(241, 150, 150); width: 80px; height: 25px; margin: 5px 5px 5px 215;"> reply </button>
+          <button type="submit" class="new-comment-btn" name="new_reply_btn" id="{{post_object.id}}" value="submit"> reply </button>
           
         </div>
 
@@ -145,18 +158,16 @@
           <span class="comment-body">
           {{post_comment.body}}
         </span>
-        <br>
-        <!-- <a href="{{ url_for('user', username=post_comment.author.username) }}" class="comment-author">{{post_comment.author.firstname}} {{post_comment.author.lastname}}</a> -->
-         
+
+        <a href="{{ url_for('user', username=post_comment.author.username) }}" class="comment-author">{{post_comment.author.firstname}} {{post_comment.author.lastname}}</a>
+        {% if post_comment.author.username == g.user.username %}
+          <div class="remove-comment" id="{{post_comment.id}}">
+            <a href="#">
+              Remove
+            </a>
+          </div>
+        {% endif %}
       </div>
     </div>
   {% endfor %}
 </div>
-
-
-<script type="text/javascript">
-
-
-
-
-</script>

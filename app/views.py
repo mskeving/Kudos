@@ -434,30 +434,39 @@ def delete_tag(tagid):
 	return status
 
 
-#ADD NEW REPLY
-@app.route('/newreply', methods=['POST'])
+#ADD NEW COMMENT
+@app.route('/newcomment', methods=['POST'])
 @login_required
-def add_reply():
+def new_comment():
 
 	body = request.form['body']
 	post_id = request.form['post_id']
 	
-	new_reply = Post(body=body, parent_post_id=post_id, time=datetime.utcnow(), user_id=g.user.id)
-	db.session.add(new_reply)
+	new_comment = Post(body=body, parent_post_id=post_id, time=datetime.utcnow(), user_id=g.user.id)
+	db.session.add(new_comment)
 	db.session.commit()
 
-	reply_info = {}
-	reply_info["comment_id"] = new_reply.id
-	print new_reply.id
-	reply_info["author_username"] = new_reply.author.username
-	print new_reply.author.username
-	reply_info["author_photo"] = str(new_reply.author.photo)
-	print new_reply.author.photo
+	comment_info = {}
+	comment_info["comment_id"] = new_comment.id
+	comment_info["author_username"] = new_comment.author.username
+	comment_info["author_photo"] = str(new_comment.author.photo)
 
-	reply_info_json = json.dumps(reply_info)
+	comment_info_json = json.dumps(comment_info)
 
+	return comment_info_json
 
-	return reply_info_json
+#DELETE COMMENT
+@app.route('/deletecomment/<postid>', methods=['POST'])
+@login_required
+def delete_comment(postid):
+	
+	delete_comment = db.session.query(Post).filter_by(id=postid).one()
+	db.session.delete(delete_comment)
+	db.session.commit()
+
+	status = "complete"
+
+	return status
 
 
 #DELETE POSTS
@@ -489,6 +498,8 @@ def delete_post(postid):
 	db.session.commit()
 
 	return redirect(url_for('index'))
+
+
 
 
 #POST PAGE
