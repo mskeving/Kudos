@@ -144,12 +144,9 @@
           {{reply_form.reply_body (class="reply-body", id="{{post_object.id}}")}}
 
           
-          <button type="submit" class="new-comment-btn" name="new_reply_btn" id="{{post_object.id}}" value="submit"> reply </button>
+          <button type="button" class="new-comment-btn" name="new_reply_btn" id="{{post_object.id}}" value="submit"> reply </button>
           
         </div>
-
-      <!-- Associate text box with specific post -->
-      <!-- with ajax can just get id of comment_body. not needed ->{{ reply_form.hidden_post_id(value=post_object.id) }} -->
     </form>
   </div>
 </div>

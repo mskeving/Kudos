@@ -255,8 +255,9 @@
 			};
 		});
 
-		//NEW POST
-		$('#new_post_button').click(function(e){
+		//NEW POST - fill in with #new-post-button
+		$('#nothing').click(function(e){
+			console.log("new post button")
 			e.preventDefault();
 			collect_tags($('.new_post_form'))
 			var data = {
@@ -304,14 +305,16 @@
 		})
 
 		//NEW COMMENT
-		$('.new_comment_button').click(function(e){
+		$('.new-comment-btn').click(function(e){
+			console.log("in fnc")
 			e.preventDefault();
-
+			console.log("in new comment button function");
 			var data = {
 				post_id: $('.comment_body').attr('id'),
-				body: $(this).siblings('.reply_body').val()
+				body: $(this).siblings('.reply-body').val()
 			}
-			console.log(data)
+			console.log(data);
+			//get entire comment display to append new comment to
 			var comment_display=$(this).parent().parent().parent().parent().siblings('"' + data['post_id'] + '.comments');
 
 			$.ajax({
