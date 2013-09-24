@@ -118,14 +118,14 @@ a {
 
 .submit-kudos {
   padding: 20px;
-  width: 200px;
+  width: 280px;
   height: 158px;
   margin: 0px 10px;
   background: #e2d7d8;
   padding: 10px;
 }
 
-.post_button {
+.post-button {
   color: white;
   font-weight: 700;
   background: rgb(241, 150, 150);
@@ -314,17 +314,6 @@ a.avatar .cropper {
 	font-size: 15px;
 	text-align: center;
 	padding: 10px;
-
-
-}
-
-#post-button {
-  color: white; 
-  font-weight:700; 
-  background: rgb(241, 150, 150); 
-  width: 80px; 
-  height: 25px; 
-  margin-top: 14px;
 }
 
 .new-post-body {

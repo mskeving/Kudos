@@ -39,9 +39,9 @@
 			    					<span class="form-control">{{ new_post_form.post_body (class="new-post-body") }} </span>
 			    				</div>
 
-			    				<button class="post_button" type="button" id="post-button" value="cancel">Cancel</button>
+			    				<button class="post-button" type="button" id="no-new-post-button" value="cancel">Cancel</button>
 
-				    			<button class="post_button" type="submit" id="post-button" name="new_post_btn" value="submit"> Submit </button>
+				    			<button class="post-button" type="submit" id="new-post-button" name="new_post_btn" value="submit"> Submit </button>
 
 								{{ new_post_form.hidden_tag_ids (class="hidden_tag_ids", id="hidden_tag_ids") }}
 								{{ new_post_form.hidden_tag_text (class="hidden_tag_text", id="hidden_tag_text") }}
@@ -241,13 +241,13 @@
 
 		$('#no_new_post_btn').click(function(e) {
 			e.preventDefault();
-			$('#post-modal').hide();
+			$('.post-modal').hide();
 			$('#post-column').css('margin', '0px');
 		});
 
 		$('#new-post-modal-btn').click(function(e) {
-			$('#post-modal').toggle();
-			if($('#post-modal').css('display')=='none'){
+			$('.post-modal').toggle();
+			if($('.post-modal').css('display')=='none'){
 				$('#post-column').css('margin', '0px');
 			}
 			else{
