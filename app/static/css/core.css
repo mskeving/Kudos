@@ -362,6 +362,14 @@ a.avatar .cropper {
   text-decoration: underline;
 }
 
+.remove-comment {
+  display: none;
+}
+
+.one-comment:hover .remove-comment {
+  display: block;
+}
+
 .tag-modal {
   padding-left: 4px;
 }

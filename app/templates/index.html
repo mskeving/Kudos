@@ -131,19 +131,19 @@
 	 		var data = {
 	 			post_id: this.id
 	 		}
-	 	$.ajax({
-	 		type: 'POST',
-	 		url: '/removethanks', 
-	 		data: data,
-	 		success: function(response){
-	 			console.log("success removing thanks");
-	 			button.removeClass('thank-button-pressed').addClass('thank-button');
-	 			console.log("success");
-	 		},
-	 		error: function(){
-	 			console.log("error removing thanks");
-	 		}
-	 	})
+		 	$.ajax({
+		 		type: 'POST',
+		 		url: '/removethanks', 
+		 		data: data,
+		 		success: function(response){
+		 			console.log("success removing thanks");
+		 			button.removeClass('thank-button-pressed').addClass('thank-button');
+		 			console.log("success");
+		 		},
+		 		error: function(){
+		 			console.log("error removing thanks");
+		 		}
+		 	})
 
 	 	})
 
