@@ -119,11 +119,33 @@
         };
         $.post('/sendthanks', data, function(){
         	console.log("this: " + this);
-        	button.css('background', 'url(/static/img/thank-button-pressed.png) no-repeat 12px 12px');
-        	//create avatar on post 
+        	button.removeClass('thank-button').addClass('thank-button-pressed');
 
         })
       });
+
+	 	//REMOVE THANKS
+	 	$('.thank-button-pressed').click(function(e){
+	 		e.preventDefault();
+	 		var button = $(this);
+	 		var data = {
+	 			post_id: this.id
+	 		}
+	 	$.ajax({
+	 		type: 'POST',
+	 		url: '/removethanks', 
+	 		data: data,
+	 		success: function(response){
+	 			console.log("success removing thanks");
+	 			button.removeClass('thank-button-pressed').addClass('thank-button');
+	 			console.log("success");
+	 		},
+	 		error: function(){
+	 			console.log("error removing thanks");
+	 		}
+	 	})
+
+	 	})
 
 
 		//REMOVE TAG
@@ -310,7 +332,7 @@
 			e.preventDefault();
 			console.log("in new comment button function");
 			var data = {
-				post_id: $('.comment_body').attr('id'),
+				post_id: $(this).parent().attr('id'),
 				body: $(this).siblings('.reply-body').val()
 			}
 			console.log(data);

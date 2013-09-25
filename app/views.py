@@ -362,6 +362,25 @@ def send_thanks():
 
 	return post_id
 
+#REMOVE THANKS
+@app.route('/removethanks', methods=['POST'])
+@login_required
+def remove_thanks():
+	form = request.form
+
+	thanks_sender = g.user.id
+	post_id = form.get('post_id')
+
+	delete_thanks = Thanks.query.filter(and_(Thanks.thanks_sender==thanks_sender, Thanks.post_id==post_id)).all() 
+
+	for thank in delete_thanks:
+		db.session.delete(thank)
+	db.session.commit()
+
+	status = "complete"
+	return status
+
+
 #ADD NEW TAG
 @app.route('/newtag', methods=['POST'])
 @login_required
@@ -444,6 +463,7 @@ def new_comment():
 	body = form.get('body')
 	post_id = form.get('post_id')
 	
+	print "post_id: %r" % post_id
 
 	new_comment = Post(body=body, parent_post_id=post_id, time=datetime.utcnow(), user_id=g.user.id)
 	db.session.add(new_comment)
