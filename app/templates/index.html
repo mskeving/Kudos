@@ -118,7 +118,7 @@
           post_id: this.id
         };
         $.post('/sendthanks', data, function(){
-        	console.log("this: " + this);
+        	console.log("success giving thanks");
         	button.removeClass('thank-button').addClass('thank-button-pressed');
 
         })
