@@ -84,7 +84,7 @@
 				//find corresponding tag_id in tag_ids array
 				// var tag_id = settings.tag_ids[tag_position];
 
-				console.log(settings);
+				console.log(settings, id);
 				var tag_id = settings.autocomplete_dict[value];				
 
 				var tagslist = $(this).val().split(delimiter[id]);
@@ -151,11 +151,10 @@
 		
 	$.fn.removeTag = function(value) { 
 			value = unescape(value);
-			this.each(function() { 
+			this.each(function() {
 				var id = $(this).attr('id');
 	
 				var old = $(this).val().split(delimiter[id]);
-					
 				$('#'+id+'_tagsinput .tag').remove();
 				str = '';
 				for (i=0; i< old.length; i++) { 
@@ -163,8 +162,8 @@
 						str = str + delimiter[id] +old[i];
 					}
 				}
-				
-				$.fn.tagsInput.importTags(this,str);
+				console.log('removing', old, str);
+				// $.fn.tagsInput.importTags(this,str);
 
 				if (tags_callbacks[id] && tags_callbacks[id]['onRemoveTag']) {
 					var f = tags_callbacks[id]['onRemoveTag'];
@@ -183,7 +182,7 @@
 	
 	// clear all existing tags and import new ones from a string
 	$.fn.importTags = function(str) {
-                id = $(this).attr('id');
+        var id = $(this).attr('id');
 		$('#'+id+'_tagsinput .tag').remove();
 		$.fn.tagsInput.importTags(this,str);
 	}
@@ -304,6 +303,7 @@
 							var d = $(this).attr('data-default');
 							if ($(event.data.fake_input).val()!='' && $(event.data.fake_input).val()!=d) { 
 								if( (event.data.minChars <= $(event.data.fake_input).val().length) && (!event.data.maxChars || (event.data.maxChars >= $(event.data.fake_input).val().length)) )
+
 									$(event.data.real_input).addTag($(event.data.fake_input).val(),{focus:true,unique:(settings.unique)});
 							} else {
 								$(event.data.fake_input).val($(event.data.fake_input).attr('data-default'));
@@ -322,6 +322,7 @@
 							if (jQuery.inArray(tokentext, settings.autocomplete_list) < 0) {
 								console.log('not a tag'); return false;
 							}
+
 							$(event.data.real_input).addTag(tokentext,{focus:true,unique:(settings.unique)});
 						}
 					  	$(event.data.fake_input).resetAutosize(settings);
@@ -370,7 +371,8 @@
 		$(obj).val('');
 		var id = $(obj).attr('id');
 		var tags = val.split(delimiter[id]);
-		for (i=0; i<tags.length; i++) { 
+		for (i=0; i<tags.length; i++) {
+
 			$(obj).addTag(tags[i],{focus:false,callback:false});
 		}
 		if(tags_callbacks[id] && tags_callbacks[id]['onChange'])

@@ -32,8 +32,8 @@
 					<div class="row">
 						<div class="col-lg-6">
 							<div class ="submit-kudos">
-			    				<div class="tags" id="tagsinput_tagsinput" name="tags_div">
-										<input type="text" class="tag_input" id="tag_input" name="tag_input" value placeholder="tags"/>
+			    				<div class="tags" name="tags_div">
+										<input type="text" class="tag_input" name="tag_input" value placeholder="tags"/>
 									</div>
 			    				<div class="input-group">
 			    					<span class="form-control">{{ new_post_form.post_body (class="new-post-body") }} </span>
@@ -77,7 +77,7 @@
 			var tag_json = {{tag_json|safe}}; 
 			var tag_ids = {{tag_ids|safe}};
 
-
+			// this makes the tag input work for all tag autocompleters
 			$('.tag_input').tagsInput({
 				width: 'auto',
 				height: '30px',
@@ -176,7 +176,7 @@
 
 
 		//ADD NEW TAG
-		$('.submit-new-tag-btn').click(function(e) {
+		$('.new-tag-btn').click(function(e) {
 			e.preventDefault();
 			console.log('clicked to add tags for: ' + this.id);
 			form = $(this).parent()
