@@ -285,7 +285,7 @@ a.avatar .cropper {
   width: 92px;
 }
 
-.post a.thank-button-pressed {
+.post a.pressed {
   background: url(../img/thank-button-pressed.png) no-repeat 12px 12px;
   padding-left: 8px;
   width: 92px;
