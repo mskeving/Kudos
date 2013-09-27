@@ -271,14 +271,12 @@ canvas,
 }
 
 .navbar {
-  position: fixed;
+  position: relative;
   min-height: 50px;
   padding-left: 15px;
   margin-bottom: 20px;
   background-color: #e2d7d8;
   border-radius: 4px;
-  width: 100%;
-  z-index: 100;
 }
 
 .navbar:before,
