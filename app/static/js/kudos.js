@@ -138,7 +138,7 @@ $('.new-tag-btn').click(function(e) {
 	}
 
 	else{
-		$(this).add("<span> No new tags </span>");
+		$(this).append("<span> No new tags </span>");
 		e.preventDefault();
 		console.log('no new tags');
 	}
@@ -146,18 +146,18 @@ $('.new-tag-btn').click(function(e) {
 	
 });
 
-	$('.addtag-button').click(function(e){
-		e.preventDefault();
-		$(this).parent().parent().children(".tag-modal").toggle();
-		if ($(this).parents().siblings('.comment-modal').css('display') != 'none') {
-			$(this).parent().parent().children('.comment-modal').toggle();
-		};
+$('.addtag-button').click(function(e){
+	e.preventDefault();
+	$(this).parent().parent().children(".tag-modal").toggle();
+	if ($(this).parents().siblings('.comment-modal').css('display') != 'none') {
+		$(this).parent().parent().children('.comment-modal').toggle();
+	};
 
 });
 
-	$('.no_new_tag_btn').click(function(e){
-	e.preventDefault();
-	$(this).parent().toggle();
+$('.no_new_tag_btn').click(function(e){
+e.preventDefault();
+$(this).parent().toggle();
 })
 
 	//SHOW COMMENT MODAL
