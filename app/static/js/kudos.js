@@ -42,11 +42,18 @@ $('.thank-button').click(function(e){
 		var data = {
           post_id: this.id
         };
-		$.post('/sendthanks', data, function(){
-    	console.log("success giving thanks");
-    	button.addClass('pressed');
-
-		})	
+        $.ajax({
+        	type: 'POST',
+        	url: '/sendthanks',
+        	data: data,
+        	success: function(response){
+        		console.log("success giving thanks");
+		    	button.addClass('pressed');
+        	},
+        	error: function(){
+        		console.log("error sending thanks");
+        	}
+        })
 	}
 })
 
