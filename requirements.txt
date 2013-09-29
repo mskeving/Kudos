@@ -11,8 +11,10 @@ WTForms==1.0.4
 Werkzeug==0.9.4
 decorator==3.4.0
 gunicorn==18.0
+httplib2==0.8
 itsdangerous==0.23
 newrelic==1.13.1.31
+oauth2client==1.2
 psycopg2==2.5.1
 python-openid==2.2.5
 pytz==2013b
