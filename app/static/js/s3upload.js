@@ -4,7 +4,7 @@
 
     S3Upload.prototype.s3_object_name = 'default_name';
 
-    S3Upload.prototype.s3_sign_put_url = '/sign_s3_upload';
+    S3Upload.prototype.s3_sign_put_url = '/d';
 
     S3Upload.prototype.file_dom_selector = 'file';
 

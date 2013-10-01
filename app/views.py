@@ -323,6 +323,10 @@ def sign_s3_upload():
          'public_url': public_url
       })
 
+@app.route('/submit_form')
+def submit_form():
+	return render_template('account.html')
+
 #ADD NEW POST
 @app.route('/editpost', methods=['POST'])
 @login_required
