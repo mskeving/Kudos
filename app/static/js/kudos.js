@@ -171,7 +171,7 @@ $('.comment-button').click(function(e){
 
 
 
-
+//SHOW NEW POST MODAL
 $('#no_new_post_btn').click(function(e) {
 	e.preventDefault();
 	$('.post-modal').hide();
@@ -179,12 +179,15 @@ $('#no_new_post_btn').click(function(e) {
 });
 
 $('#new-post-modal-btn').click(function(e) {
-	$('.post-modal').toggle();
+
 	if($('.post-modal').css('display')=='none'){
-		$('#post-column').css('margin', '0px');
+		$('.post-modal').slideDown(600);
+		$('#post-column').css('margin', '240px 0px 0px 0px');
 	}
 	else{
-		$('#post-column').css('margin', '240px 0px 0px 0px');
+		$('.post-modal').slideUp(600);
+		$('#post-column').css('margin', '0px');
+		
 	};
 });
 
