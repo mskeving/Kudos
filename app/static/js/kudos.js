@@ -179,15 +179,12 @@ $('#no_new_post_btn').click(function(e) {
 });
 
 $('#new-post-modal-btn').click(function(e) {
-
+	$('.post-modal').toggle();
 	if($('.post-modal').css('display')=='none'){
-		$('.post-modal').slideDown(600);
-		$('#post-column').css('margin', '240px 0px 0px 0px');
+		$('#post-column').css('margin', '0px');
 	}
 	else{
-		$('.post-modal').slideUp(600);
-		$('#post-column').css('margin', '0px');
-		
+		$('#post-column').css('margin', '240px 0px 0px 0px');
 	};
 });
 
