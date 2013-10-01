@@ -160,7 +160,7 @@ e.preventDefault();
 $(this).parent().toggle();
 })
 
-	//SHOW COMMENT MODAL
+//SHOW COMMENT MODAL
 $('.comment-button').click(function(e){
 	e.preventDefault();
 	$(this).parent().parent().children(".comment-modal").toggle();
@@ -196,7 +196,8 @@ $('#nothing').click(function(e){
 	var data = {
 		post_body: $('#new_post_body').val(),
 		hidden_tag_ids: $('.hidden_tag_ids').val(),
-		hidden_tag_text: $('.hidden_tag_text').val()
+		hidden_tag_text: $('.hidden_tag_text').val(),
+		photo_info: $('.dropbox-chooser').val()
 	};
 	console.log(data);
 	$.ajax({
@@ -204,6 +205,7 @@ $('#nothing').click(function(e){
 		url: '/editpost',
 		data: data,
 		success: function(e){
+			//html for new post
 			console.log("success - new comment submitted");
 		},
 		error: function(e){
@@ -277,3 +279,4 @@ $('.new-comment-btn').click(function(e){
 		dataType: "json"
 	});
 })
+

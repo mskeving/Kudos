@@ -1,0 +1,38 @@
+
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script type="text/javascript" src="/static/js/lodash.js"></script>
+
+<script type="text/javascript" src="/static/js/S3upload.js"></script>
+
+<input type="file" id="file" onchange="s3_upload();"/>
+<p id="progress">Please select a file
+<div id="preview"><img src="/static/avatars_hb/Skevington.jpg"  /></div>
+
+<form method="POST" action="/submit_form/">
+    <input type="hidden" id="avatar_url" name="avatar_url" value="/static/avatars_hb/Skevington.jpg" />
+    <input type="text" name="username" placeholder="Username" /><br />
+    <input type="text" name="full_name" placeholder="Full name" /><br /><br />
+    <input type="submit" value="Update profile" />
+</form>
+
+<script>
+function s3_upload(){
+    var s3upload = new S3Upload({
+        file_dom_selector: 'file',
+        s3_sign_put_url: '/sign_s3_upload/',
+
+        onProgress: function(percent, message) { 
+            console.log("uploading")
+            $('#status').html('Upload progress: ' + percent + '%' + message);
+        },
+        onFinishS3Put: function(public_url) { 
+            $('#status').html('Upload completed. Uploaded to: '+ public_url);
+            $("#avatar_url").val(public_url);
+            $("#preview").html('<img src="'+public_url+'" style="width:300px;" />');
+        },
+        onError: function(status) {
+            $('#status').html('Upload error: ' + status);
+        }
+    });
+}
+</script>
