@@ -5,6 +5,8 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 CSRF_ENABLED = True #CROSS-SITE REQUEST FORGERY
 SECRET_KEY = 'you-will-never-guess'
 
+
+
 try:
 	AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
 	AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')

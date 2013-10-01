@@ -57,6 +57,8 @@ class User(db.Model):
 	#backref is adding author to Post class
 	#lazy.. whether all posts are loaded at the same time as user. look up options
 
+
+
 	def generate_photo_url(self, expires_in=300):
 		#url should be everything after bucket name (dropboxkudos)
 		if app.config['USE_S3']:

@@ -1,15 +1,20 @@
 import json
 import os
 
-from app import app, lm, db, oid
+from base64 import b64encode, b64decode
+
+from app import app, lm, db
 from flask import send_from_directory, render_template, flash, redirect, session, url_for, request, g 
-from flask.ext.login import login_user, logout_user, current_user, login_required 
+from flask.ext.login import (login_user, logout_user, current_user, login_required,
+							LoginManager, UserMixin, AnonymousUserMixin, confirm_login, fresh_login_required) 
+from oauth2client.client import (FlowExchangeError, flow_from_clientsecrets, OAuth2WebServerFlow)
 from forms import LoginForm, EditForm, EditPost, DeletePost, NewReply
 from models import User, Post, UserTeam, Team, Tag, Thanks, ROLE_USER, ROLE_ADMIN
 from datetime import datetime
 from flask.ext.sqlalchemy import sqlalchemy
 from sqlalchemy import and_, or_
 from app.lib import email_sender
+
 
 @app.before_request
 def before_request():
@@ -26,45 +31,90 @@ def serve_image(filename):
 	image_path = os.path.join(app.root_path, 'static','img')
 	return send_from_directory(image_path, filename)
 
-def posts_to_indented_posts(posts):
-	# Turns a list of posts from a database query into a list of dictionaries
-	# with the right keys/values to be passed to the post.html template
-	indented_posts = []
-
-	for p in posts:
 
 
-		d = {}
-		d['post_object'] = p
-		d['indent'] = 0
+@app.route('/login', methods = ['GET'])
+def login():
+	#if you're going straight to user profile, and need to login, next parameter makes sure you're redirected to user profile instead of /index
+	next = request.args.get('next')
+	csrf_token = os.urandom(32)
+	session['google_auth_csrf'] = csrf_token
+	csrf_token_encoded = b64encode(csrf_token)
+	state = csrf_token_encoded + "|" + next
+	auth_uri = create_auth_flow(request, state=state).step1_get_authorize_url()
 
-		children = []
-		for child in p.children:
-			children.append(child)
-		d['children_objects'] = children
+	return render_template('login.html', 
+		title = 'Sign In', 
+		auth_uri=auth_uri
+        )
 
-		tagged_users = []
-		tagged_teams = []
-		for tag in p.tags:
-			if tag.user_tag_id:
-				tagged_users.append(tag) #send in all user information
-			elif tag.team_tag_id:
-				tagged_teams.append(tag) #just teamname
-			else:
-				print "no tags for this post.id: %r" % p.id 
-		d['tagged_users'] = tagged_users
-		d['tagged_teams'] = tagged_teams
+@app.route('/auth_finish', methods = ['GET'])
+def auth_finish():
+	code = request.args.get('code')
 
-		#list of users giving thanks for post
-		thanks_senders = []
-		for thank in p.thanks:
-			thanks_senders.append(thank.user.username)
-		d['thanks_senders'] = thanks_senders
+	csrf_token_and_next = request.args.get('state')
+	csrf_token_encoded = csrf_token_and_next.split('|', 1)[0]
+	csrf_token = b64decode(csrf_token_encoded)
+	next = csrf_token_and_next.split('|', 1)[1]
 
-		indented_posts.append(d)
+	#get string comparison function from kannan for security
+	if csrf_token != session['google_auth_csrf']:
+		raise Exception("TODO: send 403 page")
 
-	return indented_posts
-	
+	del session['google_auth_csrf']
+
+	if code:
+		try:
+			cred = create_auth_flow(request).step2_exchange(code)
+
+		except FlowExchangeError as e:
+			flash_msg = "An error occured when trying to log in. Please refresh and try again."
+
+		#check db to see if email exists for valid users
+		u = User.query.filter(User.email==cred.id_token.get('email')).all()
+		if len(u) == 0:
+			raise Exception('TODO: show error template')
+		if len(u) > 1:
+			raise Exception('Too many entries in DB for user %r') % cred.id_token.get('email')
+
+		#tell flask to remember that u is current logged in user
+		login_user(u[0], remember=True)
+
+	else:
+		raise Exception("TODO: error template. You need to authenticate with google to log in.")
+	return redirect(next)
+
+
+def create_auth_flow(request, **kwargs):
+	#TODO: set user_agent - describe all levels of stack
+	GOOGLE_API_SCOPE=[
+    "https://www.googleapis.com/auth/userinfo.profile",
+    "https://www.googleapis.com/auth/userinfo.email",
+	]
+	redirect_uri = request.url_root + 'auth_finish'
+
+	#to only use dropbox domain, pass hd='dropbox.com'
+	#probably don't need to do this because we're checking email in db
+	return OAuth2WebServerFlow(client_id=os.environ.get('GOOGLE_CLIENT_ID'), 
+								client_secret=os.environ.get('GOOGLE_CLIENT_SECRET'), 
+								scope=GOOGLE_API_SCOPE,
+								redirect_uri=redirect_uri, 
+								access_type='offline',
+								**kwargs)
+
+#LOGOUT
+@app.route('/logout')
+def logout():
+	logout_user()
+	return redirect(url_for('index'))
+
+
+@lm.user_loader
+def load_user(id):
+	#user ids in Flask-login are always unicode. Need to convert to int
+	return User.query.get(int(id))
+
+
 
 @app.route('/')
 @app.route('/index')
@@ -139,61 +189,7 @@ def index():
 
 		)
 
-#LOGIN 
-@app.route('/login', methods = ['GET', 'POST'])
-@oid.loginhandler #tells Flask-OpenID that this is our login view function
-def login():
 
-	email_input = request.args.get("email_login")
-	print "email_input: %r" % email_input
-
-	if g.user is not None and g.user.is_authenticated():
-		#if there's a logged in user already, will not do a second login on top
-		return redirect(url_for('index'))
-	login_form = LoginForm()
-
-	if login_form.validate_on_submit(): #if anything fails validation, will return false
-		#store value of remember_me boolean in flask session (NOT db.session)
-		session['remember_me'] = login_form.remember_me.data
-		#trigger user authentication through Flask-OpenID
-		#form.openid.data is what user enters. nickname and email is the data we want from the openid provider
-		return oid.try_login(login_form.openid.data, ask_for = ['nickname', 'email'])
-	return render_template('login.html', 
-		title = 'Sign In', 
-		login_form = login_form,
-        ) #if validation fails, load login page them so they can resubmit 
-
-
-
-#LOGOUT
-@app.route('/logout')
-def logout():
-	logout_user()
-	return redirect(url_for('index'))
-
-@oid.after_login
-#resp has info returned by OpenID provider
-def after_login(resp):
-	if resp.email is None or resp.email=="":
-		flash('Invalid login. Please try again.')
-		return redirect(url_for('login'))
-	print "EMAIL: %s" % resp.email
-	user = User.query.filter_by(email=resp.email).first()
-	if user is None:
-		flash('You must sign in with Hackbright email address. Please try again.')
-		return redirect(url_for('login'))
-	remember_me = False 
-	if 'remember_me' in session:
-		remember_me = session['remember_me']
-		session.pop('remember_me', None) #?
-	#register as valid login
-	login_user(user, remember=remember_me)
-	return redirect(request.args.get('next') or url_for('index'))
-
-@lm.user_loader
-def load_user(id):
-	#user ids in Flask-login are always unicode. Need to convert to int
-	return User.query.get(int(id))
 
 #TEAM PROFILE
 @app.route('/team/<team>')
@@ -649,4 +645,43 @@ class HPost:
 			cls.dump(post.children, indent+1)
 
 
+def posts_to_indented_posts(posts):
+	# Turns a list of posts from a database query into a list of dictionaries
+	# with the right keys/values to be passed to the post.html template
+	indented_posts = []
+
+	for p in posts:
+
+
+		d = {}
+		d['post_object'] = p
+		d['indent'] = 0
+
+		children = []
+		for child in p.children:
+			children.append(child)
+		d['children_objects'] = children
+
+		tagged_users = []
+		tagged_teams = []
+		for tag in p.tags:
+			if tag.user_tag_id:
+				tagged_users.append(tag) #send in all user information
+			elif tag.team_tag_id:
+				tagged_teams.append(tag) #just teamname
+			else:
+				print "no tags for this post.id: %r" % p.id 
+		d['tagged_users'] = tagged_users
+		d['tagged_teams'] = tagged_teams
+
+		#list of users giving thanks for post
+		thanks_senders = []
+		for thank in p.thanks:
+			thanks_senders.append(thank.user.username)
+		d['thanks_senders'] = thanks_senders
+
+		indented_posts.append(d)
+
+	return indented_posts
+	
 
