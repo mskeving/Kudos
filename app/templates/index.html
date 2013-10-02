@@ -101,7 +101,7 @@
 
 
 		$(function () {
-			var data;
+			var data = {};
 			//.live is same as .on() for earlier jquery versions
 			$('#chooser').live('DbxChooserSuccess', function (e) {
 				console.log('chooser success');
@@ -113,28 +113,40 @@
 					thumbnail: e.originalEvent.files[0].thumbnails["200x200"]
 				};
 
-				//can only send binary data using blob
-				var xhr = new XMLHttpRequest();
-				xhr.open("GET", e.originalEvent.files[0].thumbnails["200x200"], true);
-				xhr.responseType = "blob";
-				xhr.onload = function (oEvent)  {
-						//handle errors in here
-					  var blob = xhr.response;
-					s3_upload({raw: blob,
-					       filename: e.originalEvent.files[0].name,
-					       type: xhr.getResponseHeader("Content-Type")});
-   					};
-
-				xhr.send();
+				
 
 				$('#chosen').show();
-				$('#filename').text(filename);
+				$('#filename').text(data['filename']);
 				$('#submit').attr('disabled', false);			
 				
 			});
-
+			$('#remove').click(function (e) {
+				e.preventDefault();
+				data = {}
+				$('#chosen').hide();
+				$('.dropbox-chooser').removeClass('dropbox-chooser-used');
+				$('#submit').attr('disabled', true);
+			});
 
 			$('#new-post-button').click(function(e){
+				//Check if file selected from dropbox chooser
+				if ($.isEmptyObject(data)===false){
+					//can only send binary data using blob
+					var xhr = new XMLHttpRequest();
+					xhr.open("GET", data['thumbnail'], true);
+					xhr.responseType = "blob";
+					xhr.onload = function (oEvent)  {
+							//handle errors in here
+						  var blob = xhr.response;
+						s3_upload({raw: blob,
+						       filename: data['filename'],
+						       type: xhr.getResponseHeader("Content-Type")});
+	   					};
+
+
+					xhr.send();
+				}
+
 				collect_tags($('.new_post_form'));
 				data = $.extend(data, {
 					post_body: $('#post_body').val(),
@@ -155,12 +167,7 @@
 			});	
 
 
-			$('#remove').click(function (e) {
-				e.preventDefault();
-				$('#chosen').hide();
-				$('.dropbox-chooser').removeClass('dropbox-chooser-used');
-				$('#submit').attr('disabled', true);
-			});
+			
 
 
 		});
