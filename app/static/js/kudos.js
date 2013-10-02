@@ -173,7 +173,11 @@ $('.comment-button').click(function(e){
 
 
 $('#no-new-post-button').click(function(e) {
+	//hide post modal and remove any input (post body, tags, or chosen images)
 	$('.post-modal').toggle();
+	$('#post_body').val("");
+	$(this).parent().children('.tags').children('.tagsinput').children('span').remove();
+	$('#chosen').text("");
 	$('#post-column').css('margin', '0px');
 });
 
@@ -278,4 +282,138 @@ $('.new-comment-btn').click(function(e){
 		dataType: "json"
 	});
 })
+
+//Dropbox Chooser file selection
+$(function () {
+	var data = {};
+	//.live is same as .on() for earlier jquery versions
+	$('#chooser').live('DbxChooserSuccess', function (e) {
+		console.log('chooser success');
+		//e.preventDefault();
+		data = {
+			url: e.originalEvent.files[0].link,
+			filename: e.originalEvent.files[0].name,
+			thumbnail: e.originalEvent.files[0].thumbnails["200x200"]
+		};
+
+		$('#chosen').show();
+		$('#filename').text(data['filename']);
+		$('#submit').attr('disabled', false);			
+		
+	});
+	$('#remove').click(function (e) {
+		e.preventDefault();
+		data = {}
+		$('#chosen').hide();
+		$('.dropbox-chooser').removeClass('dropbox-chooser-used');
+		$('#submit').attr('disabled', true);
+	});
+
+	//Submit new post
+	$('#new-post-button').click(function(e){
+		//Check if file selected from dropbox chooser
+		if ($.isEmptyObject(data)===false){
+			//can only send binary data using blob
+			var xhr = new XMLHttpRequest();
+			xhr.open("GET", data['thumbnail'], true);
+			xhr.responseType = "blob";
+			xhr.onload = function (oEvent)  {
+				//handle errors in here
+				var blob = xhr.response;
+				s3_upload({raw: blob,
+				        filename: data['filename'],
+				        type: xhr.getResponseHeader("Content-Type")},
+
+				        function (public_url){
+					       	collect_tags($('.new_post_form'));
+							data = {
+								public_url: public_url,
+								post_body: $('#post_body').val(),
+								hidden_tag_ids: $('.hidden_tag_ids').val(),
+								hidden_tag_text: $('.hidden_tag_text').val(),
+							};
+							$.ajax({
+								type: "POST", 
+								url: "/editpost",
+								data:data, 
+								success: function(e){
+									console.log("success! created new post");
+								},
+								error: function(e){
+									console.log("error! no new post created");
+								}
+							});
+
+				        });
+				};
+			}
+			else{
+				collect_tags($('.new_post_form'));
+			data = {
+				post_body: $('#post_body').val(),
+				hidden_tag_ids: $('.hidden_tag_ids').val(),
+				hidden_tag_text: $('.hidden_tag_text').val(),
+			};
+			$.ajax({
+				type: "POST", 
+				url: "/editpost",
+				data:data, 
+				success: function(e){
+					console.log("success! created new post");
+				},
+				error: function(e){
+					console.log("error! no new post created");
+				}
+			});
+
+			};
+
+			xhr.send();
+		
+	});	
+
+
+
+});
+
+function s3_upload(data, callback){
+	console.log("DATA HERE!!!!!")
+	console.log(data)
+	console.log('in s3_upload');
+	var public_url = ""
+
+	// call new endpoint
+	//data['filename'] = 'secret.jpg';
+
+	// don't call this guy
+	var settings = {
+        s3_sign_put_url: '/sign_s3_upload/',
+        s3_object_name: data['filename'],
+    
+        onProgress: function(percent, message) { 
+            console.log("uploading file");
+        },
+        onFinishS3Put: function(public_url) { 
+            //Create preview of photo: $("#avatar_url").val(public_url);
+            //$("#preview").html('<img src="'+public_url+'" style="width:300px;" />');
+            console.log("finished uploading file");
+            callback(public_url);
+        },
+        onError: function(status) {
+        	console.log("error uploading file: " + status);
+        }
+    };
+
+    if (!data.raw) {
+    	console.log("sending file dom data");		    	
+    	// TODO: this "file" selector should be configurable from 'data'
+    	settings.file_dom_selector = "file";
+    }
+    else {
+    	console.log("sending raw data: " + data.raw.length);
+    	settings.raw_data = {data: data.raw, type: data.type};
+    }
+
+    var s3upload = new S3Upload(settings);
+};
 
