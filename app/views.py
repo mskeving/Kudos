@@ -289,8 +289,16 @@ def user(username):
 def account():
 	return render_template('account.html')
 
+@app.route('/upload_from_dropbox_url', methods=['POST'])
+def upload_from_dropbox_url():
+	dropbox_url = form.get('dropbox_url')
+
+
+
 @app.route('/sign_s3_upload/')
 def sign_s3_upload():
+	#TODO: Think about preventing abuse of this
+	#associate uploads with a user. If there are any things in S3 bucket that aren't referenced with a user, delete them
     AWS_ACCESS_KEY = os.environ.get('AWS_ACCESS_KEY_ID')       
     AWS_SECRET_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
     S3_BUCKET = os.environ.get('S3_BUCKET')
@@ -302,13 +310,17 @@ def sign_s3_upload():
     #may want to customize object_name other than filename to prevent overwrites in S3
     #TODO: properly quote name in case of spaces or other awkward characters
     object_name = request.args.get('s3_object_name')
-    print "object_name: %r " % object_name
     mime_type = request.args.get('s3_object_type')
+#    mime_type = "%s; charset=UTF-8" % (,)
+
+    print "object_name: %r " % ((object_name, mime_type),)
+
 
     expires = int(time.time()+10)
     amz_headers = "x-amz-acl:public-read"
 
-    put_request = "PUT\n\n%s\n%d\n%s\n/%s/%s" % (mime_type, expires, amz_headers, S3_BUCKET, object_name)
+    put_request = "PUT\n\n%s\n%d\n%s\n/%s/%s" % (mime_type, expires, amz_headers, S3_BUCKET, urllib.quote(object_name))
+    print "put_request: %s" % (put_request,)
 
     #signature generated as SHA1 hash of compiled AWS secret key and PUT request
     signature = base64.encodestring(hmac.new(AWS_SECRET_KEY,put_request, hashlib.sha1).digest())

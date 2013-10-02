@@ -1,13 +1,6 @@
 (function() {
 
   window.S3Upload = (function() {
-
-    S3Upload.prototype.s3_object_name = 'default_name';
-
-    S3Upload.prototype.s3_sign_put_url = '/d';
-
-    S3Upload.prototype.file_dom_selector = 'file';
-
     S3Upload.prototype.onFinishS3Put = function(public_url) {
       return console.log('base.onFinishS3Put()', public_url);
     };
@@ -26,17 +19,25 @@
       for (option in options) {
         this[option] = options[option];
       }
-      this.handleFileSelect(document.getElementById(this.file_dom_selector));
+      console.log("file_dom_selector: " + this.file_dom_selector)
+      console.log(document.getElementById(this.file_dom_selector))
 
+      if (this.file_dom_selector) {
+        this.handleFileSelect(document.getElementById(this.file_dom_selector));
+      }
+      else {
+         this.handleRawData(this.raw_data);
+       }
     }
 
     S3Upload.prototype.handleFileSelect = function(file_element) {
+      console.log("in handleFileSelect with file_element: " + file_element)
       var f, files, output, _i, _len, _results;
       this.onProgress(0, 'Upload started.');
       files = file_element.files;
       output = [];
       _results = [];
-      console.log("in handleFileSelect")
+      
       console.log(files.length)
       for (_i = 0, _len = files.length; _i < _len; _i++) {
         f = files[_i];
@@ -44,6 +45,11 @@
       }
       return _results;
     };
+
+    S3Upload.prototype.handleRawData = function(raw_data) {
+      raw_data.is_raw = true;
+      return [this.uploadFile(raw_data)];
+    }
 
     S3Upload.prototype.createCORSRequest = function(method, url) {
       var xhr;
@@ -59,11 +65,11 @@
       return xhr;
     };
 
-    S3Upload.prototype.executeOnSignedUrl = function(file, callback) {
+    S3Upload.prototype.executeOnSignedUrl = function(mime_type, callback) {
       var this_s3upload, xhr;
       this_s3upload = this;
       xhr = new XMLHttpRequest();
-      xhr.open('GET', this.s3_sign_put_url + '?s3_object_type=' + file.type + '&s3_object_name=' + this.s3_object_name, true);
+      xhr.open('GET', this.s3_sign_put_url + '?s3_object_type=' + mime_type + '&s3_object_name=' + this.s3_object_name, true);
       xhr.overrideMimeType('text/plain; charset=x-user-defined');
       xhr.onreadystatechange = function(e) {
         var result;
@@ -112,14 +118,22 @@
       }
       xhr.setRequestHeader('Content-Type', file.type);
       xhr.setRequestHeader('x-amz-acl', 'public-read');
-      return xhr.send(file);
+      if (file.data) {
+           return xhr.send(file.data);
+     }
+      else {
+        // file is a file dom element here
+        return xhr.send(file);
+      }
     };
 
     S3Upload.prototype.uploadFile = function(file) {
-      console.log("in uploadFile with file: " + file)
+      if (!file.is_raw) {
+        console.log("in uploadFile with file: " + file)
+      }
       var this_s3upload;
       this_s3upload = this;
-      return this.executeOnSignedUrl(file, function(signedURL, publicURL) {
+      return this.executeOnSignedUrl(file.type, function(signedURL, publicURL) {
         return this_s3upload.uploadToS3(file, signedURL, publicURL);
       });
     };

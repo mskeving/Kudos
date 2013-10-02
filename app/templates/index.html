@@ -101,16 +101,59 @@
 		});
 
 
-
 		$(function () {
 			var data;
 			//.live is same as .on() for earlier jquery versions
 			$('#chooser').live('DbxChooserSuccess', function (e) {
-				e.preventDefault();
+				console.log('chooser success');
+				//e.preventDefault();
 				data = {
+					//url: e.originalEvent.files[0].thumbnails["200x200"],
 					url: e.originalEvent.files[0].link,
 					filename: e.originalEvent.files[0].name
 				};
+
+				//can only send binary data using blob
+				var xhr = new XMLHttpRequest();
+				xhr.open("GET", e.originalEvent.files[0].thumbnails["200x200"], true);
+				xhr.responseType = "blob";
+				xhr.onload = function (oEvent)  {
+						//handle errors in here
+					  var blob = xhr.response;
+
+						s3_upload({raw: blob,
+   							       filename: e.originalEvent.files[0].name,
+   							       type: xhr.getResponseHeader("Content-Type")});
+   					};
+
+				xhr.send();
+				return;
+
+				//not using this because it doesn't return blobs
+				$.ajax({
+					type: "GET",
+   					url: e.originalEvent.files[0].thumbnails["200x200"],
+   					beforeSend: function (xhr) {
+   						//XHR binary charset opt by Marcus Granado 2006 [http://mgran.blogspot.com]
+   						console.log("before send!");
+   						xhr.responseType = "blob";
+   						//hax to send binary data - needed for IE6 etc
+						//xhr.overrideMimeType('text\/plain; charset=x-user-defined');
+					},
+   					success:function(data, textStatus, xhr){
+   						console.log("s3 upload " + xhr.getResponseHeader("Content-Type"));   						
+   						s3_upload({raw: data,
+   							       filename: e.originalEvent.files[0].name,
+   							       type: xhr.getResponseHeader("Content-Type")});
+   					},
+   					error:function(){
+   						console.log("NOOO IT FAILED");
+   					}
+   				});
+				return;
+
+				console.log(data)
+				console.log(e.originalEvent)
 				s3_upload(data);
 				//TODO: Show thumbnail e.originalEvent.files[0].thumbnails["64x64"]
 				$('#chosen').show();
@@ -149,8 +192,16 @@
 		});
 
 		function s3_upload(data){
-		    var s3upload = new S3Upload({
-		        file_dom_selector: 'file',
+			console.log("DATA HERE!!!!!")
+			console.log(data)
+			console.log('in s3_upload');
+			var public_url = ""
+
+			// call new endpoint
+			//data['filename'] = 'secret.jpg';
+
+			// don't call this guy
+			var settings = {
 		        s3_sign_put_url: '/sign_s3_upload/',
 		        s3_object_name: data['filename'],
 		    
@@ -165,7 +216,19 @@
 		        onError: function(status) {
 		        	console.log("error uploading file");
 		        }
-		    });
+		    };
+
+		    if (!data.raw) {
+		    	console.log("sending file dom data");		    	
+		    	// TODO: this "file" selector should be configurable from 'data'
+		    	settings.file_dom_selector = "file";
+		    }
+		    else {
+		    	console.log("sending raw data: " + data.raw.length);
+		    	settings.raw_data = {data: data.raw, type: data.type};
+		    }
+
+		    var s3upload = new S3Upload(settings);
 		};
 	</script>
 	{% endblock %}
