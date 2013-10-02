@@ -160,7 +160,6 @@
   {% for post_comment in post.get('children_objects') %}
     <div class="one-comment" id="{{post_comment.id}}">
       <div class="clearfix">
-
         <a class="avatar" href="{{ url_for('user', username=post_comment.author.username) }}">
           <div class="cropper">
               <img src="{{post_comment.author.photo}}" alt="{{post_comment.author.username}}" />

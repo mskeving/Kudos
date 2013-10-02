@@ -520,6 +520,13 @@ def new_comment():
 	comment_info["author_username"] = new_comment.author.username
 	comment_info["author_photo"] = str(new_comment.author.photo)
 
+	if new_comment.author.firstname and new_comment.author.lastname: 
+		comment_info["author_name"] = new_comment.author.firstname + " " + new_comment.author.lastname
+	elif new_comment.author.firstname:
+		comment_info["author_name"] = new_comment.author.firstname
+	else:
+		comment_info["author_name"] = new_comment.author.username
+
 	comment_info_json = json.dumps(comment_info)
 
 	return comment_info_json
@@ -566,7 +573,7 @@ def delete_post(postid):
 
 	db.session.commit()
 
-	return redirect(url_for('index'))
+	return postid
 
 
 

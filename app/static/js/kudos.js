@@ -230,9 +230,11 @@ $('.remove-comment').click(function(e){
 		type: "POST",
 		url: '/deletepost/' + post_id,
 		data: data,
-		success: function(response){
+		success: function(post_id){
 			comment.remove();
 			console.log("success");
+			//TODO: reduce number of comments by 1
+
 		}, 
 		error: function(){
 			console.log("error");
@@ -242,6 +244,7 @@ $('.remove-comment').click(function(e){
 
 //NEW COMMENT
 $('.new-comment-btn').click(function(e){
+	var new_comment_btn = $(this)
 	console.log("in fnc")
 	e.preventDefault();
 	console.log("in new comment button function");
@@ -263,15 +266,13 @@ $('.new-comment-btn').click(function(e){
 			var username = comment_info.author_username
 			var photo = comment_info.author_photo
 			var id = comment_info.comment_id
-			var new_avatar = '<a class="avatar" href="{{url_for("user", username="' + username + '")}}"><div class="cropper"><img src=' + photo +' alt=' + username + '>';
-			var new_comment = $('<div class="one-comment" id="' + id + '"><div class="clearfix">' + new_avatar) 
+			var author_name = comment_info.author_name
+			var new_comment = $('<div class="one-comment" id="' + id + '"><div class="clearfix"><a class="avatar" href="/user/"' + username + '"><div class="cropper"><img src=' + photo +' alt=' + username + '></div></a><span class="comment-body">' + data["body"] + '</span><a href="/user/' + username + '" class="comment-author">' + author_name + '</a><div class="remove-comment" id="' + id + '><a href="#">Remove</a></div></div></div>');
 
 			comment_display.append(new_comment);
-			//two separate appends to close <a> tag? DOESN'T WORK! 
-			new_comment=$('"#' + id + '.one-comment');
 
-			new_comment.append($('<span class="comment-body">' + data["body"] + '<br>'));
-
+			new_comment_btn.siblings('.reply-body').val("");
+			new_comment_btn.parent().parent().parent('.comment-modal').toggle()
 
 		},
 		error: function(e){
