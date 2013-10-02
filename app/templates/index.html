@@ -48,7 +48,6 @@
 				    				<span id="filename"></span> 
 				    				(<a id="remove" href="#">remove</a>)
 				    			</p>
-				    			<img id="file-preview" src="">
 
 								{{ new_post_form.hidden_tag_ids (class="hidden_tag_ids", id="hidden_tag_ids") }}
 								{{ new_post_form.hidden_tag_text (class="hidden_tag_text", id="hidden_tag_text") }}
@@ -110,7 +109,8 @@
 				data = {
 					//url: e.originalEvent.files[0].thumbnails["200x200"],
 					url: e.originalEvent.files[0].link,
-					filename: e.originalEvent.files[0].name
+					filename: e.originalEvent.files[0].name,
+					thumbnail: e.originalEvent.files[0].thumbnails["200x200"]
 				};
 
 				//can only send binary data using blob
@@ -120,63 +120,37 @@
 				xhr.onload = function (oEvent)  {
 						//handle errors in here
 					  var blob = xhr.response;
-
-						s3_upload({raw: blob,
-   							       filename: e.originalEvent.files[0].name,
-   							       type: xhr.getResponseHeader("Content-Type")});
+					s3_upload({raw: blob,
+					       filename: e.originalEvent.files[0].name,
+					       type: xhr.getResponseHeader("Content-Type")});
    					};
 
 				xhr.send();
-				return;
 
-				//not using this because it doesn't return blobs
-				$.ajax({
-					type: "GET",
-   					url: e.originalEvent.files[0].thumbnails["200x200"],
-   					beforeSend: function (xhr) {
-   						//XHR binary charset opt by Marcus Granado 2006 [http://mgran.blogspot.com]
-   						console.log("before send!");
-   						xhr.responseType = "blob";
-   						//hax to send binary data - needed for IE6 etc
-						//xhr.overrideMimeType('text\/plain; charset=x-user-defined');
-					},
-   					success:function(data, textStatus, xhr){
-   						console.log("s3 upload " + xhr.getResponseHeader("Content-Type"));   						
-   						s3_upload({raw: data,
-   							       filename: e.originalEvent.files[0].name,
-   							       type: xhr.getResponseHeader("Content-Type")});
-   					},
-   					error:function(){
-   						console.log("NOOO IT FAILED");
-   					}
-   				});
-				return;
-
-				console.log(data)
-				console.log(e.originalEvent)
-				s3_upload(data);
-				//TODO: Show thumbnail e.originalEvent.files[0].thumbnails["64x64"]
 				$('#chosen').show();
 				$('#filename').text(filename);
-				$('#submit').attr('disabled', false);
+				$('#submit').attr('disabled', false);			
+				
 			});
+
+
 			$('#new-post-button').click(function(e){
 				collect_tags($('.new_post_form'));
 				data = $.extend(data, {
-				post_body: $('#post_body').val(),
-				hidden_tag_ids: $('.hidden_tag_ids').val(),
-				hidden_tag_text: $('.hidden_tag_text').val(),
-			});
-			$.ajax({
-				type: "POST", 
-				url: "/editpost",
-				data: data, 
-				success: function(e){
-					console.log("success! created new post");
-				},
-				error: function(e){
-					console.log("error! no new post created");
-				}
+					post_body: $('#post_body').val(),
+					hidden_tag_ids: $('.hidden_tag_ids').val(),
+					hidden_tag_text: $('.hidden_tag_text').val(),
+				});
+				$.ajax({
+					type: "POST", 
+					url: "/editpost",
+					data: data, 
+					success: function(e){
+						console.log("success! created new post");
+					},
+					error: function(e){
+						console.log("error! no new post created");
+					}
 				})
 			});	
 
@@ -214,7 +188,7 @@
 		            console.log("finished uploading file");
 		        },
 		        onError: function(status) {
-		        	console.log("error uploading file");
+		        	console.log("error uploading file: " + status);
 		        }
 		    };
 

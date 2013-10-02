@@ -307,13 +307,15 @@ def sign_s3_upload():
     	print "using S3!!!!!"
     print "in sign_s3_upload"
 
-    #may want to customize object_name other than filename to prevent overwrites in S3
     #TODO: properly quote name in case of spaces or other awkward characters
-    object_name = request.args.get('s3_object_name')
-    mime_type = request.args.get('s3_object_type')
-#    mime_type = "%s; charset=UTF-8" % (,)
+    # object_name = request.args.get('s3_object_name')
 
-    print "object_name: %r " % ((object_name, mime_type),)
+    #create unique filename
+    r = os.urandom(32)
+    object_name = base64.b64encode(r)+'?x=y&'
+
+
+    mime_type = request.args.get('s3_object_type')
 
 
     expires = int(time.time()+10)
@@ -324,12 +326,14 @@ def sign_s3_upload():
 
     #signature generated as SHA1 hash of compiled AWS secret key and PUT request
     signature = base64.encodestring(hmac.new(AWS_SECRET_KEY,put_request, hashlib.sha1).digest())
+    print repr(signature)
     #strip surrounding whitespace for safer transmission
     signature = urllib.quote_plus(signature.strip())
 
-    public_url = 'https://%s.s3.amazonaws.com/%s' % (S3_BUCKET, object_name)
+    public_url = 'https://%s.s3.amazonaws.com/%s' % (S3_BUCKET, urllib.quote(object_name))
     print "url: %r " % public_url
 
+    print repr(signature)
     return json.dumps({
         'signed_request': '%s?AWSAccessKeyId=%s&Expires=%d&Signature=%s' % (public_url, AWS_ACCESS_KEY, expires, signature),
          'public_url': public_url
@@ -347,7 +351,7 @@ def new_post():
 	form = request.form
 	user_id = g.user.id
 
-	url = form.get('url')
+	url = form.get('thumbnail')
 	print "url: %r " % url
 	filename = form.get('filename')
 	print "url: %r " % filename

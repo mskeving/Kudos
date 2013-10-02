@@ -68,6 +68,8 @@
     S3Upload.prototype.executeOnSignedUrl = function(mime_type, callback) {
       var this_s3upload, xhr;
       this_s3upload = this;
+      console.log("OBJECT NAME")
+      console.log(this.s3_object_name)
       xhr = new XMLHttpRequest();
       xhr.open('GET', this.s3_sign_put_url + '?s3_object_type=' + mime_type + '&s3_object_name=' + this.s3_object_name, true);
       xhr.overrideMimeType('text/plain; charset=x-user-defined');
@@ -80,7 +82,8 @@
             this_s3upload.onError('Signing server returned some ugly/empty JSON: "' + this.responseText + '"');
             return false;
           }
-          return callback(decodeURIComponent(result.signed_request), result.url);
+          //return callback(decodeURIComponent(result.signed_request), result.url); -decodingURI left '+' unescaped
+          return callback(result.signed_request, result.url);
         } else if (this.readyState === 4 && this.status !== 200) {
           return this_s3upload.onError('Could not contact request signing server. Status = ' + this.status);
         }
