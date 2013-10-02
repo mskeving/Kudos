@@ -41,7 +41,13 @@
 
 			    				<button class="post-button" type="button" id="no-new-post-button" value="cancel">Cancel</button>
 
-				    			<button class="post-button" type="submit" id="new-post-button" name="new_post_btn" value="submit"> Submit </button>
+				    			<button class="post-button" type="button" id="new-post-button" name="new_post_btn" value="submit"> Submit </button>
+
+				    			<input type="dropbox-chooser" id="chooser" name="selected-file" data-link-type="direct" style="visibility: hidden;"/>
+				    			<p id="chosen" style="display:none">Chosen file: 
+				    				<span id="filename"></span> 
+				    				(<a id="remove" href="#">remove</a>)
+				    			</p>
 
 								{{ new_post_form.hidden_tag_ids (class="hidden_tag_ids", id="hidden_tag_ids") }}
 								{{ new_post_form.hidden_tag_text (class="hidden_tag_text", id="hidden_tag_text") }}
@@ -52,6 +58,7 @@
 				</form>
 			</div>
 		</div>
+
 
 		<div id="post-column">
 <!-- Display posts -->
@@ -64,15 +71,19 @@
 
 	<script type="text/javascript" src="/static/js/jquery1_4_4.min.js"></script>
 	<script type='text/javascript' src="/static/js/jquery-ui.min.js"></script>
+	<script type="text/javascript" src="/static/js/lodash.js"></script>
+	<script type="text/javascript" src="/static/js/S3upload.js"></script>
 	<link rel="stylesheet" type="text/css" href="/static/css/jquery-ui.css" />
 	<script type="text/javascript" src="/static/js/jquery.tagsinput.js"></script>
 	<script type="text/javascript" src="/static/js/kudos.js"></script>
+	<script type="text/javascript" src="/static/js/dropboxchooser.js" id="dropboxjs" data-app-key="vi9myl48jsb166j"></script>
 
 
 	<script type="text/javascript">
 
+
 		$(document).ready(function(){
-			$('.new_post_form').submit(call_collect_tags);
+			//$('.new_post_form').submit(call_collect_tags);
 
 			var tag_words = {{tag_words|safe}}; //safe: tell flask that this input is okay
 			var tag_json = {{tag_json|safe}}; 
@@ -87,7 +98,8 @@
 				tag_ids: tag_ids,
 			});
 		});
-	
+
+
 		
 	</script>
 	{% endblock %}

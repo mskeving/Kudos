@@ -1,5 +1,4 @@
-import json
-import os
+import time, os, json, base64, hmac, urllib, hashlib
 
 from base64 import b64encode, b64decode
 
@@ -283,6 +282,50 @@ def user(username):
 		)
 
 
+@app.route('/sign_s3_upload/')
+def sign_s3_upload():
+	#TODO: Think about preventing abuse of this
+	#associate uploads with a user. If there are any things in S3 bucket that aren't referenced with a user, delete them
+    AWS_ACCESS_KEY = os.environ.get('AWS_ACCESS_KEY_ID')       
+    AWS_SECRET_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
+    S3_BUCKET = os.environ.get('S3_BUCKET')
+
+    if app.config['USE_S3']:
+    	print "using S3!!!!!"
+    print "in sign_s3_upload"
+
+    #TODO: properly quote name in case of spaces or other awkward characters
+    # object_name = request.args.get('s3_object_name')
+
+    #create unique filename
+    r = os.urandom(32)
+    object_name = base64.urlsafe_b64encode(r)+'?x=y&'
+
+
+    mime_type = request.args.get('s3_object_type')
+
+
+    expires = int(time.time()+10)
+    amz_headers = "x-amz-acl:public-read"
+
+    put_request = "PUT\n\n%s\n%d\n%s\n/%s/%s" % (mime_type, expires, amz_headers, S3_BUCKET, urllib.quote(object_name))
+    print "put_request: %s" % (put_request,)
+
+    #signature generated as SHA1 hash of compiled AWS secret key and PUT request
+    signature = base64.encodestring(hmac.new(AWS_SECRET_KEY,put_request, hashlib.sha1).digest())
+    print repr(signature)
+    #strip surrounding whitespace for safer transmission
+    signature = urllib.quote_plus(signature.strip())
+
+    public_url = 'https://%s.s3.amazonaws.com/%s' % (S3_BUCKET, urllib.quote(object_name))
+    print "url: %r " % public_url
+
+    print repr(signature)
+    return json.dumps({
+        'signed_request': '%s?AWSAccessKeyId=%s&Expires=%d&Signature=%s' % (public_url, AWS_ACCESS_KEY, expires, signature),
+         'public_url': public_url
+      })
+
 #ADD NEW POST
 @app.route('/editpost', methods=['POST'])
 @login_required
@@ -291,22 +334,28 @@ def new_post():
 	form = request.form
 	user_id = g.user.id
 
+	url = form.get('public_url')
+	print "url: %r " % url
+	filename = form.get('filename')
+	print "url: %r " % filename
 
 	post_text = form.get('post_body')
+	print "post_text %r " % post_text
 	if post_text:
 		
-		new_post = Post(body=post_text, time=datetime.utcnow(), user_id=user_id) 
+		new_post = Post(body=post_text, time=datetime.utcnow(), user_id=user_id, photo_link=url) 
 		db.session.add(new_post)
 		db.session.commit()
 		db.session.refresh(new_post)
-
+		print "committed new post"
 
 		#Submit tags
 		tag_ids = form.get('hidden_tag_ids', '').split('|')
 		tag_text = form.get('hidden_tag_text', '').split('|')
 
-
-		#print "TAG IDS: %s" % tag_ids
+		print "tag_ids: %r" % tag_ids
+		print "tag_text %r " % tag_text
+ 		#print "TAG IDS: %s" % tag_ids
 		for i in range(len(tag_ids)-1): #last index will be "" because of delimiters 
 			#USER TAG
 			if tag_ids[i][0] == 'u':
@@ -339,6 +388,7 @@ def new_post():
 				new_tag = Tag(team_tag_id=tag_id, body=tag_text[i], post_id=new_post.id, tag_author=user_id, time=datetime.utcnow())
 				db.session.add(new_tag)
 		db.session.commit()
+		print "commited tags for this post"
 		return redirect(url_for('index'))
 	else:
 		return redirect(url_for('index'))

@@ -203,7 +203,7 @@ a.avatar .cropper {
   font-size: 21px;
   font-family: 'museo_sans_300regular';
   line-height: 25px;
-  margin-top: 35px;
+  margin-top: 26px;
 }
 
 .post .photo-thumb {
@@ -230,6 +230,10 @@ a.avatar .cropper {
 
 .post .white-card a:hover {
   text-decoration: underline;
+}
+
+.post .post-photo {
+  margin: 26px 30px 0px 30px;
 }
 
 .post .post-author {
