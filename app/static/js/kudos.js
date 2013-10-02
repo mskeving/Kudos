@@ -172,9 +172,8 @@ $('.comment-button').click(function(e){
 
 
 
-$('#no_new_post_btn').click(function(e) {
-	e.preventDefault();
-	$('.post-modal').hide();
+$('#no-new-post-button').click(function(e) {
+	$('.post-modal').toggle();
 	$('#post-column').css('margin', '0px');
 });
 

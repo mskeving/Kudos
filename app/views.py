@@ -312,7 +312,7 @@ def sign_s3_upload():
 
     #create unique filename
     r = os.urandom(32)
-    object_name = base64.b64encode(r)+'?x=y&'
+    object_name = base64.urlsafe_b64encode(r)+'?x=y&'
 
 
     mime_type = request.args.get('s3_object_type')
@@ -351,7 +351,7 @@ def new_post():
 	form = request.form
 	user_id = g.user.id
 
-	url = form.get('thumbnail')
+	url = form.get('public_url')
 	print "url: %r " % url
 	filename = form.get('filename')
 	print "url: %r " % filename

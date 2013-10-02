@@ -78,12 +78,15 @@
         if (this.readyState === 4 && this.status === 200) {
           try {
             result = JSON.parse(this.responseText);
+            console.log('PUBLIC_URL::::::::')
+            console.log(result.public_url)
+
           } catch (error) {
             this_s3upload.onError('Signing server returned some ugly/empty JSON: "' + this.responseText + '"');
             return false;
           }
-          //return callback(decodeURIComponent(result.signed_request), result.url); -decodingURI left '+' unescaped
-          return callback(result.signed_request, result.url);
+          //return callback(decodeURIComponent(result.signed_request), result.url); -->decodingURI left '+' unescaped
+          return callback(result.signed_request, result.public_url);
         } else if (this.readyState === 4 && this.status !== 200) {
           return this_s3upload.onError('Could not contact request signing server. Status = ' + this.status);
         }
@@ -103,7 +106,7 @@
         xhr.onload = function() {
           if (xhr.status === 200) {
             this_s3upload.onProgress(100, 'Upload completed.');
-            return this_s3upload.onFinishS3Put(url);
+            return this_s3upload.onFinishS3Put(public_url);
           } else {
             return this_s3upload.onError('Upload error: ' + xhr.status);
           }

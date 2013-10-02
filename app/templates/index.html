@@ -136,34 +136,58 @@
 					xhr.open("GET", data['thumbnail'], true);
 					xhr.responseType = "blob";
 					xhr.onload = function (oEvent)  {
-							//handle errors in here
-						  var blob = xhr.response;
+						//handle errors in here
+						var blob = xhr.response;
 						s3_upload({raw: blob,
-						       filename: data['filename'],
-						       type: xhr.getResponseHeader("Content-Type")});
-	   					};
+						        filename: data['filename'],
+						        type: xhr.getResponseHeader("Content-Type")},
 
+						        function (public_url){
+							       	collect_tags($('.new_post_form'));
+									data = {
+										public_url: public_url,
+										post_body: $('#post_body').val(),
+										hidden_tag_ids: $('.hidden_tag_ids').val(),
+										hidden_tag_text: $('.hidden_tag_text').val(),
+									};
+									$.ajax({
+										type: "POST", 
+										url: "/editpost",
+										data:data, 
+										success: function(e){
+											console.log("success! created new post");
+										},
+										error: function(e){
+											console.log("error! no new post created");
+										}
+									});
+
+						        });
+   					};
+   				}
+   				else{
+   					collect_tags($('.new_post_form'));
+					data = {
+						post_body: $('#post_body').val(),
+						hidden_tag_ids: $('.hidden_tag_ids').val(),
+						hidden_tag_text: $('.hidden_tag_text').val(),
+					};
+					$.ajax({
+						type: "POST", 
+						url: "/editpost",
+						data:data, 
+						success: function(e){
+							console.log("success! created new post");
+						},
+						error: function(e){
+							console.log("error! no new post created");
+						}
+					});
+
+   				};
 
 					xhr.send();
-				}
-
-				collect_tags($('.new_post_form'));
-				data = $.extend(data, {
-					post_body: $('#post_body').val(),
-					hidden_tag_ids: $('.hidden_tag_ids').val(),
-					hidden_tag_text: $('.hidden_tag_text').val(),
-				});
-				$.ajax({
-					type: "POST", 
-					url: "/editpost",
-					data: data, 
-					success: function(e){
-						console.log("success! created new post");
-					},
-					error: function(e){
-						console.log("error! no new post created");
-					}
-				})
+				
 			});	
 
 
@@ -172,7 +196,7 @@
 
 		});
 
-		function s3_upload(data){
+		function s3_upload(data, callback){
 			console.log("DATA HERE!!!!!")
 			console.log(data)
 			console.log('in s3_upload');
@@ -191,8 +215,9 @@
 		        },
 		        onFinishS3Put: function(public_url) { 
 		            //Create preview of photo: $("#avatar_url").val(public_url);
-		            $("#preview").html('<img src="'+public_url+'" style="width:300px;" />');
+		            //$("#preview").html('<img src="'+public_url+'" style="width:300px;" />');
 		            console.log("finished uploading file");
+		            callback(public_url);
 		        },
 		        onError: function(status) {
 		        	console.log("error uploading file: " + status);
