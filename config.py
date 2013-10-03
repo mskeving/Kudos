@@ -1,5 +1,5 @@
 import os
-# from boto.s3.connection import S3Connection
+from boto.s3.connection import S3Connection
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 CSRF_ENABLED = True #CROSS-SITE REQUEST FORGERY
