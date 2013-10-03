@@ -1,5 +1,6 @@
 import os
 from boto.s3.connection import S3Connection
+import sys
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 CSRF_ENABLED = True #CROSS-SITE REQUEST FORGERY
@@ -25,7 +26,9 @@ try:
 	USE_S3 = True
 except Exception, e:
 	USE_S3 = False
+
 	print e
+	sys.stdout.flush()
 
 if os.environ.get('DATABASE_URL') is None:
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'app.db')
