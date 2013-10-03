@@ -1,5 +1,5 @@
 import os
-from boto.s3.connection import S3Connection
+# from boto.s3.connection import S3Connection
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 CSRF_ENABLED = True #CROSS-SITE REQUEST FORGERY
@@ -8,6 +8,7 @@ SECRET_KEY = 'you-will-never-guess'
 
 
 try:
+	raise Exception('no aws')
 	AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
 	AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
 	S3_BUCKET = os.environ.get('S3_BUCKET')
@@ -25,7 +26,6 @@ try:
 	USE_S3 = True
 except Exception, e:
 	USE_S3 = False
-	print e
 
 if os.environ.get('DATABASE_URL') is None:
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'app.db')
