@@ -1,6 +1,6 @@
 function call_collect_tags(){
 	collect_tags($(this))
-}
+};
 
 function collect_tags(form){
 
@@ -14,7 +14,15 @@ function collect_tags(form){
 		hidden_tag_text.val(hidden_tag_text.val() + tag_text + "|");
 	});
 	console.log($(".hidden_tag_ids").val());
-}
+};
+
+function clear_post_modal_info(){
+	$('#post_body').val("");
+	$('.hidden_tag_ids').val("");
+	$('.hidden_tag_text').val("");
+	$('.submit-kudos').children('.tags').children('.tagsinput').children('span').remove()
+	$('#chosen').text("");
+};
 
 $('.thank-button').click(function(e){
 	e.preventDefault();
@@ -55,7 +63,7 @@ $('.thank-button').click(function(e){
         	}
         })
 	}
-})
+});
 
 
 
@@ -173,10 +181,8 @@ $('.comment-button').click(function(e){
 $('#no-new-post-button').click(function(e) {
 	//hide post modal and remove any input (post body, tags, or chosen images)
 	$('.post-modal').toggle();
-	$('#post_body').val("");
-	$(this).parent().children('.tags').children('.tagsinput').children('span').remove();
-	$('#chosen').text("");
 	$('#post-column').css('margin', '0px');
+	clear_post_modal_info()
 });
 
 $('#new-post-modal-btn').click(function(e) {
@@ -189,33 +195,6 @@ $('#new-post-modal-btn').click(function(e) {
 	};
 });
 
-//NEW POST - fill in with #new-post-button
-$('#nothing').click(function(e){
-	console.log("new post button")
-	e.preventDefault();
-	collect_tags($('.new_post_form'))
-	var data = {
-		post_body: $('#new_post_body').val(),
-		hidden_tag_ids: $('.hidden_tag_ids').val(),
-		hidden_tag_text: $('.hidden_tag_text').val(),
-		photo_info: $('.dropbox-chooser').val()
-	};
-	console.log(data);
-	$.ajax({
-		type: 'POST',
-		url: '/editpost',
-		data: data,
-		success: function(e){
-			//html for new post
-			console.log("success - new comment submitted");
-		},
-		error: function(e){
-			console.log('error creating new post');
-		}
-	});
-	
-
-});
 
 //REMOVE COMMENT
 $('.remove-comment').click(function(e){
@@ -319,72 +298,57 @@ $(function () {
 			xhr.onload = function (oEvent)  {
 				//handle errors in here
 				var blob = xhr.response;
-				s3_upload({raw: blob,
-				        filename: data['filename'],
-				        type: xhr.getResponseHeader("Content-Type")},
-
-				        function (public_url){
-					       	collect_tags($('.new_post_form'));
-							data = {
-								public_url: public_url,
-								post_body: $('#post_body').val(),
-								hidden_tag_ids: $('.hidden_tag_ids').val(),
-								hidden_tag_text: $('.hidden_tag_text').val(),
-							};
-							$.ajax({
-								type: "POST", 
-								url: "/editpost",
-								data:data, 
-								success: function(e){
-									console.log("success! created new post");
-								},
-								error: function(e){
-									console.log("error! no new post created");
-								}
-							});
-
-				        });
-				};
-			}
-			else{
-				collect_tags($('.new_post_form'));
-			data = {
-				post_body: $('#post_body').val(),
-				hidden_tag_ids: $('.hidden_tag_ids').val(),
-				hidden_tag_text: $('.hidden_tag_text').val(),
+				s3_upload(
+					{
+					raw: blob,
+			        filename: data['filename'],
+			        type: xhr.getResponseHeader("Content-Type")},
+			        function (public_url){
+			        	create_post(public_url);
+			        }
+		        );
 			};
-			$.ajax({
-				type: "POST", 
-				url: "/editpost",
-				data:data, 
-				success: function(e){
-					console.log("success! created new post");
-				},
-				error: function(e){
-					console.log("error! no new post created");
-				}
-			});
-
-			};
-
 			xhr.send();
-		
+		}
+		else{
+			create_post();
+		}
 	});	
-
-
-
 });
 
+function create_post(public_url){
+	collect_tags($('.new_post_form'));
+	data = {
+		public_url : public_url,
+		post_body : $('#post_body').val(),
+		hidden_tag_ids : $('.hidden_tag_ids').val(),
+		hidden_tag_text : $('.hidden_tag_text').val()
+	}
+
+	$.ajax({
+		type: "POST", 
+		url: "/editpost",
+		data: data, 
+		success: function(post_page){
+			$('#post-column').prepend(post_page);
+			$('.post-modal').toggle();
+			$('#post-column').css('margin', '0px');
+			clear_post_modal_info();
+			console.log("success! created new post");
+		},
+		error: function(resp){
+			console.log("error! no new post created");
+		}
+	});
+}
+
+
+
+//Called if file chosen with dropbox chooser 
 function s3_upload(data, callback){
-	console.log("DATA HERE!!!!!")
-	console.log(data)
 	console.log('in s3_upload');
 	var public_url = ""
 
-	// call new endpoint
-	//data['filename'] = 'secret.jpg';
-
-	// don't call this guy
 	var settings = {
         s3_sign_put_url: '/sign_s3_upload/',
         s3_object_name: data['filename'],

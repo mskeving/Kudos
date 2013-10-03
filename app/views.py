@@ -282,6 +282,7 @@ def user(username):
 		)
 
 
+
 @app.route('/sign_s3_upload/')
 def sign_s3_upload():
 	#TODO: Think about preventing abuse of this
@@ -330,32 +331,33 @@ def sign_s3_upload():
 @app.route('/editpost', methods=['POST'])
 @login_required
 def new_post():
-	print "in edit post"
-	form = request.form
+
 	user_id = g.user.id
 
+	new_post_form = EditPost() 
+	reply_form = NewReply()
+	delete_form = DeletePost()
+	
+	form = request.form
 	url = form.get('public_url')
-	print "url: %r " % url
 	filename = form.get('filename')
-	print "url: %r " % filename
-
 	post_text = form.get('post_body')
-	print "post_text %r " % post_text
+
+	print "post_text: %r" % post_text
+	print "url: %r" % url
+
 	if post_text:
 		
 		new_post = Post(body=post_text, time=datetime.utcnow(), user_id=user_id, photo_link=url) 
 		db.session.add(new_post)
 		db.session.commit()
 		db.session.refresh(new_post)
-		print "committed new post"
 
+	
 		#Submit tags
 		tag_ids = form.get('hidden_tag_ids', '').split('|')
 		tag_text = form.get('hidden_tag_text', '').split('|')
 
-		print "tag_ids: %r" % tag_ids
-		print "tag_text %r " % tag_text
- 		#print "TAG IDS: %s" % tag_ids
 		for i in range(len(tag_ids)-1): #last index will be "" because of delimiters 
 			#USER TAG
 			if tag_ids[i][0] == 'u':
@@ -363,36 +365,26 @@ def new_post():
 				new_tag = Tag(user_tag_id=tag_id, body=tag_text[i], post_id=new_post.id, tag_author=user_id, time=datetime.utcnow())
 				db.session.add(new_tag)
 				
-
-				# Get the recipient user, so that we know who to send the email to
-				# kudos_recip = User.query.filter(User.id == tag_id).first()
-
-				# #SENDING EMAIL NOTIFICATIONS
-
-				# assert kudos_recip, "Missing kudos recipient"
-				# # TODO - Right now, we send an email with:
-				# # - A button that links to www.gooogle.com - this should be the permalink of the kudos in future
-				# # - To rk@dropbox.com - we should change this to the kudos recipient
-				# #print "HEREEEEE\n\n\sdnf\adsnf\asdnf\ansdf\ndasf"
-				# #print g.user.email
-				# email_sender.send_email(
-				# 	url_for('permalink_for_post_with_id', post_id=new_post.id, _external=True),
-				# 	'mskeving@gmail.com',
-				# 	g.user.email,
-				# 	message=post_text,
-				# 	sender_name="%s %s" % (g.user.firstname, g.user.lastname)
-				# 	)
 			#TEAM TAGS
 			elif tag_ids[i][0] == 't':
 				tag_id = int(tag_ids[i][1:]) #remove leading 't' to convert back to int team_id
 				new_tag = Tag(team_tag_id=tag_id, body=tag_text[i], post_id=new_post.id, tag_author=user_id, time=datetime.utcnow())
 				db.session.add(new_tag)
 		db.session.commit()
-		print "commited tags for this post"
-		return redirect(url_for('index'))
-	else:
-		return redirect(url_for('index'))
 
+		db.session.refresh(new_post)
+		posts=[new_post,]
+		indented_post = posts_to_indented_posts(posts)[0]
+
+		post_page = render_template('post.html', 
+			post=indented_post, 
+			reply_form=reply_form,
+			new_post_form=new_post_form,
+			)
+
+		return post_page
+	else:
+		return "There needs to be text to submit a new post"
 
 #SEND THANKS
 @app.route('/sendthanks', methods=['POST'])
@@ -549,8 +541,9 @@ def delete_comment(postid):
 @app.route('/deletepost/<postid>', methods=['GET','POST'])
 @login_required
 def delete_post(postid):
-	#post_id = request.form['hidden_post_id'] #hidden value in DeletePost form
-	print "in delete post"
+	form = request.form
+
+
 	
 	delete_post = db.session.query(Post).filter_by(id=postid).one()
 
@@ -573,8 +566,10 @@ def delete_post(postid):
 
 	db.session.commit()
 
-	return postid
 
+	#return postid
+
+	return redirect(url_for('index'))
 
 
 
