@@ -333,7 +333,7 @@ a.avatar .cropper {
 }
 
 .comments {
-  margin: 0px 10px 10px 10px;
+  margin: 10px 0px 10px;
   width: 300px;
   background: #e2d7d8;
   padding-bottom: 1px;
@@ -353,6 +353,7 @@ a.avatar .cropper {
   left: 26%;
   font-family: 'museo_sans_300regular';
   font-size: 15px;
+  width: 200px
 } 
 
 .comment-author {

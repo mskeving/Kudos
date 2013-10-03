@@ -233,7 +233,7 @@ $('.new-comment-btn').click(function(e){
 	}
 	console.log(data);
 	//get entire comment display to append new comment to
-	var comment_display=$(this).parent().parent().parent().parent().siblings('"' + data['post_id'] + '.comments');
+	var comment_display=$(this).parent().parent().parent().parent().children('.comments');
 
 	$.ajax({
 		type: "POST",
@@ -319,10 +319,10 @@ $(function () {
 function create_post(public_url){
 	collect_tags($('.new_post_form'));
 	data = {
-		public_url : public_url,
-		post_body : $('#post_body').val(),
-		hidden_tag_ids : $('.hidden_tag_ids').val(),
-		hidden_tag_text : $('.hidden_tag_text').val()
+		public_url: public_url,
+		post_body: $('#post_body').val(),
+		hidden_tag_ids: $('.hidden_tag_ids').val(),
+		hidden_tag_text: $('.hidden_tag_text').val()
 	}
 
 	$.ajax({
@@ -343,6 +343,28 @@ function create_post(public_url){
 }
 
 
+//REMOVE POST
+$('.remove-post-button').click(function(e){
+	e.preventDefault();
+	var post_id = $(this).parent().parent('.post').attr('id');
+	var parent_post = $(this).parent().parent('.post');
+	data = {
+		post_id : post_id
+	}
+	$.ajax({
+		type: "POST",
+		url: '/deletepost/' + post_id,
+		data: data,
+		success: function(resp){
+			parent_post.remove();
+			console.log("success deleting post");
+		},
+		error: function(resp){
+			console.log("error deleting post");
+		} 
+	})
+
+});
 
 //Called if file chosen with dropbox chooser 
 function s3_upload(data, callback){
@@ -379,4 +401,6 @@ function s3_upload(data, callback){
 
     var s3upload = new S3Upload(settings);
 };
+
+
 

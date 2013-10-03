@@ -567,7 +567,7 @@ def delete_post(postid):
 	db.session.commit()
 
 
-	#return postid
+	return postid
 
 	return redirect(url_for('index'))
 
