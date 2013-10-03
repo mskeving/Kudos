@@ -56,9 +56,9 @@ def auth_finish():
 	csrf_token = b64decode(csrf_token_encoded)
 	next = csrf_token_and_next.split('|', 1)[1]
 
-	#get string comparison function from kannan for security
-	if csrf_token != session['google_auth_csrf']:
-		raise Exception("TODO: send 403 page")
+	#This prevents timing attack rather than using a simple string comparison
+	if not safe_string_equals(csrf_token, session['google_auth_csrf']):
+		raise Exception("TODO: send 403 page")		
 
 	del session['google_auth_csrf']
 
@@ -695,6 +695,17 @@ class HPost:
 		for post in hposts:
 			print indent * " " + str(post.dbo.id), str(post.dbo.body)
 			cls.dump(post.children, indent+1)
+
+
+def safe_string_equals(a, b):
+    assert isinstance(a, str), type(a)
+    assert isinstance(b, str), type(b)
+    if len(a) != len(b):
+        return False
+    res = 0
+    for i in xrange(len(a)):
+        res |= ord(a[i]) ^ ord(b[i])
+    return res == 0
 
 
 def posts_to_indented_posts(posts):
