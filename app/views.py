@@ -34,9 +34,9 @@ def serve_image(filename):
 
 @app.route('/login', methods = ['GET'])
 def login():
-	u = User.query.filter(User.email=='mskeving@gmail.com').first()
-	login_user(u, remember=True)
-	return redirect('/index')
+	# u = User.query.filter(User.email=='mskeving@gmail.com').first()
+	# login_user(u, remember=True)
+	# return redirect('/index')
 
 	#if you're going straight to user profile, and need to login, next parameter makes sure you're redirected to user profile instead of /index
 	next = request.args.get('next','')
