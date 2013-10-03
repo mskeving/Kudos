@@ -25,6 +25,7 @@ try:
 	USE_S3 = True
 except Exception, e:
 	USE_S3 = False
+	print e
 
 if os.environ.get('DATABASE_URL') is None:
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'app.db')
