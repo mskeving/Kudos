@@ -24,7 +24,8 @@ function clear_post_modal_info(){
 	$('#chosen').text("");
 };
 
-$('.thank-button').click(function(e){
+
+$('.thank-button').live('click', function(e){
 	e.preventDefault();
 	var button = $(e.target);
 	//REMOVE THANKS
@@ -65,17 +66,14 @@ $('.thank-button').click(function(e){
 	}
 });
 
-
-
 //REMOVE TAG
-$('.remove-tag').click(function(e) {
+$('.remove-tag').live('click', function(e) {
 	e.preventDefault();
 	var avatar = $(this).parent();
-	var tagid = avatar.attr('id')
-	console.log("tagid: " + tagid)
+	var tagid = avatar.attr('id');
 	var data = {
 		tagid: tagid
-	}
+	};
 
 
 	$.ajax({
@@ -95,9 +93,8 @@ $('.remove-tag').click(function(e) {
 
 
 //ADD NEW TAG
-$('.new-tag-btn').click(function(e) {
+$('.new-tag-btn').live('click', function(e) {
 	e.preventDefault();
-	console.log('clicked to add tags for: ' + this.id);
 	form = $(this).parent()
 	collect_tags(form);
 	tag_ids = form.find('.hidden_tag_ids').val();
@@ -150,7 +147,7 @@ $('.new-tag-btn').click(function(e) {
 	
 });
 
-$('.addtag-button').click(function(e){
+$('.addtag-button').live('click', function(e){
 	e.preventDefault();
 	$(this).parent().parent().children(".tag-modal").toggle();
 	if ($(this).parents().siblings('.comment-modal').css('display') != 'none') {
@@ -159,13 +156,13 @@ $('.addtag-button').click(function(e){
 
 });
 
-$('.no_new_tag_btn').click(function(e){
+$('.no_new_tag_btn').live('click', function(e){
 e.preventDefault();
 $(this).parent().toggle();
 })
 
 //SHOW COMMENT MODAL
-$('.comment-button').click(function(e){
+$('.comment-button').live('click', function(e){
 	e.preventDefault();
 	$(this).parent().parent().children(".comment-modal").toggle();
 	if ($(this).parents().siblings('.tag-modal').css('display') != 'none') {
@@ -174,14 +171,14 @@ $('.comment-button').click(function(e){
 });
 
 //NEW POST MODAL
-$('#no-new-post-button').click(function(e) {
+$('#no-new-post-button').live('click', function(e) {
 	//hide post modal and remove any input (post body, tags, or chosen images)
 	$('.post-modal').toggle();
 	$('#post-column').css('margin', '0px');
 	clear_post_modal_info()
 });
 
-$('#new-post-modal-btn').click(function(e) {
+$('#new-post-modal-btn').live('click', function(e) {
 	$('.post-modal').toggle();
 	if($('.post-modal').css('display')=='none'){
 		$('#post-column').css('margin', '0px');
@@ -193,7 +190,7 @@ $('#new-post-modal-btn').click(function(e) {
 
 
 //REMOVE COMMENT
-$('.remove-comment').click(function(e){
+$('.remove-comment').live('click', function(e){
 	e.preventDefault();
 	var post_id = $(this).attr('id');
 	var comment = $(this).parent().parent()
@@ -218,7 +215,7 @@ $('.remove-comment').click(function(e){
 })
 
 //NEW COMMENT
-$('.new-comment-btn').click(function(e){
+$('.new-comment-btn').live('click', function(e){
 	var new_comment_btn = $(this)
 	console.log("in fnc")
 	e.preventDefault();
@@ -275,7 +272,7 @@ $(function () {
 		$('#submit').attr('disabled', false);			
 		
 	});
-	$('#remove').click(function (e) {
+	$('#remove').live('click', function (e) {
 		e.preventDefault();
 		data = {}
 		$('#chosen').hide();
@@ -284,7 +281,7 @@ $(function () {
 	});
 
 	//Submit new post
-	$('#new-post-button').click(function(e){
+	$('#new-post-button').live('click', function(e){
 		//Check if file selected from dropbox chooser
 		if ($.isEmptyObject(data)===false){
 			//can only send binary data using blob
@@ -340,7 +337,7 @@ function create_post(public_url){
 
 
 //REMOVE POST
-$('.remove-post-button').click(function(e){
+$('.remove-post-button').live('click', function(e){
 	e.preventDefault();
 	var post_id = $(this).parent().parent('.post').attr('id');
 	var parent_post = $(this).parent().parent('.post');
