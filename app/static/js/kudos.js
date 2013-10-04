@@ -123,10 +123,8 @@ $('.new-tag-btn').click(function(e) {
 			for(var i = 0; i<tag_array.user_tags.length; i++){
 				var username = $.trim(tag_array.user_tags[i].username);
 				var user_id = tag_array.user_tags[i].user_id;
-				var url = '{{url_for("user", username="mskeving")}}'
-				new_url = url.replace("mskeving", username)
 				var photo = tag_array.user_tags[i].photo;
-				var new_avatar = $('<a class="avatar" id=' + user_id + ' href=' + new_url + '><div class="cropper"><img src=' + photo +' alt=' + username + '>');
+				var new_avatar = $('<a class="avatar" id=' + user_id + ' href="/user/' + username + '"><div class="cropper"><img src=' + photo +' alt=' + username + '>');
 				console.log("this" + this)
 				form.parent().parent().children(".taggees").children(".avatars").append(new_avatar);
 
@@ -135,9 +133,7 @@ $('.new-tag-btn').click(function(e) {
 			for(var i = 0; i<tag_array.team_tags.length; i++){
 				var teamname = tag_array.team_tags[i].teamname;
 				var photo = tag_array.team_tags[i].photo;
-				var url = '{{url_for("team", team="Baratheon")}}'
-				var new_url = url.replace("Baratheon", teamname)
-				var new_avatar = $('<a class="avatar" href=' + new_url + '><div class="cropper"><img src=' + photo +' alt=' + teamname + '>');
+				var new_avatar = $('<a class="avatar" href="/team/' + teamname + '""><div class="cropper"><img src=' + photo +' alt=' + teamname + '>');
 				console.log("this" + this)
 				form.parent().parent().children(".taggees").children(".avatars").append(new_avatar);
 
