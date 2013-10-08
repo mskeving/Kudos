@@ -159,6 +159,7 @@ a {
 
 .avatar-container {
   float: left;
+  height: 81px;
 }
 
 /* circular avatars */
@@ -187,8 +188,6 @@ a.avatar .cropper {
 
 .remove-tag {
   text-align: center;
-  bottom: 0;
-  left: 0;
   display: none;
 }
 
