@@ -2,18 +2,35 @@ import time, os, json, base64, hmac, urllib, hashlib
 
 from base64 import b64encode, b64decode
 
-from app import app, lm, db
+from app import app, lm, db, mail
 from flask import send_from_directory, render_template, flash, redirect, session, url_for, request, g 
 from flask.ext.login import (login_user, logout_user, current_user, login_required,
 							LoginManager, UserMixin, AnonymousUserMixin, confirm_login, fresh_login_required) 
 from oauth2client.client import (FlowExchangeError, flow_from_clientsecrets, OAuth2WebServerFlow)
 from forms import LoginForm, EditForm, EditPost, DeletePost, NewReply
 from models import User, Post, UserTeam, Team, Tag, Thanks, ROLE_USER, ROLE_ADMIN
+from emails import follower_notification
 from datetime import datetime
 from flask.ext.sqlalchemy import sqlalchemy
 from sqlalchemy import and_, or_
 from app.lib import email_sender
 
+from flask.ext.mail import Message
+
+@app.route('/notification')
+@login_required
+def notification():
+
+	msg = Message("Hello", 
+		sender='kudosfromdropbox@gmail.com',
+		recipients=['mskeving@gmail.com'])
+	msg.body = render_template('email.txt')
+	msg.html = render_template('email.html')
+	#mail.send(msg)
+	recipients=['mskeving@gmail.com']
+	sender = app.config['MAIL_USERNAME']
+	follower_notification(sender, recipients)
+	return redirect(url_for('index'))
 
 @app.before_request
 def before_request():
