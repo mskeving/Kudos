@@ -189,11 +189,22 @@ a.avatar .cropper {
 .remove-tag {
   text-align: center;
   display: none;
+  float: left;
+  margin-left: -8;
 }
 
 .avatar-container:hover .remove-tag {
   display: block;
 }
+.taggee-name {
+  text-align: center;
+  display: none;
+}
+
+.avatar-container:hover .taggee-name {
+  display: block;
+}
+
 
 /* user-inputted blurb */
 .post blockquote {

@@ -23,9 +23,11 @@
 
           <div class="remove-tag">
             <a href="#">
-              remove 
+              X 
             </a>
-
+          </div>
+          <div class="taggee-name">
+            {{tag.user_tag.firstname}}
           </div>
         </div>
       {% endfor %}
@@ -40,8 +42,11 @@
           </a>
           <div class="remove-tag">
               <a href="#">
-                remove
+                X
               </a>
+          </div>
+          <div class="taggee-name">
+            {{tag.team_tag.teamname}}
           </div>
         </div>
       {% endfor %}
