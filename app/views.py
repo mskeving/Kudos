@@ -3,17 +3,22 @@ import time, os, json, base64, hmac, urllib, hashlib
 from base64 import b64encode, b64decode
 
 from app import app, lm, db, mail
-from flask import send_from_directory, render_template, flash, redirect, session, url_for, request, g 
-from flask.ext.login import (login_user, logout_user, current_user, login_required,
-							LoginManager, UserMixin, AnonymousUserMixin, confirm_login, fresh_login_required) 
-from oauth2client.client import (FlowExchangeError, flow_from_clientsecrets, OAuth2WebServerFlow)
+from flask import (send_from_directory, render_template, flash, 
+				redirect, session, url_for, request, g, current_app)
+from flask.ext.login import (login_user, logout_user, current_user, 
+							login_required,	LoginManager, UserMixin, 
+							AnonymousUserMixin, confirm_login, 
+							fresh_login_required) 
+from oauth2client.client import (FlowExchangeError, 
+								flow_from_clientsecrets, 
+								OAuth2WebServerFlow)
 from forms import LoginForm, EditForm, EditPost, DeletePost, NewReply
-from models import User, Post, UserTeam, Team, Tag, Thanks, ROLE_USER, ROLE_ADMIN
+from models import (User, Post, UserTeam, Team, Tag, 
+					Thanks, ROLE_USER, ROLE_ADMIN)
 from datetime import datetime
 from flask.ext.sqlalchemy import sqlalchemy
 from sqlalchemy import and_, or_
-from app.lib import emails
-from emails import follower_notification
+from threading import Thread
 
 from flask.ext.mail import Message
 
@@ -353,11 +358,24 @@ def send_notification(post_id, message, recipient_list, img_url):
 		img_url=img_url,
 		post_id=post_id,
 		)
-	
 
-	mail.send(msg)
+	
+	thr = Thread(target = send_async_notification, args = [app,msg])
+	thr.start()
+
+	#mail.send(msg)
 
 	return 
+
+
+
+def send_async_notification(my_app, msg):
+	with my_app.app_context():
+		print "app name: "
+		print my_app.name
+		mail.send(msg)
+
+	return
 
 
 #ADD NEW POST
@@ -616,7 +634,7 @@ def delete_post(postid):
 @app.route('/post/<post_id>', methods=['GET'])
 @login_required
 def permalink_for_post_with_id(post_id):
-	new_post = EditPost() 
+	new_post_form = EditPost() 
 	reply_form = NewReply()
 	posts = Post.query.filter(Post.id==int(post_id)).all()
 	post = posts_to_indented_posts(posts)[0]
@@ -626,6 +644,7 @@ def permalink_for_post_with_id(post_id):
 		post=post,
 		new_post=new_post,
 		reply_form=reply_form,
+		new_post_form=new_post_form,
 		)
 
 
