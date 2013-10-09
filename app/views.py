@@ -9,28 +9,16 @@ from flask.ext.login import (login_user, logout_user, current_user, login_requir
 from oauth2client.client import (FlowExchangeError, flow_from_clientsecrets, OAuth2WebServerFlow)
 from forms import LoginForm, EditForm, EditPost, DeletePost, NewReply
 from models import User, Post, UserTeam, Team, Tag, Thanks, ROLE_USER, ROLE_ADMIN
-from emails import follower_notification
 from datetime import datetime
 from flask.ext.sqlalchemy import sqlalchemy
 from sqlalchemy import and_, or_
-from app.lib import email_sender
+from app.lib import emails
+from emails import follower_notification
 
 from flask.ext.mail import Message
 
-@app.route('/notification')
-@login_required
-def notification():
 
-	msg = Message("Hello", 
-		sender='kudosfromdropbox@gmail.com',
-		recipients=['mskeving@gmail.com'])
-	msg.body = render_template('email.txt')
-	msg.html = render_template('email.html')
-	#mail.send(msg)
-	recipients=['mskeving@gmail.com']
-	sender = app.config['MAIL_USERNAME']
-	follower_notification(sender, recipients)
-	return redirect(url_for('index'))
+
 
 @app.before_request
 def before_request():
@@ -344,8 +332,36 @@ def sign_s3_upload():
          'public_url': public_url
       })
 
+
+def send_notification(post_id, message, recipient_list, img_url):
+	print "in send_notification"
+	kudos_header = g.user.firstname + " sent you kudos!"
+	recipient_emails = []
+	for recipient in recipient_list:
+		recipient_emails.append(recipient.email)
+	sender = app.config['MAIL_USERNAME']
+	recipients=recipient_emails
+	print "recipients: %r" % recipients
+
+	msg = Message(subject="You've received a kudos", 
+		sender=sender,
+		recipients=recipients)
+
+	msg.html = render_template('email.html',
+		kudos_header=kudos_header,
+		message=message,
+		img_url=img_url,
+		post_id=post_id,
+		)
+	
+
+	mail.send(msg)
+
+	return 
+
+
 #ADD NEW POST
-@app.route('/editpost', methods=['POST'])
+@app.route('/createpost', methods=['POST'])
 @login_required
 def new_post():
 
@@ -356,42 +372,48 @@ def new_post():
 	delete_form = DeletePost()
 	
 	form = request.form
-	url = form.get('public_url')
+	photo_url = form.get('public_url')
 	filename = form.get('filename')
 	post_text = form.get('post_body')
 
-	print "post_text: %r" % post_text
-	print "url: %r" % url
 
-	if post_text:
-		
-		new_post = Post(body=post_text, time=datetime.utcnow(), user_id=user_id, photo_link=url) 
+	if post_text:		
+		new_post = Post(body=post_text, time=datetime.utcnow(), user_id=user_id, photo_link=photo_url) 
 		db.session.add(new_post)
 		db.session.commit()
 		db.session.refresh(new_post)
-
+		post_id = new_post.id
 	
 		#Submit tags
 		tag_ids = form.get('hidden_tag_ids', '').split('|')
 		tag_text = form.get('hidden_tag_text', '').split('|')
 
+		tagged_user_ids = []
 		for i in range(len(tag_ids)-1): #last index will be "" because of delimiters 
 			#USER TAG
 			if tag_ids[i][0] == 'u':
-				tag_id = int(tag_ids[i][1:]) #remove leading 'u' to convert back to int user_id
-				new_tag = Tag(user_tag_id=tag_id, body=tag_text[i], post_id=new_post.id, tag_author=user_id, time=datetime.utcnow())
+				user_id = int(tag_ids[i][1:]) #remove leading 'u' to convert back to int user_id
+				new_tag = Tag(user_tag_id=user_id, body=tag_text[i], post_id=post_id, tag_author=user_id, time=datetime.utcnow())
+				tagged_user_ids.append(user_id)
 				db.session.add(new_tag)
+
 				
 			#TEAM TAGS
 			elif tag_ids[i][0] == 't':
-				tag_id = int(tag_ids[i][1:]) #remove leading 't' to convert back to int team_id
-				new_tag = Tag(team_tag_id=tag_id, body=tag_text[i], post_id=new_post.id, tag_author=user_id, time=datetime.utcnow())
+				team_id = int(tag_ids[i][1:]) #remove leading 't' to convert back to int team_id
+				new_tag = Tag(team_tag_id=team_id, body=tag_text[i], post_id=post_id, tag_author=user_id, time=datetime.utcnow())
 				db.session.add(new_tag)
 		db.session.commit()
 
+		
 		db.session.refresh(new_post)
 		posts=[new_post,]
 		indented_post = posts_to_indented_posts(posts)[0]
+
+		#Send email notification to taggees that they've been tagged in a post
+		tagged_users = User.query.filter(User.id.in_(tagged_user_ids))
+		send_notification(post_id, post_text, tagged_users, photo_url)
+
 
 		post_page = render_template('post.html', 
 			post=indented_post, 

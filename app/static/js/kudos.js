@@ -320,7 +320,7 @@ function create_post(public_url){
 
 	$.ajax({
 		type: "POST", 
-		url: "/editpost",
+		url: "/createpost",
 		data: data, 
 		success: function(post_page){
 			$('#post-column').prepend(post_page);
