@@ -3,17 +3,17 @@ import time, os, json, base64, hmac, urllib, hashlib
 from base64 import b64encode, b64decode
 
 from app import app, lm, db, mail
-from flask import (send_from_directory, render_template, flash, 
+from flask import (send_from_directory, render_template, flash,
 				redirect, session, url_for, request, g, current_app)
-from flask.ext.login import (login_user, logout_user, current_user, 
-							login_required,	LoginManager, UserMixin, 
-							AnonymousUserMixin, confirm_login, 
-							fresh_login_required) 
-from oauth2client.client import (FlowExchangeError, 
-								flow_from_clientsecrets, 
+from flask.ext.login import (login_user, logout_user, current_user,
+							login_required,	LoginManager, UserMixin,
+							AnonymousUserMixin, confirm_login,
+							fresh_login_required)
+from oauth2client.client import (FlowExchangeError,
+								flow_from_clientsecrets,
 								OAuth2WebServerFlow)
 from forms import LoginForm, EditForm, EditPost, DeletePost, NewReply
-from models import (User, Post, UserTeam, Team, Tag, 
+from models import (User, Post, UserTeam, Team, Tag,
 					Thanks, ROLE_USER, ROLE_ADMIN)
 from datetime import datetime
 from flask.ext.sqlalchemy import sqlalchemy
