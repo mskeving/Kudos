@@ -87,11 +87,11 @@
 
       {% if g_user_tagged_in_post or g.user.username == post_object.author.username%}
         {% if post.get('thanks_senders')|length != 0 %}
-          <a href="#">{{post.get('thanks_senders')|length}} Thanks</a>
+          <a href="#" class="thank-count">{{post.get('thanks_senders')|length}} Thanks</a>
         {% elif post.get('thanks_senders')|length == 1 %}
           <a href="#">{{post.get('thanks_senders')|length}} Thank</a>
         {% else %}
-          <a href="#">No Thanks</a>
+          <a href="#" class="thank-count">No Thanks</a>
         {% endif %}
       {% else %}
         <!-- you're not tagged in this -->

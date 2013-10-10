@@ -345,6 +345,7 @@ def send_notification(post_id, message, recipient_list, img_url):
 	for recipient in recipient_list:
 		recipient_emails.append(recipient.email)
 	sender = app.config['MAIL_USERNAME']
+	print "sender: %r " % sender
 	recipients=recipient_emails
 	print "recipients: %r" % recipients
 
@@ -475,6 +476,19 @@ def remove_thanks():
 
 	status = "complete"
 	return status
+
+@app.route('/displaythanks', methods=['POST'])
+@login_required
+def display_thanks(post_id):
+
+	thanks = Thanks.query.filter(Thanks.post_id==post_id).all()
+	thankers = []
+	for thank in thanks:
+		thankers.append(thank.thanker)
+
+	return thankers
+
+
 
 
 #ADD NEW TAG
