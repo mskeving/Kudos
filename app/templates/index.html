@@ -9,7 +9,6 @@
 <body>
 	{% block content %}
 
-
 	<div id="main-column" style="position: relative">
 
 		<div class="new_post" style="position: relative">
@@ -22,7 +21,7 @@
 			</a>
 			<!-- Submit new Kudos -->
 			<div class="post-modal">
-				<form action='/editpost' class="new_post_form" method="POST" name="add" >
+				<form class="new_post_form">
 					<!-- inclide csrf token in every form for security --> 
 					{{ new_post_form.csrf_token }} 
 					{% for error in new_post_form.errors.post_body %}

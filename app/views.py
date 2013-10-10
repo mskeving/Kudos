@@ -2,17 +2,27 @@ import time, os, json, base64, hmac, urllib, hashlib
 
 from base64 import b64encode, b64decode
 
-from app import app, lm, db
-from flask import send_from_directory, render_template, flash, redirect, session, url_for, request, g 
-from flask.ext.login import (login_user, logout_user, current_user, login_required,
-							LoginManager, UserMixin, AnonymousUserMixin, confirm_login, fresh_login_required) 
-from oauth2client.client import (FlowExchangeError, flow_from_clientsecrets, OAuth2WebServerFlow)
+from app import app, lm, db, mail
+from flask import (send_from_directory, render_template, flash,
+				redirect, session, url_for, request, g, current_app)
+from flask.ext.login import (login_user, logout_user, current_user,
+							login_required,	LoginManager, UserMixin,
+							AnonymousUserMixin, confirm_login,
+							fresh_login_required)
+from oauth2client.client import (FlowExchangeError,
+								flow_from_clientsecrets,
+								OAuth2WebServerFlow)
 from forms import LoginForm, EditForm, EditPost, DeletePost, NewReply
-from models import User, Post, UserTeam, Team, Tag, Thanks, ROLE_USER, ROLE_ADMIN
+from models import (User, Post, UserTeam, Team, Tag,
+					Thanks, ROLE_USER, ROLE_ADMIN)
 from datetime import datetime
 from flask.ext.sqlalchemy import sqlalchemy
 from sqlalchemy import and_, or_
-from app.lib import email_sender
+from threading import Thread
+
+from flask.ext.mail import Message
+
+
 
 
 @app.before_request
@@ -327,8 +337,50 @@ def sign_s3_upload():
          'public_url': public_url
       })
 
+
+def send_notification(post_id, message, recipient_list, img_url):
+	print "in send_notification"
+	kudos_header = g.user.firstname + " sent you kudos!"
+	recipient_emails = []
+	for recipient in recipient_list:
+		recipient_emails.append(recipient.email)
+	sender = app.config['MAIL_USERNAME']
+	recipients=recipient_emails
+	print "recipients: %r" % recipients
+
+	msg = Message(subject="You've received a kudos", 
+		sender=sender,
+		recipients=recipients,
+		reply_to='mskevington@dropbox.com')
+
+	msg.html = render_template('email.html',
+		kudos_header=kudos_header,
+		message=message,
+		img_url=img_url,
+		post_id=post_id,
+		)
+
+	
+	thr = Thread(target = send_async_notification, args = [app,msg])
+	thr.start()
+
+	#mail.send(msg)
+
+	return 
+
+
+
+def send_async_notification(my_app, msg):
+	with my_app.app_context():
+		print "app name: "
+		print my_app.name
+		mail.send(msg)
+
+	return
+
+
 #ADD NEW POST
-@app.route('/editpost', methods=['POST'])
+@app.route('/createpost', methods=['POST'])
 @login_required
 def new_post():
 
@@ -339,42 +391,48 @@ def new_post():
 	delete_form = DeletePost()
 	
 	form = request.form
-	url = form.get('public_url')
+	photo_url = form.get('public_url')
 	filename = form.get('filename')
 	post_text = form.get('post_body')
 
-	print "post_text: %r" % post_text
-	print "url: %r" % url
 
-	if post_text:
-		
-		new_post = Post(body=post_text, time=datetime.utcnow(), user_id=user_id, photo_link=url) 
+	if post_text:		
+		new_post = Post(body=post_text, time=datetime.utcnow(), user_id=user_id, photo_link=photo_url) 
 		db.session.add(new_post)
 		db.session.commit()
 		db.session.refresh(new_post)
-
+		post_id = new_post.id
 	
 		#Submit tags
 		tag_ids = form.get('hidden_tag_ids', '').split('|')
 		tag_text = form.get('hidden_tag_text', '').split('|')
 
+		tagged_user_ids = []
 		for i in range(len(tag_ids)-1): #last index will be "" because of delimiters 
 			#USER TAG
 			if tag_ids[i][0] == 'u':
-				tag_id = int(tag_ids[i][1:]) #remove leading 'u' to convert back to int user_id
-				new_tag = Tag(user_tag_id=tag_id, body=tag_text[i], post_id=new_post.id, tag_author=user_id, time=datetime.utcnow())
+				user_id = int(tag_ids[i][1:]) #remove leading 'u' to convert back to int user_id
+				new_tag = Tag(user_tag_id=user_id, body=tag_text[i], post_id=post_id, tag_author=user_id, time=datetime.utcnow())
+				tagged_user_ids.append(user_id)
 				db.session.add(new_tag)
+
 				
 			#TEAM TAGS
 			elif tag_ids[i][0] == 't':
-				tag_id = int(tag_ids[i][1:]) #remove leading 't' to convert back to int team_id
-				new_tag = Tag(team_tag_id=tag_id, body=tag_text[i], post_id=new_post.id, tag_author=user_id, time=datetime.utcnow())
+				team_id = int(tag_ids[i][1:]) #remove leading 't' to convert back to int team_id
+				new_tag = Tag(team_tag_id=team_id, body=tag_text[i], post_id=post_id, tag_author=user_id, time=datetime.utcnow())
 				db.session.add(new_tag)
 		db.session.commit()
 
+		
 		db.session.refresh(new_post)
 		posts=[new_post,]
 		indented_post = posts_to_indented_posts(posts)[0]
+
+		#Send email notification to taggees that they've been tagged in a post
+		tagged_users = User.query.filter(User.id.in_(tagged_user_ids))
+		send_notification(post_id, post_text, tagged_users, photo_url)
+
 
 		post_page = render_template('post.html', 
 			post=indented_post, 
@@ -423,21 +481,19 @@ def remove_thanks():
 @app.route('/newtag', methods=['POST'])
 @login_required
 def add_tag():	
-	print "in /newtag"
 	user_id = g.user.id
-	post_id = request.form["post_id"]
+	form = request.form
+	post_id = form.get("post_id")
+	img_url = form.get("post_photo_url")
+	post_text = form.get("post_text")
 
 	tag_ids = request.form['tag_ids'].split('|')
 	tag_text = request.form['tag_text'].split('|')
 
-	print "tag_ids: %r" % tag_ids
-	print "tag_text: %r" % tag_text
- 
-
-
 	new_tag_dict={}
 	user_tag_info = []
 	team_tag_info = []
+	tagged_user_ids = [] #to get user emails for notifications
 
 	for i in range(len(tag_ids)-1): #last index will be "" because of delimiters 
 		print "in for loop"
@@ -447,12 +503,16 @@ def add_tag():
 			new_tag = Tag(user_tag_id=tag_id, body=tag_text[i], post_id=post_id, tag_author=user_id, time=datetime.utcnow())
 
 			tagged_user = User.query.filter_by(id=tag_id).first()
+			#get tag information to create avatars client side
 			user = {}
 			user['photo'] = tagged_user.photo
 			user['username'] = tagged_user.username
 			user['user_id'] = tagged_user.id
 			user_tag_info.append(user)
 			db.session.add(new_tag)
+
+			tagged_user_ids.append(tagged_user.id)
+
 		#TEAM TAGS
 		if tag_ids[i][0] == 't':
 			tag_id = int(tag_ids[i][1:]) #remove leading 'u' to convert back to int user_id
@@ -472,6 +532,11 @@ def add_tag():
 
 
 	db.session.commit()
+
+	tagged_users = User.query.filter(User.id.in_(tagged_user_ids))
+	#send email notifcation to new taggees:
+	send_notification(post_id, post_text, tagged_users, img_url)
+
 	tag_info_json = json.dumps(new_tag_dict)
 
 	return tag_info_json
@@ -577,7 +642,7 @@ def delete_post(postid):
 @app.route('/post/<post_id>', methods=['GET'])
 @login_required
 def permalink_for_post_with_id(post_id):
-	new_post = EditPost() 
+	new_post_form = EditPost() 
 	reply_form = NewReply()
 	posts = Post.query.filter(Post.id==int(post_id)).all()
 	post = posts_to_indented_posts(posts)[0]
@@ -587,6 +652,7 @@ def permalink_for_post_with_id(post_id):
 		post=post,
 		new_post=new_post,
 		reply_form=reply_form,
+		new_post_form=new_post_form,
 		)
 
 

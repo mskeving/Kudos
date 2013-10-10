@@ -1,6 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
+        <link rel="stylesheet" href="/static/css/core.css" type="text/css" charset="utf-8" />
         <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
         <title>Dropbox Photos</title>
         <style>
@@ -32,8 +33,8 @@
                                                                         <tr>
                                                                             <td>
                                                                                 <center>
-																					<div style="font-size: 26px; padding-bottom: 20px;">
-																						{{sender_name}} sent you kudos!
+																					<div style="font-size: 26px;">
+																						{{kudos_header}}
 																					</div>
                                                                                </center>
                                                                             </td>
@@ -53,7 +54,9 @@
                                                                                     <a href="{{href}}">
                                                                                         <div style="max-width: 500px;">
                                                                                             <!-- An image goes here if we have a relevant one for the post -->
-                                                                                            <img src="{{img_src}}" style="display: block; max-width: 100%;" border="0">
+                                                                                            {% if img_url != None %}
+                                                                                            <img src="{{img_url}}" style="display: block; max-width: 100%;" border="0">
+                                                                                            {% endif %}
                                                                                             <!-- end image -->
                                                                                         </div>
                                                                                     </a>
@@ -62,7 +65,7 @@
                                                                         </tr>
                                                                     </table>
                                                                 </center>
-                                                                <div style="font-size: 16px; padding-bottom: 20px;">
+                                                                <div style="font-size: 16px; padding-bottom: 40px; padding-top: 30px; text-align: center">
 	                                                                    {{message}}
                                                                </div>
 						<center>
@@ -126,8 +129,9 @@
 								width: 125px;
 								padding: 12px 5px;
 								">
-								View kudos
-
+                                <a href="{{url_for('permalink_for_post_with_id', post_id=post_id, _external=True)}}">
+								    View kudos
+                                </a>
 								</div>
 							</a>
 						</center>
