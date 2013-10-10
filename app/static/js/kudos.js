@@ -95,17 +95,23 @@ $('.remove-tag').live('click', function(e) {
 //ADD NEW TAG
 $('.new-tag-btn').live('click', function(e) {
 	e.preventDefault();
-	form = $(this).parent()
+	form = $(this).parent('.new-tag-form');
 	collect_tags(form);
 	tag_ids = form.find('.hidden_tag_ids').val();
 	tag_text = form.find('.hidden_tag_text').val();
+	post_photo_url = form.parent('.tag-modal').parent('.post').children('.white-card').children('.post-photo').attr('src');
+	post_text = form.parent('.tag-modal').parent('.post').children('.white-card').children('blockquote').text()
+
 
 	if (tag_ids != ""){
 		var data = {
 		post_id: this.id,
 		tag_ids: tag_ids,
-		tag_text: tag_text
+		tag_text: tag_text,
+		post_photo_url: post_photo_url,
+		post_text: post_text
 		};
+
 
 		$.post('/newtag', data, function(tag_info){
 			form.parent().toggle(); 
@@ -322,8 +328,8 @@ function create_post(public_url){
 		type: "POST", 
 		url: "/createpost",
 		data: data, 
-		success: function(post_page){
-			$('#post-column').prepend(post_page);
+		success: function(new_post){
+			$('#post-column').prepend(new_post);
 			$('.post-modal').toggle();
 			$('#post-column').css('margin', '0px');
 			clear_post_modal_info();

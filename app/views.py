@@ -350,7 +350,8 @@ def send_notification(post_id, message, recipient_list, img_url):
 
 	msg = Message(subject="You've received a kudos", 
 		sender=sender,
-		recipients=recipients)
+		recipients=recipients,
+		reply_to='mskevington@dropbox.com')
 
 	msg.html = render_template('email.html',
 		kudos_header=kudos_header,
@@ -480,21 +481,19 @@ def remove_thanks():
 @app.route('/newtag', methods=['POST'])
 @login_required
 def add_tag():	
-	print "in /newtag"
 	user_id = g.user.id
-	post_id = request.form["post_id"]
+	form = request.form
+	post_id = form.get("post_id")
+	img_url = form.get("post_photo_url")
+	post_text = form.get("post_text")
 
 	tag_ids = request.form['tag_ids'].split('|')
 	tag_text = request.form['tag_text'].split('|')
 
-	print "tag_ids: %r" % tag_ids
-	print "tag_text: %r" % tag_text
- 
-
-
 	new_tag_dict={}
 	user_tag_info = []
 	team_tag_info = []
+	tagged_user_ids = [] #to get user emails for notifications
 
 	for i in range(len(tag_ids)-1): #last index will be "" because of delimiters 
 		print "in for loop"
@@ -504,12 +503,16 @@ def add_tag():
 			new_tag = Tag(user_tag_id=tag_id, body=tag_text[i], post_id=post_id, tag_author=user_id, time=datetime.utcnow())
 
 			tagged_user = User.query.filter_by(id=tag_id).first()
+			#get tag information to create avatars client side
 			user = {}
 			user['photo'] = tagged_user.photo
 			user['username'] = tagged_user.username
 			user['user_id'] = tagged_user.id
 			user_tag_info.append(user)
 			db.session.add(new_tag)
+
+			tagged_user_ids.append(tagged_user.id)
+
 		#TEAM TAGS
 		if tag_ids[i][0] == 't':
 			tag_id = int(tag_ids[i][1:]) #remove leading 'u' to convert back to int user_id
@@ -529,6 +532,11 @@ def add_tag():
 
 
 	db.session.commit()
+
+	tagged_users = User.query.filter(User.id.in_(tagged_user_ids))
+	#send email notifcation to new taggees:
+	send_notification(post_id, post_text, tagged_users, img_url)
+
 	tag_info_json = json.dumps(new_tag_dict)
 
 	return tag_info_json
