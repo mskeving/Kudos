@@ -407,6 +407,16 @@ a.avatar .cropper {
   float: right;
 }
 
+.thanker-modal {
+  display: none;
+}
+
+.thanker-name {
+  float: left;
+  margin-top: 25px;
+  margin-left: 15px;
+}
+
 .new-comment-btn{
   color: white;
   font-weight: 700;

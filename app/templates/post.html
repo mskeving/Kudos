@@ -78,26 +78,33 @@
       {% else %}
         <a href="#" class="comment-count">{{comments}} Comments</a>
       {% endif %}
-          
+
+      
+
+
       <br> 
       
       <!-- show # thanks received if you're tagged in post or you're author -->
 
-
-
       {% if g_user_tagged_in_post or g.user.username == post_object.author.username%}
-        {% if post.get('thanks_senders')|length != 0 %}
-          <a href="#" class="thank-count">{{post.get('thanks_senders')|length}} Thanks</a>
-        {% elif post.get('thanks_senders')|length == 1 %}
-          <a href="#">{{post.get('thanks_senders')|length}} Thank</a>
+        {% if post.get('thankers')|length != 0 %}
+          <a href="#" class="thank-count">{{post.get('thankers')|length}} Thanks</a>
+        {% elif post.get('thankers')|length == 1 %}
+          <a href="#">{{post.get('thankers')|length}} Thank</a>
         {% else %}
           <a href="#" class="thank-count">No Thanks</a>
         {% endif %}
       {% else %}
         <!-- you're not tagged in this -->
       {% endif %}
+      {% include 'thankers-modal.html' with context %}
     </div>
   </div>
+
+     
+  
+
+    
 
   <div class="toolbar">
     <a class="toolbar-button addtag-button" id="addtag-button" href="#">
@@ -106,7 +113,7 @@
     <a class="toolbar-button comment-button" id="addcomment-button" href="#">
       Comment
     </a>
-      {% if g.user.username in post.get('thanks_senders') %}
+      {% if g.user.username in post.get('thankers') %}
         <a class="toolbar-button thank-button pressed" href="#" name="send-thanks" id="{{post_object.id}}">
           Thank
         </a>

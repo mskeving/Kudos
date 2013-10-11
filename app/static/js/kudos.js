@@ -69,10 +69,8 @@ $('.thank-button').live('click', function(e){
 //DISPLAY THANKERS
 $('.thank-count').live('click', function(e){
 	e.preventDefault()
-	post_id = $(this).parent().parent().parent('.post').attr('id')
-	data = {
-		post_id: post_id
-	}
+	thanker_modal = $(this).parent().children('.thanker-modal');
+	thanker_modal.dialog({ title: "These Dropboxers appreciate your work:" });
 })
 
 //REMOVE TAG

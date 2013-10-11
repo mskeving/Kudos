@@ -479,12 +479,12 @@ def remove_thanks():
 
 @app.route('/displaythanks', methods=['POST'])
 @login_required
-def display_thanks(post_id):
+def display_thanks():
 
 	thanks = Thanks.query.filter(Thanks.post_id==post_id).all()
 	thankers = []
 	for thank in thanks:
-		thankers.append(thank.thanker)
+		thankers.append(thank.thanker)	
 
 	return thankers
 
@@ -818,10 +818,10 @@ def posts_to_indented_posts(posts):
 		d['tagged_teams'] = tagged_teams
 
 		#list of users giving thanks for post
-		thanks_senders = []
+		thankers = []
 		for thank in p.thanks:
-			thanks_senders.append(thank.user.username)
-		d['thanks_senders'] = thanks_senders
+			thankers.append(thank)
+		d['thankers'] = thankers
 
 		indented_posts.append(d)
 

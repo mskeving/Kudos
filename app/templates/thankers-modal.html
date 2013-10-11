@@ -1,0 +1,16 @@
+<div class="thanker-modal">
+    {% for thanker in post.get('thankers') %}
+      <div class="one-thanker">
+        <div class="clearfix">
+          <a class="avatar" href="{{ url_for('user', username=thanker.user.username) }}">
+            <div class="cropper">
+                <img src="{{thanker.user.photo}}" alt="{{thanker.user.username}}" />
+            </div>
+          </a>
+          <div class="thanker-name">
+            <a href="{{ url_for('user', username=thanker.user.username) }}" class="thanker-name">{{thanker.user.firstname}} {{thanker.user.lastname}}</a>
+        </div>
+        </div>
+      </div>
+    {% endfor %}
+</div>
