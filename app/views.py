@@ -397,53 +397,52 @@ def new_post():
 	post_text = form.get('post_body')
 
 
-	if post_text:		
-		new_post = Post(body=post_text, time=datetime.utcnow(), user_id=user_id, photo_link=photo_url) 
-		db.session.add(new_post)
-		db.session.commit()
-		db.session.refresh(new_post)
-		post_id = new_post.id
+
+	new_post = Post(body=post_text, time=datetime.utcnow(), user_id=user_id, photo_link=photo_url) 
+	db.session.add(new_post)
+	db.session.commit()
+	db.session.refresh(new_post)
+	post_id = new_post.id
+
+	#Submit tags
+	tag_ids = form.get('hidden_tag_ids', '').split('|')
+	tag_text = form.get('hidden_tag_text', '').split('|')
+
+	tagged_user_ids = []
+	for i in range(len(tag_ids)-1): #last index will be "" because of delimiters 
+		#USER TAG
+		if tag_ids[i][0] == 'u':
+			user_id = int(tag_ids[i][1:]) #remove leading 'u' to convert back to int user_id
+			new_tag = Tag(user_tag_id=user_id, body=tag_text[i], post_id=post_id, tag_author=user_id, time=datetime.utcnow())
+			tagged_user_ids.append(user_id)
+			db.session.add(new_tag)
+
+			
+		#TEAM TAGS
+		elif tag_ids[i][0] == 't':
+			team_id = int(tag_ids[i][1:]) #remove leading 't' to convert back to int team_id
+			new_tag = Tag(team_tag_id=team_id, body=tag_text[i], post_id=post_id, tag_author=user_id, time=datetime.utcnow())
+			db.session.add(new_tag)
+	db.session.commit()
+
 	
-		#Submit tags
-		tag_ids = form.get('hidden_tag_ids', '').split('|')
-		tag_text = form.get('hidden_tag_text', '').split('|')
+	db.session.refresh(new_post)
+	posts=[new_post,]
+	indented_post = posts_to_indented_posts(posts)[0]
 
-		tagged_user_ids = []
-		for i in range(len(tag_ids)-1): #last index will be "" because of delimiters 
-			#USER TAG
-			if tag_ids[i][0] == 'u':
-				user_id = int(tag_ids[i][1:]) #remove leading 'u' to convert back to int user_id
-				new_tag = Tag(user_tag_id=user_id, body=tag_text[i], post_id=post_id, tag_author=user_id, time=datetime.utcnow())
-				tagged_user_ids.append(user_id)
-				db.session.add(new_tag)
-
-				
-			#TEAM TAGS
-			elif tag_ids[i][0] == 't':
-				team_id = int(tag_ids[i][1:]) #remove leading 't' to convert back to int team_id
-				new_tag = Tag(team_tag_id=team_id, body=tag_text[i], post_id=post_id, tag_author=user_id, time=datetime.utcnow())
-				db.session.add(new_tag)
-		db.session.commit()
-
-		
-		db.session.refresh(new_post)
-		posts=[new_post,]
-		indented_post = posts_to_indented_posts(posts)[0]
-
-		#Send email notification to taggees that they've been tagged in a post
-		tagged_users = User.query.filter(User.id.in_(tagged_user_ids))
-		send_notification(post_id, post_text, tagged_users, photo_url)
+	#Send email notification to taggees that they've been tagged in a post
+	tagged_users = User.query.filter(User.id.in_(tagged_user_ids))
+	send_notification(post_id, post_text, tagged_users, photo_url)
 
 
-		post_page = render_template('post.html', 
-			post=indented_post, 
-			reply_form=reply_form,
-			new_post_form=new_post_form,
-			)
+	post_page = render_template('post.html', 
+		post=indented_post, 
+		reply_form=reply_form,
+		new_post_form=new_post_form,
+		)
 
-		return post_page
-	else:
-		return "There needs to be text to submit a new post"
+	return post_page
+
 
 #SEND THANKS
 @app.route('/sendthanks', methods=['POST'])

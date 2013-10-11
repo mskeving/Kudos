@@ -105,23 +105,29 @@ a {
 
 .post-modal {
   display: none;
-  position: absolute;
   left: 0;
   width: 100%;
   text-align: center;
 }
 
 .post-modal .row {
-  position: relative;
   z-index: 1000;
 }
 
 .submit-kudos {
-  padding: 20px;
   width: 280px;
   margin: 0px 10px;
   background: #e2d7d8;
   padding: 10px;
+}
+
+.error-post .submit-post-error {
+  display: block;
+}
+
+.submit-post-error {
+  display: none;
+  margin-top: 10px;
 }
 
 .post-button {
@@ -334,7 +340,7 @@ a.avatar .cropper {
 }
 
 .new-post-body {
-  width: 279px;
+  width: 280px;
   height: 70px;
 }
 

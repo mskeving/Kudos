@@ -22,6 +22,7 @@ function clear_post_modal_info(){
 	$('.hidden_tag_ids').val("");
 	$('.hidden_tag_text').val("");
 	$('#chosen').text("");
+	$('.submit-kudos').removeClass('error-post')
 };
 
 
@@ -69,8 +70,8 @@ $('.thank-button').live('click', function(e){
 //DISPLAY THANKERS
 $('.thank-count').live('click', function(e){
 	e.preventDefault()
-	thanker_modal = $(this).parent().children('.thanker-modal');
-	thanker_modal.dialog({ title: "We thank you for your work:" });
+	thanker_modal = $(this).parent().children('.thanker-modal').clone();
+	thanker_modal.dialog({ title: "Thanks for your work!" });
 })
 
 //REMOVE TAG
@@ -185,7 +186,6 @@ $('.comment-button').live('click', function(e){
 
 //NEW POST MODAL
 $('#no-new-post-button').live('click', function(e) {
-	//hide post modal and remove any input (post body, tags, or chosen images)
 	$('.post-modal').toggle();
 	$('#post-column').css('margin', '0px');
 	clear_post_modal_info()
@@ -193,12 +193,6 @@ $('#no-new-post-button').live('click', function(e) {
 
 $('#new-post-modal-btn').live('click', function(e) {
 	$('.post-modal').toggle();
-	if($('.post-modal').css('display')=='none'){
-		$('#post-column').css('margin', '0px');
-	}
-	else{
-		$('#post-column').css('margin', '240px 0px 0px 0px');
-	};
 });
 
 
@@ -324,9 +318,15 @@ $(function () {
 
 function create_post(public_url){
 	collect_tags($('.new_post_form'));
+	post_body = $('#post_body').val()
+
+	if (!post_body){
+		$('.submit-kudos').addClass('error-post');
+
+	}
 	data = {
 		public_url: public_url,
-		post_body: $('#post_body').val(),
+		post_body: post_body,
 		hidden_tag_ids: $('.hidden_tag_ids').val(),
 		hidden_tag_text: $('.hidden_tag_text').val()
 	}
