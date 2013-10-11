@@ -1,23 +1,25 @@
+<html>
+	<head>
+		<title>Kudos</title>
+		<link rel="shortcut icon" href="/static/img/favicon.ico">
+		<link rel="stylesheet" href="/static/css/core.css" type="text/css" charset="utf-8" />
+	</head>
+	<body>
+		{% with messages = get_flashed_messages() %}
+		{% if messages%}
+		<ul>
+			{% for message in messages %}
+				<li>{{message}} </li>
+			{% endfor %}
+		</ul>
+		{% endif %}
+		{% endwith %}
+		<div name="login-screen" style='position:relative;'>
 
+			<img src='/static/img/kudos-artwork-salmon.jpg' class='kudos-home-art'>
 
+			<a href="{{auth_uri}}">Sign in with Google</a>
 
-{% with messages = get_flashed_messages() %}
-{% if messages%}
-<ul>
-	{% for message in messages %}
-		<li>{{message}} </li>
-	{% endfor %}
-</ul>
-{% endif %}
-{% endwith %}
-
-<link rel="stylesheet" href="/static/css/core.css" type="text/css" charset="utf-8" />
-
-<div name="login-screen" style='position:relative;'>
-
-	<img src='/static/img/kudos-artwork-salmon.jpg' class='kudos-home-art'>
-
-	<a href="{{auth_uri}}">Sign in with Google</a>
-
-</div>
-
+		</div>
+	</body>
+</html>

@@ -1,104 +1,97 @@
-<html>
+
 {% extends "base.html" %}
 
-<head>
-	
-	<title>Kudos</title>
 
-</head>
-<body>
-	{% block content %}
+{% block content %}
 
-	<div id="main-column" style="position: relative">
+<div id="main-column" style="position: relative">
 
-		<div class="new_post" style="position: relative">
-			<a href="#" id="new-post-modal-btn">
-				<div class="new-kudos-button">
-					<div class="depth" title="Give Kudos">
-						Give Kudos
-					</div>
+	<div class="new_post" style="position: relative">
+		<a href="#" id="new-post-modal-btn">
+			<div class="new-kudos-button">
+				<div class="depth" title="Give Kudos">
+					Give Kudos
 				</div>
-			</a>
-			<!-- Submit new Kudos -->
-			<div class="post-modal">
-				<form class="new_post_form">
-					<!-- inclide csrf token in every form for security --> 
-					{{ new_post_form.csrf_token }} 
-					{% for error in new_post_form.errors.post_body %}
-						<!-- <span style="color:red;">[{{error}}]</span>  -->
-					{% endfor %}<br />
+			</div>
+		</a>
+		<!-- Submit new Kudos -->
+		<div class="post-modal">
+			<form class="new_post_form">
+				<!-- inclide csrf token in every form for security --> 
+				{{ new_post_form.csrf_token }} 
+				{% for error in new_post_form.errors.post_body %}
+					<!-- <span style="color:red;">[{{error}}]</span>  -->
+				{% endfor %}<br />
 
-					<div class="row">
-						<div class="col-lg-6">
-							<div class ="submit-kudos">
-			    				<div class="tags" name="tags_div">
-										<input type="text" class="tag_input" name="tag_input" value placeholder="tags"/>
-									</div>
-			    				<div class="input-group">
-			    					<span class="form-control">{{ new_post_form.post_body (class="new-post-body") }} </span>
-			    				</div>
+				<div class="row">
+					<div class="col-lg-6">
+						<div class ="submit-kudos">
+		    				<div class="tags" name="tags_div">
+									<input type="text" class="tag_input" name="tag_input" value placeholder="tags"/>
+								</div>
+		    				<div class="input-group">
+		    					<span class="form-control">{{ new_post_form.post_body (class="new-post-body") }} </span>
+		    				</div>
 
-			    				<div>
-				    				<input type="dropbox-chooser" id="chooser" name="selected-file" data-link-type="direct" style="visibility: hidden;"/>
-					    			<p id="chosen" style="display:none">Chosen file: 
-					    				<span id="filename"></span> 
-					    				(<a id="remove" href="#">remove</a>)
-					    			</p>
-					    		</div>
-			    				<button class="post-button" type="button" id="no-new-post-button" value="cancel">Cancel</button>
+		    				<div>
+			    				<input type="dropbox-chooser" id="chooser" name="selected-file" data-link-type="direct" style="visibility: hidden;"/>
+				    			<p id="chosen" style="display:none">Chosen file: 
+				    				<span id="filename"></span> 
+				    				(<a id="remove" href="#">remove</a>)
+				    			</p>
+				    		</div>
+		    				<button class="post-button" type="button" id="no-new-post-button" value="cancel">Cancel</button>
 
-				    			<button class="post-button" type="button" id="new-post-button" name="new_post_btn" value="submit"> Submit </button>
+			    			<button class="post-button" type="button" id="new-post-button" name="new_post_btn" value="submit"> Submit </button>
 
-				    			
+			    			
 
-								{{ new_post_form.hidden_tag_ids (class="hidden_tag_ids", id="hidden_tag_ids") }}
-								{{ new_post_form.hidden_tag_text (class="hidden_tag_text", id="hidden_tag_text") }}
+							{{ new_post_form.hidden_tag_ids (class="hidden_tag_ids", id="hidden_tag_ids") }}
+							{{ new_post_form.hidden_tag_text (class="hidden_tag_text", id="hidden_tag_text") }}
 
-							</div>
 						</div>
 					</div>
-				</form>
-			</div>
-		</div>
-
-
-		<div id="post-column">
-<!-- Display posts -->
-			{% for post in posts %}
-			  {% include 'post.html' with context %}
-			{% endfor %}
-
+				</div>
+			</form>
 		</div>
 	</div>
 
 
+	<div id="post-column">
+<!-- Display posts -->
+		{% for post in posts %}
+		  {% include 'post.html' with context %}
+		{% endfor %}
 
-	<script type="text/javascript">
+	</div>
+</div>
 
 
-		$(document).ready(function(){
-			//$('.new_post_form').submit(call_collect_tags);
 
-			var tag_words = {{tag_words|safe}}; //safe: tell flask that this input is okay
-			var tag_json = {{tag_json|safe}}; 
-			var tag_ids = {{tag_ids|safe}};
+<script type="text/javascript">
 
-			// this makes the tag input work for all tag autocompleters
-			$('.tag_input').tagsInput({
-				width: 'auto',
-				height: '30px',
-				autocomplete_list: tag_words,
-				autocomplete_dict: tag_json, 
-				tag_ids: tag_ids,
-			});
+
+	$(document).ready(function(){
+		//$('.new_post_form').submit(call_collect_tags);
+
+		var tag_words = {{tag_words|safe}}; //safe: tell flask that this input is okay
+		var tag_json = {{tag_json|safe}}; 
+		var tag_ids = {{tag_ids|safe}};
+
+		// this makes the tag input work for all tag autocompleters
+		$('.tag_input').tagsInput({
+			width: 'auto',
+			height: '30px',
+			autocomplete_list: tag_words,
+			autocomplete_dict: tag_json, 
+			tag_ids: tag_ids,
 		});
+	});
 
 
-		
-	</script>
-	{% endblock %}
-	</body>
+	
+</script>
+{% endblock %}
 
-</html>
 
 
