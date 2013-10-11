@@ -24,8 +24,8 @@ class UserTeam(db.Model):
 	__tablename__ = "users_teams"
 
 	id = db.Column(db.Integer, primary_key=True)
-	user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-	team_id = db.Column(db.Integer, db.ForeignKey('teams.id'))
+	user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+	team_id = db.Column(db.Integer, db.ForeignKey('teams.id'), nullable=False)
 
 	__table_args__ = (
 		db.UniqueConstraint('user_id', 'team_id'),
@@ -42,7 +42,6 @@ class User(db.Model):
 	nickname = db.Column(db.String(64), index=True)
 	email = db.Column(db.String(120), index=True, unique=True)
 	phone = db.Column(db.String(25), index=True)
-	about_me = db.Column(db.String(140))
 	username = db.Column(db.String(68))
 	facebook = db.Column(db.String(140))
 	twitter = db.Column(db.String(140))
