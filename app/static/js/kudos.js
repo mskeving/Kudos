@@ -70,7 +70,7 @@ $('.thank-button').live('click', function(e){
 $('.thank-count').live('click', function(e){
 	e.preventDefault()
 	thanker_modal = $(this).parent().children('.thanker-modal');
-	thanker_modal.dialog({ title: "These Dropboxers appreciate your work:" });
+	thanker_modal.dialog({ title: "We thank you for your work:" });
 })
 
 //REMOVE TAG

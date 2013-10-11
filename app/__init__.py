@@ -16,6 +16,7 @@ app.jinja_env.add_extension('jinja2.ext.do')
 
 db = SQLAlchemy(app)
 lm = LoginManager()
+lm.login_message = None
 lm.init_app(app)
 #once user is logged in, will go to login page ('/login')
 #Flask-login can protect views against non logged in users by added login_requred decorator
