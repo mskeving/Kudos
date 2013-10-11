@@ -74,80 +74,79 @@
   };
   
 	$.fn.addTag = function(value,options,settings) {
-			options = jQuery.extend({focus:false,callback:true},options);
-			
-			this.each(function() { 
-				var id = $(this).attr('id');
-				
-				//get index of tag in autocomplete_list
-				// var tag_position = jQuery.inArray(value, settings.autocomplete_list);
-				//find corresponding tag_id in tag_ids array
-				// var tag_id = settings.tag_ids[tag_position];
-
-				console.log(settings, id);
-				var tag_id = settings.autocomplete_dict[value];				
-
-				var tagslist = $(this).val().split(delimiter[id]);
-				//var tagslist = JSON.parse($(this).val());
-				//tagslist needs tag object appended to it 
-				if (tagslist[0] == '') { 
-					tagslist = new Array();
-				}
-
-				value = jQuery.trim(value);
-				//go through word list and find value's index. Then go through tag_objects list and find value at same index
-				//add that to html element as value 
-
-				if (options.unique) {
-					var skipTag = $(this).tagExist(value);
-					if(skipTag == true) {
-					    //Marks fake input as not_valid to let styling it
-    				    $('#'+id+'_tag').addClass('not_valid');
-    				}
-				} else {
-					var skipTag = false; 
-				}
-				
-				//add id to each new tag, specific to person or team tagged
-				if (value !='' && skipTag != true) { 
-                    $('<span>').attr('id',tag_id).addClass('tag').append(
-                        $('<span>').text(value).append('&nbsp;&nbsp;'),
-                        $('<a>', {
-                            href  : '#',
-                            title : 'Removing tag',
-                            text  : 'x'
-                        }).click(function () {
-                            return $('#' + id).removeTag(escape(value));
-                        })
-                    ).insertBefore('#' + id + '_addTag');
-
-					tagslist.push(value);
-				
-					$('#'+id+'_tag').val('');
-					if (options.focus) {
-						$('#'+id+'_tag').focus();
-					} else {		
-						$('#'+id+'_tag').blur();
-					}
-					
-					$.fn.tagsInput.updateTagsField(this,tagslist);
-					
-					if (options.callback && tags_callbacks[id] && tags_callbacks[id]['onAddTag']) {
-						var f = tags_callbacks[id]['onAddTag'];
-						f.call(this, value);
-					}
-					if(tags_callbacks[id] && tags_callbacks[id]['onChange'])
-					{
-						var i = tagslist.length;
-						var f = tags_callbacks[id]['onChange'];
-						f.call(this, $(this), tagslist[i-1]);
-					}					
-				}
+		options = jQuery.extend({focus:false,callback:true},options);
 		
-			});		
+		this.each(function() { 
+			var id = $(this).attr('id');
 			
-			return false;
-		};
+			//get index of tag in autocomplete_list
+			// var tag_position = jQuery.inArray(value, settings.autocomplete_list);
+			//find corresponding tag_id in tag_ids array
+			// var tag_id = settings.tag_ids[tag_position];
+			settings = settings || $(this).data('tag-settings');
+			var tag_id = settings.autocomplete_dict[value];				
+
+			var tagslist = $(this).val().split(delimiter[id]);
+			//var tagslist = JSON.parse($(this).val());
+			//tagslist needs tag object appended to it 
+			if (tagslist[0] == '') { 
+				tagslist = new Array();
+			}
+
+			value = jQuery.trim(value);
+			//go through word list and find value's index. Then go through tag_objects list and find value at same index
+			//add that to html element as value 
+
+			var skipTag;
+			if (options.unique) {
+				if (skipTag = $(this).tagExist(value)) {
+					//Marks fake input as not_valid to let styling it
+				    $('#'+id+'_tag').addClass('not_valid');
+				}
+			} else {
+				var skipTag = false; 
+			}
+			
+			//add id to each new tag, specific to person or team tagged
+			if (value !='' && skipTag != true) { 
+                $('<span>').attr('id',tag_id).addClass('tag').append(
+                    $('<span>').text(value).append('&nbsp;&nbsp;'),
+                    $('<a>', {
+                        href  : '#',
+                        title : 'Removing tag',
+                        text  : 'x'
+                    }).click(function () {
+                        return $('#' + id).removeTag(escape(value));
+                    })
+                ).insertBefore('#' + id + '_addTag');
+
+				tagslist.push(value);
+			
+				$('#'+id+'_tag').val('');
+				if (options.focus) {
+					$('#'+id+'_tag').focus();
+				} else {		
+					$('#'+id+'_tag').blur();
+				}
+				
+				$.fn.tagsInput.updateTagsField(this,tagslist);
+				
+				if (options.callback && tags_callbacks[id] && tags_callbacks[id]['onAddTag']) {
+					var f = tags_callbacks[id]['onAddTag'];
+					f.call(this, value);
+				}
+				if(tags_callbacks[id] && tags_callbacks[id]['onChange'])
+				{
+					var i = tagslist.length;
+					var f = tags_callbacks[id]['onChange'];
+					f.call(this, $(this), tagslist[i-1]);
+				}					
+			}
+	
+		});		
+		
+		return false;
+	};
 		
 	$.fn.removeTag = function(value) { 
 			value = unescape(value);
@@ -162,8 +161,7 @@
 						str = str + delimiter[id] +old[i];
 					}
 				}
-				console.log('removing', old, str);
-				// $.fn.tagsInput.importTags(this,str);
+				$.fn.tagsInput.importTags(this,str);
 
 				if (tags_callbacks[id] && tags_callbacks[id]['onRemoveTag']) {
 					var f = tags_callbacks[id]['onRemoveTag'];
@@ -186,17 +184,6 @@
 		$('#'+id+'_tagsinput .tag').remove();
 		$.fn.tagsInput.importTags(this,str);
 	}
-
-	//mine
-	$.fn.isAvailableTag = function(tag, tag_list) {
-		if (jQuery.inArray(tag, tag_list) < 0) {
-			console.log('not in list');
-		}
-		else {
-			console.log('in list');
-		}
-
-	}
 		
 	$.fn.tagsInput = function(options) {
 		var default_settings = {
@@ -216,7 +203,7 @@
 	      inputPadding: 6*2
 		}
 	    var settings = jQuery.extend(default_settings, options);
-
+	    $(this).data('tag-settings', settings);
 
 		this.each(function() { 
 			if (settings.hide) { 
@@ -233,7 +220,7 @@
 				holder: '#'+id+'_tagsinput',
 				input_wrapper: '#'+id+'_addTag',
 				fake_input: '#'+id+'_tag'
-			},settings);
+			}, settings);
 	
 			delimiter[id] = data.delimiter;
 			
@@ -286,13 +273,6 @@
 					$(data.fake_input).autocomplete(autocomplete_options);
 					$(data.fake_input).bind('autocompleteselect',data,function(event,ui) {
 						tokentext = ui.item.value;
-						$.fn.isAvailableTag(tokentext, settings.autocomplete_list);
-						
-						console.log("settings.unique: ")
-						console.log(settings.unique)
-						console.log("settings: ")
-						console.log(settings)
-
 						$(event.data.real_input).addTag(tokentext,{focus:true,unique:(settings.unique)}, settings);
 						return false;
 					});
@@ -319,10 +299,6 @@
 					    event.preventDefault();
 					    var tokentext = $(event.data.fake_input).val();
 						if( (event.data.minChars <= tokentext.length) && (!event.data.maxChars || (event.data.maxChars >= tokentext.length)) ) {
-							if (jQuery.inArray(tokentext, settings.autocomplete_list) < 0) {
-								console.log('not a tag'); return false;
-							}
-
 							$(event.data.real_input).addTag(tokentext,{focus:true,unique:(settings.unique)});
 						}
 					  	$(event.data.fake_input).resetAutosize(settings);

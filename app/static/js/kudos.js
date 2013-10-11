@@ -18,9 +18,9 @@ function collect_tags(form){
 
 function clear_post_modal_info(){
 	$('#post_body').val("");
+	$('.post-modal .tag_input').importTags('');
 	$('.hidden_tag_ids').val("");
 	$('.hidden_tag_text').val("");
-	$('.submit-kudos').children('.tags').children('.tagsinput').children('span').remove()
 	$('#chosen').text("");
 };
 
