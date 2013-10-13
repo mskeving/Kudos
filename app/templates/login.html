@@ -2,24 +2,32 @@
 	<head>
 		<title>Kudos</title>
 		<link rel="shortcut icon" href="/static/img/favicon.ico">
-		<link rel="stylesheet" href="/static/css/core.css" type="text/css" charset="utf-8" />
+		<link rel="stylesheet" href="/static/css/login.css" type="text/css" charset="utf-8" />
 	</head>
-	<body>
-		{% with messages = get_flashed_messages() %}
-		{% if messages%}
-		<ul>
-			{% for message in messages %}
-				<li>{{message}} </li>
-			{% endfor %}
-		</ul>
-		{% endif %}
-		{% endwith %}
-		<div name="login-screen" style='position:relative;'>
-
-			<img src='/static/img/kudos-artwork-salmon.jpg' class='kudos-home-art'>
-
-			<a href="{{auth_uri}}">Sign in with Google</a>
-
-		</div>
+	<body style="background: #d6736c;">
+		<div id="login-page-container">
+	      <div id="login-page">
+	        <div class="logo"><img src="/static/img/kudos_logo.png"/></div>
+	        <div class="content">
+	          
+	            <a class="login-button" href="{{auth_uri}}">Login with Google</a>
+	        </div>
+	            <ul class=flashes>
+	            
+	              <li style="color:white;">Please log in with your Dropbox email account to view this page.</li>
+	            
+	            </ul>
+	          
+	        
+	      </div>
+	    
+	      <div id="footer">
+	        <ul>
+	          <li class="subheader">Help</li>
+	          <li><a href="mailto:team-kudos@dropbox.com">Email</a></li>
+	          <li>Help Docs</li>
+	        </ul>
+	      </div>
+	    </div>
 	</body>
 </html>

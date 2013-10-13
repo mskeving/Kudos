@@ -79,10 +79,12 @@ def auth_finish():
 		except FlowExchangeError as e:
 			flash_msg = "An error occured when trying to log in. Please refresh and try again."
 
+		email = cred.id_token.get('email')
 		#check db to see if email exists for valid users
-		u = User.query.filter(User.email==cred.id_token.get('email')).all()
+		u = User.query.filter(User.email==email).all()
+
 		if len(u) == 0:
-			raise Exception('TODO: show error template')
+			raise Exception('TODO: show error template (%r not in database)' % (email,)) 
 		if len(u) > 1:
 			raise Exception('Too many entries in DB for user %r') % cred.id_token.get('email')
 
