@@ -806,10 +806,15 @@ def posts_to_indented_posts(posts):
 
 	for p in posts:
 
-
 		d = {}
 		d['post_object'] = p
 		d['indent'] = 0
+
+		author_teams = []
+		user_teams= UserTeam.query.filter(UserTeam.user_id==p.author.id).all()
+		for team in user_teams:
+			author_teams.append(team.team)
+		d['author_teams'] = author_teams
 
 		children = []
 		for child in p.children:
