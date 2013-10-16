@@ -3,6 +3,7 @@ app.db
 *.pyc
 tmp/
 db_repository/
+heroku_only/
 app.db
 css help.rtf
 user_data.rtf
