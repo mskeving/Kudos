@@ -504,6 +504,10 @@ a.avatar .cropper {
   text-decoration: underline;
 }
 
+.user-info .white-card .employee-name {
+  color: black;
+}
+
 .user-page-avatars {
   float: left;
   width: 155px;
