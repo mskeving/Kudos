@@ -179,11 +179,11 @@ a.avatar {
 
 a.avatar img {
   display: block;
-  height: 80px;
+  height: 99px;
   border: 0;
   margin: 0;
-  margin-left: -30px;
-  margin-top: -4px;
+  margin-left: -2px;
+  margin-top: -7px;
 }
  /* border-radius is equal to 50 percent of a general width,
      actually 30 pixels, here and a circle was got
@@ -246,8 +246,31 @@ a.avatar .cropper {
   color: #a6b1bb;
 }
 
+.post .white-card div {
+  padding-bottom: 10px;
+}
+
 .post .white-card a:hover {
   text-decoration: underline;
+}
+
+.user-info .white-card ul {
+  font-family: 'museo_sans_300regular';
+  font-size: 14px;
+}
+
+.user-info .white-card ul li {
+  padding-bottom: 2px;
+}
+
+.user-info .white-card ul div {
+  padding-bottom: 10px;
+}
+
+.user-info .white-card h2 {
+  font-family: 'museo_sans_300regular';
+  font-size: 26px;
+  padding-bottom: 18px;
 }
 
 .post .post-photo {
@@ -461,15 +484,15 @@ a.avatar .cropper {
   background: #e2d7d8;
   margin: 50px auto;
   min-width: 550px;
-  max-width: 800px;
+  max-width: 669px;
   padding: 7px;
 }
 
 .user-info .white-card {
   background: white;
-  padding: 25px;
-  margin: 0 0 0 272px;
-  height: 140px;
+  padding-top: 50px;
+  margin: 0 0 0 164px;
+  height: 195px;
 }
 
 .user-info .white-card a {
@@ -483,35 +506,20 @@ a.avatar .cropper {
 
 .user-page-avatars {
   float: left;
+  width: 155px;
 }
 
 
 a.user-page-avatar img {
   display: block;
-  height: 190px;
-  margin-left: -20px;
+  height: 245px;
 }
  /* border-radius is equal to 50 percent of a general width,
      actually 30 pixels, here and a circle was got
      (there is also with prefix - moz and - o) */
 a.user-page-avatar .cropper {
-  width: 270px;
+  width: 156px;
   overflow: hidden;
-}
-
-.user-info .white-card ul {
-  font-family: 'museo_sans_300regular';
-  font-size: 14px;
-}
-
-.user-info .white-card ul li {
-  padding-bottom: 2px;
-}
-
-.user-info .white-card h2 {
-  font-family: 'museo_sans_300regular';
-  font-size: 26px;
-  padding-bottom: 18px;
 }
 
 .dropbox-dropin-btn.dropbox-dropin-default {

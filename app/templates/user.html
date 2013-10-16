@@ -9,7 +9,7 @@
 	  <!-- will always display user tags before team tags -->
 	  	<a class="user-page-avatar" href="#">
 	      	<div class="cropper">
-	        	<img src="{{user.generate_photo_url()}}" alt="{{user.username}}" />
+	        	<img src="{{user.photo}}" alt="{{user.username}}" />
 		 	</div>
 	 	</a>
 	  
@@ -21,7 +21,9 @@
   	<ul>
 		<li>
 			{% for team in list_of_team_names %}
-				<a href="{{ url_for('team', team=team) }}">{{team}} </a>
+				<div>
+					<a href="{{ url_for('team', team=team) }}">{{team}} </a>
+				</div>
 			{% endfor %}
 		</li>
 		<li>{{user.email}}</li>
