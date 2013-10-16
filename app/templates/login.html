@@ -9,9 +9,22 @@
 	      <div id="login-page">
 	        <div class="logo"><img src="/static/img/kudos_logo.png"/></div>
 	        <div class="content">
-	          
-	            <a class="login-button" href="{{auth_uri}}">Login with Google</a>
+	          	<div>
+	            	<a class="login-button" href="{{auth_uri}}">Login with Google</a>
+	            </div>
+	            <div class="login-error">
+		            {% with messages = get_flashed_messages() %}
+					{% if messages%}
+					<ul>
+						{% for message in messages %}
+							<li>{{message}} </li>
+						{% endfor %}
+					</ul>
+					{% endif %}
+					{% endwith %}
+				</div>
 	        </div>
+	       
 	            <ul class=flashes>
 	            
 	              <li style="color:white;">Please log in with your Dropbox email account to view this page.</li>

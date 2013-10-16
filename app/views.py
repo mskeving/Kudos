@@ -44,6 +44,7 @@ def serve_image(filename):
 
 @app.route('/login', methods = ['GET'])
 def login():
+
 	#if you're going straight to user profile, and need to login, next parameter makes sure you're redirected to user profile instead of /index
 	next = request.args.get('next','')
 	csrf_token = os.urandom(32)
@@ -54,7 +55,7 @@ def login():
 
 	return render_template('login.html', 
 		title = 'Sign In', 
-		auth_uri=auth_uri
+		auth_uri=auth_uri,
         )
 
 @app.route('/auth_finish', methods = ['GET'])
@@ -72,6 +73,10 @@ def auth_finish():
 
 	del session['google_auth_csrf']
 
+	def back_to_login_with_error(error_msg):
+		flash(error_msg)
+		return redirect(url_for('login'))
+
 	if code:
 		try:
 			cred = create_auth_flow(request).step2_exchange(code)
@@ -84,16 +89,21 @@ def auth_finish():
 		u = User.query.filter(User.email==email).all()
 
 		if len(u) == 0:
-			raise Exception('TODO: show error template (%r not in database)' % (email,)) 
+			error_msg = "You're not registered on Dropbox Kudos yet - are you a new Dropboxer? If so, contact team-kudos@dropbox.com to get access."
+			return back_to_login_with_error(error_msg)
+
 		if len(u) > 1:
-			raise Exception('Too many entries in DB for user %r') % cred.id_token.get('email')
+			error_msg = "Too many entries for %r in database. Please contact team-kudos@dropbox.com" % cred.id_token.get('email')
+			return back_to_login_with_error(error_msg)
 
 		#tell flask to remember that u is current logged in user
 		login_user(u[0], remember=True)
 
 	else:
-		raise Exception("TODO: error template. You need to authenticate with google to log in.")
+		error_msg = "You need to authenticate with Google in order to log in to Kudos."
+		return back_to_login_with_error(error_msg)
 	return redirect(next or "/index")
+
 
 
 def create_auth_flow(request, **kwargs):
