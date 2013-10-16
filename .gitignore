@@ -15,10 +15,10 @@ get_dropbook_data.py
 
 newrelic.ini
 
+.anvil/
 /env
 /app/static/hackbright_users.txt
-/app/static/avatars_db
-/app/static/avatars_hb
+app/static/img/skevington.jpg
 =======
 flask/*
 .DS_Store
