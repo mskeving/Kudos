@@ -332,6 +332,7 @@ a.avatar .cropper {
 }
 
 .new-kudos-button {
+  cursor: pointer;
 	width: 80%;
 	background: rgb(241, 150, 150);
 	height: 16px;
