@@ -20,12 +20,13 @@
                 <img src="{{tag.user_tag.photo}}" alt="{{tag.username}}" />
         	  </div>
           </a>
-
-          <div class="remove-tag">
-            <a href="#">
-              X 
-            </a>
-          </div>
+          {% if g_user_tagged_in_post or g.user.username == post_object.author.username%}
+            <div class="remove-tag">
+              <a>
+                X 
+              </a>
+            </div>
+          {% endif %}
           <div class="taggee-name">
             {{tag.user_tag.firstname}}
           </div>
@@ -40,11 +41,13 @@
                 <img src="{{tag.team_tag.photo}}" alt="{{tag.team_tag.teamname}}" />
             </div>
           </a>
-          <div class="remove-tag">
-              <a href="#">
-                X
-              </a>
-          </div>
+          {% if g_user_tagged_in_post or g.user.username == post_object.author.username%}
+            <div class="remove-tag">
+                <a href="#">
+                  X
+                </a>
+            </div>
+          {% endif %}
           <div class="taggee-name">
             {{tag.team_tag.teamname}}
           </div>

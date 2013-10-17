@@ -200,6 +200,7 @@ a.avatar .cropper {
   display: none;
   float: left;
   margin-left: -8;
+  cursor: pointer;
 }
 
 .avatar-container:hover .remove-tag {

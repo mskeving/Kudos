@@ -374,8 +374,6 @@ def send_notification(message, subject, recipient_list, post_id, img_url):
 	print "in send_notification"
 	kudos_header = g.user.firstname + " sent you kudos!"
 	recipient_emails = []
-	
-	print "recipients: %r" % recipients
 
 	sender = app.config['MAIL_USERNAME']
 	print "sender: %r " % sender
