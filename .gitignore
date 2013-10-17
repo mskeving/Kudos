@@ -18,7 +18,6 @@ newrelic.ini
 .anvil/
 /env
 /app/static/hackbright_users.txt
-app/static/img/skevington.jpg
 =======
 flask/*
 .DS_Store
