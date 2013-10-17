@@ -530,6 +530,46 @@ a.user-page-avatar .cropper {
   margin-top: 10px;
 }
 
+.feedback-modal {
+  display: none;
+  width: 300px;
+  background: #e2d7d8;
+  position: absolute;
+  top: 62px;
+  right: 0px;
+  border-radius: 7px;
+  padding: 9px;
+}
+
+.feedback-description {
+  font-family: 'museo_sans_300regular';
+  font-size: 14;
+}
+
+.feedback-input {
+  width: 285px;
+  height: 160px;
+  border-radius: 7px;
+  margin-top: 10px;
+
+}
+
+.submit-feedback-btn {
+  margin-top: 10px;
+  cursor: pointer;
+  width: 89%;
+  background: #e2d7d8;
+  height: 16px;
+  border-radius: 10px;
+  font-family: 'museo_sans_700regular';
+  font-size: 12px;
+
+}
+
+.feedback-modal.displaying{
+  display:block;
+}
+
 
 div.tagsinput { border-bottom:1px solid #CCC; background: #FFF; padding:5px; width:300px; height:100px; overflow-y: auto;}
 div.tagsinput span.tag { border: 1px solid rgb(250,150,150); -moz-border-radius:2px; -webkit-border-radius:2px; display: block; float: left; padding: 5px; text-decoration:none; background: rgb(250,150,150); color: #fff; margin-right: 5px; margin-bottom:5px;font-family: helvetica;  font-size:13px;}

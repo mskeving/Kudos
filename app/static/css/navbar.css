@@ -299,10 +299,6 @@ canvas,
   clear: both;
 }
 
-.navbar-nav {
-  margin-top: 10px;
-  margin-bottom: 15px;
-}
 
 .navbar-nav > li > a {
   padding-top: 15px;
@@ -552,7 +548,6 @@ canvas,
     margin-left: -15px;
   }
   .navbar-nav {
-    float: left;
     margin-top: 0;
     margin-bottom: 0;
   }
@@ -614,4 +609,8 @@ a.list-group-item.active > .badge,
 
 .nav-pills > li > a > .badge {
   margin-left: 3px;
+}
+
+#nav-feedback{
+  float: right;
 }

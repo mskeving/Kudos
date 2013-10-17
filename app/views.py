@@ -135,7 +135,27 @@ def load_user(id):
 	#user ids in Flask-login are always unicode. Need to convert to int
 	return User.query.get(int(id))
 
+@app.route('/feedback', methods=['POST'])
+@login_required
+def feedback():
+	form = request.form
 
+	sender = g.user.email
+	reply_to = sender
+	recipient_list = ["kudos@dropbox.com"]
+	subject = "Kudos Feedback"
+	text = form.get('feedback')
+	subject = "kudos feedback"
+
+	kudos_header = "feedback from %s %s" %(g.user.firstname, g.user.lastname)
+	html = render_template('feedback_email.html',
+		text=text,
+		kudos_header=kudos_header,
+		)
+
+	send_email(sender, recipient_list, reply_to, subject, html)
+
+	return "complete"
 
 @app.route('/')
 @app.route('/index')
@@ -350,46 +370,49 @@ def sign_s3_upload():
       })
 
 
-def send_notification(post_id, message, recipient_list, img_url):
+def send_notification(message, subject, recipient_list, post_id, img_url):
 	print "in send_notification"
 	kudos_header = g.user.firstname + " sent you kudos!"
 	recipient_emails = []
-	for recipient in recipient_list:
-		recipient_emails.append(recipient.email)
-	sender = app.config['MAIL_USERNAME']
-	print "sender: %r " % sender
-	recipients=recipient_emails
+	
 	print "recipients: %r" % recipients
 
-	msg = Message(subject="You've received a kudos", 
-		sender=sender,
-		recipients=recipients,
-		reply_to='mskevington@dropbox.com')
+	sender = app.config['MAIL_USERNAME']
+	print "sender: %r " % sender
 
-	msg.html = render_template('email.html',
+	reply_to="team-kuds@dropbox.com"
+
+	html = render_template('notification_email.html',
 		kudos_header=kudos_header,
 		message=message,
 		img_url=img_url,
 		post_id=post_id,
 		)
-
-	
-	thr = Thread(target = send_async_notification, args = [app,msg])
-	thr.start()
-
-	#mail.send(msg)
-
-	return 
+	sender = app.config['MAIL_USERNAME']
+	send_email(sender, recipient_list, reply_to, subject, html)
 
 
 
-def send_async_notification(my_app, msg):
-	with my_app.app_context():
-		print "app name: "
-		print my_app.name
-		mail.send(msg)
 
-	return
+
+
+def send_email(sender, recipients, reply_to, subject, html):
+	print "in send_email"
+	msg = Message(subject=subject, 
+		sender=sender,
+		recipients=recipients,
+		reply_to=reply_to,
+		html=html)
+
+	def send_async_notification(my_app, msg):
+		print "sending!"
+		with my_app.app_context():
+			print "app name: "
+			print my_app.name
+			mail.send(msg)
+
+	Thread(target = send_async_notification, args = [app,msg]).start()
+
 
 
 #ADD NEW POST
@@ -444,10 +467,14 @@ def new_post():
 
 	#Send email notification to taggees that they've been tagged in a post
 	tagged_users = User.query.filter(User.id.in_(tagged_user_ids))
-	send_notification(post_id, post_text, tagged_users, photo_url)
+	recipient_list=[]
+	for user in tagged_users:
+		recipient_list.append(user.email)
+	subject = "You've received a kudos!"
+	send_notification(post_text, subject, recipient_list, post_id, photo_url)
 
 
-	post_page = render_template('post.html', 
+	post_page = render_template('post.html',
 		post=indented_post, 
 		reply_form=reply_form,
 		new_post_form=new_post_form,
@@ -560,7 +587,11 @@ def add_tag():
 
 	tagged_users = User.query.filter(User.id.in_(tagged_user_ids))
 	#send email notifcation to new taggees:
-	send_notification(post_id, post_text, tagged_users, img_url)
+	recipient_list = []
+	for user in tagged_users:
+		recipient_list.append(user.email)
+	subject = "You've received a kudos!"
+	send_notification(post_text, subject, recipient_list, post_id, img_url)
 
 	tag_info_json = json.dumps(new_tag_dict)
 

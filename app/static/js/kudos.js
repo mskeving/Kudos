@@ -25,6 +25,49 @@ function clear_post_modal_info(){
 	$('.submit-kudos').removeClass('error-post')
 };
 
+$('#nav-feedback').live('click', function(e){
+	e.preventDefault();
+	if ($('.feedback-modal').hasClass('displaying')){
+		$('.feedback-modal').removeClass('displaying');
+	}
+	else{
+		$('.feedback-modal').addClass('displaying');
+	}
+})
+
+$('.submit-feedback-btn').live('click', function(e){
+	e.preventDefault();
+	console.log("in submit feedback");
+	var feedback = $('.feedback-input').val();
+	var data = {
+		feedback: feedback
+	};
+
+	$.ajax({
+		type: "POST",
+		url: "/feedback",
+		data: data,
+		success: function(response){
+			$('.feedback-input').val("");
+			$('.feedback-modal').removeClass('displaying');
+		},
+		error: function(){
+			console.log("could not submit feedback");
+		}
+	})
+})
+
+document.onkeydown = function(evt) {
+	evt = evt || window.event;
+	if (evt.keyCode == 27) {
+		console.log('escape');
+		if ($('.feedback-modal').hasClass('displaying')){
+			$('.feedback-modal').removeClass('displaying');
+			$('.feedback-input').val("");
+		}
+	}
+};
+
 
 $('.thank-button').live('click', function(e){
 	e.preventDefault();
