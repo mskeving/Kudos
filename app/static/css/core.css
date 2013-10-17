@@ -174,24 +174,24 @@ a {
 /* circular avatars */
 a.avatar {
   float: left;
-  margin: 3px 5px;
+  margin: 3px 2px;
 }
 
 a.avatar img {
   display: block;
-  height: 99px;
+  height: 105px;
   border: 0;
   margin: 0;
-  margin-left: -2px;
-  margin-top: -7px;
+  margin-left: 0px;
+  margin-top: -3px;
 }
  /* border-radius is equal to 50 percent of a general width,
      actually 30 pixels, here and a circle was got
      (there is also with prefix - moz and - o) */
 a.avatar .cropper {
 	border-radius: 50%; /* read above */
-	width: 60px;
-	height: 60px;
+	width: 65px;
+	height: 65px;
 	overflow: hidden;
 }
 

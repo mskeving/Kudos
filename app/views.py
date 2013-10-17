@@ -444,7 +444,7 @@ def new_post():
 
 	#Send email notification to taggees that they've been tagged in a post
 	tagged_users = User.query.filter(User.id.in_(tagged_user_ids))
-	#send_notification(post_id, post_text, tagged_users, photo_url)
+	send_notification(post_id, post_text, tagged_users, photo_url)
 
 
 	post_page = render_template('post.html', 
@@ -560,7 +560,7 @@ def add_tag():
 
 	tagged_users = User.query.filter(User.id.in_(tagged_user_ids))
 	#send email notifcation to new taggees:
-	#send_notification(post_id, post_text, tagged_users, img_url)
+	send_notification(post_id, post_text, tagged_users, img_url)
 
 	tag_info_json = json.dumps(new_tag_dict)
 
