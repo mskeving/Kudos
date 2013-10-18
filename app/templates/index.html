@@ -15,43 +15,7 @@
 			</div>
 		</a>
 
-		<div class="post-modal">
-			<form class="new-post-form">
-				{{ new_post_form.csrf_token }} 
-
-				<div class="row">
-					<div class="col-lg-6">
-						<div class ="submit-kudos">
-							<div class="tags">
-								<input type="text" class="tag_input" value placeholder="tags"/>
-							</div>
-							<div class="input-group">
-								<span class="form-control">{{ new_post_form.post_body (class="new-post-body") }}</span>
-							</div>
-
-							<div class="submit-post-error">
-								Please include a message
-							</div>
-
-							<div>
-								<input type="dropbox-chooser" id="chooser" name="selected-file" data-link-type="direct"/>
-								<p id="chosen">Chosen file:
-									<span id="filename"></span>
-									(<a id="remove" href="#">remove</a>)
-								</p>
-							</div>
-							<button class="post-button cancel-new-post" type="button">Cancel</button>
-
-							<button class="post-button submit-new-post" type="button">Submit</button>
-
-							{{ new_post_form.hidden_tag_ids (class="hidden_tag_ids", id="hidden_tag_ids") }}
-							{{ new_post_form.hidden_tag_text (class="hidden_tag_text", id="hidden_tag_text") }}
-
-						</div>
-					</div>
-				</div>
-			</form>
-		</div>
+		{% include 'post-modal.html' with context %}
 	</div>
 
 
