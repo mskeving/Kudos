@@ -139,6 +139,14 @@ a {
   margin-top: 14px;
 }
 
+.dropbox-chooser {
+  visibility: hidden;
+}
+
+#chosen{
+  display: none;
+}
+
 .main-column {
   background: #f8eeef;
   margin: 0 auto;

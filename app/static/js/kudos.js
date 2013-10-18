@@ -228,13 +228,13 @@ $('.comment-button').live('click', function(e){
 });
 
 //NEW POST MODAL
-$('#no-new-post-button').live('click', function(e) {
+$('.cancel-new-post').live('click', function(e) {
 	$('.post-modal').toggle();
 	$('.post-column').css('margin', '0px');
 	clear_post_modal_info()
 });
 
-$('#new-post-modal-btn').live('click', function(e) {
+$('.new-post-modal-btn').live('click', function(e) {
 	$('.post-modal').toggle();
 });
 
@@ -331,7 +331,7 @@ $(function () {
 	});
 
 	//Submit new post
-	$('#new-post-button').live('click', function(e){
+	$('.submit-new-post').live('click', function(e){
 		//Check if file selected from dropbox chooser
 		if ($.isEmptyObject(data)===false){
 			//can only send binary data using blob
