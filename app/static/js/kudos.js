@@ -57,6 +57,7 @@ $('.submit-feedback-btn').live('click', function(e){
 	})
 })
 
+//escape key to exit out of feedback modal
 document.onkeydown = function(evt) {
 	evt = evt || window.event;
 	if (evt.keyCode == 27) {

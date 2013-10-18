@@ -64,13 +64,8 @@
 	</div>
 </div>
 
-
-
 <script type="text/javascript">
-
-
 	$(document).ready(function(){
-		//$('.new_post_form').submit(call_collect_tags);
 
 		var tag_words = {{tag_words|safe}}; //safe: tell flask that this input is okay
 		var tag_json = {{tag_json|safe}}; 
@@ -85,9 +80,6 @@
 			tag_ids: tag_ids,
 		});
 	});
-
-
-	
 </script>
 {% endblock %}
 
