@@ -174,7 +174,7 @@ a {
 /* circular avatars */
 a.avatar {
   float: left;
-  margin: 3px 2px;
+  margin: 3px 1px;
 }
 
 a.avatar img {
@@ -190,8 +190,8 @@ a.avatar img {
      (there is also with prefix - moz and - o) */
 a.avatar .cropper {
 	border-radius: 50%; /* read above */
-	width: 65px;
-	height: 65px;
+	width: 60px;
+	height: 60px;
 	overflow: hidden;
 }
 
