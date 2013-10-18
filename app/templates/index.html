@@ -14,14 +14,10 @@
 				</div>
 			</div>
 		</a>
-		<!-- Submit new Kudos -->
+
 		<div class="post-modal">
-			<form class="new_post_form">
-				<!-- inclide csrf token in every form for security --> 
+			<form class="new-post-form">
 				{{ new_post_form.csrf_token }} 
-				{% for error in new_post_form.errors.post_body %}
-					<!-- <span style="color:red;">[{{error}}]</span>  -->
-				{% endfor %}<br />
 
 				<div class="row">
 					<div class="col-lg-6">

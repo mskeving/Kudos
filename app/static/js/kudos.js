@@ -360,7 +360,7 @@ $(function () {
 });
 
 function create_post(public_url){
-	collect_tags($('.new_post_form'));
+	collect_tags($('.new-post-form'));
 	post_body = $('#post_body').val()
 
 	if (!post_body){
