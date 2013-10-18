@@ -230,7 +230,7 @@ $('.comment-button').live('click', function(e){
 //NEW POST MODAL
 $('#no-new-post-button').live('click', function(e) {
 	$('.post-modal').toggle();
-	$('#post-column').css('margin', '0px');
+	$('.post-column').css('margin', '0px');
 	clear_post_modal_info()
 });
 
@@ -379,9 +379,9 @@ function create_post(public_url){
 		url: "/createpost",
 		data: data, 
 		success: function(new_post){
-			$('#post-column').prepend(new_post);
+			$('.post-column').prepend(new_post);
 			$('.post-modal').toggle();
-			$('#post-column').css('margin', '0px');
+			$('.post-column').css('margin', '0px');
 			clear_post_modal_info();
 			console.log("success! created new post");
 		},

@@ -3,7 +3,7 @@
 {% block content %}
 
 
-<div class="user-info clearfix" id="user_info">
+<div class="user-info clearfix">
 
 	<div class="user-page-avatars">
 	  <!-- will always display user tags before team tags -->
@@ -28,26 +28,6 @@
 		</li>
 		<li>{{user.email}}</li>
 		<li>{{user.phone}}</li>
-		<li>
-			{% if user.linkedin %}
-				<a href={{user.linkedin}}>LinkedIn</a>
-			{% endif %}
-		</li>
-		<li>
-			{% if user.facebook %}
-				<a href={{user.facebook}}>Facebook</a>
-			{% endif %}
-		</li>
-		<li>
-			{% if user.twitter %}
-				<a href=http://www.twitter.com/{{user.twitter}}>Twitter</a>
-			{% endif %}
-		</li>
-		<li>
-			{% if user.github %}
-				<a href=http://www.github.com/{{user.github}}>Github</a>
-			{% endif %}
-		</li>
 	</ul>
 
   </div>
@@ -55,20 +35,19 @@
 
 
 
-<div name="display_posts">
-	<div class="container-fluid">
 
-		<div class="main-column profile">
 
-			<div id="post-column">
-	<!-- Display posts -->
-				{% for post in posts %}
-				  {% include 'post.html' with context %}
-				{% endfor %}
 
-			</div>
-		</div>
+<div class="main-column profile">
+	<div class="post-column">
+
+		{% for post in posts %}
+		  {% include 'post.html' with context %}
+		{% endfor %}
 
 	</div>
 </div>
+
+
+
 {% endblock %}
