@@ -76,7 +76,7 @@ $('.thank-button').live('click', function(e){
 	//REMOVE THANKS
 	if (button.hasClass('pressed')){
 		var data = {
-			post_id: this.id
+			post_id: $(this).data('post-id')
 		}
 	 	$.ajax({
 	 		type: 'POST',
@@ -94,7 +94,7 @@ $('.thank-button').live('click', function(e){
 	//SEND THANKS
 	else{
 		var data = {
-          post_id: this.id
+          post_id: $(this).data('post-id')
         };
         $.ajax({
         	type: 'POST',
@@ -157,7 +157,7 @@ $('.new-tag-btn').live('click', function(e) {
 
 	if (tag_ids != ""){
 		var data = {
-		post_id: this.id,
+		post_id: $(this).data('post-id'),
 		tag_ids: tag_ids,
 		tag_text: tag_text,
 		post_photo_url: post_photo_url,
@@ -243,7 +243,7 @@ $('.new-post-modal-btn').live('click', function(e) {
 //REMOVE COMMENT
 $('.remove-comment').live('click', function(e){
 	e.preventDefault();
-	var post_id = $(this).attr('id');
+	var post_id = $(this).data('post-id');
 	var comment = $(this).parent().parent()
 	var data = {
 
@@ -267,12 +267,10 @@ $('.remove-comment').live('click', function(e){
 
 //NEW COMMENT
 $('.new-comment-btn').live('click', function(e){
-	var new_comment_btn = $(this)
-	console.log("in fnc")
 	e.preventDefault();
-	console.log("in new comment button function");
+	var new_comment_btn = $(this)
 	var data = {
-		post_id: $(this).parent().attr('id'),
+		post_id: $(this).parent().data('post-id'),
 		body: $(this).siblings('.reply-body').val()
 	}
 	console.log(data);
@@ -396,7 +394,7 @@ function create_post(public_url){
 //REMOVE POST
 $('.remove-post-button').live('click', function(e){
 	e.preventDefault();
-	var post_id = $(this).parent().parent('.post').attr('id');
+	var post_id = $(this).parent().parent('.post').data('post-id');
 	var parent_post = $(this).parent().parent('.post');
 	data = {
 		post_id : post_id

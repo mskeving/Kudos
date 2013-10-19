@@ -1,16 +1,14 @@
 
 
 {% set post_object = post.get('post_object') %}
-<!-- user post_object.author to get user info on that post -->
 
-<div class="post" id="{{post_object.id}}">
+<div class="post" data-post-id="{{post_object.id}}">
   <div class="taggees">
     <div class="avatars">
       <!-- will always display user tags before team tags -->
     {% set g_user_tagged_in_post = [] %}
     {% if post.get('tagged_users') %}
       {% for tag in post.get('tagged_users') %}
-        <!-- check if current_user is tagged in post -->
         {% if tag.user_tag.username == g.user.username %}
           {% do g_user_tagged_in_post.append(1) %}
         {% endif %}
@@ -119,11 +117,11 @@
       Comment
     </a>
       {% if g.user.username in post.get('thankers') %}
-        <a class="toolbar-button thank-button pressed" href="#" name="send-thanks" id="{{post_object.id}}">
+        <a class="toolbar-button thank-button pressed" href="#" name="send-thanks" data-post-id="{{post_object.id}}">
           Thank
         </a>
       {% else %}
-        <a class="toolbar-button thank-button" href="#" name="send-thanks" id="{{post_object.id}}">
+        <a class="toolbar-button thank-button" href="#" name="send-thanks" data-post-id="{{post_object.id}}">
           Thank
         </a>
       {% endif %}
@@ -139,13 +137,13 @@
   </div>
 
 <!-- new tag -->
-  <div class="tag-modal clearfix" id="{{post_object.id}}" style="display: none;">
-    <form action="/newtag" method="POST" class="new-tag-form" id="{{post_object.id}}">  
+  <div class="tag-modal clearfix" data-post-id="{{post_object.id}}" style="display: none;">
+    <form action="/newtag" method="POST" class="new-tag-form" data-post-id="{{post_object.id}}">  
       <div class="tags">
         <input type="text" class="tag_input" placeholder="tags"/>
       </div>
      
-      <button type="submit" class="new-tag-btn" id="{{post_object.id}}" value="submit"> 
+      <button type="submit" class="new-tag-btn" data-post-id="{{post_object.id}}" value="submit"> 
         Submit 
       </button>
       {{ reply_form.hidden_post_id(value=post_object.id) }}
@@ -156,15 +154,15 @@
 
 
 <!-- new comment -->
-  <div class="comment-modal" id="{{post_object.id}}" style="display: none;">
+  <div class="comment-modal" data-post-id="{{post_object.id}}" style="display: none;">
     <form action="/newcomment" method="POST">
       {{new_post_form.csrf_token}}
 
-        <div class="new-comment-body" id="{{post_object.id}}">
+        <div class="new-comment-body" data-post-id="{{post_object.id}}">
           {{reply_form.reply_body (class="reply-body", id="{{post_object.id}}")}}
 
           
-          <button type="button" class="new-comment-btn" name="new_reply_btn" id="{{post_object.id}}" value="submit"> reply </button>
+          <button type="button" class="new-comment-btn" name="new_reply_btn" data-post-id="{{post_object.id}}" value="submit"> reply </button>
           
         </div>
     </form>
@@ -172,10 +170,10 @@
 
 
   <!-- Display comments on post -->
-  <div class="comments" id="{{post_object.id}}">
+  <div class="comments" data-post-id="{{post_object.id}}">
 
     {% for post_comment in post.get('children_objects') %}
-      <div class="one-comment" id="{{post_comment.id}}">
+      <div class="one-comment" data-post-id="{{post_comment.id}}">
         <div class="clearfix">
           <a class="avatar" href="{{ url_for('user', username=post_comment.author.username) }}">
             <div class="cropper">
@@ -188,7 +186,7 @@
 
           <a href="{{ url_for('user', username=post_comment.author.username) }}" class="comment-author">{{post_comment.author.firstname}} {{post_comment.author.lastname}}</a>
           {% if post_comment.author.username == g.user.username %}
-            <div class="remove-comment" id="{{post_comment.id}}">
+            <div class="remove-comment" data-post-id="{{post_comment.id}}">
               <a href="#">
                 Remove
               </a>
