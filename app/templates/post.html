@@ -132,13 +132,13 @@
   </div>
 
 <!-- new tag -->
-  <div class="tag-modal clearfix" data-post-id="{{post_object.id}}" style="display: none;">
-    <form action="/newtag" method="POST" class="new-tag-form" data-post-id="{{post_object.id}}">  
+  <div class="tag-modal clearfix" data-post-id="{{post_object.id}}">
+    <form class="new-tag-form" data-post-id="{{post_object.id}}">  
       <div class="tags">
         <input type="text" class="tag_input" placeholder="tags"/>
       </div>
      
-      <button type="submit" class="new-tag-btn" data-post-id="{{post_object.id}}" value="submit"> 
+      <button type="submit" class="new-tag-btn" data-post-id="{{post_object.id}}"> 
         Submit 
       </button>
       {{ reply_form.hidden_post_id(value=post_object.id) }}
@@ -149,16 +149,12 @@
 
 
 <!-- new comment -->
-  <div class="comment-modal" data-post-id="{{post_object.id}}" style="display: none;">
-    <form action="/newcomment" method="POST">
+  <div class="comment-modal" data-post-id="{{post_object.id}}">
+    <form>
       {{new_post_form.csrf_token}}
-
         <div class="new-comment-body" data-post-id="{{post_object.id}}">
-          {{reply_form.reply_body (class="reply-body", id="{{post_object.id}}")}}
-
-          
-          <button type="button" class="new-comment-btn" name="new_reply_btn" data-post-id="{{post_object.id}}" value="submit"> reply </button>
-          
+          {{reply_form.reply_body (class="reply-body")}}
+          <button type="button" class="new-comment-btn" name="new_reply_btn" data-post-id="{{post_object.id}}"> reply </button>
         </div>
     </form>
   </div>
@@ -182,7 +178,7 @@
           <a href="{{ url_for('user', username=post_comment.author.username) }}" class="comment-author">{{post_comment.author.firstname}} {{post_comment.author.lastname}}</a>
           {% if post_comment.author.username == g.user.username %}
             <div class="remove-comment" data-post-id="{{post_comment.id}}">
-              <a href="#">
+              <a>
                 Remove
               </a>
             </div>

@@ -433,6 +433,7 @@ a.avatar .cropper {
 
 .tag-modal {
   padding-left: 4px;
+  display: none;
 }
 
 .tag-modal .tags {
@@ -451,6 +452,10 @@ a.avatar .cropper {
   height: 25px;
   margin: 8px;
   float: right;
+}
+
+.comment-modal {
+  display: none;
 }
 
 .thanker-modal {
