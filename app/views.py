@@ -549,10 +549,10 @@ def add_tag():
 		print "in for loop"
 		#USER TAGS
 		if tag_ids[i][0] == 'u':
-			tag_id = int(tag_ids[i][1:]) #remove leading 'u' to convert back to int user_id
-			new_tag = Tag(user_tag_id=tag_id, body=tag_text[i], post_id=post_id, tag_author=user_id, time=datetime.utcnow())
+			tag_user_id = int(tag_ids[i][1:]) #remove leading 'u' to convert back to int user_id
+			new_tag = Tag(user_tag_id=tag_user_id, body=tag_text[i], post_id=post_id, tag_author=user_id, time=datetime.utcnow())
 
-			tagged_user = User.query.filter_by(id=tag_id).first()
+			tagged_user = User.query.filter_by(id=tag_user_id).first()
 			#get tag information to create avatars client side
 			user = {}
 			user['photo'] = tagged_user.photo
@@ -565,10 +565,10 @@ def add_tag():
 
 		#TEAM TAGS
 		if tag_ids[i][0] == 't':
-			tag_id = int(tag_ids[i][1:]) #remove leading 'u' to convert back to int user_id
-			new_tag = Tag(team_tag_id=tag_id, body=tag_text[i], post_id=post_id, tag_author=user_id, time=datetime.utcnow())
+			tag_team_id = int(tag_ids[i][1:]) #remove leading 't' to convert back to int team_id
+			new_tag = Tag(team_tag_id=tag_team_id, body=tag_text[i], post_id=post_id, tag_author=user_id, time=datetime.utcnow())
 
-			tagged_team = Team.query.filter_by(id=tag_id).first()
+			tagged_team = Team.query.filter_by(id=tag_team_id).first()
 			team = {}
 			team['photo'] = tagged_team.photo
 			team['teamname'] = tagged_team.teamname

@@ -8,7 +8,7 @@ function collect_tags(form){
 	$.each(all_tags, function(){
 		var hidden_tag_ids = form.find(".hidden_tag_ids");
 		var hidden_tag_text = form.find(".hidden_tag_text");
-		var tag_id = $(this).attr('id');
+		var tag_id = $(this).attr('id');	//tag_id === user or team_id of chosen tag
 		hidden_tag_ids.val(hidden_tag_ids.val() + tag_id + "|");
 		var tag_text = $(this).children("span").text();
 		hidden_tag_text.val(hidden_tag_text.val() + tag_text + "|");
@@ -122,7 +122,7 @@ $('.thank-count').live('click', function(e){
 $('.remove-tag').live('click', function(e) {
 	e.preventDefault();
 	var avatar = $(this).parent();
-	var tagid = avatar.attr('id');
+	var tagid = avatar.data('tag-id');
 	var data = {
 		tagid: tagid
 	};
@@ -154,7 +154,6 @@ $('.new-tag-btn').live('click', function(e) {
 	post_photo_url = form.parent('.tag-modal').parent('.post').children('.white-card').children('.post-photo').attr('src');
 	post_text = form.parent('.tag-modal').parent('.post').children('.white-card').children('blockquote').text()
 
-
 	if (tag_ids != ""){
 		var data = {
 		post_id: $(this).data('post-id'),
@@ -163,7 +162,6 @@ $('.new-tag-btn').live('click', function(e) {
 		post_photo_url: post_photo_url,
 		post_text: post_text
 		};
-
 
 		$.post('/newtag', data, function(tag_info){
 			form.parent().toggle(); 
@@ -179,11 +177,10 @@ $('.new-tag-btn').live('click', function(e) {
 				var username = $.trim(tag_array.user_tags[i].username);
 				var user_id = tag_array.user_tags[i].user_id;
 				var photo = tag_array.user_tags[i].photo;
-				var new_avatar = $('<a class="avatar" id=' + user_id + ' href="/user/' + username + '"><div class="cropper"><img src=' + photo +' alt=' + username + '>');
-				console.log("this" + this)
+				var new_avatar = $('<a class="avatar" href="/user/' + username + '"><div class="cropper"><img src=' + photo +' alt=' + username + '>');
 				form.parent().parent().children(".taggees").children(".avatars").append(new_avatar);
-
 			}
+
 			//DISPLAY TEAM AVATARS
 			for(var i = 0; i<tag_array.team_tags.length; i++){
 				var teamname = tag_array.team_tags[i].teamname;
@@ -191,7 +188,6 @@ $('.new-tag-btn').live('click', function(e) {
 				var new_avatar = $('<a class="avatar" href="/team/' + teamname + '""><div class="cropper"><img src=' + photo +' alt=' + teamname + '>');
 				console.log("this" + this)
 				form.parent().parent().children(".taggees").children(".avatars").append(new_avatar);
-
 			}
 		})
 	}
