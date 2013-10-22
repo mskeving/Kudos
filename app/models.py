@@ -5,9 +5,6 @@ import os
 from boto.s3.connection import S3Connection
 from boto.s3.key import Key
 
-ROLE_USER = 0
-ROLE_ADMIN = 1
-
 class Team(db.Model):
 	__tablename__ = "teams"
 

@@ -14,7 +14,7 @@ from oauth2client.client import (FlowExchangeError,
 								OAuth2WebServerFlow)
 from forms import LoginForm, EditForm, EditPost, DeletePost, NewReply
 from models import (User, Post, UserTeam, Team, Tag,
-					Thanks, ROLE_USER, ROLE_ADMIN)
+					Thanks)
 from datetime import datetime
 from flask.ext.sqlalchemy import sqlalchemy
 from sqlalchemy import and_, or_
@@ -37,6 +37,7 @@ def before_request():
 
 @app.route('/static/img/<path:filename>')
 def serve_image(filename):
+	#for avatars when no S3 connection
 	image_path = os.path.join(app.root_path, 'static','img')
 	return send_from_directory(image_path, filename)
 
@@ -159,10 +160,8 @@ def feedback():
 
 @app.route('/')
 @app.route('/index')
-@login_required #this page is only seen by logged in users
+@login_required 
 def index():
-
-	#new tags branch
 
 	user = g.user
 	new_post_form = EditPost() 
@@ -173,7 +172,6 @@ def index():
 	user_tags = db.session.query(User).all()
 	team_tags = db.session.query(Team).all()
 	all_tags = user_tags + team_tags
-
 
 
 	tag_dict = {}
