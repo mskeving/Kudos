@@ -16,6 +16,17 @@ function collect_tags(form){
 	console.log($(".hidden_tag_ids").val());
 };
 
+function show_progress(clicked_element){
+	clicked_element.css('cursor', 'progress');
+	$('body').css('cursor', 'progress');
+
+}
+
+function end_show_progress(clicked_element){
+	clicked_element.css('cursor', 'progress');
+	$('body').css('cursor', 'default');
+}
+
 function clear_post_modal_info(){
 	$('#post_body').val("");
 	$('.post-modal .tag_input').importTags('');
@@ -326,6 +337,7 @@ $(function () {
 
 	//Submit new post
 	$('.submit-new-post').live('click', function(e){
+		show_progress($(this));
 		//Check if file selected from dropbox chooser
 		if ($.isEmptyObject(data)===false){
 			//can only send binary data using blob
@@ -350,6 +362,7 @@ $(function () {
 		else{
 			create_post();
 		}
+		end_show_progress($(this));
 	});	
 });
 

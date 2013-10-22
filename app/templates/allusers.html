@@ -16,7 +16,9 @@
 	 </div>
 
 	<div class="white-card">
-		<h2>{{user.firstname}} {{user.lastname}}</h2>
+		<a href="{{ url_for('user', username=user.username) }}" class="employee-name">
+			<h2>{{user.firstname}} {{user.lastname}}</h2>
+		</a>
 		<ul>
 		<li>
 			{% for team in user_teams_dict.get(user.id) %}

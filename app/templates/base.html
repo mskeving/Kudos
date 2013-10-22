@@ -22,10 +22,9 @@
 		<title>Kudos</title>
 	{% endif %}
 
-	
 	</head>
-	<body>
 
+	<body>
 		<div class="navbar" name="navigation">
 			<ul class="nav navbar-nav">
 				<li class="active"><a href="{{ url_for('index') }}">Kudos</a></li>
@@ -43,7 +42,6 @@
 			{% include 'feedback-modal.html' with context %}
 		</div>
 
-
 		{% with messages = get_flashed_messages() %}
 		{% if messages%}
 		<ul>
@@ -55,7 +53,6 @@
 		{% endwith %}
 
 		{% block content %}{% endblock %} 
-		<!-- moving block content to head - why does this make changes? -->
 	</body>
 
 </html>
