@@ -19,32 +19,14 @@
 		<h2>{{user.firstname}} {{user.lastname}}</h2>
 		<ul>
 		<li>
-			{% for team in list_of_teams %}
-				<a href="{{ url_for('team', team=team) }}">{{team}} </a>
+			{% for team in user_teams_dict.get(user.id) %}
+				<div>
+					<a href="{{ url_for('team', team=team.team.teamname) }}">{{team.team.teamname}}</a>
+				</div>
 			{% endfor %}
 		</li>
 		<li>{{user.email}}</li>
 		<li>{{user.phone}}</li>
-		<li>
-			{% if user.linkedin %}
-				<a href={{user.linkedin}}>LinkedIn</a>
-			{% endif %}
-		</li>
-		<li>
-			{% if user.facebook %}
-				<a href={{user.facebook}}>Facebook</a>
-			{% endif %}
-		</li>
-		<li>
-			{% if user.twitter %}
-				<a href=http://www.twitter.com/{{user.twitter}}>Twitter</a>
-			{% endif %}
-		</li>
-		<li>
-			{% if user.github %}
-				<a href={{user.github}}>Github</a>
-			{% endif %}
-		</li>
 	</ul>
 
 	</div>

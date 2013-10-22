@@ -720,7 +720,7 @@ def all_users():
 		list_of_teams = []
 		teams = db.session.query(UserTeam).filter_by(user_id=user.id).all()
 		for team in teams:
-			list_of_teams.append(team.team_id)
+			list_of_teams.append(team)
 		dict_of_users_teams[user.id]=list_of_teams
 
 
@@ -728,7 +728,7 @@ def all_users():
 	#users_list_of_teams = db.session.query(Team).filter_by()
 	return render_template('allusers.html', 
 		all_users=all_users,
-		user_teams=dict_of_users_teams,
+		user_teams_dict=dict_of_users_teams,
 		)
 
 
