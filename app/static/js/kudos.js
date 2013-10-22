@@ -61,7 +61,6 @@ $('.submit-feedback-btn').live('click', function(e){
 document.onkeydown = function(evt) {
 	evt = evt || window.event;
 	if (evt.keyCode == 27) {
-		console.log('escape');
 		if ($('.feedback-modal').hasClass('displaying')){
 			$('.feedback-modal').removeClass('displaying');
 			$('.feedback-input').val("");
