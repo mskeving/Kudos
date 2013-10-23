@@ -33,6 +33,7 @@ function get_tag_list(){
 }
 
 function collect_tags(form){
+	//collects tags that you have chosen to submit with new post
 
 	var all_tags = form.find("span.tag"); //gives you all tags in new post form 
 	$.each(all_tags, function(){
@@ -184,7 +185,7 @@ $('.remove-tag').live('click', function(e) {
 });
 
 
-//ADD NEW TAG
+//SUBMIT NEW TAG
 $('.new-tag-btn').live('click', function(e) {
 	e.preventDefault();
 	form = $(this).parent('.new-tag-form');
@@ -280,15 +281,11 @@ $('.new-post-modal-btn').live('click', function(e) {
 $('.remove-comment').live('click', function(e){
 	e.preventDefault();
 	var post_id = $(this).data('post-id');
-	var comment = $(this).parent().parent()
-	var data = {
-
-	}
+	var comment = $(this).parent().parent();
 
 	$.ajax({
 		type: "POST",
 		url: '/deletepost/' + post_id,
-		data: data,
 		success: function(post_id){
 			comment.remove();
 			console.log("success");
@@ -418,7 +415,7 @@ function create_post(public_url){
 		data: data, 
 		success: function(new_post){
 			$('.post-column').prepend(new_post);
-
+			get_tag_list()
 			$('.post-modal').toggle();
 			$('.post-column').css('margin', '0px');
 			clear_post_modal_info();
