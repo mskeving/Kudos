@@ -1,6 +1,36 @@
-function call_collect_tags(){
-	collect_tags($(this))
-};
+$(document).ready(function(){
+	get_tag_list()
+});
+
+
+function get_tag_list(){
+	//gets tag list from db to populate autocomplete for tag modals
+
+	$.ajax({
+		type: "POST",
+		url: "/create_tag_list",
+		success: function(tag_info){
+
+			tag_words = tag_info.tag_words;
+			console.log(tag_words)
+			tag_dict = tag_info.tag_dict;
+			tag_ids = tag_info.tag_ids;
+
+			// this makes the tag input work for all tag autocompleters. uses tagsinput.js
+			$('.tag_input').tagsInput({
+				width: 'auto',
+				height: '30px',
+				autocomplete_list: tag_words,
+				autocomplete_dict: tag_dict,
+				tag_ids: tag_ids,
+			});
+		},
+		error: function(){
+			console.log('error');
+		},
+		dataType: 'json'
+	})
+}
 
 function collect_tags(form){
 
@@ -368,7 +398,8 @@ $(function () {
 
 function create_post(public_url){
 	collect_tags($('.new-post-form'));
-	post_body = $('#post_body').val()
+	post_body = $('#post_body').val();
+	console.log("post_body: " + post_body);
 
 	if (!post_body){
 		$('.submit-kudos').addClass('error-post');
@@ -387,6 +418,7 @@ function create_post(public_url){
 		data: data, 
 		success: function(new_post){
 			$('.post-column').prepend(new_post);
+
 			$('.post-modal').toggle();
 			$('.post-column').css('margin', '0px');
 			clear_post_modal_info();

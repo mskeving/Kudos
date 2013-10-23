@@ -29,21 +29,7 @@
 </div>
 
 <script type="text/javascript">
-	$(document).ready(function(){
 
-		var tag_words = {{tag_words|safe}}; //safe: tell flask that this input is okay
-		var tag_json = {{tag_json|safe}}; 
-		var tag_ids = {{tag_ids|safe}};
-
-		// this makes the tag input work for all tag autocompleters
-		$('.tag_input').tagsInput({
-			width: 'auto',
-			height: '30px',
-			autocomplete_list: tag_words,
-			autocomplete_dict: tag_json, 
-			tag_ids: tag_ids,
-		});
-	});
 </script>
 
 {% endblock %}

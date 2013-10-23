@@ -167,12 +167,29 @@ def index():
 	new_post_form = EditPost() 
 	reply_form = NewReply()
 	delete_form = DeletePost()
-	
-	#query for list of available tag words
+
+	#query for all parent posts
+	posts = Post.query.filter(Post.parent_post_id==None).order_by(Post.time.desc())
+
+	if posts != None:
+		indented_posts = posts_to_indented_posts(posts)
+
+	return render_template("index.html",
+		title='Home',
+		user=user,
+		posts=indented_posts,
+		new_post_form=new_post_form,
+		reply_form=reply_form,
+		delete_form=delete_form,
+		)
+
+@app.route('/create_tag_list', methods=['POST'])
+@login_required
+def create_tag_list():
+
 	user_tags = db.session.query(User).all()
 	team_tags = db.session.query(Team).all()
 	all_tags = user_tags + team_tags
-
 
 	tag_dict = {}
 
@@ -193,42 +210,18 @@ def index():
 		else:
 			print "no name for user: "
 
-
 	#Team Tags - all teams
 	for tag in team_tags:
 		tag_team_id = "t" + str(tag.id)
 		tag_dict[tag.teamname] = tag_team_id
 
+	tag_words_string = tag_dict.keys()
+	tag_ids_string = tag_dict.values()
 
-	tag_words_string = json.dumps(tag_dict.keys())
-	tag_ids_string = json.dumps(tag_dict.values())
-
-	tag_json = json.dumps(tag_dict)
-
-
-	#query for all parent posts
-	posts = Post.query.filter(Post.parent_post_id==None).order_by(Post.time.desc())
-
-
-	if posts != None:
-		indented_posts = posts_to_indented_posts(posts)
-
-
-	return render_template("index.html", 
-		title='Home', 
-		user=user,
-		posts=indented_posts,
-		new_post_form=new_post_form,
-		reply_form=reply_form,
-		delete_form=delete_form,
-		tag_words=tag_words_string,
-		tag_ids=tag_ids_string,
-		tag_json=tag_json,
-		fullname = fullname,
-
-		)
-
-
+	return json.dumps({'tag_words': tag_words_string, 
+		'tag_ids': tag_ids_string,
+		'tag_dict': tag_dict
+		})
 
 #TEAM PROFILE
 @app.route('/team/<team>')
@@ -386,10 +379,6 @@ def send_notification(message, subject, recipient_list, post_id, img_url):
 		)
 	sender = app.config['MAIL_USERNAME']
 	send_email(sender, recipient_list, reply_to, subject, html)
-
-
-
-
 
 
 def send_email(sender, recipients, reply_to, subject, html):

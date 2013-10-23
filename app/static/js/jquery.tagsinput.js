@@ -84,7 +84,7 @@
 			//find corresponding tag_id in tag_ids array
 			// var tag_id = settings.tag_ids[tag_position];
 			settings = settings || $(this).data('tag-settings');
-			var tag_id = settings.autocomplete_dict[value];				
+			var tag_id = settings.autocomplete_dict[value];	
 
 			var tagslist = $(this).val().split(delimiter[id]);
 			//var tagslist = JSON.parse($(this).val());
