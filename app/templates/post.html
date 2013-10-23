@@ -94,11 +94,9 @@
 
       {% if g_user_tagged_in_post or g.user.username == post_object.author.username%}
         {% if post.get('thankers')|length == 1 %}
-          <a>{{post.get('thankers')|length}} Thank</a>
-        {% elif post.get('thankers')|length > 1 %}
-          <a>{{post.get('thankers')|length}} Thanks</a>
+          <a class="thank-count">{{post.get('thankers')|length}} Thank</a>
         {% else %}
-          <a>No Thanks</a>
+          <a class="thank-count">{{post.get('thankers')|length}} Thanks</a>
         {% endif %}
       {% endif %}
 

@@ -637,10 +637,7 @@ def delete_comment(postid):
 @app.route('/deletepost/<postid>', methods=['GET','POST'])
 @login_required
 def delete_post(postid):
-	form = request.form
 
-
-	
 	delete_post = db.session.query(Post).filter_by(id=postid).one()
 
 	#delete post, replies, associatated tags, and thanks 
@@ -662,11 +659,7 @@ def delete_post(postid):
 
 	db.session.commit()
 
-
 	return postid
-
-	return redirect(url_for('index'))
-
 
 
 #POST PAGE
