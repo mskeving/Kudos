@@ -301,7 +301,7 @@ $('.remove-comment').live('click', function(e){
 //NEW COMMENT
 $('.new-comment-btn').live('click', function(e){
 	e.preventDefault();
-	var new_comment_btn = $(this)
+	var new_comment_btn = $(this);
 	var data = {
 		post_id: $(this).parent().data('post-id'),
 		body: $(this).siblings('.reply-body').val()
@@ -314,13 +314,22 @@ $('.new-comment-btn').live('click', function(e){
 		url: '/newcomment',
 		data: data, 
 		success: function(comment_template){
-			console.log("sucess - new comment submitted");
-
 			all_comments.append(comment_template);
+			
+			//increase comment count on white card
+			var comment_count_text = $('[data-post-id=' + data.post_id + '] .comment-count').text();
+			var comment_count = parseInt(comment_count_text.split(' ')[0]);
+			var new_comment_count = comment_count + 1;
+			if (new_comment_count === 1){
+				$('[data-post-id=' + data.post_id + '] .comment-count').text(new_comment_count + " Comment");	
+			}
+			else{
+				$('[data-post-id=' + data.post_id + '] .comment-count').text(new_comment_count + " Comments");
+			}
 
+			//clear and hide comment modal
 			new_comment_btn.siblings('.reply-body').val("");
-			new_comment_btn.parent().parent().parent('.comment-modal').toggle()
-
+			$('.comment-modal[data-post-id=' + data.post_id + ']').toggle()
 		},
 		error: function(e){
 			console.log('error creating new reply')
