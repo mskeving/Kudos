@@ -289,7 +289,7 @@ $('.remove-comment').live('click', function(e){
 		success: function(post_id){
 			comment.remove();
 			console.log("success");
-			//TODO: reduce number of comments by 1
+			//TODO: reduce number of comments by 1 
 
 		}, 
 		error: function(){
@@ -306,24 +306,17 @@ $('.new-comment-btn').live('click', function(e){
 		post_id: $(this).parent().data('post-id'),
 		body: $(this).siblings('.reply-body').val()
 	}
-	console.log(data);
-	//get entire comment display to append new comment to
-	var comment_display=$(this).parent().parent().parent().parent().children('.comments');
+
+	var all_comments = $('.comments[data-post-id=' + data.post_id + ']');
 
 	$.ajax({
 		type: "POST",
 		url: '/newcomment',
 		data: data, 
-		success: function(comment_info){
+		success: function(comment_template){
 			console.log("sucess - new comment submitted");
 
-			var username = comment_info.author_username
-			var photo = comment_info.author_photo
-			var id = comment_info.comment_id
-			var author_name = comment_info.author_name
-			var new_comment = $('<div class="one-comment" id="' + id + '"><div class="clearfix"><a class="avatar" href="/user/"' + username + '"><div class="cropper"><img src=' + photo +' alt=' + username + '></div></a><span class="comment-body">' + data["body"] + '</span><a href="/user/' + username + '" class="comment-author">' + author_name + '</a><div class="remove-comment" id="' + id + '><a href="#">Remove</a></div></div></div>');
-
-			comment_display.append(new_comment);
+			all_comments.append(comment_template);
 
 			new_comment_btn.siblings('.reply-body').val("");
 			new_comment_btn.parent().parent().parent('.comment-modal').toggle()
@@ -331,8 +324,7 @@ $('.new-comment-btn').live('click', function(e){
 		},
 		error: function(e){
 			console.log('error creating new reply')
-		},
-		dataType: "json"
+		}
 	});
 })
 

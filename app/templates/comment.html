@@ -1,0 +1,21 @@
+<div class="one-comment" data-comment-id="{{comment.id}}">
+  <div class="clearfix">
+    <a class="avatar" href="{{ url_for('user', username=comment.author.username) }}">
+      <div class="cropper">
+          <img src="{{comment.author.photo}}" alt="{{comment.author.username}}" />
+      </div>
+    </a>
+      <div class="comment-body">
+      {{comment.body}}
+    </div>
+
+    <a href="{{ url_for('user', username=comment.author.username) }}" class="comment-author">{{comment.author.firstname}} {{comment.author.lastname}}</a>
+    {% if comment.author.username == g.user.username %}
+      <div class="remove-comment" data-post-id="{{comment.id}}">
+        <a>
+          Remove
+        </a>
+      </div>
+    {% endif %}
+  </div>
+</div>

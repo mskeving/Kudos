@@ -81,7 +81,7 @@
       </a> 
     </div>
     <div class="post-metadata">
-      {% set comments = post.get('children_objects')|length %}
+      {% set comments = post.get('comments')|length %}
       {% if comments == 1 %}
         <a class="comment-count">{{comments}} Comment</a>
       {% else %}
@@ -162,29 +162,10 @@
 
   <!-- Display comments on post -->
   <div class="comments" data-post-id="{{post_object.id}}">
+    {% for comment in post.get('comments') %}
 
-    {% for post_comment in post.get('children_objects') %}
-      <div class="one-comment" data-post-id="{{post_comment.id}}">
-        <div class="clearfix">
-          <a class="avatar" href="{{ url_for('user', username=post_comment.author.username) }}">
-            <div class="cropper">
-                <img src="{{post_comment.author.photo}}" alt="{{post_comment.author.username}}" />
-            </div>
-          </a>
-            <div class="comment-body">
-            {{post_comment.body}}
-          </div>
+      {% include 'comment.html' with context %}
 
-          <a href="{{ url_for('user', username=post_comment.author.username) }}" class="comment-author">{{post_comment.author.firstname}} {{post_comment.author.lastname}}</a>
-          {% if post_comment.author.username == g.user.username %}
-            <div class="remove-comment" data-post-id="{{post_comment.id}}">
-              <a>
-                Remove
-              </a>
-            </div>
-          {% endif %}
-        </div>
-      </div>
     {% endfor %}
   </div>
 </div>

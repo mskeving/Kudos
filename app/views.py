@@ -597,7 +597,7 @@ def delete_tag(tagid):
 	return status
 
 
-#ADD NEW COMMENT
+#SUBMIT NEW COMMENT
 @app.route('/newcomment', methods=['POST'])
 @login_required
 def new_comment():
@@ -613,21 +613,11 @@ def new_comment():
 	db.session.add(new_comment)
 	db.session.commit()
 
-	comment_info = {}
-	comment_info["comment_id"] = new_comment.id
-	comment_info["author_username"] = new_comment.author.username
-	comment_info["author_photo"] = str(new_comment.author.photo)
-
-	if new_comment.author.firstname and new_comment.author.lastname: 
-		comment_info["author_name"] = new_comment.author.firstname + " " + new_comment.author.lastname
-	elif new_comment.author.firstname:
-		comment_info["author_name"] = new_comment.author.firstname
-	else:
-		comment_info["author_name"] = new_comment.author.username
-
-	comment_info_json = json.dumps(comment_info)
-
-	return comment_info_json
+	print "submitted new comment"
+	comment_template = render_template("comment.html",
+		comment=new_comment)
+	print "rendered comment_template"
+	return comment_template
 
 #DELETE COMMENT
 @app.route('/deletecomment/<postid>', methods=['POST'])
@@ -835,7 +825,7 @@ def posts_to_indented_posts(posts):
 		children = []
 		for child in p.children:
 			children.append(child)
-		d['children_objects'] = children
+		d['comments'] = children
 
 		tagged_users = []
 		tagged_teams = []
