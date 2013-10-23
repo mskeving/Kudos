@@ -112,7 +112,7 @@
       Comment
     </a>
 
-    {% if g.user.username in post.get('thankers') %}
+    {% if g.user in post.get('thankers') %}
       <a class="toolbar-button thank-button pressed" data-post-id="{{post_object.id}}">
         Thank
       </a>

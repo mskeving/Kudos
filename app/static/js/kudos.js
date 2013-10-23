@@ -12,7 +12,6 @@ function get_tag_list(){
 		success: function(tag_info){
 
 			tag_words = tag_info.tag_words;
-			console.log(tag_words)
 			tag_dict = tag_info.tag_dict;
 			tag_ids = tag_info.tag_ids;
 

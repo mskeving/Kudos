@@ -2,13 +2,13 @@
     {% for thanker in post.get('thankers') %}
       <div class="one-thanker">
         <div class="clearfix">
-          <a class="avatar" href="{{ url_for('user', username=thanker.user.username) }}">
+          <a class="avatar" href="{{ url_for('user', username=thanker.username) }}">
             <div class="cropper">
-                <img src="{{thanker.user.photo}}" alt="{{thanker.user.username}}" />
+                <img src="{{thanker.photo}}" alt="{{thanker.username}}" />
             </div>
           </a>
           <div class="thanker-name">
-            <a href="{{ url_for('user', username=thanker.user.username) }}" class="thanker-name">{{thanker.user.firstname}} {{thanker.user.lastname}}</a>
+            <a href="{{ url_for('user', username=thanker.username) }}" class="thanker-name">{{thanker.firstname}} {{thanker.lastname}}</a>
         </div>
         </div>
       </div>

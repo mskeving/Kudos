@@ -512,8 +512,6 @@ def display_thanks():
 	return thankers
 
 
-
-
 #ADD NEW TAG
 @app.route('/newtag', methods=['POST'])
 @login_required
@@ -835,7 +833,8 @@ def posts_to_indented_posts(posts):
 		#list of users giving thanks for post
 		thankers = []
 		for thank in p.thanks:
-			thankers.append(thank)
+			thankers.append(thank.user)
+			print thankers
 		d['thankers'] = thankers
 
 		indented_posts.append(d)
