@@ -212,6 +212,8 @@
 			var id = $(this).attr('id');
 			if (!id || delimiter[$(this).attr('id')]) {
 				id = $(this).attr('id', 'tags' + new Date().getTime()).attr('id');
+				console.log("creating id: ");
+				console.log(id)
 			}
 			
 			var data = jQuery.extend({

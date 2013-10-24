@@ -187,16 +187,34 @@ def index():
 @login_required
 def create_tag_list():
 
+	form = request.form
+	post_id = form.get('post_id')
+
 	user_tags = db.session.query(User).all()
 	team_tags = db.session.query(Team).all()
 	all_tags = user_tags + team_tags
 
+	#query for tags already associated with post
+	used_tags = Tag.query.filter(Tag.post_id==post_id).all()
+	used_tags_dict = {}
+	for used_tag in used_tags:
+		if used_tag.team_tag_id:
+			used_tags_dict[used_tag.team_tag_id] = 'team'
+		else:
+			used_tags_dict[used_tag.user_tag_id] = 'user'
+	print "used_tags_dict: %r " % used_tags_dict
+
 	tag_dict = {}
 
-	#Available User Tags: full name, last name, nickname, teamname
 	for tag in user_tags:
-		tag_user_id = "u" + str(tag.id)
+		#if tag has already been used on this post, don't add to available tags 
 
+		if tag.id in used_tags_dict:
+			print "skipping this one"
+			continue
+
+		tag_user_id = "u" + str(tag.id)
+		#Available User Tags: full name, last name, nickname, teamname
 		if tag.firstname and tag.lastname and tag.nickname:
 			fullname = tag.firstname + " " + tag.lastname + " (" + tag.nickname + ")"
 			tag_dict[fullname] = tag_user_id
@@ -214,6 +232,7 @@ def create_tag_list():
 	for tag in team_tags:
 		tag_team_id = "t" + str(tag.id)
 		tag_dict[tag.teamname] = tag_team_id
+
 
 	tag_words_string = tag_dict.keys()
 	tag_ids_string = tag_dict.values()

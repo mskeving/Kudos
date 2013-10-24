@@ -1,14 +1,20 @@
 $(document).ready(function(){
-	get_tag_list()
+	//get_tag_list()
 });
 
 
-function get_tag_list(){
+function get_tag_list(post_id, selector){
 	//gets tag list from db to populate autocomplete for tag modals
+	//selector must have tag_input class
+
+	var data = {
+		post_id: post_id
+	}
 
 	$.ajax({
 		type: "POST",
 		url: "/create_tag_list",
+		data: data,
 		success: function(tag_info){
 
 			tag_words = tag_info.tag_words;
@@ -16,7 +22,7 @@ function get_tag_list(){
 			tag_ids = tag_info.tag_ids;
 
 			// this makes the tag input work for all tag autocompleters. uses tagsinput.js
-			$('.tag_input').tagsInput({
+			selector.tagsInput({
 				width: 'auto',
 				height: '30px',
 				autocomplete_list: tag_words,
@@ -165,11 +171,13 @@ $('.thank-count').live('click', function(e){
 //TAG MODAL
 $('.addtag-button').live('click', function(e){
 	e.preventDefault();
-	$(this).parent().parent().children(".tag-modal").toggle();
-	if ($(this).parents().siblings('.comment-modal').css('display') != 'none') {
-		$(this).parent().parent().children('.comment-modal').toggle();
+	var post_id = $(this).data('post-id');
+	tag_input = $('.tag_input[data-post-id=' + post_id + ']');
+	get_tag_list(post_id, tag_input);
+	$('.tag-modal[data-post-id=' + post_id + ']').toggle();
+	if ($('.coment-modal[data-post-id=' + post_id + ']').css('display') != 'none') {
+		$('.coment-modal[data-post-id=' + post_id + ']').toggle();
 	};
-
 });
 
 $('.no_new_tag_btn').live('click', function(e){
@@ -206,6 +214,7 @@ $('.remove-tag').live('click', function(e) {
 //SUBMIT NEW TAG
 $('.new-tag-btn').live('click', function(e) {
 	e.preventDefault();
+
 	form = $(this).parent('.new-tag-form');
 	collect_tags(form);
 	tag_ids = form.find('.hidden_tag_ids').val();
