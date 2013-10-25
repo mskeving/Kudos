@@ -161,11 +161,16 @@ $('.thank-button').live('click', function(e){
 	}
 });
 
-//DISPLAY THANKERS
+//DISPLAY THANKER MODAL
 $('.thank-count').live('click', function(e){
 	e.preventDefault()
 	thanker_modal = $(this).parent().children('.thanker-modal').clone();
-	thanker_modal.dialog({ title: "Thanks for your work!" });
+	thanker_modal.dialog({
+		title: "Thanks for your work!",
+		close: function(){
+			thanker_modal.remove();
+		}
+	});
 })
 
 //TAG MODAL
