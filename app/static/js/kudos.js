@@ -3,9 +3,9 @@ $(document).ready(function(){
 });
 
 
-function get_tag_list(post_id, selector){
+function get_tag_list(post_id, obj){
 	//gets tag list from db to populate autocomplete for tag modals
-	//selector must have tag_input class
+	//obj must have tag_input class
 
 	var data = {
 		post_id: post_id
@@ -22,13 +22,14 @@ function get_tag_list(post_id, selector){
 			tag_ids = tag_info.tag_ids;
 
 			// this makes the tag input work for all tag autocompleters. uses tagsinput.js
-			selector.tagsInput({
+			obj.tagsInput({
 				width: 'auto',
 				height: '30px',
 				autocomplete_list: tag_words,
 				autocomplete_dict: tag_dict,
 				tag_ids: tag_ids,
-			});
+			},
+			obj);
 		},
 		error: function(){
 			console.log('error');
@@ -188,7 +189,7 @@ $(this).parent().toggle();
 //REMOVE TAG
 $('.remove-tag').live('click', function(e) {
 	e.preventDefault();
-	var avatar = $(this).parent();
+	var avatar = $(this).parent('.avatar-container');
 	var tagid = avatar.data('tag-id');
 	var data = {
 		tagid: tagid
@@ -200,11 +201,10 @@ $('.remove-tag').live('click', function(e) {
 		url: '/deletetag/' + tagid,
 		data: data,
 		success: function(status){
-			console.log(status);
 			avatar.remove();
 		},
 		error: function(){
-			console.log("error");
+			console.log("error removing tag");
 		}
 	});
 	

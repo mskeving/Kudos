@@ -14,7 +14,7 @@
           {% do g_user_tagged_in_post.append(1) %}
         {% endif %}
 
-        <div class="avatar-container">
+        <div class="avatar-container" data-tag-id="{{tag.id}}">
           <a class="avatar" href="{{ url_for('user', username=tag.user_tag.username) }}">
           	<div class="cropper">
                 <img src="{{tag.user_tag.photo}}" alt="{{tag.username}}" />
@@ -132,8 +132,13 @@
 <!-- new tag -->
   <div class="tag-modal clearfix" data-post-id="{{post_object.id}}">
     <form class="new-tag-form" data-post-id="{{post_object.id}}">  
-      <div class="tags">
+      <div class="tags" data-post-id="{{post_object.id}}">
         <input type="text" class="tag_input" data-post-id="{{post_object.id}}" placeholder="tags"/>
+        <div data-id="_tagsinput" class="tagsinput">
+          <div data-id="_addTag">
+            <input data-id="_tag" value="" data-default="add a tag" />
+          </div>
+        </div>
       </div>
      
       <button type="submit" class="new-tag-btn" data-post-id="{{post_object.id}}"> 

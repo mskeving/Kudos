@@ -43,6 +43,7 @@
 	    }
 
 
+
   };
   $.fn.resetAutosize = function(options){
     // alert(JSON.stringify(options));
@@ -185,7 +186,9 @@
 		$.fn.tagsInput.importTags(this,str);
 	}
 		
-	$.fn.tagsInput = function(options) {
+	$.fn.tagsInput = function(options, obj) {
+
+		//$(this) is the class tag_input
 		var default_settings = {
 	      interactive:true,
 	      defaultText:'add a tag',
@@ -206,22 +209,21 @@
 	    $(this).data('tag-settings', settings);
 
 		this.each(function() { 
+
 			if (settings.hide) { 
 				$(this).hide();				
 			}
 			var id = $(this).attr('id');
 			if (!id || delimiter[$(this).attr('id')]) {
 				id = $(this).attr('id', 'tags' + new Date().getTime()).attr('id');
-				console.log("creating id: ");
-				console.log(id)
 			}
 			
 			var data = jQuery.extend({
 				pid:id,
-				real_input: '#'+id,
-				holder: '#'+id+'_tagsinput',
-				input_wrapper: '#'+id+'_addTag',
-				fake_input: '#'+id+'_tag'
+				real_input: '#' + id,
+				holder: '#' + id + '_tagsinput',
+				input_wrapper: '#' + id + '_addTag',
+				fake_input: '#' + id + '_tag'
 			}, settings);
 	
 			delimiter[id] = data.delimiter;
@@ -232,20 +234,13 @@
 				tags_callbacks[id]['onRemoveTag'] = settings.onRemoveTag;
 				tags_callbacks[id]['onChange'] = settings.onChange;
 			}
-	
-			var markup = '<div id="'+id+'_tagsinput" class="tagsinput"><div id="'+id+'_addTag">';
-			
-			if (settings.interactive) {
-				markup = markup + '<input id="'+id+'_tag" value="" data-default="'+settings.defaultText+'" />';
-			}
-			
-			markup = markup + '</div><div class="tags_clear"></div></div>';
-			
-			$(markup).insertAfter(this);
 
-			$(data.holder).css('width',settings.width);
-			$(data.holder).css('min-height',settings.height);
-			$(data.holder).css('height',settings.height);
+			//instead of creating new markup, add unique ids to already exisitng 
+			$(this).siblings('.tagsinput').attr('id', id + '_tagsinput');
+			$(this).siblings('.tagsinput').children('[data-id=_addTag').attr('id', id + '_addTag');
+			$(this).siblings('.tagsinput').children('[data-id=_addTag').children('[data-id=_tag]').attr('id', id + '_tag');
+
+
 	
 			if ($(data.real_input).val()!='') { 
 				$.fn.tagsInput.importTags($(data.real_input),$(data.real_input).val());
