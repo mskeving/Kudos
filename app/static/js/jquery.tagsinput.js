@@ -18,15 +18,20 @@
 
 	var delimiter = new Array();
 	var tags_callbacks = new Array();
+
+	//only called if settings.autosize = true
 	$.fn.doAutosize = function(o){
 	    var minWidth = $(this).data('minwidth'),
 	        maxWidth = $(this).data('maxwidth'),
 	        val = '',
 	        input = $(this),
 	        testSubject = $('#'+$(this).data('tester_id'));
-	
+
+		//if input.val === '' do nothing, otherwise keep going
 	    if (val === (val = input.val())) {return;}
+
 	
+
 	    // Enter new content into testSubject
 	    var escaped = val.replace(/&/g, '&amp;').replace(/\s/g,' ').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 	    testSubject.html(escaped);
@@ -186,7 +191,7 @@
 		$.fn.tagsInput.importTags(this,str);
 	}
 		
-	$.fn.tagsInput = function(options, obj) {
+	$.fn.tagsInput = function(options) {
 
 		//$(this) is the class tag_input
 		var default_settings = {
@@ -213,6 +218,8 @@
 			if (settings.hide) { 
 				$(this).hide();				
 			}
+
+			//creating unique id
 			var id = $(this).attr('id');
 			if (!id || delimiter[$(this).attr('id')]) {
 				id = $(this).attr('id', 'tags' + new Date().getTime()).attr('id');
@@ -235,7 +242,7 @@
 				tags_callbacks[id]['onChange'] = settings.onChange;
 			}
 
-			//instead of creating new markup, add unique ids to already exisitng 
+			//instead of creating new markup, add unique ids to already exisitng
 			$(this).siblings('.tagsinput').attr('id', id + '_tagsinput');
 			$(this).siblings('.tagsinput').children('[data-id=_addTag').attr('id', id + '_addTag');
 			$(this).siblings('.tagsinput').children('[data-id=_addTag').children('[data-id=_tag]').attr('id', id + '_tag');
