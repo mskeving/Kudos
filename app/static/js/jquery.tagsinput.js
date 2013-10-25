@@ -295,7 +295,6 @@
 							}
 							return false;
 						});
-				
 				}
 
 				//Delete last tag on backspace

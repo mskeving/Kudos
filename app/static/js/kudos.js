@@ -180,17 +180,13 @@ $('.addtag-button').live('click', function(e){
 	if (!tag_modal.hasClass('pressed')){
 		get_tag_list(post_id, tag_input);
 		tag_modal.addClass('pressed');
-	}
-
-
-	if ($('.coment-modal[data-post-id=' + post_id + ']').css('display') != 'none') {
-		$('.coment-modal[data-post-id=' + post_id + ']').toggle();
 	};
+
 });
 
 $('.no_new_tag_btn').live('click', function(e){
-e.preventDefault();
-$(this).parent().toggle();
+	e.preventDefault();
+	$(this).parent().toggle();
 })
 
 //REMOVE TAG
@@ -281,10 +277,8 @@ $('.new-tag-btn').live('click', function(e) {
 //SHOW COMMENT MODAL
 $('.comment-button').live('click', function(e){
 	e.preventDefault();
-	$(this).parent().parent().children(".comment-modal").toggle();
-	if ($(this).parents().siblings('.tag-modal').css('display') != 'none') {
-			$(this).parent().parent().children('.tag-modal').toggle();
-		};
+	var post_id = $(this).data('post-id')
+	$('.comment-modal[data-post-id=' + post_id + ']').toggle();
 });
 
 
