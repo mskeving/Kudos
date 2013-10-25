@@ -297,21 +297,7 @@
 						});
 				
 				}
-				// if user types a comma, create a new tag
-				$(data.fake_input).bind('keypress',data,function(event) {
-					if (event.which==event.data.delimiter.charCodeAt(0) || event.which==13 ) {
-					    event.preventDefault();
-					    var tokentext = $(event.data.fake_input).val();
-						if( (event.data.minChars <= tokentext.length) && (!event.data.maxChars || (event.data.maxChars >= tokentext.length)) ) {
-							$(event.data.real_input).addTag(tokentext,{focus:true,unique:(settings.unique)});
-						}
-					  	$(event.data.fake_input).resetAutosize(settings);
-						return false;
-					} else if (event.data.autosize) {
-			            $(event.data.fake_input).doAutosize(settings);
-            
-          			}
-				});
+
 				//Delete last tag on backspace
 				data.removeWithBackspace && $(data.fake_input).bind('keydown', function(event)
 				{

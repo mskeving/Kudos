@@ -179,9 +179,9 @@ $('.addtag-button').live('click', function(e){
 
 	if (!tag_modal.hasClass('pressed')){
 		get_tag_list(post_id, tag_input);
-		tag_modal.addClass('pressed');	
+		tag_modal.addClass('pressed');
 	}
-	
+
 
 	if ($('.coment-modal[data-post-id=' + post_id + ']').css('display') != 'none') {
 		$('.coment-modal[data-post-id=' + post_id + ']').toggle();
