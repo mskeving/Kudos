@@ -41,7 +41,7 @@ class User(db.Model):
 	photo = db.Column(db.String(120))
 	phone = db.Column(db.String(25), index=True)
 	username = db.Column(db.String(68))
-	manager_id = db.Column(db.Integer)
+	manager_id = db.Column(db.Integer, nullable=True)
 
 	posts = db.relationship('Post', backref='author', lazy='dynamic')
 	users = db.relationship('UserTeam', backref='user', primaryjoin="User.id==UserTeam.user_id")
