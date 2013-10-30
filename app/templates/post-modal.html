@@ -6,7 +6,12 @@
 			<div class="col-lg-6">
 				<div class ="submit-kudos">
 					<div class="tags">
-						<input type="text" class="tag_input" value placeholder="tags"/>
+						<input type="text" class="tag_input" id="new-post-tag-input" value placeholder="tags"/>
+						<div data-id="_tagsinput" class="tagsinput">
+				            <div data-id="_addTag">
+					            <input data-id="_tag" value="" data-default="add a tag" />
+					        </div>
+				        </div>
 					</div>
 					<div class="input-group">
 						<span class="form-control">{{ new_post_form.post_body (class="new-post-body") }}</span>

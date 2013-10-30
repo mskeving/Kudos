@@ -3,7 +3,7 @@ $(document).ready(function(){
 });
 
 
-function get_tag_list(post_id, obj){
+function get_tag_list(obj, post_id){
 	//gets tag list from db to populate autocomplete for tag modals
 	//obj must have tag_input class
 
@@ -183,7 +183,7 @@ $('.addtag-button').live('click', function(e){
 	tag_modal.toggle();
 
 	if (!tag_modal.hasClass('pressed')){
-		get_tag_list(post_id, tag_input);
+		get_tag_list(tag_input, post_id);
 		tag_modal.addClass('pressed');
 	};
 
@@ -426,14 +426,23 @@ $(function () {
 
 
 //NEW POST MODAL
+$('.new-post-modal-btn').live('click', function(e) {
+	post_modal = $('.post-modal');
+	tag_input = $('#new-post-tag-input');
+	post_modal.toggle();
+
+	if (!post_modal.hasClass('pressed')){
+		get_tag_list(tag_input);
+	post_modal.addClass('pressed');
+	};
+
+});
+
 $('.cancel-new-post').live('click', function(e) {
 	$('.post-modal').toggle();
 	$('.post-column').css('margin', '0px');
-	clear_post_modal_info()
-});
 
-$('.new-post-modal-btn').live('click', function(e) {
-	$('.post-modal').toggle();
+	clear_post_modal_info()
 });
 
 
@@ -459,10 +468,10 @@ function create_post(public_url){
 		data: data, 
 		success: function(new_post){
 			$('.post-column').prepend(new_post);
-			get_tag_list()
 			$('.post-modal').toggle();
 			$('.post-column').css('margin', '0px');
 			clear_post_modal_info();
+			post_modal.removeClass('pressed')
 			console.log("success! created new post");
 		},
 		error: function(resp){

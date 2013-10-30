@@ -194,21 +194,23 @@ def create_tag_list():
 	team_tags = db.session.query(Team).all()
 	all_tags = user_tags + team_tags
 
-	#query for tags already associated with post
-	used_tags = Tag.query.filter(Tag.post_id==post_id).all()
 	used_tags_dict = {}
-	for used_tag in used_tags:
-		if used_tag.team_tag_id:
-			used_tags_dict[used_tag.team_tag_id] = 'team'
-		else:
-			used_tags_dict[used_tag.user_tag_id] = 'user'
-	print "used_tags_dict: %r " % used_tags_dict
+	if post_id:
+		#query for tags already associated with given post
+		#there won't be a post_id if you're getting tag list to submit new post
+		used_tags = Tag.query.filter(Tag.post_id==post_id).all()
+		for used_tag in used_tags:
+			if used_tag.team_tag_id:
+				used_tags_dict[used_tag.team_tag_id] = 'team'
+			else:
+				used_tags_dict[used_tag.user_tag_id] = 'user'
+		print "used_tags_dict: %r " % used_tags_dict
+
 
 	tag_dict = {}
 
 	for tag in user_tags:
 		#if tag has already been used on this post, don't add to available tags 
-
 		if tag.id in used_tags_dict:
 			print "skipping this one"
 			continue

@@ -182,7 +182,7 @@ a {
 /* circular avatars */
 a.avatar {
   float: left;
-  margin: 3px 1px;
+  margin: 3px 5px;
 }
 
 a.avatar img {
