@@ -19,13 +19,6 @@
   <div class="white-card">
   	<h2>{{user.firstname}} {{user.lastname}}</h2>
   	<ul>
-		{% if manager %}
-			<li>
-				<div>
-					Lead: <a href="{{url_for('user', username=manager.username) }}"> {{manager.firstname}} {{manager.lastname}}</a>
-				</div>
-			</li>
-		{% endif %}
 		<li>
 			{% for team in list_of_team_names %}
 				<div>
@@ -33,6 +26,13 @@
 				</div>
 			{% endfor %}
 		</li>
+		{% if manager %}
+			<li>
+				<div>
+					Lead: <a href="{{url_for('user', username=manager.username) }}"> {{manager.firstname}} {{manager.lastname}}</a>
+				</div>
+			</li>
+		{% endif %}
 		<li>{{user.email}}</li>
 		<li>{{user.phone}}</li>
 	</ul>
