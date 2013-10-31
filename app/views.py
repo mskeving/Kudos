@@ -657,11 +657,13 @@ def delete_comment(postid):
 
 
 #DELETE POSTS
-@app.route('/deletepost/<postid>', methods=['GET','POST'])
+@app.route('/deletepost', methods=['GET','POST'])
 @login_required
-def delete_post(postid):
+def delete_post():
+	form = request.form
+	post_id = form.get('post_id')
 
-	delete_post = db.session.query(Post).filter_by(id=postid).one()
+	delete_post = db.session.query(Post).filter_by(id=post_id).one()
 
 	#delete post, replies, associatated tags, and thanks 
 	to_delete_list = []
@@ -676,13 +678,12 @@ def delete_post(postid):
 		print thank.id
 		to_delete_list.append(thank)
 
-	for obj_to_delete in to_delete_list: #delete everything associated with post
-		print "obj to delete: %r" % obj_to_delete
+	for obj_to_delete in to_delete_list: #delete everything associated with post ie. tags, comments, thanks
 		db.session.delete(obj_to_delete)
 
 	db.session.commit()
 
-	return postid
+	return post_id
 
 
 #POST PAGE

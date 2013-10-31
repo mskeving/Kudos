@@ -290,13 +290,17 @@ $('.comment-button').live('click', function(e){
 //REMOVE COMMENT
 $('.remove-comment').live('click', function(e){
 	e.preventDefault();
-	var comment_id = $(this).data('comment-id');
+	var post_id = $(this).data('comment-id');
 	var parent_post_id = $(this).closest('.comments').data('post-id');
 	var comment = $(this).parent().parent();
+	data = {
+		post_id: post_id
+	};
 
 	$.ajax({
 		type: "POST",
-		url: '/deletepost/' + comment_id,
+		data: data,
+		url: '/deletepost',
 		success: function(comment_id){
 			comment.remove();
 
@@ -490,7 +494,7 @@ $('.remove-post-button').live('click', function(e){
 	}
 	$.ajax({
 		type: "POST",
-		url: '/deletepost/' + post_id,
+		url: '/deletepost',
 		data: data,
 		success: function(resp){
 			parent_post.remove();
