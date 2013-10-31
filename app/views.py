@@ -296,7 +296,7 @@ def user(username):
 	reply_form = NewReply()
 	new_post_form = EditPost()
 	user = User.query.filter_by(username=username).first()
-	#user = g.user
+	manager = User.query.filter_by(id=user.manager_id).first()
 	tagged_posts = []
 	tags = Tag.query.filter(and_(Tag.user_tag_id==user.id, Post.parent_post_id==None)).all() 
 		#get all parent posts that user is tagged in 
@@ -333,6 +333,7 @@ def user(username):
 		user=user, 
 		posts=indented_posts,
 		list_of_team_names=list_of_team_names,
+		manager=manager,
 		)
 
 
