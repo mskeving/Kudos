@@ -2,6 +2,9 @@ $(document).ready(function(){
 	//get_tag_list()
 });
 
+function show_modal(obj){
+	obj.slideToggle(500);
+}
 
 function get_tag_list(obj, post_id){
 	//gets tag list from db to populate autocomplete for tag modals
@@ -180,7 +183,7 @@ $('.addtag-button').live('click', function(e){
 		tag_input = $('.tag_input[data-post-id=' + post_id + ']'),
 		tag_modal = $('.tag-modal[data-post-id=' + post_id + ']');
 
-	tag_modal.toggle();
+	show_modal(tag_modal);
 
 	if (!tag_modal.hasClass('pressed')){
 		get_tag_list(tag_input, post_id);
@@ -191,7 +194,7 @@ $('.addtag-button').live('click', function(e){
 
 $('.no_new_tag_btn').live('click', function(e){
 	e.preventDefault();
-	$(this).parent().toggle();
+	show_modal($(this).parent());
 })
 
 //REMOVE TAG
@@ -240,7 +243,7 @@ $('.new-tag-btn').live('click', function(e) {
 		};
 
 		$.post('/newtag', data, function(tag_info){
-			form.parent().toggle(); 
+			show_modal(form.parent());
 			form.children('.tags').children('.tagsinput').children('span').remove(); //remove tag spans from input box
 			form.children(".hidden_tag_ids").val(""); //and clear hidden values
 			form.children(".hidden_tag_text").val("");
@@ -283,7 +286,7 @@ $('.new-tag-btn').live('click', function(e) {
 $('.comment-button').live('click', function(e){
 	e.preventDefault();
 	var post_id = $(this).data('post-id')
-	$('.comment-modal[data-post-id=' + post_id + ']').toggle();
+	show_modal($('.comment-modal[data-post-id=' + post_id + ']'));
 });
 
 
@@ -338,7 +341,7 @@ $('.new-comment-btn').live('click', function(e){
 
 			//clear and hide comment modal
 			new_comment_btn.siblings('.reply-body').val("");
-			$('.comment-modal[data-post-id=' + data.post_id + ']').toggle()
+			show_modal($('.comment-modal[data-post-id=' + data.post_id + ']'));
 		},
 		error: function(e){
 			console.log('error creating new reply');
@@ -431,7 +434,7 @@ $(function () {
 $('.new-post-modal-btn').live('click', function(e) {
 	post_modal = $('.post-modal');
 	tag_input = $('#new-post-tag-input');
-	post_modal.toggle();
+	show_modal(post_modal);
 
 	if (!post_modal.hasClass('pressed')){
 		get_tag_list(tag_input);
@@ -441,7 +444,7 @@ $('.new-post-modal-btn').live('click', function(e) {
 });
 
 $('.cancel-new-post').live('click', function(e) {
-	$('.post-modal').toggle();
+	show_modal($('.post-modal'));
 	$('.post-column').css('margin', '0px');
 
 	clear_post_modal_info()
@@ -469,7 +472,7 @@ function create_post(public_url){
 		data: data, 
 		success: function(new_post){
 			$('.post-column').prepend(new_post);
-			$('.post-modal').toggle();
+			show_modal($('.post-modal'));
 			$('.post-column').css('margin', '0px');
 			clear_post_modal_info();
 			post_modal.removeClass('pressed')
