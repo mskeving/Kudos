@@ -603,11 +603,14 @@ def add_tag():
 	return tag_info_json
 
 #DELETE TAGS
-@app.route('/deletetag/<tagid>', methods=['GET','POST'])
+@app.route('/deletetag', methods=['GET','POST'])
 @login_required
-def delete_tag(tagid):
+def delete_tag():
+
+	form = request.form
+	tag_id = form.get('tag_id')
 	
-	delete_tag = db.session.query(Tag).filter_by(id=tagid).one()
+	delete_tag = db.session.query(Tag).filter_by(id=tag_id).one()
 
 	db.session.delete(delete_tag)
 	db.session.commit()

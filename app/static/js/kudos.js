@@ -198,15 +198,15 @@ $('.no_new_tag_btn').live('click', function(e){
 $('.remove-tag').live('click', function(e) {
 	e.preventDefault();
 	var avatar = $(this).parent('.avatar-container'),
-		tagid = avatar.data('tag-id'),
+		tag_id = avatar.data('tag-id'),
 		data = {
-			tagid: tagid
+			tag_id: tag_id
 		};
 
 
 	$.ajax({
 		type: "POST",
-		url: '/deletetag/' + tagid,
+		url: '/deletetag',
 		data: data,
 		success: function(status){
 			avatar.remove();
