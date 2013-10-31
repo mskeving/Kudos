@@ -59,7 +59,7 @@ function show_progress(clicked_element){
 }
 
 function end_show_progress(clicked_element){
-	clicked_element.css('cursor', 'progress');
+	clicked_element.css('cursor', 'default');
 	$('body').css('cursor', 'default');
 }
 
@@ -395,7 +395,6 @@ $(function () {
 
 	//Submit new post
 	$('.submit-new-post').live('click', function(e){
-		show_progress($(this));
 		//Check if file selected from dropbox chooser
 		if ($.isEmptyObject(data)===false){
 			//can only send binary data using blob
@@ -420,7 +419,6 @@ $(function () {
 		else{
 			create_post();
 		}
-		end_show_progress($(this));
 	});	
 });
 
@@ -449,11 +447,10 @@ $('.cancel-new-post').live('click', function(e) {
 function create_post(public_url){
 	collect_tags($('.new-post-form'));
 	post_body = $('#post_body').val();
-	console.log("post_body: " + post_body);
 
 	if (!post_body){
 		$('.submit-kudos').addClass('error-post');
-
+		return
 	}
 	data = {
 		public_url: public_url,
@@ -461,7 +458,7 @@ function create_post(public_url){
 		hidden_tag_ids: $('.hidden_tag_ids').val(),
 		hidden_tag_text: $('.hidden_tag_text').val()
 	}
-
+	show_progress($('.submit-new-post'));
 	$.ajax({
 		type: "POST", 
 		url: "/createpost",
@@ -473,9 +470,11 @@ function create_post(public_url){
 			clear_post_modal_info();
 			post_modal.removeClass('pressed')
 			console.log("success! created new post");
+			end_show_progress($('.submit-new-post'));
 		},
 		error: function(resp){
 			console.log("error! no new post created");
+			end_show_progress($('.submit-new-post'));
 		}
 	});
 }
