@@ -1,6 +1,28 @@
-$(document).ready(function(){
-	//get_tag_list()
-});
+$('#more-posts').live('click', function(){
+	last_post_on_page = $('.post').last();
+	last_post_id = last_post_on_page.data('post-id');
+
+	// pass in last post_id on page to get the next bundle
+	data = {
+		last_post_id: last_post_id
+	}
+	$.ajax({
+		url: '/get_more_posts',
+		type: 'POST',
+		data: data,
+		success: function(new_post_info){
+			if (new_post_info['more_to_display']===false){
+				$('#more-posts').remove()
+			}
+			$('.post-column').append(new_post_info['new_posts'])
+
+		},
+		error: function(){
+			console.log('failed to load more posts');
+		},
+		dataType: 'json'
+	})
+})
 
 function show_modal(obj){
 	obj.slideToggle(500);

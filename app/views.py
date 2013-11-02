@@ -17,7 +17,7 @@ from models import (User, Post, UserTeam, Team, Tag,
 					Thanks)
 from datetime import datetime
 from flask.ext.sqlalchemy import sqlalchemy
-from sqlalchemy import and_, or_
+from sqlalchemy import and_, or_, func
 from threading import Thread
 
 from flask.ext.mail import Message
@@ -169,7 +169,7 @@ def index():
 	delete_form = DeletePost()
 
 	#query for all parent posts
-	posts = Post.query.filter(Post.parent_post_id==None).order_by(Post.time.desc())
+	posts = Post.query.filter(Post.parent_post_id==None).order_by(Post.time.desc()).limit(3)
 
 	if posts != None:
 		indented_posts = posts_to_indented_posts(posts)
@@ -182,6 +182,47 @@ def index():
 		reply_form=reply_form,
 		delete_form=delete_form,
 		)
+
+@app.route('/get_more_posts', methods=['POST'])
+@login_required
+def get_more_posts():
+
+	new_post_form = EditPost()
+	reply_form = NewReply()
+	form = request.form
+	num_posts_to_display = 12
+
+	last_post_id = form.get('last_post_id')
+
+	total_posts_left = db.session.query(Post).filter(and_(Post.parent_post_id==None, Post.id<last_post_id)).count()
+
+	#older posts will have smaller post_id
+	posts = Post.query.filter(and_(Post.id<last_post_id, Post.parent_post_id==None)).order_by(Post.time.desc()).limit(num_posts_to_display)
+
+	more_to_display = True
+	if posts != None:
+		indented_posts = posts_to_indented_posts(posts)
+		if len(indented_posts) < num_posts_to_display:
+			more_to_display = False
+		elif len(indented_posts) == total_posts_left:
+			more_to_display = False
+
+	new_posts = ""
+	for post in indented_posts:
+		new_posts += render_template('post.html',
+			post=post,
+			reply_form=reply_form,
+			new_post_form=new_post_form,
+			)
+
+	new_post_info = {
+		'new_posts': new_posts,
+		'more_to_display': more_to_display
+	}
+
+	post_json = json.dumps(new_post_info)
+
+	return post_json
 
 @app.route('/create_tag_list', methods=['POST'])
 @login_required
@@ -257,10 +298,12 @@ def team(team):
 
 	tagged_posts = []
 	for tag in tags:
+		print "tag: %r " % tag
 		tagged_posts.append(tag.post)
 
 	indented_posts = []
 	if len(tagged_posts) != 0:
+		print "tagged posts: %r " % tagged_posts
 		indented_posts = posts_to_indented_posts(tagged_posts)
 
 	dict_of_users_teams = {}
@@ -853,6 +896,10 @@ def posts_to_indented_posts(posts):
 				tagged_teams.append(tag) #just teamname
 			else:
 				print "no tags for this post.id: %r" % p.id 
+
+		#TODO: get all team and user tags in one list to sort based on time
+		sorted_tags = sorted(tagged_users, key=lambda tag: tag.time)
+
 		d['tagged_users'] = tagged_users
 		d['tagged_teams'] = tagged_teams
 
@@ -860,7 +907,6 @@ def posts_to_indented_posts(posts):
 		thankers = []
 		for thank in p.thanks:
 			thankers.append(thank.user)
-			print thankers
 		d['thankers'] = thankers
 
 		indented_posts.append(d)
