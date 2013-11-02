@@ -10,7 +10,6 @@ from flask.ext.login import (login_user, logout_user, current_user,
 							AnonymousUserMixin, confirm_login,
 							fresh_login_required)
 from oauth2client.client import (FlowExchangeError,
-								flow_from_clientsecrets,
 								OAuth2WebServerFlow)
 from forms import LoginForm, EditForm, EditPost, DeletePost, NewReply
 from models import (User, Post, UserTeam, Team, Tag,
@@ -22,7 +21,35 @@ from threading import Thread
 
 from flask.ext.mail import Message
 
+from settings import settings
 
+def auth_finish(email, next):
+	if email is None:
+		error_msg = "You need to authenticate with Google in order to log in to Kudos."
+		return back_to_login_with_error(error_msg)
+
+	#check db to see if email exists for valid users
+	u = User.query.filter(User.email==email).all()
+
+	def back_to_login_with_error(error_msg):
+		flash(error_msg)
+		return redirect(url_for('login'))
+
+	if len(u) == 0:
+		error_msg = "You're not registered on Dropbox Kudos yet - are you a new Dropboxer? If so, contact team-kudos@dropbox.com to get access."
+		return back_to_login_with_error(error_msg)
+
+	if len(u) > 1:
+		error_msg = "Too many entries for %r in database. Please contact team-kudos@dropbox.com" % cred.id_token.get('email')
+		return back_to_login_with_error(error_msg)
+
+	#tell flask to remember that u is current logged in user
+	login_user(u[0], remember=True)
+
+	return redirect(next or '/')
+
+
+settings.google_auth_handler.setup(app, auth_finish)
 
 
 @app.before_request
@@ -42,87 +69,13 @@ def serve_image(filename):
 	return send_from_directory(image_path, filename)
 
 
-
 @app.route('/login', methods = ['GET'])
 def login():
-
-	#if you're going straight to user profile, and need to login, next parameter makes sure you're redirected to user profile instead of /index
-	next = request.args.get('next','')
-	csrf_token = os.urandom(32)
-	session['google_auth_csrf'] = csrf_token
-	csrf_token_encoded = b64encode(csrf_token)
-	state = csrf_token_encoded + "|" + next
-	auth_uri = create_auth_flow(request, state=state).step1_get_authorize_url()
-
+	next = request.args.get('next','')  # 'next' is where to go after login is complete.
+	auth_uri = settings.google_auth_handler.start(request.url_root, next)
 	return render_template('login.html', 
-		title = 'Sign In', 
-		auth_uri=auth_uri,
-        )
-
-@app.route('/auth_finish', methods = ['GET'])
-def auth_finish():
-	code = request.args.get('code')
-
-	csrf_token_and_next = request.args.get('state')
-	csrf_token_encoded = csrf_token_and_next.split('|', 1)[0]
-	csrf_token = b64decode(csrf_token_encoded)
-	next = csrf_token_and_next.split('|', 1)[1]
-
-	#This prevents timing attack rather than using a simple string comparison
-	if not safe_string_equals(csrf_token, session['google_auth_csrf']):
-		raise Exception("TODO: send 403 page")		
-
-	del session['google_auth_csrf']
-
-	def back_to_login_with_error(error_msg):
-		flash(error_msg)
-		return redirect(url_for('login'))
-
-	if code:
-		try:
-			cred = create_auth_flow(request).step2_exchange(code)
-
-		except FlowExchangeError as e:
-			flash_msg = "An error occured when trying to log in. Please refresh and try again."
-
-		email = cred.id_token.get('email')
-		#check db to see if email exists for valid users
-		u = User.query.filter(User.email==email).all()
-
-		if len(u) == 0:
-			error_msg = "You're not registered on Dropbox Kudos yet - are you a new Dropboxer? If so, contact team-kudos@dropbox.com to get access."
-			return back_to_login_with_error(error_msg)
-
-		if len(u) > 1:
-			error_msg = "Too many entries for %r in database. Please contact team-kudos@dropbox.com" % cred.id_token.get('email')
-			return back_to_login_with_error(error_msg)
-
-		#tell flask to remember that u is current logged in user
-		login_user(u[0], remember=True)
-
-	else:
-		error_msg = "You need to authenticate with Google in order to log in to Kudos."
-		return back_to_login_with_error(error_msg)
-	return redirect(next or "/index")
-
-
-
-def create_auth_flow(request, **kwargs):
-	#TODO: set user_agent - describe all levels of stack
-	GOOGLE_API_SCOPE=[
-    "https://www.googleapis.com/auth/userinfo.profile",
-    "https://www.googleapis.com/auth/userinfo.email",
-	]
-	redirect_uri = request.url_root + 'auth_finish'
-
-	#to only use dropbox domain, pass hd='dropbox.com'
-	#probably don't need to do this because we're checking email in db
-	return OAuth2WebServerFlow(client_id=os.environ.get('GOOGLE_CLIENT_ID'), 
-								client_secret=os.environ.get('GOOGLE_CLIENT_SECRET'), 
-								scope=GOOGLE_API_SCOPE,
-								redirect_uri=redirect_uri, 
-								access_type='offline',
-								**kwargs)
+		title='Sign In', 
+		auth_uri=auth_uri)
 
 #LOGOUT
 @app.route('/logout')
@@ -385,45 +338,45 @@ def user(username):
 def sign_s3_upload():
 	#TODO: Think about preventing abuse of this
 	#associate uploads with a user. If there are any things in S3 bucket that aren't referenced with a user, delete them
-    AWS_ACCESS_KEY = os.environ.get('AWS_ACCESS_KEY_ID')       
-    AWS_SECRET_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
-    S3_BUCKET = os.environ.get('S3_BUCKET')
+	AWS_ACCESS_KEY = os.environ.get('AWS_ACCESS_KEY_ID')	   
+	AWS_SECRET_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
+	S3_BUCKET = os.environ.get('S3_BUCKET')
 
-    if app.config['USE_S3']:
-    	print "using S3!!!!!"
-    print "in sign_s3_upload"
+	if app.config['USE_S3']:
+		print "using S3!!!!!"
+	print "in sign_s3_upload"
 
-    #TODO: properly quote name in case of spaces or other awkward characters
-    # object_name = request.args.get('s3_object_name')
+	#TODO: properly quote name in case of spaces or other awkward characters
+	# object_name = request.args.get('s3_object_name')
 
-    #create unique filename
-    r = os.urandom(32)
-    object_name = base64.urlsafe_b64encode(r)+'?x=y&'
-
-
-    mime_type = request.args.get('s3_object_type')
+	#create unique filename
+	r = os.urandom(32)
+	object_name = base64.urlsafe_b64encode(r)+'?x=y&'
 
 
-    expires = int(time.time()+10)
-    amz_headers = "x-amz-acl:public-read"
+	mime_type = request.args.get('s3_object_type')
 
-    put_request = "PUT\n\n%s\n%d\n%s\n/%s/%s" % (mime_type, expires, amz_headers, S3_BUCKET, urllib.quote(object_name))
-    print "put_request: %s" % (put_request,)
 
-    #signature generated as SHA1 hash of compiled AWS secret key and PUT request
-    signature = base64.encodestring(hmac.new(AWS_SECRET_KEY,put_request, hashlib.sha1).digest())
-    print repr(signature)
-    #strip surrounding whitespace for safer transmission
-    signature = urllib.quote_plus(signature.strip())
+	expires = int(time.time()+10)
+	amz_headers = "x-amz-acl:public-read"
 
-    public_url = 'https://%s.s3.amazonaws.com/%s' % (S3_BUCKET, urllib.quote(object_name))
-    print "url: %r " % public_url
+	put_request = "PUT\n\n%s\n%d\n%s\n/%s/%s" % (mime_type, expires, amz_headers, S3_BUCKET, urllib.quote(object_name))
+	print "put_request: %s" % (put_request,)
 
-    print repr(signature)
-    return json.dumps({
-        'signed_request': '%s?AWSAccessKeyId=%s&Expires=%d&Signature=%s' % (public_url, AWS_ACCESS_KEY, expires, signature),
-         'public_url': public_url
-      })
+	#signature generated as SHA1 hash of compiled AWS secret key and PUT request
+	signature = base64.encodestring(hmac.new(AWS_SECRET_KEY,put_request, hashlib.sha1).digest())
+	print repr(signature)
+	#strip surrounding whitespace for safer transmission
+	signature = urllib.quote_plus(signature.strip())
+
+	public_url = 'https://%s.s3.amazonaws.com/%s' % (S3_BUCKET, urllib.quote(object_name))
+	print "url: %r " % public_url
+
+	print repr(signature)
+	return json.dumps({
+		'signed_request': '%s?AWSAccessKeyId=%s&Expires=%d&Signature=%s' % (public_url, AWS_ACCESS_KEY, expires, signature),
+		 'public_url': public_url
+	  })
 
 
 def send_notification(message, subject, recipient_list, post_id, img_url):
@@ -852,17 +805,6 @@ class HPost:
 		for post in hposts:
 			print indent * " " + str(post.dbo.id), str(post.dbo.body)
 			cls.dump(post.children, indent+1)
-
-
-def safe_string_equals(a, b):
-    assert isinstance(a, str), type(a)
-    assert isinstance(b, str), type(b)
-    if len(a) != len(b):
-        return False
-    res = 0
-    for i in xrange(len(a)):
-        res |= ord(a[i]) ^ ord(b[i])
-    return res == 0
 
 
 def posts_to_indented_posts(posts):

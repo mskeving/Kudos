@@ -1,6 +1,9 @@
 #!flask/bin/python
 from migrate.versioning import api
-from config import SQLALCHEMY_DATABASE_URI
-from config import SQLALCHEMY_MIGRATE_REPO
-api.upgrade(SQLALCHEMY_DATABASE_URI, SQLALCHEMY_MIGRATE_REPO)
-print 'Current database version: ' + str(api.db_version(SQLALCHEMY_DATABASE_URI, SQLALCHEMY_MIGRATE_REPO))
+from settings import settings
+
+mrepo = settings.sqlalchemy_migrations_repo
+db_url = settings.database.url
+
+api.upgrade(db_url, mrepo)
+print 'Current database version: ' + str(api.db_version(db_url, mrepo))

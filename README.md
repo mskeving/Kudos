@@ -23,7 +23,7 @@ Individual [user pages](https://dl-web.dropbox.com/spa/b0x9nvfo1ovrbum/4zuqt1-z.
 2. Create virtual env
 	```
 	$ pip install virtualenv
-	$ virtualenv env
+	$ virtualenv --python=python2.7 env
 	$ source env/bin/activate
 	```
 
@@ -32,21 +32,23 @@ Individual [user pages](https://dl-web.dropbox.com/spa/b0x9nvfo1ovrbum/4zuqt1-z.
 	$ pip install -r requrements.txt
 	```
 
-3. Create database: 
+3. Copy "settings\_example.py" to "settings.py" and modify the values.
+
+4. Create database: 
 	```
 	$ python db_create.py
 	```
 
-4. Edit db to include your necessary info to login and view index.html. NOTE: must use your actual email
+5. Edit db to include your necessary info to login and view index.html. NOTE: must use your actual email
 	```
-	$ sqlite3 app.db
-	> inset into users default values;
+	$ sqlite3 data/app.db
+	> insret into users default values;
 	> update users set email="YOU@EMAIL.COM", firstname="FIRSTNAME", lastname="LASTNAME", username="USERNAME"  where id = 1;
 	```
 
-5. Start your web server
+6. Start the web server
 	```
-	python run.py
+	./run.py
 	```
 
 
