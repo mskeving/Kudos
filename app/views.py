@@ -49,7 +49,7 @@ def auth_finish(email, next):
 	return redirect(next or '/')
 
 
-settings.google_auth_handler.setup(app, auth_finish)
+settings.login_handler.setup(app, auth_finish)
 
 
 @app.before_request
@@ -72,10 +72,7 @@ def serve_image(filename):
 @app.route('/login', methods = ['GET'])
 def login():
 	next = request.args.get('next','')  # 'next' is where to go after login is complete.
-	auth_uri = settings.google_auth_handler.start(request.url_root, next)
-	return render_template('login.html', 
-		title='Sign In', 
-		auth_uri=auth_uri)
+	return settings.login_handler.start(request.url_root, next)
 
 #LOGOUT
 @app.route('/logout')

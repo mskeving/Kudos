@@ -13,14 +13,14 @@ class Settings(object):
             app_name,
             image_store,
             database,
-            google_auth_handler, 
+            login_handler, 
             mail_sender,
             admin_emails,
             flask_config):
         self.app_name = app_name
         self.image_store = image_store
         self.database = database
-        self.google_auth_handler = google_auth_handler
+        self.login_handler = login_handler
         self.mail_sender = mail_sender
         self.admin_emails = admin_emails
         self.flask_config = flask_config
@@ -41,7 +41,7 @@ class Database(object):
     def __init__(self, url):
         self.url = url
 
-class RealGoogleAuthHandler(object):
+class GoogleAuthLoginHandler(object):
     def __init__(self, client_id, client_secret):
         self.client_id = client_id
         self.client_secret = client_secret
@@ -75,12 +75,13 @@ class RealGoogleAuthHandler(object):
                 return finish_func(None, next)
 
     def start(self, url_root, next):
-        from flask import session
+        from flask import session, render_template
         csrf_token = os.urandom(32)
         session['google_auth_csrf'] = csrf_token
         csrf_token_encoded = base64.b64encode(csrf_token)
         state = csrf_token_encoded + "|" + next
-        return self.create_auth_flow(url_root, state=state).step1_get_authorize_url()
+        auth_url = self.create_auth_flow(url_root, state=state).step1_get_authorize_url()
+        return render_template('login.html', auth_url=auth_url)
 
     def create_auth_flow(self, url_root, **kwargs):
         #TODO: set user_agent - describe all levels of stack
@@ -99,13 +100,22 @@ class RealGoogleAuthHandler(object):
                                    access_type='offline',
                                    **kwargs)
 
-class FakeGoogleAuthHandler(object):
-    def __init__():
+class FakeLoginHandler(object):
+    def __init__(self):
         pass
+
     def setup(self, app, finish_func):
-        raise RuntimeException("todo")
+        from flask import request, redirect, flash, session
+        @app.route('/fake_login_submit', methods=['POST'])
+        def fake_login_submit():
+            email = request.form.get('email') or ''
+            next = request.form.get('next') or None
+            print "EMAIL: %r, NEXT: %r" % (email, next)
+            return finish_func(email, next)
+
     def start(self, url_root, next):
-        raise RuntimeException("todo")
+        from flask import render_template
+        return render_template('fake_login.html', next=next)
 
 class MailSender(object):
     def __init__(self, server, port, use_tls, use_ssl, username, password, reply_to):
