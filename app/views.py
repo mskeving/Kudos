@@ -338,16 +338,9 @@ def user(username):
 def sign_s3_upload():
 	#TODO: Think about preventing abuse of this
 	#associate uploads with a user. If there are any things in S3 bucket that aren't referenced with a user, delete them
-	AWS_ACCESS_KEY = os.environ.get('AWS_ACCESS_KEY_ID')	   
-	AWS_SECRET_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
-	S3_BUCKET = os.environ.get('S3_BUCKET')
-
-	if app.config['USE_S3']:
-		print "using S3!!!!!"
-	print "in sign_s3_upload"
-
-	#TODO: properly quote name in case of spaces or other awkward characters
-	# object_name = request.args.get('s3_object_name')
+	AWS_ACCESS_KEY = settings.image_store.aws_credentials.access_key_id
+	AWS_SECRET_KEY = settings.image_store.aws_credentials.secret_access_key
+	S3_BUCKET = settings.image_store.bucket_name
 
 	#create unique filename
 	r = os.urandom(32)
