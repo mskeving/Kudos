@@ -1,6 +1,7 @@
 import time, os, json, base64, hmac, urllib, hashlib
 
 from base64 import b64encode, b64decode
+from settings import settings
 
 from app import app, lm, db, mail
 from flask import (send_from_directory, render_template, flash,
@@ -374,7 +375,7 @@ def send_notification(message, subject, recipient_list, post_id, img_url):
 	kudos_header = g.user.firstname + " sent you kudos!"
 	recipient_emails = []
 
-	sender = app.config['MAIL_USERNAME']
+	sender = settings.mail_sender.username
 	print "sender: %r " % sender
 
 	reply_to="team-kuds@dropbox.com"
@@ -385,7 +386,7 @@ def send_notification(message, subject, recipient_list, post_id, img_url):
 		img_url=img_url,
 		post_id=post_id,
 		)
-	sender = app.config['MAIL_USERNAME']
+	sender = settings.mail_sender.username
 	send_email(sender, recipient_list, reply_to, subject, html)
 
 
