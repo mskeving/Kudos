@@ -1,7 +1,7 @@
 # Copy this to "settings.py" and change the values.
 
 from settings_helper import (
-    Settings, AwsCredentials, S3ImageStore, Database, GoogleAuthLoginHandler, MailSender,
+    Settings, AwsCredentials, S3ImageStore, Database, FakeLoginHandler, MailSender,
     base_dir,
     )
 
