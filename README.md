@@ -42,7 +42,7 @@ Individual [user pages](https://dl-web.dropbox.com/spa/b0x9nvfo1ovrbum/4zuqt1-z.
 5. Edit db to include your necessary info to login and view index.html. NOTE: must use your actual email
 	```
 	$ sqlite3 data/app.db
-	> insret into users default values;
+	> insert into users default values;
 	> update users set email="YOU@EMAIL.COM", firstname="FIRSTNAME", lastname="LASTNAME", username="USERNAME"  where id = 1;
 	```
 
