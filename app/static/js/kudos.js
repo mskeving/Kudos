@@ -1,6 +1,6 @@
 $(window).scroll(function() {
 	//load more posts when you're 100px from bottom
-	if($(window).scrollTop() + $(window).height() > $(document).height() - 100) {
+	if($(window).scrollTop() + $(window).height() > $(document).height() - 100 && window.location.pathname === '/index'){
 		last_post_on_page = $('.post').last();
 		last_post_id = last_post_on_page.data('post-id');
 
