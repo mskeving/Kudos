@@ -1,21 +1,18 @@
 # Copy this to "settings.py" and change the values.
 
 from settings_helper import (
-    Settings, AwsCredentials, S3ImageStore, Database, FakeLoginHandler, MailSender,
+    Settings, AwsCredentials, S3ImageStore, SqliteDatabase, HerokuDatabase, FakeLoginHandler, MailSender,
     base_dir,
     )
 
 import os
 
 data_dir = os.path.join(base_dir, 'data')
-if not os.path.exists(data_dir):
-    os.makedirs(data_dir)
-database = Database('sqlite:///' + os.path.join(data_dir, "app.db"))
 
 settings = Settings(
     app_name="Kudos",
     image_store=S3ImageStore(AwsCredentials("access key id", "secret access key"), "s3 bucket name"),
-    database=database,
+    database=SqliteDatabase(os.path.join(data_dir, "app.db")),
     login_handler=FakeLoginHandler(),
     mail_sender=MailSender(
         server='example.org',
@@ -30,3 +27,10 @@ settings = Settings(
         CSRF_ENABLED=True,
         SECRET_KEY='you-will-never-guess',
     ))
+
+# image_store
+# - S3ImageStore(AwsCredentials, bucket_name)
+# - LocalImageStore  TODO
+# database
+# - SqliteDatabase(path_to_db_file)
+# - HerokuDatabase(url)

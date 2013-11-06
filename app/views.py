@@ -73,7 +73,8 @@ def serve_image(filename):
 @app.route('/login', methods = ['GET'])
 def login():
 	next = request.args.get('next','')  # 'next' is where to go after login is complete.
-	return settings.login_handler.start(request.url_root, next)
+	auth_url = settings.login_handler.start(request.url_root, next)
+	return render_template('login.html', auth_url=auth_url)
 
 #LOGOUT
 @app.route('/logout')
@@ -141,9 +142,12 @@ def get_more_posts():
 	new_post_form = EditPost()
 	reply_form = NewReply()
 	form = request.form
-	num_posts_to_display = 12
+	num_posts_to_display = 3
 
 	last_post_id = form.get('last_post_id')
+
+
+
 
 	total_posts_left = db.session.query(Post).filter(and_(Post.parent_post_id==None, Post.id<last_post_id)).count()
 
@@ -160,6 +164,7 @@ def get_more_posts():
 
 	new_posts = ""
 	for post in indented_posts:
+		print "post %r " % post
 		new_posts += render_template('post.html',
 			post=post,
 			reply_form=reply_form,
