@@ -12,7 +12,8 @@ data_dir = os.path.join(base_dir, 'data')
 settings = Settings(
     app_name="Kudos",
     image_store=S3ImageStore(AwsCredentials("access key id", "secret access key"), "s3 bucket name"),
-    database=SqliteDatabase(os.path.join(data_dir, "app.db")),
+    #database=SqliteDatabase(os.path.join(data_dir, "app.db")),
+    #database=HerokuDatabase(),
     login_handler=FakeLoginHandler(),
     mail_sender=MailSender(
         server='example.org',
@@ -33,4 +34,4 @@ settings = Settings(
 # - LocalImageStore  TODO
 # database
 # - SqliteDatabase(path_to_db_file)
-# - HerokuDatabase(url)
+# - HerokuDatabase()
