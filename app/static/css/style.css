@@ -45,6 +45,12 @@ a:hover {
   color: #dc1113;
 }
 
+input,
+textarea,
+button {
+  font: inherit;
+}
+
 /*-----------------------------------*\
 
 	$UTILITIES
@@ -83,6 +89,11 @@ a:hover {
 
 .span-all {
   width: 100% !important;
+}
+
+.vi-hd {
+  position: absolute;
+  left: -9999px;
 }
 
 [data-placeholder]:empty:before {
@@ -349,11 +360,11 @@ html {
   z-index: 1;
 }
 
-.post__thanks-to li {
+.post__thanks-to li,
+.post__thanks-to .post__tagger {
   background-color: #223;
   background-color: rgba(0, 0, 0, 0.8);
   border-radius: 200px;
-  overflow: hidden;
   border: 2px solid #faf9f7;
   text-align: center;
   font-family: "Whitney SSm A", "Whitney SSm B", sans-serif;
@@ -361,20 +372,29 @@ html {
   float: left;
 }
 
-.post__thanks-to li + li {
+.post__thanks-to li + li,
+.post__thanks-to .post__tagger + li {
   margin-left: .25rem;
 }
 
-.post__thanks-to li:first-child {
+.post__thanks-to li:first-child,
+.post__thanks-to .post__tagger:first-child {
   -webkit-box-shadow: -1px 0px 1px rgba(0, 0, 0, 0.05);
   box-shadow: -1px 0px 1px rgba(0, 0, 0, 0.05);
 }
 
-.post__thanks-to li img {
-  border-radius: 50%;
+.post__thanks-to li img,
+.post__thanks-to .post__tagger img {
+  position: absolute;
+  top: 0;
+  min-width: 100%;
+  bottom: 0;
+  min-height: 100%;
 }
 
-.post__thanks-to li a {
+.post__thanks-to li a,
+.post__thanks-to .post__tagger a {
+  overflow: hidden;
   display: block;
   color: #fff;
   text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
@@ -385,7 +405,29 @@ html {
   height: 3.5rem;
 }
 
+.post__thanks-to .post__remove-tag {
+  cursor: pointer;
+  position: absolute;
+  z-index: 2;
+  width: 1.25rem;
+  height: 1.25rem;
+  font-size: .75rem;
+  line-height: 1;
+  padding: .25rem;
+  top: -.25rem;
+  right: -.25rem;
+  background-color: #fff;
+  -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  border-radius: 100%;
+  color: #333;
+}
+
 .post__thanks-to .post__tagger {
+  -webkit-box-shadow: 0 0 1px 1px white !important;
+  box-shadow: 0 0 1px 1px white !important;
+  border: none;
+  appearance: none;
   background-color: #f0ede7;
   color: rgba(0, 0, 0, 0.3);
   padding: 1.25rem 1.5rem;
@@ -467,7 +509,7 @@ html {
   border-left: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-.post__actions li .js--thanked {
+.post__actions li .thanked {
   color: #fff;
   text-shadow: 0 1px 1px rgba(150, 0, 0, 0.25);
   background-color: #f36062;
@@ -475,7 +517,7 @@ html {
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.1);
 }
 
-.post__actions li .js--thanked .fa-heart {
+.post__actions li .thanked.js--pressed .fa-heart {
   z-index: 5;
   -webkit-transform-style: preserve-3d;
   transform-style: preserve-3d;
