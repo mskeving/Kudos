@@ -26,3 +26,7 @@ newrelic.ini
 flask/*
 .DS_Store
 /app/static/css/img/missy.psd
+
+# Design-related dirs/files to ignore
+.sass-cache
+node_modules/

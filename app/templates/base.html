@@ -1,12 +1,14 @@
 <html>
 	<head>
-	<link rel="stylesheet" href="/static/css/core.css" type="text/css" charset="utf-8" />
-	<link rel="stylesheet" href="/static/css/navbar.css" type="text/css" charset="utf-8" />
+	<link rel="stylesheet" href="/static/css/style.css" type="text/css" charset="utf-8" />
+	<link rel="stylesheet" type="text/css" href="//cloud.typography.com/7158232/748902/css/fonts.css" />
+	<link href="//netdna.bootstrapcdn.com/font-awesome/4.0.1/css/font-awesome.css" rel="stylesheet">
+	<meta name="viewport" content="initial-scale=1, maximum-scale=1" />
+
 	<script type="text/javascript" src="/static/js/jquery1_4_4.min.js"></script>
 	<script type='text/javascript' src="/static/js/jquery-ui.min.js"></script>
 	<script type="text/javascript" src="/static/js/lodash.js"></script>
 	<script type="text/javascript" src="/static/js/s3upload.js"></script>
-	<link rel="stylesheet" type="text/css" href="/static/css/jquery-ui.css" />
 	<script type="text/javascript" src="/static/js/jquery.tagsinput.js"></script>
 	<script type="text/javascript" src="/static/js/kudos.js"></script>
 	<script type="text/javascript" src="/static/js/dropboxchooser.js" id="dropboxjs" data-app-key="vi9myl48jsb166j"></script>
@@ -25,22 +27,27 @@
 	</head>
 
 	<body>
-		<div class="navbar" name="navigation">
-			<ul class="nav navbar-nav">
-				<li class="active"><a href="{{ url_for('index') }}">Kudos</a></li>
-				{% if g.user.is_authenticated() %}
-				<!-- If user is logged in, allow them to logout -->
-				<li><a href="{{ url_for('user', username = g.user.username) }}">Your Profile</a></li>
-				<li><a href="{{ url_for('all_users') }}">All Users</a></li>
-				<li><a href="{{ url_for('logout') }}">Logout</a></li>
-				<li id="nav-feedback"><a>Feedback</a></li>
-				{% endif %}
-			</ul>
-
-		</div>
+		<header class="site__header" name="navigation">
+			<div class="wrap island cf">
+				<h1 class="site__title standalone"><a href="{{ url_for('index') }}">Kudos</a></h1>
+				<nav class="site__navigation nav">
+					<ul class="standalone">
+						{% if g.user.is_authenticated() %}
+						<!-- If user is logged in, allow them to logout -->
+						<li><a href="{{ url_for('user', username = g.user.username) }}">Your Profile</a></li>
+						<li><a href="{{ url_for('all_users') }}">All Users</a></li>
+						<li><a href="{{ url_for('logout') }}">Logout</a></li>
+						<li id="nav-feedback"><a>Feedback</a></li>
+						{% endif %}
+					</ul>
+				</nav>
+			</div>
+		</header>
+		<!-- Commenting out feedback form for now.
 		<div class="feedback">
 			{% include 'feedback-modal.html' with context %}
 		</div>
+		-->
 
 		{% with messages = get_flashed_messages() %}
 		{% if messages%}
@@ -51,8 +58,9 @@
 		</ul>
 		{% endif %}
 		{% endwith %}
-
-		{% block content %}{% endblock %} 
+		<div class="site__content wrap cf">
+			{% block content %}{% endblock %}
+		</div>
 	</body>
 
 </html>

@@ -33,11 +33,11 @@ canvas,
 
 @media print {
 
- 
+
   .navbar {
     display: none;
   }
-  
+
 }
 
 
@@ -612,5 +612,5 @@ a.list-group-item.active > .badge,
 }
 
 #nav-feedback{
-  float: right;
+  /*float: right;*/
 }
