@@ -1,40 +1,35 @@
-	<form class="new-post-form new-post posts">
+	<form class="new-post-form new-post posts post-modal">
 		{{ new_post_form.csrf_token }}
 			<div class="post post--single">
 				<div class ="submit-kudos post__container island">
 					<div class="tags post__header-meta">
-						<ul class="cf post__thanks-to h-l">
-							<li>
+						<div class="cf post__thanks-to h-l">
 								<input type="text" class="tag_input post__tagger vi-hd" id="new-post-tag-input" value placeholder="Who do you want to thank?"/>
 								<div data-id="_tagsinput" class="tagsinput">
 			            <div data-id="_addTag">
 				            <input data-id="_tag" value="" class="post__tagger" data-default="Who do you want to thank?" placeholder="Who do you want to thank?" />
 				        	</div>
 				        </div>
-				      </li>
-				    </ul>
+				    </div>
 					</div>
-					<div class="input-group post__content">
-						<textarea id="post_body" class="new-post-body" placeholder="What awesome thing did someone do?"></textarea>
+					<div class="input-group">
+						<textarea id="post_body" class="post__new-content beta p new-post-body" placeholder="What awesome thing did someone do?"></textarea>
 					</div>
 
 					<div>
 						<input type="dropbox-chooser" id="chooser" name="selected-file" data-link-type="direct"/>
-						<p id="chosen">Chosen file:
-							<span id="filename"></span>
-							(<a id="remove" href="#">remove</a>)
-						</p>
 					</div>
-
-					<footer class="post__footer">
-						<nav class="post__actions nav">
-							<button class="butt post-button submit-new-post i" type="button"><i class="fa fa-heart"></i>Submit</button>
-						</nav>
-					</footer>
 
 					{{ new_post_form.hidden_tag_ids (class="hidden_tag_ids", id="hidden_tag_ids") }}
 					{{ new_post_form.hidden_tag_text (class="hidden_tag_text", id="hidden_tag_text") }}
 
 				</div>
+				<footer class="post__footer">
+					<nav class="post__actions nav">
+						<ul>
+							<li class="span-all"><button class="butt isle post-button submit-new-post i" type="button"><i class="fa fa-heart"></i>Submit</button></li>
+						</ul>
+					</nav>
+				</footer>
 			</div>
 	</form>

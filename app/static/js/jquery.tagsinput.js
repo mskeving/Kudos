@@ -120,7 +120,7 @@
                     $('<a>', {
                         href  : '#',
                         title : 'Removing tag',
-                        text  : 'x'
+                        html  : '<i class="fa fa-times"></i>'
                     }).addClass('post__remove-tag').click(function () {
                         return $('#' + id).removeTag(escape(value));
                     })

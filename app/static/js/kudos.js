@@ -498,10 +498,9 @@ function create_post(public_url){
 		data: data,
 		success: function(new_post){
 			$('.post-column').prepend(new_post);
-			show_modal($('.post-modal'));
+			$('ol.posts .post').first().addClass('post--new-in-stream');
 			$('.post-column').css('margin', '0px');
 			clear_post_modal_info();
-			post_modal.removeClass('pressed')
 			console.log("success! created new post");
 			end_show_progress($('.submit-new-post'));
 		},

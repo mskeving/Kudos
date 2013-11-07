@@ -2,7 +2,7 @@
 
 {% set post_object = post.get('post_object') %}
 
-<div class="post post--single" data-post-id="{{post_object.id}}">
+<li class="post post--single" data-post-id="{{post_object.id}}">
   <div class="post__container island">
     <div class="post__header-meta">
       <div class="taggees">
@@ -146,7 +146,7 @@
       </ul>
     </nav>
   </div>
-</div>
+</li>
 
 <!-- new tag
   <div class="tag-modal clearfix" data-post-id="{{post_object.id}}">

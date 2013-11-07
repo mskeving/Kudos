@@ -403,6 +403,11 @@ html {
 	}
 
 	.post__new-content {
+		border: none;
+		background-color: transparent;
+		width: 100%;
+		height: auto;
+		resize: vertical;
 		border-bottom: 1px dashed rgba(0,0,0,.2);
 
 		&:focus {
@@ -447,6 +452,10 @@ html {
 			font-family: $sans-serif;
 
 			.butt {
+				width: 100%;
+				-webkit-appearance: none;
+				background-color: transparent;
+				border: none;
 				border-top: 1px solid rgba(0,0,0,.1);
 				display: block;
 				text-align: center;
@@ -600,4 +609,10 @@ html {
 		transform: scale(1);
 		transition-timing-function: ease-in-out;
 	}
+}
+
+//===============
+
+.tag {
+	float: right;
 }
