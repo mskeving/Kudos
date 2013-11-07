@@ -11,6 +11,7 @@ class Team(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	teamname = db.Column(db.String(120), index=True)
 	photo = db.Column(db.String(120))
+	is_active = db.Column(db.Boolean, default=True)
 	tagged_in = db.relationship('Tag', backref='team_tag')
 	teams = db.relationship('UserTeam', backref='team')
 	# ex) query results from UserTeam: 
@@ -23,6 +24,7 @@ class UserTeam(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 	team_id = db.Column(db.Integer, db.ForeignKey('teams.id'), nullable=False)
+	is_active = db.Column(db.Boolean, default=True)
 
 	__table_args__ = (
 		db.UniqueConstraint('user_id', 'team_id'),
@@ -42,6 +44,7 @@ class User(db.Model):
 	phone = db.Column(db.String(25), index=True)
 	username = db.Column(db.String(68))
 	manager_id = db.Column(db.Integer, nullable=True)
+	is_active = db.Column(db.Boolean, default=True)
 
 	posts = db.relationship('Post', backref='author', lazy='dynamic')
 	users = db.relationship('UserTeam', backref='user', primaryjoin="User.id==UserTeam.user_id")
@@ -112,6 +115,8 @@ class Post(db.Model):
 	time = db.Column(db.DateTime)
 	user_id = db.Column(db.Integer, db.ForeignKey('users.id')) #users is tablename
 	photo_link = db.Column(db.String(140))
+	is_active = db.Column(db.Boolean, default=True)
+
 	tags = db.relationship('Tag', backref='post')
 	thanks = db.relationship('Thanks', backref='post')
 	children = db.relationship('Post') #when query for posts, post.children will be available
@@ -130,6 +135,7 @@ class Thanks(db.Model):
 	thanks_sender = db.Column(db.Integer, db.ForeignKey('users.id'))
 	post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
 	time = db.Column(db.DateTime)
+	is_active = db.Column(db.Boolean, default=True)
 
 
 class Tag(db.Model):
@@ -142,6 +148,7 @@ class Tag(db.Model):
 	post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
 	tag_author = db.Column(db.Integer, db.ForeignKey('users.id')) 
 	time = db.Column(db.DateTime)
+	is_active = db.Column(db.Boolean, default=True)
 
 
 

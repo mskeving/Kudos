@@ -259,7 +259,6 @@ def team(team):
 
 	indented_posts = []
 	if len(tagged_posts) != 0:
-		print "tagged posts: %r " % tagged_posts
 		indented_posts = posts_to_indented_posts(tagged_posts)
 
 	dict_of_users_teams = {}
@@ -297,10 +296,12 @@ def user(username):
 	user = User.query.filter_by(username=username).first()
 	manager = User.query.filter_by(id=user.manager_id).first()
 	tagged_posts = []
+
+	#get all tags that user is tagged in 
 	tags = Tag.query.filter(and_(Tag.user_tag_id==user.id, Post.parent_post_id==None)).all() 
-		#get all parent posts that user is tagged in 
 
 	tagged_posts = []
+	#for each tag, find post associated with it
 	for tag in tags:
 		tagged_posts.append(tag.post)
 
@@ -661,13 +662,10 @@ def delete_post():
 	to_delete_list = []
 	to_delete_list.append(delete_post)
 	for tag in delete_post.tags:
-		print tag.id
 		to_delete_list.append(tag)
 	for child in delete_post.children:
-		print child.id
 		to_delete_list.append(child)
 	for thank in delete_post.thanks:
-		print thank.id
 		to_delete_list.append(thank)
 
 	for obj_to_delete in to_delete_list: #delete everything associated with post ie. tags, comments, thanks

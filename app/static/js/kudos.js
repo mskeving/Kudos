@@ -1,5 +1,5 @@
 function show_modal(obj){
-       obj.slideToggle(500);
+       obj.slideToggle(300);
 }
 
 
