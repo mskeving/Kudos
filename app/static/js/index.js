@@ -20,11 +20,8 @@ $(window).scroll(function() {
 				url: '/get_more_posts',
 				type: 'POST',
 				data: data,
-				success: function(new_post_info){
-					if (new_post_info['more_to_display']===false){
-						$('#more-posts').remove()
-					}
-					$('.post-column').append(new_post_info['new_posts'])
+				success: function(new_posts){
+					$('.post-column').append(new_posts);
 					scrollInAction = false;
 
 				},

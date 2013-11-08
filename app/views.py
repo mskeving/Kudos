@@ -146,39 +146,30 @@ def get_more_posts():
 
 	last_post_id = form.get('last_post_id')
 
-
-
-
-	total_posts_left = db.session.query(Post).filter(and_(Post.parent_post_id==None, Post.id<last_post_id)).count()
-
 	#older posts will have smaller post_id
-	posts = Post.query.filter(and_(Post.id<last_post_id, Post.parent_post_id==None)).order_by(Post.time.desc()).limit(num_posts_to_display)
+	total_posts_left = db.session.query(Post).filter(and_(Post.parent_post_id==None, Post.id<last_post_id)).all()
 
-	more_to_display = True
-	if posts != None:
-		indented_posts = posts_to_indented_posts(posts)
-		if len(indented_posts) < num_posts_to_display:
-			more_to_display = False
-		elif len(indented_posts) == total_posts_left:
-			more_to_display = False
+	posts_to_display = []
+	count_total_posts_left = len(total_posts_left)
+	#next posts to display are at end of list
+	for post in total_posts_left[-1:-num_posts_to_display:-1]:
+		posts_to_display.append(post)
+
+	indented_posts = []
+	if len(posts_to_display) > 0:
+		indented_posts = posts_to_indented_posts(posts_to_display)
 
 	new_posts = ""
 	for post in indented_posts:
-		print "post %r " % post
 		new_posts += render_template('post.html',
 			post=post,
 			reply_form=reply_form,
 			new_post_form=new_post_form,
 			)
 
-	new_post_info = {
-		'new_posts': new_posts,
-		'more_to_display': more_to_display
-	}
+	new_posts_json = json.dumps(new_posts)
 
-	post_json = json.dumps(new_post_info)
-
-	return post_json
+	return new_posts_json
 
 @app.route('/create_tag_list', methods=['POST'])
 @login_required

@@ -374,10 +374,8 @@ function change_count(jquery_selector, add_value){
 //Dropbox Chooser file selection
 $(function () {
 	var data = {};
-	//.live is same as .on() for earlier jquery versions
 	$('#chooser').live('DbxChooserSuccess', function (e) {
 		console.log('chooser success');
-		//e.preventDefault();
 		data = {
 			url: e.originalEvent.files[0].link,
 			filename: e.originalEvent.files[0].name,
