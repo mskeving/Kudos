@@ -1,10 +1,6 @@
 @charset "UTF-8";
 
 
-@import url(../css/navbar.css);
-
-@import url(../css/jquery-ui.css);
-
 /*-----------------------------------*\
 
 	$RESET
@@ -99,6 +95,30 @@ button {
 [data-placeholder]:empty:before {
   content: attr(data-placeholder);
   color: rgba(0, 0, 0, 0.3);
+}
+
+.f-r {
+  float: right;
+}
+
+.f-l {
+  float: left;
+}
+
+.c-t {
+  text-align: center;
+}
+
+.fix3d,
+input,
+textarea,
+button,
+.butt,
+html,
+.posts,
+.post__new-tagged .tag .post__remove-tag {
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
 }
 
 /*-----------------------------------*\
@@ -405,34 +425,17 @@ html {
   height: 3.5rem;
 }
 
-.post__thanks-to .post__remove-tag {
-  cursor: pointer;
-  position: absolute;
-  z-index: 2;
-  width: 1.25rem;
-  height: 1.25rem;
-  font-size: .75rem;
-  line-height: 1;
-  padding: .25rem;
-  top: -.25rem;
-  right: -.25rem;
-  background-color: #fff;
-  -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-  border-radius: 100%;
-  color: #333;
-}
-
 .post__thanks-to .post__tagger {
-  -webkit-box-shadow: 0 0 1px 1px white !important;
-  box-shadow: 0 0 1px 1px white !important;
+  clear: both;
+  z-index: 2;
   border: none;
-  appearance: none;
+  -webkit-appearance: none;
   background-color: #f0ede7;
   color: rgba(0, 0, 0, 0.3);
   padding: 1.25rem 1.5rem;
   text-align: left;
   line-height: 1;
+  min-width: 17rem;
 }
 
 .post__thanks-to .post__tagger:focus {
@@ -440,12 +443,57 @@ html {
   background-color: #faf9f7;
 }
 
+.post__remove-tag {
+  cursor: pointer;
+  position: absolute;
+  z-index: 2;
+  text-align: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  font-size: .75rem;
+  line-height: 1;
+  padding: .25rem;
+  top: -.25rem;
+  right: -.25rem;
+  background-color: rgba(255, 255, 255, 0.9);
+  background-image: -webkit-gradient(linear, top left, bottom left, from(rgba(255, 255, 255, 0)), to(white));
+  background-image: -webkit-linear-gradient(rgba(255, 255, 255, 0), white);
+  background-image: linear-gradient(rgba(255, 255, 255, 0), white);
+  -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  text-shadow: none;
+  border-radius: 100%;
+  color: #333;
+}
+
+.post__new-tagged .tag {
+  -webkit-animation: fadeInDown .3s;
+  animation: fadeInDown .3s;
+  display: inline-block;
+  font-size: .75rem;
+  padding: .25rem .5rem;
+  background-color: #c0af9e;
+  border-radius: .25em;
+  margin-right: .75rem;
+  margin-top: .75rem;
+  color: #fff;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+  font-family: "Whitney SSm A", "Whitney SSm B", sans-serif;
+  font-weight: 700;
+}
+
+.post__new-tagged .tag .post__remove-tag {
+  top: -.6rem;
+  right: -.5rem;
+}
+
 .post__new-content {
   border: none;
   background-color: transparent;
   width: 100%;
-  height: auto;
-  resize: vertical;
+  height: 1.7222rem;
+  resize: none;
+  margin-bottom: none;
   border-bottom: 1px dashed rgba(0, 0, 0, 0.2);
 }
 
@@ -459,16 +507,17 @@ html {
 }
 
 .post__content .post__photo {
-  margin: -2.25rem -1.5rem;
-  margin-bottom: 1.5rem;
-  max-width: none;
-  width: -webkit-calc(100% + 3rem);
-  width: calc(100% + 3rem);
-  border-radius: .25rem .25rem 0 0;
+  margin: -2.25rem -1.5rem 0 1.5rem;
+  margin-bottom: -1.5rem;
+  border-radius: 0 .25rem 0 0;
 }
 
 .post__content :last-child {
   margin-bottom: 0;
+}
+
+.post__header-meta {
+  min-height: 3rem;
 }
 
 .post__meta {
@@ -484,11 +533,19 @@ html {
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
+.post__actions {
+  text-align: center;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
 .post__actions li {
   display: inline-block;
-  margin-right: -.28rem;
   width: 50%;
   font-family: "Whitney SSm A", "Whitney SSm B", sans-serif;
+}
+
+.post__actions li + li {
+  margin-left: -.28rem;
 }
 
 .post__actions li .butt {
@@ -496,9 +553,7 @@ html {
   -webkit-appearance: none;
   background-color: transparent;
   border: none;
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
   display: block;
-  text-align: center;
   color: rgba(0, 0, 0, 0.5);
   font-weight: 700;
   text-decoration: none;
@@ -508,10 +563,21 @@ html {
   perspective: 250px;
 }
 
-.post__actions li .butt:active {
+.post__actions li .butt:focus {
+  outline: none;
+  -webkit-box-shadow: inset 0 0 1px 1px rgba(243, 96, 98, 0.5);
+  box-shadow: inset 0 0 1px 1px rgba(243, 96, 98, 0.5);
+  color: #f36062;
+}
+
+.post__actions li .butt:active,
+.post__actions li .butt:active:focus {
   background-image: -webkit-gradient(linear, top left, bottom left, from(rgba(100, 80, 0, 0.05)), to(rgba(100, 80, 0, 0)));
   background-image: -webkit-linear-gradient(rgba(100, 80, 0, 0.05), rgba(100, 80, 0, 0));
   background-image: linear-gradient(rgba(100, 80, 0, 0.05), rgba(100, 80, 0, 0));
+  -webkit-box-shadow: none;
+  box-shadow: none;
+  color: rgba(0, 0, 0, 0.5);
 }
 
 .post__actions li + li {
@@ -732,8 +798,72 @@ html {
   }
 }
 
-.tag {
-  float: right;
+@-webkit-keyframes fadeInDown {
+  0% {
+    -webkit-transform: translateY(-6px);
+    transform: translateY(-6px);
+    opacity: 0;
+  }
+
+  65% {
+    -webkit-transform: translateY(3px);
+    transform: translateY(3px);
+  }
+
+  100% {
+    -webkit-transform: none;
+    transform: none;
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInDown {
+  0% {
+    -webkit-transform: translateY(-6px);
+    transform: translateY(-6px);
+    opacity: 0;
+  }
+
+  65% {
+    -webkit-transform: translateY(3px);
+    transform: translateY(3px);
+  }
+
+  100% {
+    -webkit-transform: none;
+    transform: none;
+    opacity: 1;
+  }
+}
+
+/*-----------------------------------*\
+	$JS-HELPERS
+\*-----------------------------------*/
+
+.ui-autocomplete {
+  position: absolute;
+  list-style: none;
+  padding-left: 0;
+  background-color: rgba(255, 255, 255, 0.9);
+  -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  border-radius: .25rem;
+  font-family: "Whitney SSm A", "Whitney SSm B", sans-serif;
+  overflow: hidden;
+}
+
+.ui-autocomplete li a {
+  text-decoration: none;
+  color: #333;
+  font-weight: 700;
+  display: block;
+  padding: .5rem 1.5rem;
+}
+
+.ui-autocomplete li a.ui-state-hover {
+  cursor: pointer;
+  background-color: #f36062;
+  color: #fff;
 }
 
 /*# sourceMappingURL=style.css.map */

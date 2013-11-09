@@ -61,9 +61,9 @@
       </div>
     </div>
 
-    <div class="post__content">
+    <div class="post__content cf">
       {% if post_object.photo_link %}
-        <img class="post-photo" src='{{post_object.photo_link}}'>
+        <img class="post__photo f-r" src='{{post_object.photo_link}}'>
       {% endif %}
       <blockquote class="{% if not post_object.photo_link %}beta{% endif %}">
         {{post_object.body}}
@@ -87,6 +87,8 @@
       </div><!-- /.post__meta -->
     </div><!-- /.post__content -->
   </div><!-- /.post__container -->
+
+{% if 0 == 1 %}
 
   <div class="post-metadata post__comments island">
     {% set comments = post.get('comments')|length %}
@@ -131,6 +133,8 @@
       </div>
 
   </div>
+
+{% endif %}
 
   <div class="toolbar post__footer">
     <!--<a class="toolbar-button addtag-button" data-post-id="{{post_object.id}}">

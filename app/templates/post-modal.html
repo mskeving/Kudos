@@ -7,17 +7,17 @@
 								<input type="text" class="tag_input post__tagger vi-hd" id="new-post-tag-input" value placeholder="Who do you want to thank?"/>
 								<div data-id="_tagsinput" class="tagsinput">
 			            <div data-id="_addTag">
-				            <input data-id="_tag" value="" class="post__tagger" data-default="Who do you want to thank?" placeholder="Who do you want to thank?" />
+				            <input data-id="_tag" tabindex="1" value="" class="post__tagger" data-default="Who do you want to thank?" placeholder="Who do you want to thank?" />
 				        	</div>
 				        </div>
 				    </div>
 					</div>
 					<div class="input-group">
-						<textarea id="post_body" class="post__new-content beta p new-post-body" placeholder="What awesome thing did someone do?"></textarea>
+						<textarea id="post_body" tabindex="2" class="post__new-content beta p new-post-body" placeholder="What awesome thing did someone do?"></textarea>
 					</div>
 
-					<div>
-						<input type="dropbox-chooser" id="chooser" name="selected-file" data-link-type="direct"/>
+					<div class="post__new-tagged">
+
 					</div>
 
 					{{ new_post_form.hidden_tag_ids (class="hidden_tag_ids", id="hidden_tag_ids") }}
@@ -27,7 +27,8 @@
 				<footer class="post__footer">
 					<nav class="post__actions nav">
 						<ul>
-							<li class="span-all"><button class="butt isle post-button submit-new-post i" type="button"><i class="fa fa-heart"></i>Submit</button></li>
+							<li class="isle"><input type="dropbox-chooser" id="chooser" name="selected-file" data-link-type="direct"/></li>
+							<li><button tabindex="3" class="butt isle post-button submit-new-post i" type="button"><i class="fa fa-heart"></i>Submit</button></li>
 						</ul>
 					</nav>
 				</footer>

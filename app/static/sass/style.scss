@@ -1,12 +1,8 @@
-// Legacy support CSS. Will replace for production.
-@import "../css/navbar.css";
-@import "../css/jquery-ui.css";
-
-
 $sans-serif: "Whitney SSm A", "Whitney SSm B", sans-serif;
 $serif: "Archer SSm A", "Archer SSm B", serif;
 
 $red: #f36062;
+$cream: #E8E2DC;
 
 /*-----------------------------------*\
 
@@ -44,6 +40,7 @@ a {
 
 input, textarea, button {
 	font: inherit;
+	@extend .fix3d;
 }
 
 /*-----------------------------------*\
@@ -100,6 +97,25 @@ input, textarea, button {
 		content: attr(data-placeholder);
 		color: rgba(0,0,0,.3);
 	}
+}
+
+// Floats
+.f-r {
+	float: right;
+}
+
+.f-l {
+	float: left;
+}
+
+// Center text
+.c-t {
+	text-align: center;
+}
+
+// @extend this to fix flickering when transforming other objects.
+.fix3d {
+	transform: translateZ(0);
 }
 
 /*-----------------------------------*\
@@ -211,6 +227,7 @@ hr {
 
 .butt {
 	cursor: pointer;
+	@extend .fix3d;
 }
 
 .media {
@@ -265,6 +282,7 @@ html {
 	font: 112.5%/1.5 $serif;
 	color: #2b2b29;
 	-webkit-font-smoothing: antialiased;
+	@extend .fix3d;
 	background-color: #e8e2dc;
 
 	@media (max-width: 500px) {
@@ -310,6 +328,7 @@ html {
 	padding-left: 0;
 	padding-top: 2.25rem;
 	perspective: 2000px;
+	@extend .fix3d;
 }
 
 .post {
@@ -368,32 +387,18 @@ html {
 			}
 		}
 
-		.post__remove-tag {
-			cursor: pointer;
-			position: absolute;
-			z-index: 2;
-			width: 1.25rem;
-			height: 1.25rem;
-			font-size: .75rem;
-			line-height: 1;
-			padding: .25rem;
-			top: -.25rem;
-			right: -.25rem;
-			background-color: #fff;
-			box-shadow: 0 1px 2px rgba(0,0,0,.2);
-			border-radius: 100%;
-			color: #333;
-		}
-
 		.post__tagger {
-			box-shadow: 0 0 1px 1px rgba(255,255,255,1) !important;
+			clear: both;
+			z-index: 2;
+
 			border: none;
-			appearance: none;
+			-webkit-appearance: none;
 			background-color: darken(#faf9f7, 5%);
 			color: rgba(0,0,0,.3);
 			padding: 1.25rem 1.5rem;
 			text-align: left;
 			line-height: 1;
+			min-width: 17rem;
 
 			&:focus {
 				outline: none;
@@ -402,12 +407,57 @@ html {
 		}
 	}
 
+	.post__remove-tag {
+		cursor: pointer;
+		position: absolute;
+		z-index: 2;
+		text-align: center;
+		width: 1.25rem;
+		height: 1.25rem;
+		font-size: .75rem;
+		line-height: 1;
+		padding: .25rem;
+		top: -.25rem;
+		right: -.25rem;
+		background-color: rgba(255,255,255,.9);
+		background-image: linear-gradient(rgba(255,255,255,0), rgba(255,255,255,1));
+		box-shadow: 0 1px 2px rgba(0,0,0,.2);
+		text-shadow: none;
+		border-radius: 100%;
+		color: #333;
+	}
+
+
+.post__new-tagged {
+	.tag {
+		animation: fadeInDown .3s;
+		display: inline-block;
+		font-size: .75rem;
+		padding: .25rem .5rem;
+		background-color: darken($cream, 20%);
+		border-radius: .25em;
+		margin-right: .75rem;
+		margin-top: .75rem;
+		color: #fff;
+		text-shadow: 0 1px 1px rgba(0,0,0,.1);
+		font-family: $sans-serif;
+		font-weight: 700;
+
+		.post__remove-tag {
+			@extend .fix3d;
+			top: -.6rem;
+			right: -.5rem;
+		}
+	}
+}
+
 	.post__new-content {
 		border: none;
 		background-color: transparent;
 		width: 100%;
-		height: auto;
-		resize: vertical;
+		height: 1.7222rem;
+		resize: none;
+		margin-bottom: none;
 		border-bottom: 1px dashed rgba(0,0,0,.2);
 
 		&:focus {
@@ -420,16 +470,18 @@ html {
 		color: #534d4a;
 
 		.post__photo {
-			margin: -2.25rem -1.5rem;
-			margin-bottom: 1.5rem;
-			max-width: none;
-			width: calc(100% + 3rem);
-			border-radius: .25rem .25rem 0 0;
+			margin: -2.25rem -1.5rem 0 1.5rem;
+			margin-bottom: -1.5rem;
+			border-radius: 0 .25rem 0 0;
 		}
 
 		:last-child {
 			margin-bottom: 0;
 		}
+	}
+
+	.post__header-meta {
+		min-height: 3rem;
 	}
 
 	.post__meta {
@@ -445,9 +497,13 @@ html {
 	}
 
 	.post__actions {
+		text-align: center;
+		border-top: 1px solid rgba(0,0,0,.1);
 		li {
 			display: inline-block;
-			margin-right: -.28rem;
+			+ li {
+				margin-left: -.28rem;
+			}
 			width: 50%;
 			font-family: $sans-serif;
 
@@ -456,16 +512,22 @@ html {
 				-webkit-appearance: none;
 				background-color: transparent;
 				border: none;
-				border-top: 1px solid rgba(0,0,0,.1);
 				display: block;
-				text-align: center;
 				color: rgba(0,0,0,.5);
 				font-weight: 700;
 				text-decoration: none;
 				transition: .3s;
 				perspective: 250px;
-				&:active {
+				&:focus {
+					outline: none;
+					box-shadow: inset 0 0 1px 1px transparentize($red, .5);
+					color: $red;
+				}
+
+				&:active, &:active:focus {
 					background-image: linear-gradient(rgba(100,80,0,.05), rgba(100,80,0,0));
+					box-shadow: none;
+					color: rgba(0,0,0,.5);
 				}
 			}
 
@@ -611,8 +673,51 @@ html {
 	}
 }
 
-//===============
+@keyframes fadeInDown {
+	0% {
+		transform: translateY(-6px);
+		opacity: 0;
+	}
 
-.tag {
-	float: right;
+	65% {
+		transform: translateY(3px);
+	}
+
+	100% {
+		transform: none;
+		opacity: 1;
+	}
+}
+
+/*-----------------------------------*\
+	$JS-HELPERS
+\*-----------------------------------*/
+
+.tagsinput {
+
+}
+
+.ui-autocomplete {
+	position: absolute;
+	list-style: none;
+	padding-left: 0;
+	background-color: rgba(255,255,255,.9);
+	box-shadow: 0 1px 2px rgba(0,0,0,.1);
+	border-radius: .25rem;
+	font-family: $sans-serif;
+	overflow: hidden;
+
+	li a {
+		text-decoration: none;
+		color: #333;
+		font-weight: 700;
+		display: block;
+		padding: .5rem 1.5rem;
+
+		&.ui-state-hover {
+			cursor: pointer;
+			background-color: $red;
+			color: #fff;
+		}
+	}
 }

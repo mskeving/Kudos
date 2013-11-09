@@ -49,7 +49,6 @@ function get_tag_list(obj, post_id){
 			// this makes the tag input work for all tag autocompleters. uses tagsinput.js
 			obj.tagsInput({
 				width: 'auto',
-				height: '30px',
 				autocomplete_list: tag_words,
 				autocomplete_dict: tag_dict,
 				tag_ids: tag_ids,
@@ -91,6 +90,7 @@ function end_show_progress(clicked_element){
 function clear_post_modal_info(){
 	$('#post_body').val("");
 	$('.post-modal .tag_input').importTags('');
+	$('.post__new-tagged span').remove();
 	$('.hidden_tag_ids').val("");
 	$('.hidden_tag_text').val("");
 	$('#chosen').text("");
@@ -266,7 +266,7 @@ $('.new-tag-btn').live('click', function(e) {
 
 		$.post('/newtag', data, function(tag_info){
 			show_modal(form.parent());
-			form.children('.tags').children('.tagsinput').children('span').remove(); //remove tag spans from input box
+			$('div').remove(); //remove tag spans from input box
 			form.children(".hidden_tag_ids").val(""); //and clear hidden values
 			form.children(".hidden_tag_text").val("");
 			console.log("tag_dict: " + tag_info);
@@ -467,6 +467,8 @@ $('.new-post-modal-btn').live('click', function(e) {
 $(document).ready(function(){
 	tag_input = $('#new-post-tag-input');
 	get_tag_list(tag_input);
+
+	$('#post_body').autogrow();
 });
 
 $('.cancel-new-post').live('click', function(e) {
@@ -499,7 +501,6 @@ function create_post(public_url){
 		success: function(new_post){
 			$('.post-column').prepend(new_post);
 			$('ol.posts .post').first().addClass('post--new-in-stream');
-			$('.post-column').css('margin', '0px');
 			clear_post_modal_info();
 			console.log("success! created new post");
 			end_show_progress($('.submit-new-post'));
