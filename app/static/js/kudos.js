@@ -220,7 +220,7 @@ $('.no_new_tag_btn').live('click', function(e){
 })
 
 //REMOVE TAG
-$('.post__remove-tag').live('click', function(e) {
+$('.remove-tag').live('click', function(e) {
 	e.preventDefault();
 	var avatar = $(this).parent('.avatar-container'),
 		tag_id = avatar.data('tag-id'),

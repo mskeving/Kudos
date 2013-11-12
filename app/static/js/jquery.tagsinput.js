@@ -121,7 +121,7 @@
                         href  : '#',
                         title : 'Removing tag',
                         html  : '<i class="fa fa-times"></i>'
-                    }).addClass('post__remove-tag').click(function () {
+                    }).addClass('post__remove-tag remove-new-tag').click(function () {
                         return $('#' + id).removeTag(escape(value));
                     })
                 ).appendTo('.post__new-tagged');
@@ -160,7 +160,7 @@
 				var id = $(this).attr('id');
 
 				var old = $(this).val().split(delimiter[id]);
-				$('#'+id+'_tagsinput .tag').remove();
+				$('.post__new-tagged .tag').remove();
 				str = '';
 				for (i=0; i< old.length; i++) {
 					if (old[i]!=value) {
@@ -206,7 +206,6 @@
 	      unique:true,
 	      removeWithBackspace:true,
 	      placeholderColor:'#666666',
-	      autosize: true,
 	      comfortZone: 20,
 	      inputPadding: 6*2
 		}
@@ -228,7 +227,7 @@
 			var data = jQuery.extend({
 				pid:id,
 				real_input: '#' + id,
-				holder: '#' + id + '_tagsinput',
+				holder: '.post__new-tagged',
 				input_wrapper: '#' + id + '_addTag',
 				fake_input: '#' + id + '_tag'
 			}, settings);
@@ -298,6 +297,7 @@
 				}
 
 				//Delete last tag on backspace
+/*
 				data.removeWithBackspace && $(data.fake_input).bind('keydown', function(event)
 				{
 					if(event.keyCode == 8 && $(this).val() == '')
@@ -310,6 +310,7 @@
 						 $(this).trigger('focus');
 					}
 				});
+*/
 				$(data.fake_input).blur();
 
 				//Removes the not_valid class when user changes the value of the fake input
