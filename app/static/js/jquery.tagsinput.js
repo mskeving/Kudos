@@ -115,6 +115,7 @@
 			
 			//add id to each new tag, specific to person or team tagged
 			if (value !='' && skipTag != true) { 
+				console.log('tag_id: ' + tag_id)
                 $('<span>').attr('id',tag_id).addClass('tag').append(
                     $('<span>').text(value).append('&nbsp;&nbsp;'),
                     $('<a>', {
@@ -158,7 +159,7 @@
 			value = unescape(value);
 			this.each(function() {
 				var id = $(this).attr('id');
-	
+				console.log('id: ' + id)
 				var old = $(this).val().split(delimiter[id]);
 				$('#'+id+'_tagsinput .tag').remove();
 				str = '';

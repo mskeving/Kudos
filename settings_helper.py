@@ -54,7 +54,7 @@ class HerokuDatabase(Database):
         url = os.environ.get('DATABASE_URL')
         if url is None or len(url) == 0:
             raise Exception("Missing environment variable \"DATABASE_URL\".");
-        super(SqliteDatabase, self).__init__(url)
+        super(HerokuDatabase, self).__init__(url)
 
 class GoogleAuthLoginHandler(object):
     def __init__(self, client_id, client_secret):
