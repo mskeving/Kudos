@@ -15,7 +15,7 @@
             {% if tag.user_tag.username == g.user.username %}
               {% do g_user_tagged_in_post.append(1) %}
             {% endif %}
-              <li>
+              <li class="avatar-container" data-tag-id="{{tag.id}}">
                 <a class="avatar" href="{{ url_for('user', username=tag.user_tag.username) }}">
                     <!--<img src="/static/img/generic_photo.jpg" alt="{{tag.username}}" />-->
                     <img src="{{tag.user_tag.photo}}" title="{{tag.user_tag.firstname}} {{tag.user_tag.lastname}}" alt="{{tag.username}}" />
@@ -25,7 +25,7 @@
                 </div>-->
                 {% if g_user_tagged_in_post or g.user.username == post_object.author.username%}
 
-                  <div class="post__remove-tag .remove-tag">
+                  <div class="post__remove-tag remove-tag">
                     <i class="fa fa-times"></i>
                   </div>
 
@@ -38,16 +38,14 @@
 
         {% if post.get('tagged_teams') %}
           {% for tag in post.get('tagged_teams') %}
-            <li>
+            <li class="avatar-container" data-tag-id="{{tag.id}}">
               <a class="avatar" href="{{ url_for('team', team=tag.team_tag.teamname) }}">
-                <div class="cropper">
-                    <img src="/static/img/generic_photo.jpg" title="{{tag.team_tag.teamname}}" alt="{{tag.username}}" />
+                    <img src="/static/img/team_photo.jpg" title="{{tag.team_tag.teamname}}" alt="{{tag.username}}" />
                     <!-- <img src="{{tag.team_tag.photo}}" alt="{{tag.team_tag.teamname}}" /> -->
-                </div>
               </a>
 
               {% if g_user_tagged_in_post or g.user.username == post_object.author.username%}
-                <div class="post__remove-tag .remove-tag">
+                <div class="post__remove-tag remove-tag">
                   <i class="fa fa-times"></i>
                 </div>
               {% endif %}
