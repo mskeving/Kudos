@@ -7,27 +7,19 @@
 
 <div class="main-column">
 
-	<div class="new-post">
-		<a class="new-post-modal-btn">
-			<div class="new-kudos-button">
-				<div class="depth">
-					Give Kudos
-				</div>
-			</div>
-		</a>
-
 		{% include 'post-modal.html' with context %}
 
-	</div>
+		<hr>
 
+		<h2 class="gamma">Recent Posts</h2>
 
-	<div class="post-column">
+	<ol class="post-column posts">
 
 		{% for post in posts %}
 		  {% include 'post.html' with context %}
 		{% endfor %}
 
-	</div>
+	</ol>
 </div>
 
 {% endblock %}

@@ -24,7 +24,6 @@ function get_tag_list(obj, post_id){
 			// this makes the tag input work for all tag autocompleters. uses tagsinput.js
 			obj.tagsInput({
 				width: 'auto',
-				height: '30px',
 				autocomplete_list: tag_words,
 				autocomplete_dict: tag_dict,
 				tag_ids: tag_ids,
@@ -40,7 +39,7 @@ function get_tag_list(obj, post_id){
 function collect_tags(form){
 	//collects tags that you have chosen to submit with new post
 
-	var all_tags = form.find("span.tag"); //gives you all tags in new post form 
+	var all_tags = form.find("span.tag"); //gives you all tags in new post form
 	$.each(all_tags, function(){
 		var hidden_tag_ids = form.find(".hidden_tag_ids");
 		var hidden_tag_text = form.find(".hidden_tag_text");
@@ -66,6 +65,7 @@ function end_show_progress(clicked_element){
 function clear_post_modal_info(){
 	$('#post_body').val("");
 	$('.post-modal .tag_input').importTags('');
+	$('.post__new-tagged span').remove();
 	$('.hidden_tag_ids').val("");
 	$('.hidden_tag_text').val("");
 	$('#chosen').text("");
@@ -124,17 +124,17 @@ $('.thank-button').live('click', function(e){
 	var post_id = $(this).data('post-id');
 	thank_count_selector = $('[data-post-id=' + post_id + '] .thank-count');
 	//REMOVE THANKS
-	if (button.hasClass('pressed')){
+	if (button.hasClass('thanked')){
 		var data = {
 			post_id: post_id
 		}
 	 	$.ajax({
 	 		type: 'POST',
-	 		url: '/removethanks', 
+	 		url: '/removethanks',
 	 		data: data,
 	 		success: function(response){
 	 			console.log("success removing thanks");
-	 			button.removeClass('pressed');
+	 			button.removeClass('thanked');
 				change_count(thank_count_selector, -1);
 	 		},
 	 		error: function(){
@@ -153,7 +153,7 @@ $('.thank-button').live('click', function(e){
         	data: data,
         	success: function(response){
         		console.log("success giving thanks");
-		    	button.addClass('pressed');
+		    	button.addClass('thanked js--pressed');
 				change_count(thank_count_selector, 1);
         	},
         	error: function(){
@@ -217,7 +217,7 @@ $('.remove-tag').live('click', function(e) {
 			console.log("error removing tag");
 		}
 	});
-	
+
 });
 
 
@@ -243,7 +243,7 @@ $('.new-tag-btn').live('click', function(e) {
 
 		$.post('/newtag', data, function(tag_info){
 			show_modal(form.parent());
-			form.children('.tags').children('.tagsinput').children('span').remove(); //remove tag spans from input box
+			$('div').remove(); //remove tag spans from input box
 			form.children(".hidden_tag_ids").val(""); //and clear hidden values
 			form.children(".hidden_tag_text").val("");
 			console.log("tag_dict: " + tag_info);
@@ -255,7 +255,7 @@ $('.new-tag-btn').live('click', function(e) {
 				var username = $.trim(tag_array.user_tags[i].username);
 				var user_id = tag_array.user_tags[i].user_id;
 				var photo = tag_array.user_tags[i].photo;
-				var new_avatar = $('<a class="avatar" href="/user/' + username + '"><div class="cropper"><img src=' + photo +' alt=' + username + '>');
+				var new_avatar = $('<li><a class="avatar" href="/user/' + username + '"><img src=' + photo +' alt=' + username + '></a></li>');
 				form.parent().parent().children(".taggees").children(".avatars").append(new_avatar);
 			}
 
@@ -263,7 +263,7 @@ $('.new-tag-btn').live('click', function(e) {
 			for(var i = 0; i<tag_array.team_tags.length; i++){
 				var teamname = tag_array.team_tags[i].teamname;
 				var photo = tag_array.team_tags[i].photo;
-				var new_avatar = $('<a class="avatar" href="/team/' + teamname + '""><div class="cropper"><img src=' + photo +' alt=' + teamname + '>');
+				var new_avatar = $('<li><a class="avatar" href="/team/' + teamname + '""><img src=' + photo +' alt=' + teamname + '></a></li>');
 				console.log("this" + this)
 				form.parent().parent().children(".taggees").children(".avatars").append(new_avatar);
 			}
@@ -276,7 +276,7 @@ $('.new-tag-btn').live('click', function(e) {
 		console.log('no new tags');
 	}
 
-	
+
 });
 
 
@@ -309,7 +309,7 @@ $('.remove-comment').live('click', function(e){
 			comment_count_selector = $('[data-post-id=' + parent_post_id + '] .comment-count');
 			change_count(comment_count_selector, -1);
 
-		}, 
+		},
 		error: function(){
 			console.log("error");
 		}
@@ -331,7 +331,7 @@ $('.new-comment-btn').live('click', function(e){
 	$.ajax({
 		type: "POST",
 		url: '/newcomment',
-		data: data, 
+		data: data,
 		success: function(comment_template){
 			all_comments.append(comment_template);
 
@@ -385,7 +385,7 @@ $(function () {
 		};
 
 		$('#chosen').show();
-		$('#filename').text(data['filename']);		
+		$('#filename').text(data['filename']);
 	});
 
 	$('#remove').live('click', function (e) {
@@ -426,9 +426,8 @@ $(function () {
 		else{
 			create_post();
 		}
-	});	
+	});
 });
-
 
 //NEW POST MODAL
 $('.new-post-modal-btn').live('click', function(e) {
@@ -441,6 +440,13 @@ $('.new-post-modal-btn').live('click', function(e) {
 	post_modal.addClass('pressed');
 	};
 
+});
+
+$(document).ready(function(){
+	tag_input = $('#new-post-tag-input');
+	get_tag_list(tag_input);
+
+	$('#post_body').autogrow();
 });
 
 $('.cancel-new-post').live('click', function(e) {
@@ -467,15 +473,13 @@ function create_post(public_url){
 	}
 	show_progress($('.submit-new-post'));
 	$.ajax({
-		type: "POST", 
+		type: "POST",
 		url: "/createpost",
-		data: data, 
+		data: data,
 		success: function(new_post){
 			$('.post-column').prepend(new_post);
-			show_modal($('.post-modal'));
-			$('.post-column').css('margin', '0px');
+			$('ol.posts .post').first().addClass('post--new-in-stream');
 			clear_post_modal_info();
-			post_modal.removeClass('pressed')
 			console.log("success! created new post");
 			end_show_progress($('.submit-new-post'));
 		},
@@ -490,8 +494,8 @@ function create_post(public_url){
 //REMOVE POST
 $('.remove-post-button').live('click', function(e){
 	e.preventDefault();
-	var post_id = $(this).parent().parent('.post').data('post-id');
-	var parent_post = $(this).parent().parent('.post');
+	var post_id = $(this).closest('.post').data('post-id');
+	var parent_post = $(this).closest('.post');
 	data = {
 		post_id : post_id
 	}
@@ -505,12 +509,12 @@ $('.remove-post-button').live('click', function(e){
 		},
 		error: function(resp){
 			console.log("error deleting post");
-		} 
+		}
 	})
 
 });
 
-//Called if file chosen with dropbox chooser 
+//Called if file chosen with dropbox chooser
 function s3_upload(data, callback){
 	console.log('in s3_upload');
 	var public_url = ""
@@ -518,11 +522,11 @@ function s3_upload(data, callback){
 	var settings = {
         s3_sign_put_url: '/sign_s3_upload/',
         s3_object_name: data['filename'],
-    
-        onProgress: function(percent, message) { 
+
+        onProgress: function(percent, message) {
             console.log("uploading file");
         },
-        onFinishS3Put: function(public_url) { 
+        onFinishS3Put: function(public_url) {
             //Create preview of photo: $("#avatar_url").val(public_url);
             //$("#preview").html('<img src="'+public_url+'" style="width:300px;" />');
             console.log("finished uploading file");
@@ -534,7 +538,7 @@ function s3_upload(data, callback){
     };
 
     if (!data.raw) {
-    	console.log("sending file dom data");		    	
+    	console.log("sending file dom data");
     	// TODO: this "file" selector should be configurable from 'data'
     	settings.file_dom_selector = "file";
     }
