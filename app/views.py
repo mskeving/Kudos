@@ -367,9 +367,7 @@ def sign_s3_upload():
 	  })
 
 
-def send_notification(message, subject, recipient_list, post_id, img_url):
-	print "in send_notification"
-	kudos_header = g.user.firstname + " sent you kudos!"
+def create_notification(header, message, subject, recipient_list, post_id, img_url):
 	recipient_emails = []
 
 	sender = settings.mail_sender.username
@@ -378,7 +376,7 @@ def send_notification(message, subject, recipient_list, post_id, img_url):
 	reply_to = settings.mail_sender.reply_to
 
 	html = render_template('notification_email.html',
-		kudos_header=kudos_header,
+		kudos_header=header,
 		message=message,
 		img_url=img_url,
 		post_id=post_id,
@@ -462,8 +460,8 @@ def new_post():
 	for user in tagged_users:
 		recipient_list.append(user.email)
 	subject = "You've received a kudos!"
-	send_notification(post_text, subject, recipient_list, post_id, photo_url)
-
+	header = g.user.firstname + " sent you kudos!"
+	create_notification(header, post_text, subject, recipient_list, post_id, photo_url)
 
 	post_page = render_template('post.html',
 		post=indented_post, 
@@ -535,6 +533,7 @@ def add_tag():
 	user_tag_info = []
 	team_tag_info = []
 	tagged_user_ids = [] #to get user emails for notifications
+	tagged_team_ids = []
 
 	for i in range(len(tag_ids)-1): #last index will be "" because of delimiters 
 		#USER TAGS
@@ -566,6 +565,8 @@ def add_tag():
 			team_tag_info.append(team)
 			db.session.add(new_tag)	
 
+			tagged_team_ids.append(tagged_team.id)
+
 	new_tag_dict['user_tags'] = user_tag_info	
 	new_tag_dict['team_tags'] = team_tag_info
 
@@ -574,12 +575,19 @@ def add_tag():
 	db.session.commit()
 
 	tagged_users = User.query.filter(User.id.in_(tagged_user_ids))
-	#send email notifcation to new taggees:
+	users_teams_in_tagged_teams = UserTeam.query.filter(Team.id.in_(tagged_team_ids))
+	#send email notifcation to new user taggees:
 	recipient_list = []
 	for user in tagged_users:
 		recipient_list.append(user.email)
+	for user_team in users_teams_in_tagged_teams:
+		print "user_team email %r" % user_team.user.email
+		recipient_list.append(user_team.user.email)
+
+
 	subject = "You've received a kudos!"
-	send_notification(post_text, subject, recipient_list, post_id, img_url)
+	header = g.user.firstname + " sent you kudos!"
+	create_notification(header, post_text, subject, recipient_list, post_id, img_url)
 
 	tag_info_json = json.dumps(new_tag_dict)
 
