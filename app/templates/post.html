@@ -6,8 +6,30 @@
   <div class="taggees">
     <div class="avatars">
 
-    {% set g_user_tagged_in_post = [] %}
+    {% if post.get('tagged_teams') %}
+      {% for tag in post.get('tagged_teams') %}
+        <div class="avatar-container">
+          <a class="avatar" href="{{ url_for('team', team=tag.team_tag.teamname) }}">
+            <div class="cropper">
+                <img src="/static/img/generic_photo.jpg" alt="{{tag.username}}" />
+                <!-- <img src="{{tag.team_tag.photo}}" alt="{{tag.team_tag.teamname}}" /> -->
+            </div>
+          </a>
 
+          {% if g_user_tagged_in_post or g.user.username == post_object.author.username%}
+            <div class="remove-tag">
+                <a>X</a>
+            </div>
+          {% endif %}
+
+          <div class="taggee-name">
+            {{tag.team_tag.teamname}}
+          </div>
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    {% set g_user_tagged_in_post = [] %}
     {% if post.get('tagged_users') %}
       {% for tag in post.get('tagged_users') %}
         {% if tag.user_tag.username == g.user.username %}
@@ -35,29 +57,6 @@
           </div>
         </div>
 
-      {% endfor %}
-    {% endif %}
-
-    {% if post.get('tagged_teams') %}
-      {% for tag in post.get('tagged_teams') %}
-        <div class="avatar-container">
-          <a class="avatar" href="{{ url_for('team', team=tag.team_tag.teamname) }}">
-            <div class="cropper">
-                <img src="/static/img/generic_photo.jpg" alt="{{tag.username}}" />
-                <!-- <img src="{{tag.team_tag.photo}}" alt="{{tag.team_tag.teamname}}" /> -->
-            </div>
-          </a>
-
-          {% if g_user_tagged_in_post or g.user.username == post_object.author.username%}
-            <div class="remove-tag">
-                <a>X</a>
-            </div>
-          {% endif %}
-
-          <div class="taggee-name">
-            {{tag.team_tag.teamname}}
-          </div>
-        </div>
       {% endfor %}
     {% endif %}
     </div>

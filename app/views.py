@@ -1,4 +1,4 @@
-import time, os, json, base64, hmac, urllib, hashlib
+import time, os, json, base64, hmac, urllib, hashlib, random
 
 from base64 import b64encode, b64decode
 from settings import settings
@@ -537,7 +537,6 @@ def add_tag():
 	tagged_user_ids = [] #to get user emails for notifications
 
 	for i in range(len(tag_ids)-1): #last index will be "" because of delimiters 
-		print "in for loop"
 		#USER TAGS
 		if tag_ids[i][0] == 'u':
 			tag_user_id = int(tag_ids[i][1:]) #remove leading 'u' to convert back to int user_id
@@ -824,9 +823,9 @@ def posts_to_indented_posts(posts):
 			else:
 				print "no tags for this post.id: %r" % p.id 
 
-		#TODO: get all team and user tags in one list to sort based on time
-		sorted_tags = sorted(tagged_users, key=lambda tag: tag.time)
-
+		#display tags in random order each time
+		random.shuffle(tagged_users)
+		random.shuffle(tagged_teams)
 		d['tagged_users'] = tagged_users
 		d['tagged_teams'] = tagged_teams
 
