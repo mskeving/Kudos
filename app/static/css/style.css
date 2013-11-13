@@ -182,9 +182,13 @@ h2,
 .beta {
   font-size: 1.45rem;
   line-height: 1.2;
-  font-weight: 700;
-  letter-spacing: -.05em;
-  margin-bottom: .75rem;
+  font-weight: 200;
+  margin-bottom: 0.75rem;
+}
+
+h2.p,
+.beta.p {
+  margin-bottom: 1.5rem;
 }
 
 h3,
@@ -195,7 +199,7 @@ h4,
   text-transform: uppercase;
   letter-spacing: .1em;
   font-weight: 700;
-  font-family: "Whitney SSm A", "Whitney SSm B", sans-serif;
+  font-family: freight-sans-pro, sans-serif;
 }
 
 h4,
@@ -238,11 +242,11 @@ hr {
 }
 
 .isle {
-  padding: .75rem;
+  padding: 0.75rem;
 }
 
 .spit {
-  padding: .375rem;
+  padding: 0.375rem;
 }
 
 .img--med {
@@ -303,7 +307,7 @@ hr {
 }
 
 html {
-  font: 112.5%/1.5 "Archer SSm A", "Archer SSm B", serif;
+  font: 112.5%/1.5 proxima-nova, sans-serif;
   color: #2b2b29;
   -webkit-font-smoothing: antialiased;
   background-color: #e8e2dc;
@@ -329,7 +333,7 @@ html {
 }
 
 .site__title {
-  font-family: "Whitney SSm A", "Whitney SSm B", sans-serif;
+  font-family: freight-sans-pro, sans-serif;
   font-size: 1.5rem;
   line-height: 1;
   letter-spacing: -.05em;
@@ -387,7 +391,7 @@ html {
   border-radius: 200px;
   border: 2px solid #faf9f7;
   text-align: center;
-  font-family: "Whitney SSm A", "Whitney SSm B", sans-serif;
+  font-family: freight-sans-pro, sans-serif;
   line-height: 3.5rem;
   float: left;
 }
@@ -478,13 +482,57 @@ html {
   margin-top: .75rem;
   color: #fff;
   text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
-  font-family: "Whitney SSm A", "Whitney SSm B", sans-serif;
+  font-family: freight-sans-pro, sans-serif;
   font-weight: 700;
 }
 
 .post__new-tagged .tag .post__remove-tag {
   top: -.6rem;
   right: -.5rem;
+}
+
+.post__edit-actions {
+  display: block;
+  margin-bottom: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.post__edit-actions.f-r {
+  margin-left: 1rem;
+  margin-bottom: 0;
+  margin-top: 0;
+}
+
+@media screen and (max-width: 600px) {
+  .post__edit-actions {
+    float: none;
+    margin-left: 0;
+    margin-bottom: 0.75rem;
+  }
+}
+
+.post__edit-actions .edit-actions__butt {
+  display: inline-block;
+  text-decoration: none;
+  font-size: .75rem;
+  padding: .25em .5em;
+  margin-right: .25rem;
+  background-color: transparent;
+  color: #c0af9e;
+  -webkit-box-shadow: inset 0 0 0 2px #c0af9e;
+  box-shadow: inset 0 0 0 2px #c0af9e;
+  border-radius: .25em;
+  font-weight: 700;
+}
+
+.post__edit-actions .edit-actions__butt.remove-post-button:hover {
+  color: #f36062;
+  -webkit-box-shadow: inset 0 0 0 2px #f36062;
+  box-shadow: inset 0 0 0 2px #f36062;
+}
+
+.post__edit-actions .edit-actions__butt:last-child {
+  margin-right: 0;
 }
 
 .post__new-content {
@@ -507,9 +555,23 @@ html {
 }
 
 .post__content .post__photo {
-  margin: -2.25rem -1.5rem 0 1.5rem;
+  margin: -2.2rem -1.5rem 0 1.5rem;
   margin-bottom: -1.5rem;
   border-radius: 0 .25rem 0 0;
+}
+
+@media (max-width: 600px) {
+  .post__content .post__photo {
+    float: none;
+    margin: 0 0 1.5rem;
+    border-radius: .25rem .25rem 0 0;
+    max-width: -webkit-calc(100% + 3rem);
+    max-width: calc(100% + 3rem);
+    width: -webkit-calc(100% + 3rem);
+    width: calc(100% + 3rem);
+    margin: -webkit-calc(-2.25rem) -webkit-calc(-1.5rem) 1.5rem;
+    margin: calc(-2.25rem) calc(-1.5rem) 1.5rem;
+  }
 }
 
 .post__content :last-child {
@@ -521,7 +583,7 @@ html {
 }
 
 .post__meta {
-  font-family: "Whitney SSm A", "Whitney SSm B", sans-serif;
+  font-family: freight-sans-pro, sans-serif;
   color: rgba(0, 0, 0, 0.5);
 }
 
@@ -536,16 +598,18 @@ html {
 .post__actions {
   text-align: center;
   border-top: 1px solid rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  border-radius: 0 0 .25rem .25rem;
 }
 
 .post__actions li {
   display: inline-block;
   width: 50%;
-  font-family: "Whitney SSm A", "Whitney SSm B", sans-serif;
+  font-family: freight-sans-pro, sans-serif;
 }
 
 .post__actions li + li {
-  margin-left: -.28rem;
+  margin-left: -.3rem;
 }
 
 .post__actions li .butt {
@@ -590,6 +654,7 @@ html {
   background-color: #f36062;
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.1);
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.1);
+  border-radius: 0 0 0 .25rem;
 }
 
 .post__actions li .thanked.js--pressed .fa-heart {
@@ -629,7 +694,7 @@ html {
 }
 
 .comments {
-  font-family: "Whitney SSm A", "Whitney SSm B", sans-serif;
+  font-family: freight-sans-pro, sans-serif;
   font-size: .7778rem;
   line-height: 1.3;
   padding-left: 0;
@@ -848,7 +913,7 @@ html {
   -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   border-radius: .25rem;
-  font-family: "Whitney SSm A", "Whitney SSm B", sans-serif;
+  font-family: freight-sans-pro, sans-serif;
   overflow: hidden;
 }
 
@@ -857,7 +922,7 @@ html {
   color: #333;
   font-weight: 700;
   display: block;
-  padding: .5rem 1.5rem;
+  padding: 0.5rem 1.5rem;
 }
 
 .ui-autocomplete li a.ui-state-hover {
