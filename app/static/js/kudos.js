@@ -69,7 +69,9 @@ function clear_post_modal_info(){
 	$('.hidden_tag_ids').val("");
 	$('.hidden_tag_text').val("");
 	$('#chosen').text("");
-	$('.submit-kudos').removeClass('error-post')
+	$('.submit-kudos').removeClass('error-post');
+	$('.dropbox-dropin-btn').removeClass('dropbox-dropin-success');
+	$('.dropbox-dropin-btn').addClass('dropbox-dropin-default');
 };
 
 $('#nav-feedback').live('click', function(e){
@@ -383,22 +385,23 @@ $(function () {
 		};
 
 		$('#chosen').show();
-		$('#filename').text(data['filename']);
-		$('#submit').attr('disabled', false);			
-		
+		$('#filename').text(data['filename']);		
 	});
+
 	$('#remove').live('click', function (e) {
 		e.preventDefault();
 		data = {}
 		$('#chosen').hide();
-		$('.dropbox-chooser').removeClass('dropbox-chooser-used');
-		$('#submit').attr('disabled', true);
+		$('.dropbox-dropin-btn').removeClass('dropbox-dropin-success');
+		$('.dropbox-dropin-btn').addClass('dropbox-dropin-default');
 	});
 
 	//Submit new post
 	$('.submit-new-post').live('click', function(e){
 		//Check if file selected from dropbox chooser
+		console.log('data' + data)
 		if ($.isEmptyObject(data)===false){
+			console.log('not empty data')
 			//can only send binary data using blob
 			var xhr = new XMLHttpRequest();
 			xhr.open("GET", data['thumbnail'], true);
@@ -413,6 +416,8 @@ $(function () {
 			        type: xhr.getResponseHeader("Content-Type")},
 			        function (public_url){
 			        	create_post(public_url);
+			        	//reset data={} so no picture uploaded with next post
+			        	data = {};
 			        }
 		        );
 			};

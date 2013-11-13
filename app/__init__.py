@@ -34,7 +34,7 @@ if not app.debug: #from run.py. Only emails administrator of error if not in deb
     if m.username or m.password:
         credentials = (m.username, m.password)
     mail_handler = SMTPHandler(
-            (m.server, settings.mail_sender.port),
+            (m.server, m.port),
             m.reply_to, settings.admin_emails, 'Missy failure', credentials)
     mail_handler.setLevel(logging.ERROR)
     app.logger.addHandler(mail_handler)

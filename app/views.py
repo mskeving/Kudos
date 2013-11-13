@@ -375,7 +375,7 @@ def send_notification(message, subject, recipient_list, post_id, img_url):
 	sender = settings.mail_sender.username
 	print "sender: %r " % sender
 
-	reply_to="team-kuds@dropbox.com"
+	reply_to = settings.mail_sender.reply_to
 
 	html = render_template('notification_email.html',
 		kudos_header=kudos_header,
@@ -689,7 +689,7 @@ def permalink_for_post_with_id(post_id):
 @app.route('/all_users')
 @login_required
 def all_users():
-	all_users = db.session.query(User).all()
+	all_users = db.session.query(User).order_by(User.firstname).all()
 
 
 	dict_of_users_teams={}
