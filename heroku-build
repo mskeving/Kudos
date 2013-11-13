@@ -1,0 +1,37 @@
+#! /bin/bash
+set -e
+out='heroku-build-output'
+top_level_files=(Procfile db_create.py db_upgrade.py runp-heroku.py requirements.txt settings_helper.py)
+
+die() {
+	for line in "$@"; do echo "$line" 1>&2; done
+	exit 1
+}
+
+[ $# -eq 0 ] || die "Not expecting any arguments.  Got: $@"
+
+if [ -e "$out" ]; then
+	[ -d "$out/.git" ] || die "Couldn't find \".git\" folder in \"$out\"."
+	echo "Clearing out \"$out\"..."
+	(cd "$out" ; (find . -d 1 | grep -v '^\./\.git' | xargs rm -r))
+else
+	echo "Creating new repo \"$out\"..."
+	mkdir -p "$out"
+	git init "$out"
+fi
+
+echo "Copying files..."
+cp -r "app" "$out"
+for f in "${top_level_files[@]}"; do
+	cp "$f" "$out"
+done
+cp "heroku-runtime.txt" "$out/runtime.txt"
+cp "heroku-settings.py" "$out/settings.py"
+find "$out" -name '*.pyc' | xargs rm
+
+echo "Committing..."
+(
+	cd "$out"
+	git add -A .
+	git commit --all -m "auto commit"
+)

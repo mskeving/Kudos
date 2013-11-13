@@ -26,3 +26,5 @@ newrelic.ini
 flask/*
 .DS_Store
 /app/static/css/img/missy.psd
+/heroku-build-output
+/heroku-settings.py
