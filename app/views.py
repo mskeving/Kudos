@@ -200,7 +200,6 @@ def create_tag_list():
 	for tag in user_tags:
 		#if tag has already been used on this post, don't add to available tags 
 		if tag.id in used_tags_dict:
-			print "skipping this one"
 			continue
 
 		tag_user_id = "u" + str(tag.id)
@@ -220,6 +219,8 @@ def create_tag_list():
 
 	#Team Tags - all teams
 	for tag in team_tags:
+		if tag.id in used_tags_dict:
+			continue
 		tag_team_id = "t" + str(tag.id)
 		tag_dict[tag.teamname] = tag_team_id
 
