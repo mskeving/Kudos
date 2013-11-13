@@ -271,7 +271,7 @@ $('.new-tag-btn').live('click', function(e) {
 	}
 
 	else{
-		$(this).append("<span> No new tags </span>");
+		$(this).parent().append("<span> No new tags selected </span>");
 		e.preventDefault();
 		console.log('no new tags');
 	}
