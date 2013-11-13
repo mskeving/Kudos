@@ -10,24 +10,18 @@
 
           {% if post.get('tagged_teams') %}
             {% for tag in post.get('tagged_teams') %}
-              <div class="avatar-container" data-tag-id="{{tag.id}}">
+              <li class="avatar-container" data-tag-id="{{tag.id}}">
                 <a class="avatar" href="{{ url_for('team', team=tag.team_tag.teamname) }}">
-                  <div class="cropper">
-                      <img src="/static/img/generic_photo.jpg" alt="{{tag.username}}" />
+                      <img src="/static/img/team_photo.jpg" title="{{tag.team_tag.teamname}}" alt="{{tag.username}}" />
                       <!-- <img src="{{tag.team_tag.photo}}" alt="{{tag.team_tag.teamname}}" /> -->
-                  </div>
                 </a>
 
                 {% if g_user_tagged_in_post or g.user.username == post_object.author.username%}
-                  <div class="remove-tag">
-                      <a>X</a>
+                  <div class="post__remove-tag remove-tag">
+                    <i class="fa fa-times"></i>
                   </div>
                 {% endif %}
-
-                <div class="taggee-name">
-                  {{tag.team_tag.teamname}}
-                </div>
-              </div>
+              </li>
             {% endfor %}
           {% endif %}
 
@@ -57,58 +51,8 @@
 
           {% endfor %}
 
-
-    {% set g_user_tagged_in_post = [] %}
-    {% if post.get('tagged_users') %}
-      {% for tag in post.get('tagged_users') %}
-        {% if tag.user_tag.username == g.user.username %}
-          {% do g_user_tagged_in_post.append(1) %}
         {% endif %}
 
-        <div class="avatar-container" data-tag-id="{{tag.id}}">
-          <a class="avatar" href="{{ url_for('user', username=tag.user_tag.username) }}">
-          	<div class="cropper">
-                <img src="/static/img/generic_photo.jpg" alt="{{tag.username}}" />
-                <!-- <img src="{{tag.user_tag.photo}}" alt="{{tag.username}}" /> -->
-            </div>
-          </a>
-
-          {% if g_user_tagged_in_post or g.user.username == post_object.author.username%}
-
-            <div class="remove-tag">
-              <a>X</a>
-            </div>
-
-          {% endif %}
-
-          <div class="taggee-name">
-            {{tag.user_tag.firstname}}
-          </div>
-        </div>
-
-      {% endfor %}
-    {% endif %}
-    </div>
-  </div>
-=======
-        {% endif %}
-
-        {% if post.get('tagged_teams') %}
-          {% for tag in post.get('tagged_teams') %}
-            <li class="avatar-container" data-tag-id="{{tag.id}}">
-              <a class="avatar" href="{{ url_for('team', team=tag.team_tag.teamname) }}">
-                    <img src="/static/img/team_photo.jpg" title="{{tag.team_tag.teamname}}" alt="{{tag.username}}" />
-                    <!-- <img src="{{tag.team_tag.photo}}" alt="{{tag.team_tag.teamname}}" /> -->
-              </a>
-
-              {% if g_user_tagged_in_post or g.user.username == post_object.author.username%}
-                <div class="post__remove-tag remove-tag">
-                  <i class="fa fa-times"></i>
-                </div>
-              {% endif %}
-            </li>
-          {% endfor %}
-        {% endif %}
 
         {% if not post.get('tagged_teams') and not post.get('tagged_users') %}
 
@@ -153,7 +97,6 @@
       </div><!-- /.post__meta -->
     </div><!-- /.post__content -->
   </div><!-- /.post__container -->
->>>>>>> design_merge
 
 {% if 0 == 1 %}
 
@@ -187,6 +130,58 @@
 
       {% endfor %}
     </div>
+
+    <!-- new comment -->
+      <div class="comment-modal" data-post-id="{{post_object.id}}">
+        <form>
+          {{new_post_form.csrf_token}}
+            <div class="new-comment-body" data-post-id="{{post_object.id}}">
+              {{reply_form.reply_body (class="reply-body")}}
+              <button type="button" class="new-comment-btn" name="new_reply_btn" data-post-id="{{post_object.id}}"> reply </button>
+            </div>
+        </form>
+      </div>
+
+  </div>
+
+{% endif %}
+
+  <div class="toolbar post__footer">
+    <!--
+    <a class="toolbar-button comment-button" data-post-id="{{post_object.id}}">
+      Comment
+    </a>-->
+    <nav class="post__actions nav">
+      <ul>
+        <li><span class="butt isle toolbar-button thank-button{% if g.user in post.get('thankers') %} thanked{% endif %}" data-post-id="{{post_object.id}}"><i class="fa fa-heart"></i> Thank</span></li>
+        <li><span class="butt isle toolbar-button comment-button" data-post-id="{{post_object.id}}"><i class="fa fa-comment"></i> Comment</span></li>
+      </ul>
+    </nav>
+  </div>
+</li>
+
+<!-- new tag
+  <div class="tag-modal clearfix" data-post-id="{{post_object.id}}">
+    <form class="new-tag-form" data-post-id="{{post_object.id}}">
+      <div class="tags" data-post-id="{{post_object.id}}">
+        <input type="text" class="tag_input" data-post-id="{{post_object.id}}" placeholder="tags"/>
+        <div data-id="_tagsinput" class="tagsinput">
+          <div data-id="_addTag">
+            <input data-id="_tag" value="" data-default="add a tag" />
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" class="new-tag-btn" data-post-id="{{post_object.id}}">
+        Submit
+      </button>
+      {{ reply_form.hidden_post_id(value=post_object.id) }}
+      {{ new_post_form.hidden_tag_ids (class="hidden_tag_ids", id=post_object.id) }}
+      {{ new_post_form.hidden_tag_text (class="hidden_tag_text", id=post_object.id) }}
+    </form>
+  </div>
+-->
+   </div>
 
     <!-- new comment -->
       <div class="comment-modal" data-post-id="{{post_object.id}}">
