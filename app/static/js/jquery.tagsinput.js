@@ -79,41 +79,38 @@
     input.css('width', minWidth);
   };
   
-	$.fn.addTag = function(value,options,settings) {
+	$.fn.addTag = function(value,options,settings,tag_id) {
 		options = jQuery.extend({focus:false,callback:true},options);
 		
 		this.each(function() { 
 			var id = $(this).attr('id');
 			
-			//get index of tag in autocomplete_list
-			// var tag_position = jQuery.inArray(value, settings.autocomplete_list);
-			//find corresponding tag_id in tag_ids array
-			// var tag_id = settings.tag_ids[tag_position];
+			// get index of tag in autocomplete_list
+			// find corresponding tag_id in tag_ids array
 			settings = settings || $(this).data('tag-settings');
-			var tag_id = settings.autocomplete_dict[value];	
+			tag_id = tag_id || settings.autocomplete_dict[value];	
 
 			var tagslist = $(this).val().split(delimiter[id]);
-			//var tagslist = JSON.parse($(this).val());
-			//tagslist needs tag object appended to it 
+			// tagslist needs tag object appended to it 
 			if (tagslist[0] == '') { 
 				tagslist = new Array();
 			}
 
 			value = jQuery.trim(value);
-			//go through word list and find value's index. Then go through tag_objects list and find value at same index
-			//add that to html element as value 
+			// go through word list and find value's index. Then go through tag_objects list and find value at same index
+			// add that to html element as value 
 
 			var skipTag;
 			if (options.unique) {
 				if (skipTag = $(this).tagExist(value)) {
-					//Marks fake input as not_valid to let styling it
+					// Marks fake input as not_valid to let styling it
 				    $('#'+id+'_tag').addClass('not_valid');
 				}
 			} else {
 				var skipTag = false; 
 			}
 			
-			//add id to each new tag, specific to person or team tagged
+			// add id to each new tag, specific to person or team tagged
 			if (value !='' && skipTag != true) { 
 				console.log('tag_id: ' + tag_id)
                 $('<span>').attr('id',tag_id).addClass('tag').append(
