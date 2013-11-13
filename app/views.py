@@ -367,14 +367,11 @@ def sign_s3_upload():
 	  })
 
 
-def send_notification(message, subject, recipient_list, post_id, img_url):
-	print "in send_notification"
+def create_notification(message, subject, recipient_list, post_id, img_url):
 	kudos_header = g.user.firstname + " sent you kudos!"
 	recipient_emails = []
 
 	sender = settings.mail_sender.username
-	print "sender: %r " % sender
-
 	reply_to = settings.mail_sender.reply_to
 
 	html = render_template('notification_email.html',
@@ -388,7 +385,6 @@ def send_notification(message, subject, recipient_list, post_id, img_url):
 
 
 def send_email(sender, recipients, reply_to, subject, html):
-	print "in send_email"
 	msg = Message(subject=subject, 
 		sender=sender,
 		recipients=recipients,
@@ -396,11 +392,9 @@ def send_email(sender, recipients, reply_to, subject, html):
 		html=html)
 
 	def send_async_notification(my_app, msg):
-		print "sending!"
 		with my_app.app_context():
-			print "app name: "
-			print my_app.name
-			mail.send(msg)
+			print "sending email but not really"
+			# mail.send(msg)
 
 	Thread(target = send_async_notification, args = [app,msg]).start()
 
@@ -462,7 +456,7 @@ def new_post():
 	for user in tagged_users:
 		recipient_list.append(user.email)
 	subject = "You've received a kudos!"
-	send_notification(post_text, subject, recipient_list, post_id, photo_url)
+	create_notification(post_text, subject, recipient_list, post_id, photo_url)
 
 
 	post_page = render_template('post.html',
@@ -579,7 +573,7 @@ def add_tag():
 	for user in tagged_users:
 		recipient_list.append(user.email)
 	subject = "You've received a kudos!"
-	send_notification(post_text, subject, recipient_list, post_id, img_url)
+	create_notification(post_text, subject, recipient_list, post_id, img_url)
 
 	tag_info_json = json.dumps(new_tag_dict)
 
