@@ -57,11 +57,6 @@ settings.login_handler.setup(app, auth_finish)
 def before_request():
 	#all requests will have access to the logged in user, even in templates
 	g.user = current_user
-	if g.user.is_authenticated():
-		g.user.last_seen = datetime.utcnow()
-		db.session.add(g.user)
-		db.session.commit()
-		
 
 @app.route('/static/img/<path:filename>')
 def serve_image(filename):
@@ -82,11 +77,15 @@ def logout():
 	logout_user()
 	return redirect(url_for('index'))
 
+last_user_cache = [None]
 
 @lm.user_loader
-def load_user(id):
-	#user ids in Flask-login are always unicode. Need to convert to int
-	return User.query.get(int(id))
+def load_user(id_str):
+	# TODO: Flask-Login calls load_user even on static routes.
+	# - Fixing with a cache could be tricky (consistency, multithreading)
+	# - Fixing by returning None for static routes doesn't work, because returning None
+	#   clears the login cookie.
+	return User.query.get(int(id_str))
 
 @app.route('/feedback', methods=['POST'])
 @login_required
@@ -121,7 +120,7 @@ def index():
 	delete_form = DeletePost()
 
 	#query for all parent posts
-	posts = Post.query.filter(Post.parent_post_id==None).order_by(Post.time.desc()).limit(3)
+	posts = Post.query.filter(Post.parent_post_id==None).order_by(Post.time.desc()).limit(3).all()
 
 	if posts != None:
 		indented_posts = posts_to_indented_posts(posts)
