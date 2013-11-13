@@ -1,49 +1,29 @@
 <html>
 	<head>
-		<title>Kudos</title>
-		<link rel="shortcut icon" href="/static/img/favicon.ico">
-		<link rel="stylesheet" href="/static/css/login.css" type="text/css" charset="utf-8" />
+		<title>Fake Google</title>
+
 	</head>
-	<body style="background: #d6736c;">
-		<div id="login-page-container">
-	      <div id="login-page">
-	        <div class="logo"><img src="/static/img/kudos_logo.png"/></div>
-	        <div class="content">
-	          	<div>
-                    <form action="/fake_login_submit" method="post">
-                        <input name="next" type="hidden" value="{{next}}" />
-                        <p>Email address: <input name="email" type="text" /><input type="submit" value="Fake Login" /></p>
-                    </form>
-	            </div>
-	            <div class="login-error">
-		            {% with messages = get_flashed_messages() %}
-					{% if messages%}
-					<ul>
-						{% for message in messages %}
-							<li>{{message}} </li>
-						{% endfor %}
-					</ul>
-					{% endif %}
-					{% endwith %}
-				</div>
-	        </div>
-	       
-	            <ul class=flashes>
-	            
-	              <li style="color:white;">Please log in with your Dropbox email account to view this page.</li>
-	            
-	            </ul>
-	          
-	        
-	      </div>
-	    
-	      <div id="footer">
-	        <ul>
-	          <li class="subheader">Help</li>
-	          <li><a href="mailto:team-kudos@dropbox.com">Email</a></li>
-	          <li>Help Docs</li>
-	        </ul>
-	      </div>
-	    </div>
+	<body>
+		<h1>Fake Google</h1>
+
+      	<div>
+            <form action="/fake_login_submit" method="post">
+            	{% if next %}
+                <input name="next" type="hidden" value="{{next}}" />
+                {% endif %}
+                <p>Email address: <input name="email" type="text" /><input type="submit" value="Fake Login" /></p>
+            </form>
+        </div>
+        <div class="login-error">
+            {% with messages = get_flashed_messages() %}
+			{% if messages%}
+			<ul>
+				{% for message in messages %}
+					<li>{{message}} </li>
+				{% endfor %}
+			</ul>
+			{% endif %}
+			{% endwith %}
+		</div>
 	</body>
 </html>

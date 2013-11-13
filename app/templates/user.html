@@ -42,12 +42,26 @@
 
 <div class="main-column profile">
 	<div class="post-column">
+		<div class="new-post">
+			<a class="new-post-modal-btn">
+				<div class="new-kudos-button">
+					<div class="depth">
+						Give Kudos
+					</div>
+				</div>
+			</a>
+
+			{% include 'post-modal.html' with context %}
+
+		</div>
 
 		{% for post in posts %}
 		  {% include 'post.html' with context %}
 		{% endfor %}
 
 	</div>
+
 </div>
+
 
 {% endblock %}

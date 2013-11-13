@@ -1,4 +1,4 @@
-import time, os, json, base64, hmac, urllib, hashlib
+import time, os, json, base64, hmac, urllib, hashlib, random
 
 from base64 import b64encode, b64decode
 from settings import settings
@@ -57,11 +57,6 @@ settings.login_handler.setup(app, auth_finish)
 def before_request():
 	#all requests will have access to the logged in user, even in templates
 	g.user = current_user
-	if g.user.is_authenticated():
-		g.user.last_seen = datetime.utcnow()
-		db.session.add(g.user)
-		db.session.commit()
-		
 
 @app.route('/static/img/<path:filename>')
 def serve_image(filename):
@@ -73,7 +68,8 @@ def serve_image(filename):
 @app.route('/login', methods = ['GET'])
 def login():
 	next = request.args.get('next','')  # 'next' is where to go after login is complete.
-	return settings.login_handler.start(request.url_root, next)
+	auth_url = settings.login_handler.start(request.url_root, next)
+	return render_template('login.html', auth_url=auth_url)
 
 #LOGOUT
 @app.route('/logout')
@@ -81,11 +77,15 @@ def logout():
 	logout_user()
 	return redirect(url_for('index'))
 
+last_user_cache = [None]
 
 @lm.user_loader
-def load_user(id):
-	#user ids in Flask-login are always unicode. Need to convert to int
-	return User.query.get(int(id))
+def load_user(id_str):
+	# TODO: Flask-Login calls load_user even on static routes.
+	# - Fixing with a cache could be tricky (consistency, multithreading)
+	# - Fixing by returning None for static routes doesn't work, because returning None
+	#   clears the login cookie.
+	return User.query.get(int(id_str))
 
 @app.route('/feedback', methods=['POST'])
 @login_required
@@ -120,7 +120,7 @@ def index():
 	delete_form = DeletePost()
 
 	#query for all parent posts
-	posts = Post.query.filter(Post.parent_post_id==None).order_by(Post.time.desc()).limit(3)
+	posts = Post.query.filter(Post.parent_post_id==None).order_by(Post.time.desc()).limit(3).all()
 
 	if posts != None:
 		indented_posts = posts_to_indented_posts(posts)
@@ -141,22 +141,22 @@ def get_more_posts():
 	new_post_form = EditPost()
 	reply_form = NewReply()
 	form = request.form
-	num_posts_to_display = 12
+	num_posts_to_display = 3
 
 	last_post_id = form.get('last_post_id')
 
-	total_posts_left = db.session.query(Post).filter(and_(Post.parent_post_id==None, Post.id<last_post_id)).count()
-
 	#older posts will have smaller post_id
-	posts = Post.query.filter(and_(Post.id<last_post_id, Post.parent_post_id==None)).order_by(Post.time.desc()).limit(num_posts_to_display)
+	total_posts_left = db.session.query(Post).filter(and_(Post.parent_post_id==None, Post.id<last_post_id)).all()
 
-	more_to_display = True
-	if posts != None:
-		indented_posts = posts_to_indented_posts(posts)
-		if len(indented_posts) < num_posts_to_display:
-			more_to_display = False
-		elif len(indented_posts) == total_posts_left:
-			more_to_display = False
+	posts_to_display = []
+	count_total_posts_left = len(total_posts_left)
+	#next posts to display are at end of list
+	for post in total_posts_left[-1:-num_posts_to_display:-1]:
+		posts_to_display.append(post)
+
+	indented_posts = []
+	if len(posts_to_display) > 0:
+		indented_posts = posts_to_indented_posts(posts_to_display)
 
 	new_posts = ""
 	for post in indented_posts:
@@ -166,14 +166,9 @@ def get_more_posts():
 			new_post_form=new_post_form,
 			)
 
-	new_post_info = {
-		'new_posts': new_posts,
-		'more_to_display': more_to_display
-	}
+	new_posts_json = json.dumps(new_posts)
 
-	post_json = json.dumps(new_post_info)
-
-	return post_json
+	return new_posts_json
 
 @app.route('/create_tag_list', methods=['POST'])
 @login_required
@@ -204,7 +199,6 @@ def create_tag_list():
 	for tag in user_tags:
 		#if tag has already been used on this post, don't add to available tags 
 		if tag.id in used_tags_dict:
-			print "skipping this one"
 			continue
 
 		tag_user_id = "u" + str(tag.id)
@@ -224,6 +218,8 @@ def create_tag_list():
 
 	#Team Tags - all teams
 	for tag in team_tags:
+		if tag.id in used_tags_dict:
+			continue
 		tag_team_id = "t" + str(tag.id)
 		tag_dict[tag.teamname] = tag_team_id
 
@@ -254,7 +250,6 @@ def team(team):
 
 	indented_posts = []
 	if len(tagged_posts) != 0:
-		print "tagged posts: %r " % tagged_posts
 		indented_posts = posts_to_indented_posts(tagged_posts)
 
 	dict_of_users_teams = {}
@@ -292,10 +287,12 @@ def user(username):
 	user = User.query.filter_by(username=username).first()
 	manager = User.query.filter_by(id=user.manager_id).first()
 	tagged_posts = []
+
+	#get all tags that user is tagged in 
 	tags = Tag.query.filter(and_(Tag.user_tag_id==user.id, Post.parent_post_id==None)).all() 
-		#get all parent posts that user is tagged in 
 
 	tagged_posts = []
+	#for each tag, find post associated with it
 	for tag in tags:
 		tagged_posts.append(tag.post)
 
@@ -378,7 +375,7 @@ def send_notification(message, subject, recipient_list, post_id, img_url):
 	sender = settings.mail_sender.username
 	print "sender: %r " % sender
 
-	reply_to="team-kuds@dropbox.com"
+	reply_to = settings.mail_sender.reply_to
 
 	html = render_template('notification_email.html',
 		kudos_header=kudos_header,
@@ -540,7 +537,6 @@ def add_tag():
 	tagged_user_ids = [] #to get user emails for notifications
 
 	for i in range(len(tag_ids)-1): #last index will be "" because of delimiters 
-		print "in for loop"
 		#USER TAGS
 		if tag_ids[i][0] == 'u':
 			tag_user_id = int(tag_ids[i][1:]) #remove leading 'u' to convert back to int user_id
@@ -656,13 +652,10 @@ def delete_post():
 	to_delete_list = []
 	to_delete_list.append(delete_post)
 	for tag in delete_post.tags:
-		print tag.id
 		to_delete_list.append(tag)
 	for child in delete_post.children:
-		print child.id
 		to_delete_list.append(child)
 	for thank in delete_post.thanks:
-		print thank.id
 		to_delete_list.append(thank)
 
 	for obj_to_delete in to_delete_list: #delete everything associated with post ie. tags, comments, thanks
@@ -695,7 +688,7 @@ def permalink_for_post_with_id(post_id):
 @app.route('/all_users')
 @login_required
 def all_users():
-	all_users = db.session.query(User).all()
+	all_users = db.session.query(User).order_by(User.firstname).all()
 
 
 	dict_of_users_teams={}
@@ -830,9 +823,9 @@ def posts_to_indented_posts(posts):
 			else:
 				print "no tags for this post.id: %r" % p.id 
 
-		#TODO: get all team and user tags in one list to sort based on time
-		sorted_tags = sorted(tagged_users, key=lambda tag: tag.time)
-
+		#display tags in random order each time
+		random.shuffle(tagged_users)
+		random.shuffle(tagged_teams)
 		d['tagged_users'] = tagged_users
 		d['tagged_teams'] = tagged_teams
 

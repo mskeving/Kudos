@@ -11,6 +11,7 @@ class Team(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	teamname = db.Column(db.String(120), index=True)
 	photo = db.Column(db.String(120))
+	is_deleted = db.Column(db.Boolean, default=False, nullable=False)
 	tagged_in = db.relationship('Tag', backref='team_tag')
 	teams = db.relationship('UserTeam', backref='team')
 	# ex) query results from UserTeam: 
@@ -23,6 +24,7 @@ class UserTeam(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 	team_id = db.Column(db.Integer, db.ForeignKey('teams.id'), nullable=False)
+	is_deleted = db.Column(db.Boolean, default=False, nullable=False)
 
 	__table_args__ = (
 		db.UniqueConstraint('user_id', 'team_id'),
@@ -41,7 +43,8 @@ class User(db.Model):
 	photo = db.Column(db.String(120))
 	phone = db.Column(db.String(25), index=True)
 	username = db.Column(db.String(68))
-	manager_id = db.Column(db.Integer, nullable=True)
+	manager_id = db.Column(db.Integer)
+	is_deleted = db.Column(db.Boolean, default=False, nullable=False)
 
 	posts = db.relationship('Post', backref='author', lazy='dynamic')
 	users = db.relationship('UserTeam', backref='user', primaryjoin="User.id==UserTeam.user_id")
@@ -49,13 +52,13 @@ class User(db.Model):
 	thanker = db.relationship('Thanks', backref='user')
 
 
-	#backref is adding author to Post class
-	#lazy.. whether all posts are loaded at the same time as user. look up options
+	# backref is adding author to Post class
+	# lazy.. whether all posts are loaded at the same time as user. look up options
 
 
 
 	def generate_photo_url(self, expires_in=300):
-		#url should be everything after bucket name (dropboxkudos)
+		# url should be everything after bucket name (dropboxkudos)
 		if app.config['USE_S3']:
 			if self.photo:
 				s3_path = "/avatars_hb/" + os.path.basename(self.photo)
@@ -81,17 +84,11 @@ class User(db.Model):
 				version += 1
 			return new_nickname
 
-	def avatar(self, size):
-		return "Avatar"
-		#return "<img src={{ url_for('static', filename='missy.jpg') }} height='%d' width='%d'>" %(size, size)
-		#return 'http://www.gravatar.com/avatar/' + md5(self.email).hexdigest() + '?d=mm&s=' + str(size)
-			#d=mm determines what placehold image is return when user does not have gravatar account (mystery man)
-
 	def is_authenticated(self):
 		return True
 
 	def is_active(self):
-		return True
+		return not self.is_deleted
 
 	def is_anonymous(self):
 		return False
@@ -112,6 +109,8 @@ class Post(db.Model):
 	time = db.Column(db.DateTime)
 	user_id = db.Column(db.Integer, db.ForeignKey('users.id')) #users is tablename
 	photo_link = db.Column(db.String(140))
+	is_deleted = db.Column(db.Boolean, default=False, nullable=False)
+
 	tags = db.relationship('Tag', backref='post')
 	thanks = db.relationship('Thanks', backref='post')
 	children = db.relationship('Post') #when query for posts, post.children will be available
@@ -130,6 +129,7 @@ class Thanks(db.Model):
 	thanks_sender = db.Column(db.Integer, db.ForeignKey('users.id'))
 	post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
 	time = db.Column(db.DateTime)
+	is_deleted = db.Column(db.Boolean, default=False, nullable=False)
 
 
 class Tag(db.Model):
@@ -142,6 +142,7 @@ class Tag(db.Model):
 	post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
 	tag_author = db.Column(db.Integer, db.ForeignKey('users.id')) 
 	time = db.Column(db.DateTime)
+	is_deleted = db.Column(db.Boolean, default=False, nullable=False)
 
 
 

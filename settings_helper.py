@@ -1,5 +1,6 @@
 import os
 import base64
+import urllib
 
 from oauth2client.client import (
     FlowExchangeError,
@@ -41,6 +42,20 @@ class Database(object):
     def __init__(self, url):
         self.url = url
 
+class SqliteDatabase(Database):
+    def __init__(self, path):
+        parent_dir = os.path.dirname(path)
+        if not os.path.exists(parent_dir):
+            os.mkdirs(parent_dir)
+        super(SqliteDatabase, self).__init__('sqlite:///' + path)
+
+class HerokuDatabase(Database):
+    def __init__(self):
+        url = os.environ.get('DATABASE_URL')
+        if url is None or len(url) == 0:
+            raise Exception("Missing environment variable \"DATABASE_URL\".");
+        super(HerokuDatabase, self).__init__(url)
+
 class GoogleAuthLoginHandler(object):
     def __init__(self, client_id, client_secret):
         self.client_id = client_id
@@ -81,7 +96,7 @@ class GoogleAuthLoginHandler(object):
         csrf_token_encoded = base64.b64encode(csrf_token)
         state = csrf_token_encoded + "|" + next
         auth_url = self.create_auth_flow(url_root, state=state).step1_get_authorize_url()
-        return render_template('login.html', auth_url=auth_url)
+        return auth_url
 
     def create_auth_flow(self, url_root, **kwargs):
         #TODO: set user_agent - describe all levels of stack
@@ -105,7 +120,12 @@ class FakeLoginHandler(object):
         pass
 
     def setup(self, app, finish_func):
-        from flask import request, redirect, flash, session
+        from flask import request, redirect, flash, render_template
+        @app.route('/fake_login')
+        def fake_login():
+            next = request.args.get('next')
+            return render_template('fake_login.html', next=next)
+
         @app.route('/fake_login_submit', methods=['POST'])
         def fake_login_submit():
             email = request.form.get('email') or ''
@@ -115,7 +135,10 @@ class FakeLoginHandler(object):
 
     def start(self, url_root, next):
         from flask import render_template
-        return render_template('fake_login.html', next=next)
+        auth_url = '/fake_login'
+        if next is not None:
+            auth_url += '?next=' + urllib.quote(next)
+        return auth_url
 
 class MailSender(object):
     def __init__(self, server, port, use_tls, use_ssl, username, password, reply_to):

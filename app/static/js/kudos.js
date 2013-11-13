@@ -1,32 +1,7 @@
-$('#more-posts').live('click', function(){
-	last_post_on_page = $('.post').last();
-	last_post_id = last_post_on_page.data('post-id');
-
-	// pass in last post_id on page to get the next bundle
-	data = {
-		last_post_id: last_post_id
-	}
-	$.ajax({
-		url: '/get_more_posts',
-		type: 'POST',
-		data: data,
-		success: function(new_post_info){
-			if (new_post_info['more_to_display']===false){
-				$('#more-posts').remove()
-			}
-			$('.post-column').append(new_post_info['new_posts'])
-
-		},
-		error: function(){
-			console.log('failed to load more posts');
-		},
-		dataType: 'json'
-	})
-})
-
 function show_modal(obj){
-	obj.slideToggle(500);
+       obj.slideToggle(300);
 }
+
 
 function get_tag_list(obj, post_id){
 	//gets tag list from db to populate autocomplete for tag modals
@@ -94,7 +69,9 @@ function clear_post_modal_info(){
 	$('.hidden_tag_ids').val("");
 	$('.hidden_tag_text').val("");
 	$('#chosen').text("");
-	$('.submit-kudos').removeClass('error-post')
+	$('.submit-kudos').removeClass('error-post');
+	$('.dropbox-dropin-btn').removeClass('dropbox-dropin-success');
+	$('.dropbox-dropin-btn').addClass('dropbox-dropin-default');
 };
 
 $('#nav-feedback').live('click', function(e){
@@ -294,7 +271,7 @@ $('.new-tag-btn').live('click', function(e) {
 	}
 
 	else{
-		$(this).append("<span> No new tags </span>");
+		$(this).parent().append("<span> No new tags selected </span>");
 		e.preventDefault();
 		console.log('no new tags');
 	}
@@ -399,10 +376,8 @@ function change_count(jquery_selector, add_value){
 //Dropbox Chooser file selection
 $(function () {
 	var data = {};
-	//.live is same as .on() for earlier jquery versions
 	$('#chooser').live('DbxChooserSuccess', function (e) {
 		console.log('chooser success');
-		//e.preventDefault();
 		data = {
 			url: e.originalEvent.files[0].link,
 			filename: e.originalEvent.files[0].name,
@@ -411,21 +386,22 @@ $(function () {
 
 		$('#chosen').show();
 		$('#filename').text(data['filename']);
-		$('#submit').attr('disabled', false);
-
 	});
+
 	$('#remove').live('click', function (e) {
 		e.preventDefault();
 		data = {}
 		$('#chosen').hide();
-		$('.dropbox-chooser').removeClass('dropbox-chooser-used');
-		$('#submit').attr('disabled', true);
+		$('.dropbox-dropin-btn').removeClass('dropbox-dropin-success');
+		$('.dropbox-dropin-btn').addClass('dropbox-dropin-default');
 	});
 
 	//Submit new post
 	$('.submit-new-post').live('click', function(e){
 		//Check if file selected from dropbox chooser
+		console.log('data' + data)
 		if ($.isEmptyObject(data)===false){
+			console.log('not empty data')
 			//can only send binary data using blob
 			var xhr = new XMLHttpRequest();
 			xhr.open("GET", data['thumbnail'], true);
@@ -440,6 +416,8 @@ $(function () {
 			        type: xhr.getResponseHeader("Content-Type")},
 			        function (public_url){
 			        	create_post(public_url);
+			        	//reset data={} so no picture uploaded with next post
+			        	data = {};
 			        }
 		        );
 			};
