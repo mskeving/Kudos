@@ -368,7 +368,6 @@ def sign_s3_upload():
 
 
 def create_notification(header, message, subject, recipient_list, post_id, img_url):
-
 	sender = settings.mail_sender.username
 	reply_to = settings.mail_sender.reply_to
 
@@ -563,6 +562,7 @@ def add_tag():
 			tagged_team_ids.append(tagged_team.id)
 
 	db.session.commit()
+
 	new_tag_dict['user_tags'] = user_tag_info	
 	new_tag_dict['team_tags'] = team_tag_info
 
