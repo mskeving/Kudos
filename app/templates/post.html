@@ -3,6 +3,17 @@
 
   <div class="post__container island">
 
+    <div class="post__edit-actions spit">
+      <a href="#" class="fa fa-angle-down toggle-menu"></a>
+      <ul class="menu menu--hidden sl-l">
+        <li><a class="toolbar-button addtag-button spit" data-post-id="{{post_object.id}}" href="#"><i class="fa fa-plus"></i> Add Tag</a></li>
+
+      {% if g.user.username == post_object.author.username %}
+        <li><a class="toolbar-button remove-post-button spit" href="{{ url_for('delete_post', postid=post_object.id) }}">Remove Kudos</a></li>
+      {% endif %}
+      </ul>
+    </div>
+
     <div class="post__header-meta">
       <div class="taggees">
         <ul class="avatars cf post__thanks-to h-l">
@@ -75,14 +86,6 @@
           Posted by <a href="{{ url_for('user', username=post_object.author.username) }}">{{post_object.author.firstname}} {{post_object.author.lastname}}</a>,
           <a href="{{ url_for('team', team=post.get('author_teams')[0].teamname)}}">{{post.get('author_teams')[0].teamname}}</a>
         </small>
-
-        <div class="post__edit-actions f-r">
-          <a class="toolbar-button addtag-button edit-actions__butt" data-post-id="{{post_object.id}}" href="#"><i class="fa fa-plus"></i> Add Tag</a>
-
-          {% if g.user.username == post_object.author.username %}
-            <a class="toolbar-button remove-post-button edit-actions__butt" href="{{ url_for('delete_post', postid=post_object.id) }}">Remove Kudos</a>
-          {% endif %}
-        </div>
 
       </div><!-- /.post__meta -->
     </div><!-- /.post__content -->

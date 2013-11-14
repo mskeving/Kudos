@@ -74,6 +74,19 @@ function clear_post_modal_info(){
 	$('.dropbox-dropin-btn').addClass('dropbox-dropin-default');
 };
 
+$('.toggle-menu').live('click', function(e) {
+	e.preventDefault();
+	var menu = $(this).siblings('.menu').first();
+	if($(menu).hasClass('menu--hidden')) {
+		$(menu).removeClass('menu--hidden');
+	} else {
+		$(menu).addClass('menu--hidden');
+	}
+
+	$(this).toggleClass('fa-angle-down fa-angle-up');
+
+});
+
 $('#nav-feedback').live('click', function(e){
 	e.preventDefault();
 	if ($('.feedback-modal').hasClass('displaying')){
@@ -504,7 +517,10 @@ $('.remove-post-button').live('click', function(e){
 		url: '/deletepost',
 		data: data,
 		success: function(resp){
-			parent_post.remove();
+			parent_post.addClass('post--remove-from-stream');
+			parent_post.one('webkitAnimationEnd oAnimationEnd animationEnd', function(){
+				$(this).remove();
+			});
 			console.log("success deleting post");
 		},
 		error: function(resp){

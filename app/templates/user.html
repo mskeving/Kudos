@@ -50,7 +50,15 @@
 			{% endfor %}
 			</ol>
 	{% else %}
-		<p class="beta promo faded">No posts thanking {{user.firstname}} yet. Why not <a href="#">be the first?</a></p>
+		<p class="beta promo faded">No posts thanking
+			{% if g.user.username == user.username %}
+				you yet.
+			{% else %}
+				{{user.firstname}} yet. Why not <a href="#">be the first?</a></p>
+			{% endif %}
+
+		<ol class="post-column posts">
+		</ol>
 	{% endif %}
 
 </div>
