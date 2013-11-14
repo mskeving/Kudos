@@ -7,9 +7,9 @@
 <div class="columns--two">
 {% for user in all_users %}
 
-<div class="user-card isle cf card p" id="user_info">
-	<a href="{{ url_for('user', username=user.username) }}">
-    <img class="user-card__avatar img img--lrg f-l" src="{{user.photo}}" alt="{{user.username}}" />
+<div class="user-card isle cf card p card--mini" id="user_info">
+	<a class="b user-card__avatar img--cropper img--med img--med--tall f-l" style="background-image: url({{user.photo}})" href="{{ url_for('user', username=user.username) }}">
+    <img class="img" src="{{user.photo}}" alt="{{user.username}}" />
 	</a>
 
 	<div class="user-card__info">
@@ -18,12 +18,9 @@
   	</h2>
   	<div>
   		<hr>
-			{{user.firstname}} is on the {% for team in list_of_team_names %}
-					<a href="{{ url_for('team', team=team) }}">{{team}}</a>
-			{% endfor %} team.
-			{% if manager %}
-				<a href="{{url_for('user', username=manager.username) }}"> {{manager.firstname}} {{manager.lastname}}</a> is {{user.firstname}}&rsquo;s lead.
-			{% endif %}
+  		{{user.firstname}} is on the
+  				<a href="{{ url_for('team', team=user_teams_dict.get(user.id)[-1].team.teamname) }}">{{user_teams_dict.get(user.id)[-1].team.teamname}}</a>
+  		team.
 			<ul class="user-card__meta sl-l standalone">
 				{% if user.email %}
 				<li>{{user.email}}</li>

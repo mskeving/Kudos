@@ -5,18 +5,20 @@
 
 <div class="user-card cf isle card p">
 
-	<img class="user-card__avatar img img--lrg f-l" src="/static/img/generic_photo.jpg" alt="{{user.username}}" />
-	<!-- <img src="{{user.photo}}" alt="{{user.username}}" /> -->
+	<div class="user-card__avatar img--cropper img--lrg f-l" style="background-image: url({{user.photo}})">
+		<img class="img" src="{{user.photo}}" alt="{{user.username}}" />
+		<!-- <img src="{{user.photo}}" alt="{{user.username}}" /> -->
+	</div>
 
   <div class="user-card__info">
   	<h2 class="gamma">{{user.firstname}} {{user.lastname}}</h2>
   	<div>
   		<hr>
-			{{user.firstname}} is on the {% for team in list_of_team_names %}
-					<a href="{{ url_for('team', team=team) }}">{{team}}</a>
-			{% endfor %} team.
+			{{user.firstname}} is on the
+					<a href="{{ url_for('team', team=list_of_team_names[-1]) }}">{{list_of_team_names[-1]}}</a>
+			team.
 			{% if manager %}
-				<a href="{{url_for('user', username=manager.username) }}"> {{manager.firstname}} {{manager.lastname}}</a> is {{user.firstname}}&rsquo;s lead.
+				<a href="{{url_for('user', username=manager.username) }}"> {{manager.firstname}} {{manager.lastname}}</a> is {{user.firstname}}&rsquo;s&nbsp;lead.
 			{% endif %}
 			<ul class="user-card__meta sl-l standalone">
 				{% if user.email %}
@@ -32,26 +34,24 @@
 </div>
 
 <div class="main-column profile">
-	<div class="post-column">
-		<div class="new-post">
+	<div class="new-post">
 
-			{% include 'post-modal.html' with context %}
+		{% include 'post-modal.html' with context %}
 
-		</div>
+	</div>
 
-		<hr>
-		{% if posts %}
-			<h2 class="gamma">Posts thanking {{user.firstname}}</h2>
+	<hr>
+	{% if posts %}
+		<h2 class="gamma">Posts thanking {{user.firstname}}</h2>
 
-			<ol class="posts">
+			<ol class="posts post-column">
 			{% for post in posts %}
 			  {% include 'post.html' with context %}
 			{% endfor %}
 			</ol>
-		{% else %}
-			<p class="beta promo faded">No posts thanking {{user.firstname}} yet. Why not <a href="#">be the first?</a></p>
-		{% endif %}
-	</div>
+	{% else %}
+		<p class="beta promo faded">No posts thanking {{user.firstname}} yet. Why not <a href="#">be the first?</a></p>
+	{% endif %}
 
 </div>
 

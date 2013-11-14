@@ -120,6 +120,10 @@ input, textarea, button {
 	transform: translateZ(0);
 }
 
+.b {
+	display: block;
+}
+
 /*-----------------------------------*\
 
 	$SHARED
@@ -233,14 +237,34 @@ hr {
 	padding: $baseline/4;
 }
 
+.img--cropper {
+	overflow: hidden;
+
+	.img, img {
+		max-width: 100%;
+	}
+}
+
 .img--med {
-	max-width: 4rem;
-	max-height: 4rem;
+	width: 4rem;
+	height: 4rem;
+
+	&.img--med--tall {
+		position: absolute;
+		top: 0;
+		left: 0;
+		bottom: 0;
+		height: 100%;
+		margin-top: 0;
+		margin-left: 0;
+		margin-bottom: 0;
+		width: 5rem;
+	}
 }
 
 .img--lrg {
-	max-height: 100%;
-	max-width: 10rem;
+	height: 10rem;
+	width: 10rem;
 }
 
 .butt {
@@ -263,6 +287,10 @@ hr {
 
 .card {
 	background-color: #faf9f7;
+
+	&.card--mini {
+		padding-left: 5.75rem;
+	}
 }
 
 /*-----------------------------------*\
@@ -396,7 +424,7 @@ html {
 			border: 2px solid #faf9f7;
 			text-align: center;
 			font-family: $freight;
-			line-height: 3.5rem;
+			line-height: 4rem;
 			float: left;
 
 			& + li {
@@ -423,8 +451,14 @@ html {
 				border-radius: 50%;
 				font-weight: 700;
 				text-decoration: none;
-				width: 3.5rem;
-				height: 3.5rem;
+				width: 4rem;
+				height: 4rem;
+				background-size: cover;
+				background-position: center top;
+
+				img {
+					opacity: 0;
+				}
 			}
 		}
 
@@ -512,19 +546,18 @@ html {
 	.edit-actions__butt {
 		display: inline-block;
 		text-decoration: none;
-		font-size: .75rem;
+		font-size: .65rem;
+		top: -.25rem;
+		margin-bottom: -.25rem;
 		padding: .25em .5em;
 		margin-right: .25rem;
 		background-color: transparent;
-		color: darken($cream, 20%);
-		box-shadow: inset 0 0 0 2px darken($cream, 20%);
+		color: darken($cream, 60%);
+		text-shadow: 0 1px 1px rgba(255,255,255,.1);
+		box-shadow: inset 0 0 0 1px transparentize(darken($cream, 20%), .5);
+		background-image: linear-gradient(rgba(0,0,0,0), rgba(0,0,0,.1));
 		border-radius: .25em;
 		font-weight: 700;
-
-		&.remove-post-button:hover {
-			color: $red;
-			box-shadow: inset 0 0 0 2px $red;
-		}
 
 		&:last-child {
 			margin-right: 0;
@@ -551,7 +584,8 @@ html {
 		color: #534d4a;
 
 		.post__photo {
-			margin: -2.2rem -1.5rem 0 1.5rem;
+			margin: -2.7rem -1.5rem 0 1.5rem;
+			width: 37.5%;
 			margin-bottom: -$baseline;
 			border-radius: 0 .25rem 0 0;
 
@@ -565,7 +599,7 @@ html {
 			}
 		}
 
-		:last-child {
+		> :last-child {
 			margin-bottom: 0;
 		}
 	}
@@ -705,6 +739,23 @@ html {
 	.user-card__avatar {
 		margin: -.75rem;
 		margin-right: .75rem;
+		background-size: cover;
+		background-position: center top;
+
+		img {
+			opacity: 0;
+		}
+
+		&:after {
+			content: " ";
+			position: absolute;
+			top: 0;
+			left: 0;
+			bottom: 0;
+			right: 0;
+			box-shadow: inset 0 0 0 1px rgba(0,0,0,.1);
+			border-radius: .25rem 0 0 .25rem;
+		}
 	}
 
 /*-----------------------------------*\
