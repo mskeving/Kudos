@@ -583,7 +583,7 @@ def add_tag():
 	#send notifications to teams tagged
 	recipient_list = []
 	users_teams_in_tagged_teams = None
-	if len(tagged_team_ids) < 0:
+	if len(tagged_team_ids) > 0:
 		users_teams_in_tagged_teams = UserTeam.query.filter(UserTeam.team_id.in_(tagged_team_ids)).all()
 	if users_teams_in_tagged_teams:
 		for user_team in users_teams_in_tagged_teams:
