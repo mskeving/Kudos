@@ -56,12 +56,15 @@ button {
 \*-----------------------------------*/
 
 .cf:before,
-.cf:after {
+.columns--two:before,
+.cf:after,
+.columns--two:after {
   content: " ";
   display: table;
 }
 
-.cf:after {
+.cf:after,
+.columns--two:after {
   clear: both;
 }
 
@@ -174,8 +177,8 @@ li > ol {
 
 h1,
 .alpha {
-  font-size: 3rem;
-  line-height: 1;
+  font-size: 2rem;
+  line-height: 1.5;
 }
 
 h2,
@@ -211,6 +214,14 @@ hr {
   border: none;
   border-bottom: 2px solid rgba(0, 0, 0, 0.1);
   margin-top: -2px;
+}
+
+.promo {
+  text-align: center;
+}
+
+.faded {
+  opacity: .5;
 }
 
 /*-----------------------------------*\
@@ -250,8 +261,13 @@ hr {
 }
 
 .img--med {
-  max-width: 3.5rem;
-  max-height: 3.5rem;
+  max-width: 4rem;
+  max-height: 4rem;
+}
+
+.img--lrg {
+  max-height: 100%;
+  max-width: 10rem;
 }
 
 .butt {
@@ -269,6 +285,10 @@ hr {
   max-width: 10rem;
 }
 
+.card {
+  background-color: #faf9f7;
+}
+
 /*-----------------------------------*\
 
 	$LAYOUT
@@ -282,6 +302,22 @@ hr {
 .wrap {
   max-width: 40rem;
   margin: 0 auto;
+}
+
+.columns--two > * {
+  width: 47.5%;
+}
+
+.columns--two > *:nth-child(odd) {
+  float: left;
+  margin-right: 2.5%;
+  clear: left;
+}
+
+.columns--two > *:nth-child(even) {
+  float: right;
+  margin-left: 2.5%;
+  clear: right;
 }
 
 /*-----------------------------------*\
@@ -307,7 +343,7 @@ hr {
 }
 
 html {
-  font: 112.5%/1.5 proxima-nova, sans-serif;
+  font: 112.5%/1.5 freight-sans-pro, sans-serif;
   color: #2b2b29;
   -webkit-font-smoothing: antialiased;
   background-color: #e8e2dc;
@@ -370,11 +406,11 @@ html {
 }
 
 .post__container,
-.ucard {
+.user-card {
   border-radius: .25rem .25rem 0 0;
   background-color: #faf9f7;
-  -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2), inset 0 0 10px 1px white;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2), inset 0 0 10px 1px white;
+  -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1), inset 0 0 10px 1px white;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1), inset 0 0 10px 1px white;
 }
 
 .post__thanks-to {
@@ -720,9 +756,15 @@ html {
 	$PROFILES
 \*-----------------------------------*/
 
-.ucard {
+.user-card {
   border-radius: .25rem;
   border: none;
+  overflow: hidden;
+}
+
+.user-card__avatar {
+  margin: -.75rem;
+  margin-right: .75rem;
 }
 
 /*-----------------------------------*\

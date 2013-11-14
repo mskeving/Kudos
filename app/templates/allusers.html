@@ -2,42 +2,42 @@
 
 {% block content %}
 
-	
+<h1>All Users</h1>
 
+<div class="columns--two">
 {% for user in all_users %}
 
-<div class="user-info" id="user_info">
-	<div class="user-page-avatars">
-	  	<a class="user-page-avatar" href="{{ url_for('user', username=user.username) }}">
-	      	<div class="cropper">
-	        		<img src="{{user.photo}}" alt="{{user.username}}" />
-		 	</div>
-	 	</a>
-	 </div>
+<div class="user-card isle cf card p" id="user_info">
+	<a href="{{ url_for('user', username=user.username) }}">
+    <img class="user-card__avatar img img--lrg f-l" src="{{user.photo}}" alt="{{user.username}}" />
+	</a>
 
-	<div class="white-card">
-		<a href="{{ url_for('user', username=user.username) }}" class="employee-name">
-			<h2>{{user.firstname}} {{user.lastname}}</h2>
-		</a>
-		<ul>
-		<li>
-			{% for team in user_teams_dict.get(user.id) %}
-				<div>
-					<a href="{{ url_for('team', team=team.team.teamname) }}">{{team.team.teamname}}</a>
-				</div>
-			{% endfor %}
-		</li>
-		<li>{{user.email}}</li>
-		<li>{{user.phone}}</li>
-	</ul>
-
-	</div>
+	<div class="user-card__info">
+  	<h2 class="gamma">
+  		<a href="{{ url_for('user', username=user.username) }}">{{user.firstname}} {{user.lastname}}</a>
+  	</h2>
+  	<div>
+  		<hr>
+			{{user.firstname}} is on the {% for team in list_of_team_names %}
+					<a href="{{ url_for('team', team=team) }}">{{team}}</a>
+			{% endfor %} team.
+			{% if manager %}
+				<a href="{{url_for('user', username=manager.username) }}"> {{manager.firstname}} {{manager.lastname}}</a> is {{user.firstname}}&rsquo;s lead.
+			{% endif %}
+			<ul class="user-card__meta sl-l standalone">
+				{% if user.email %}
+				<li>{{user.email}}</li>
+				{% endif %}
+				{% if user.phone %}
+				<li>{{user.phone}}</li>
+				{% endif %}
+			</ul>
+		</div>
+  </div>
 </div>
-	
+
 
 {% endfor %}
-
-
-
+</div>
 
 {% endblock %}

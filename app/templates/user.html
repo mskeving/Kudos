@@ -3,62 +3,54 @@
 {% block content %}
 
 
-<div class="user-info clearfix">
+<div class="user-card cf isle card p">
 
-	<div class="user-page-avatars">
-		<a class="user-page-avatar">
-			<div class="cropper">
-				<img src="/static/img/generic_photo.jpg" alt="{{user.username}}" />
-				<!-- <img src="{{user.photo}}" alt="{{user.username}}" /> -->
-			</div>
-		</a>
-	  
+	<img class="user-card__avatar img img--lrg f-l" src="/static/img/generic_photo.jpg" alt="{{user.username}}" />
+	<!-- <img src="{{user.photo}}" alt="{{user.username}}" /> -->
 
+  <div class="user-card__info">
+  	<h2 class="gamma">{{user.firstname}} {{user.lastname}}</h2>
+  	<div>
+  		<hr>
+			{{user.firstname}} is on the {% for team in list_of_team_names %}
+					<a href="{{ url_for('team', team=team) }}">{{team}}</a>
+			{% endfor %} team.
+			{% if manager %}
+				<a href="{{url_for('user', username=manager.username) }}"> {{manager.firstname}} {{manager.lastname}}</a> is {{user.firstname}}&rsquo;s lead.
+			{% endif %}
+			<ul class="user-card__meta sl-l standalone">
+				{% if user.email %}
+				<li>{{user.email}}</li>
+				{% endif %}
+				{% if user.phone %}
+				<li>{{user.phone}}</li>
+				{% endif %}
+			</ul>
+		</div>
   </div>
 
-  <div class="white-card">
-  	<h2>{{user.firstname}} {{user.lastname}}</h2>
-  	<ul>
-		<li>
-			{% for team in list_of_team_names %}
-				<div>
-					<a href="{{ url_for('team', team=team) }}">{{team}} </a>
-				</div>
-			{% endfor %}
-		</li>
-		{% if manager %}
-			<li>
-				<div>
-					Lead: <a href="{{url_for('user', username=manager.username) }}"> {{manager.firstname}} {{manager.lastname}}</a>
-				</div>
-			</li>
-		{% endif %}
-		<li>{{user.email}}</li>
-		<li>{{user.phone}}</li>
-	</ul>
-
-  </div>
 </div>
 
 <div class="main-column profile">
 	<div class="post-column">
 		<div class="new-post">
-			<a class="new-post-modal-btn">
-				<div class="new-kudos-button">
-					<div class="depth">
-						Give Kudos
-					</div>
-				</div>
-			</a>
 
 			{% include 'post-modal.html' with context %}
 
 		</div>
 
-		{% for post in posts %}
-		  {% include 'post.html' with context %}
-		{% endfor %}
+		<hr>
+		{% if posts %}
+			<h2 class="gamma">Posts thanking {{user.firstname}}</h2>
 
+			<ol class="posts">
+			{% for post in posts %}
+			  {% include 'post.html' with context %}
+			{% endfor %}
+			</ol>
+		{% else %}
+			<p class="beta promo faded">No posts thanking {{user.firstname}} yet. Why not <a href="#">be the first?</a></p>
+		{% endif %}
 	</div>
 
 </div>
