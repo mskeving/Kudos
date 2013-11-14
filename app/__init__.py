@@ -2,7 +2,7 @@
 #import newrelic.agent
 #newrelic.agent.initialize('newrelic.ini')
 
-import logging
+import logging.handlers
 from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy 
 import os
