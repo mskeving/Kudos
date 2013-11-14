@@ -392,7 +392,7 @@ def send_email(sender, recipients, reply_to, subject, html):
 	def send_async_notification(my_app, msg):
 		with my_app.app_context():
 			print "sending email but not really"
-			# mail.send(msg)
+			mail.send(msg)
 
 	Thread(target = send_async_notification, args = [app,msg]).start()
 
@@ -562,27 +562,34 @@ def add_tag():
 
 			tagged_team_ids.append(tagged_team.id)
 
+	db.session.commit()
 	new_tag_dict['user_tags'] = user_tag_info	
 	new_tag_dict['team_tags'] = team_tag_info
 
-
-
-	db.session.commit()
-
-	tagged_users = User.query.filter(User.id.in_(tagged_user_ids))
-	users_teams_in_tagged_teams = UserTeam.query.filter(Team.id.in_(tagged_team_ids))
-	#send email notifcation to new user taggees:
-	recipient_list = []
-	for user in tagged_users:
-		recipient_list.append(user.email)
-	for user_team in users_teams_in_tagged_teams:
-		print "user_team email %r" % user_team.user.email
-		recipient_list.append(user_team.user.email)
-
+	tagged_users = None
+	if len(tagged_user_ids) > 0:
+		tagged_users = User.query.filter(User.id.in_(tagged_user_ids)).all()
 
 	subject = "You've received a kudos!"
-	header = g.user.firstname + " sent you kudos!"
-	create_notification(header, post_text, subject, recipient_list, post_id, img_url)
+
+	#send notifcation to users tagged
+	recipient_list = []
+	if tagged_users:
+		for user in tagged_users:
+			recipient_list.append(user.email)
+		header = g.user.firstname + " sent you kudos!"
+		create_notification(header, post_text, subject, recipient_list, post_id, img_url)
+
+	#send notifications to teams tagged
+	recipient_list = []
+	users_teams_in_tagged_teams = None
+	if len(tagged_team_ids) < 0:
+		users_teams_in_tagged_teams = UserTeam.query.filter(UserTeam.team_id.in_(tagged_team_ids)).all()
+	if users_teams_in_tagged_teams:
+		for user_team in users_teams_in_tagged_teams:
+			recipient_list.append(user_team.user.email)
+		header = g.user.firstname + " sent a kudos to your team!"
+		create_notification(header, post_text, subject, recipient_list, post_id, img_url)	
 
 	tag_info_json = json.dumps(new_tag_dict)
 
