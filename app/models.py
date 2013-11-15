@@ -98,13 +98,13 @@ class User(db.Model):
 
 	def __repr__(self):
 		#tells how to print objects of this class. Used for debugging. 
-		return '<User %r>' %(self.nickname)
+		return '<User %d:%s>' % (self.id, self.username)
 
 class Post(db.Model):
 	__tablename__ = "posts"
 
 	id = db.Column(db.Integer, primary_key=True)
-	body = db.Column(db.String(140))
+	body = db.Column(db.String(500))
 	parent_post_id = db.Column(db.Integer, db.ForeignKey('posts.id')) #denotes that it's a reply
 	time = db.Column(db.DateTime)
 	user_id = db.Column(db.Integer, db.ForeignKey('users.id')) #users is tablename

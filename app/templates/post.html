@@ -169,4 +169,12 @@
     </form>
   </div>
 
+  <div class="comments" data-post-id="{{post_object.id}}">
+    {% for comment in post.get('comments') %}
+
+      {% include 'comment.html' with context %}
+
+    {% endfor %}
+  </div>
+
 </li>
