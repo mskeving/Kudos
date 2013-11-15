@@ -419,7 +419,8 @@ def new_post():
 	form = request.form
 	photo_url = form.get('photo_url')
 	filename = form.get('filename')
-	post_text = form.get('post_body')
+	post_text = form.get('post_text')
+
 
 	new_post = Post(body=post_text, time=datetime.utcnow(), user_id=user_id, photo_link=photo_url) 
 	db.session.add(new_post)

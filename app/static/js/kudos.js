@@ -498,6 +498,8 @@ function create_post(public_url){
 		});
 		return
 	}
+
+
 	data = {
 		photo_url: public_url,
 		post_text: post_text,
