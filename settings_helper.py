@@ -17,7 +17,8 @@ class Settings(object):
             login_handler, 
             mail_sender,
             admin_emails,
-            flask_config):
+            flask_config,
+            email_stealer):
         self.app_name = app_name
         self.image_store = image_store
         self.database = database
@@ -25,6 +26,7 @@ class Settings(object):
         self.mail_sender = mail_sender
         self.admin_emails = admin_emails
         self.flask_config = flask_config
+        self.email_stealer = email_stealer
 
         self.sqlalchemy_migrations_repo = os.path.join(base_dir, 'db_repository')
 

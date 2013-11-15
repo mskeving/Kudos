@@ -250,27 +250,27 @@ $('.new-tag-btn').live('click', function(e) {
 	collect_tags(form);
 	tag_ids = form.find('.hidden_tag_ids').val();
 	tag_text = form.find('.hidden_tag_text').val();
-	post_id = form.parents('.post').attr('data-post-id');
-	post_photo_url = form.parents('.post').closest('.post-photo[data-post-id="' + post_id + '"]').attr('src');
-	post_text = form.parents('.post').children('.post__container').children('.post__content').children('.p').text()
+	post_id = form.parent('.tag_modal').parent('.post').attr('data-post-id');
+	post_photo_url = form.closest('.post').closest('.post-photo[data-post-id="' + post_id + '"]').attr('src');
+	post_text = form.closest('.post').closest('.post__content blockquote').text();
 
 	if (tag_ids != ""){
 		var data = {
-		post_id: $(this).data('post-id'),
-		tag_ids: tag_ids,
-		tag_text: tag_text,
-		post_photo_url: post_photo_url,
-		post_text: post_text
+			post_id: $(this).data('post-id'),
+			tag_ids: tag_ids,
+			tag_text: tag_text,
+			post_photo_url: post_photo_url,
+			post_text: post_text
 		};
 
-		$.post('/newtag', data, function(tag_info){
+		$.post('/newtag', data, function(tag_info_json){
 			show_modal(form.parent());
 			$('.tag').remove(); //remove tag spans from input box
 			form.children(".hidden_tag_ids").val(""); //and clear hidden values
 			form.children(".hidden_tag_text").val("");
-			console.log("tag_dict: " + tag_info);
+
 			//turn tag_info json into usable array - avoidable if specify it's json datatype
-			tag_array = jQuery.parseJSON(tag_info);
+			tag_array = jQuery.parseJSON(tag_info_json);
 
 			//DISPLAY USER AVATARS
 			for(var i = 0; i<tag_array.user_tags.length; i++){
@@ -289,6 +289,15 @@ $('.new-tag-btn').live('click', function(e) {
 				console.log("this" + this)
 				form.parent().parent().children(".taggees").children(".avatars").append(new_avatar);
 			}
+
+			console.log('tagged_team_ids tag array' + tag_array.tagged_team_ids)
+			console.log('tagged_user_ids tag array' + tag_array.tagged_user_ids)
+			$.extend(data, {
+				tagged_team_ids: JSON.stringify(tag_array.tagged_team_ids),
+				tagged_user_ids: JSON.stringify(tag_array.tagged_user_ids)
+			});
+			console.log('about to send notifications');
+			send_notifications(data);
 		})
 	}
 
@@ -482,7 +491,7 @@ function create_post(public_url){
 		return
 	}
 	data = {
-		public_url: public_url,
+		photo_url: public_url,
 		post_body: post_body,
 		hidden_tag_ids: $('.hidden_tag_ids').val(),
 		hidden_tag_text: $('.hidden_tag_text').val()
@@ -492,20 +501,50 @@ function create_post(public_url){
 		type: "POST",
 		url: "/createpost",
 		data: data,
-		success: function(new_post){
-			$('.post-column').prepend(new_post);
+		success: function(response){
+			// response includes post markup, and list of tagged team/user ids
+			$('.post-column').prepend(response.new_post);
 			$('ol.posts .post').first().addClass('post--new-in-stream');
 			clear_post_modal_info();
 			console.log("success! created new post");
 			end_show_progress($('.submit-new-post'));
+
+			tagged_user_ids = response.tagged_user_ids;
+			tagged_team_ids = response.tagged_team_ids;
+			post_id = response.post_id;
+
+			$.extend(data, {
+				post_id: post_id,
+				tagged_team_ids: JSON.stringify(tagged_team_ids),
+				tagged_user_ids: JSON.stringify(tagged_user_ids)
+			})
+
+			send_notifications(data);
+
 		},
 		error: function(resp){
 			console.log("error! no new post created");
 			end_show_progress($('.submit-new-post'));
-		}
+		},
+		dataType:'json'
 	});
 }
 
+function send_notifications(data){
+	// data must include post_id, tagged_team_ids, tagged_user_ids, post_text, photo_url
+	$.ajax({
+		type: "POST",
+		url: "/create_notifications",
+		data: data,
+		success: function(){
+			console.log("success sending email notifications");
+		},
+		error: function(){
+			console.log("failed sending email notifications");
+		}
+	})
+
+}
 
 //REMOVE POST
 $('.remove-post-button').live('click', function(e){
