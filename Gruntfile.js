@@ -5,7 +5,8 @@ module.exports = function(grunt) {
 		sass: {
 		  dist: {
 		  	options: {
-		  		sourcemap: 'true'
+		  		sourcemap: true,
+		  		compass: true
 		  	},
 		    files: {
 		    	// 'output.css' : 'input.scss'

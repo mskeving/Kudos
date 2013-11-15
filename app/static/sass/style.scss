@@ -268,11 +268,6 @@ hr {
 	width: 10rem;
 }
 
-.butt {
-	cursor: pointer;
-	@extend .fix3d;
-}
-
 .media {
 	.media__img {
 		display: block;
@@ -300,6 +295,46 @@ hr {
 
 .toggle-menu {
 	cursor: pointer;
+}
+
+/*-----------------------------------*\
+	$FORMS
+\*-----------------------------------*/
+
+.butt {
+	cursor: pointer;
+	@extend .fix3d;
+	-webkit-appearance: none;
+	appearance: none;
+	border: none;
+	border-radius: .25rem;
+	padding: .25rem .75rem;
+	box-shadow: inset 0 1px rgba(255,255,255,.1), inset 0 0 0 1px rgba(255,255,255,.1), 0 1px 1px rgba(0,0,0,.1);
+	font-weight: 700;
+	background-color: #fff;
+	background-image: linear-gradient(rgba(0,0,0,0), rgba(0,0,0,.1));
+
+	&:active, &:focus {
+		outline: none;
+		background-color: darken(#fff, 5%);
+	}
+
+	&.butt--primary {
+		background-color: $red;
+		color: #fff;
+		text-shadow: 0 1px 1px rgba(0,0,0,.1);
+
+		&:active, &:focus {
+			background-color: darken($red, 5%);
+		}
+	}
+}
+
+.input {
+
+	&.error {
+		animation: shake .4s;
+	}
 }
 
 /*-----------------------------------*\
@@ -379,6 +414,11 @@ html {
 }
 
 	.site__title {
+		padding-left: 2rem;
+		background-image: inline-image("header-db.svg");
+		background-repeat: no-repeat;
+		background-size: 1.5rem;
+		background-position: left center;
 		font-family: $freight;
 		font-size: 1.5rem;
 		line-height: 1;
@@ -398,6 +438,38 @@ html {
 	}
 
 /*-----------------------------------*\
+	$FEEDBACK
+\*-----------------------------------*/
+
+.feedback-modal {
+	background-color: desaturate(darken($cream, 60%), 17%);
+	color: $cream;
+	transition: .5s;
+	max-height: 0;
+	overflow: hidden;
+	box-shadow: inset 0 -5px 10px rgba(0,0,0,.1);
+
+	&.displaying {
+		max-height: 500px;
+	}
+
+	textarea {
+		-webkit-appearance: none;
+		appearance: none;
+		background-color: rgba(255,255,255,.8);
+		border: none;
+		border-radius: .25rem;
+		margin-bottom: $baseline/2;
+
+		&:focus {
+			background-color: rgba(255,255,255,.9);
+			outline: none;
+			box-shadow: inset 0 0 20px #fff;
+		}
+	}
+}
+
+/*-----------------------------------*\
 	$POSTS
 \*-----------------------------------*/
 
@@ -411,7 +483,7 @@ html {
 
 .post__new-content {
 	&.error {
-		animation: shake .75s;
+		animation: shake .4s;
 	}
 }
 
@@ -652,7 +724,7 @@ html {
 		li {
 			display: inline-block;
 			+ li {
-				margin-left: -.24rem;
+				margin-left: -.28rem;
 			}
 			width: 50%;
 			font-family: $freight;
@@ -661,6 +733,7 @@ html {
 				width: 100%;
 				-webkit-appearance: none;
 				background-color: transparent;
+				background-image: none;
 				border: none;
 				display: block;
 				color: rgba(0,0,0,.5);
@@ -668,6 +741,7 @@ html {
 				text-decoration: none;
 				transition: .3s;
 				perspective: 250px;
+				padding: .75rem;
 				&:focus {
 					outline: 1px dotted;
 					outline-offset: -1px;
@@ -892,9 +966,25 @@ html {
 }
 
 @keyframes shake {
-        0%, 100% {transform: translateX(0);}
-        10%, 30%, 50%, 70%, 90% {transform: translateX(-10px);}
-        20%, 40%, 60%, 80% {transform: translateX(10px);}
+        0%, 100% {
+        	transform: translateX(0);
+        }
+
+        20% {
+        	transform: translateX(-10px);
+        }
+
+        40% {
+        	transform: translateX(10px);
+        }
+
+        60% {
+        	transform: translateX(-5px);
+        }
+
+        80% {
+        	transform: translateX(5px);
+        }
 }
 
 /*-----------------------------------*\

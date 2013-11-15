@@ -92,20 +92,23 @@ $('.menu *').live('click', function(){
 	$(this).parents('.menu').children('.toggle-menu').toggleClass('fa-angle-down fa-angle-up');
 });
 
-$('#nav-feedback').live('click', function(e){
+$('#nav-feedback, .cancel-feedback-btn').live('click', function(e){
 	e.preventDefault();
-	if ($('.feedback-modal').hasClass('displaying')){
-		$('.feedback-modal').removeClass('displaying');
-	}
-	else{
-		$('.feedback-modal').addClass('displaying');
-	}
-})
+	$('.feedback-modal').toggleClass('displaying')
+});
 
 $('.submit-feedback-btn').live('click', function(e){
 	e.preventDefault();
 	console.log("in submit feedback");
 	var feedback = $('.feedback-input').val();
+
+	if(feedback == "") {
+		$('.feedback-input').focus().addClass('error').one('webkitAnimationEnd oAnimationEnd animationEnd', function(){
+			$(this).removeClass('error');
+		});
+		return false;
+	}
+
 	var data = {
 		feedback: feedback
 	};
