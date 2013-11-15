@@ -54,6 +54,7 @@ input, textarea, button {
 
 \*-----------------------------------*/
 
+// Clearfix
 .cf:before,
 .cf:after {
   content: " ";
@@ -62,6 +63,24 @@ input, textarea, button {
 
 .cf:after {
 	clear: both;
+}
+
+// Centering in the unknown
+.cn-c {
+	text-align: center;
+
+	&:before {
+		content: '';
+		display: inline-block;
+		height: 100%;
+		vertical-align: middle;
+		margin-right: -.25em;
+	}
+}
+
+.cn-w {
+	display: inline-block;
+	vertical-align: middle;
 }
 
 // Cutting off bottom margins
@@ -97,6 +116,10 @@ input, textarea, button {
 
 .h-m {
 	margin-bottom: $baseline/2;
+}
+
+.m-t {
+	margin-top: $baseline;
 }
 
 [data-placeholder]:empty {
@@ -165,6 +188,8 @@ ul, ol {
 \*-----------------------------------*/
 
 h1, .alpha {
+	letter-spacing: -.05em;
+	font-weight: 700;
 	font-size: 2rem;
 	line-height: 1.5;
 }
@@ -174,6 +199,10 @@ h2, .beta {
 	line-height: 1.2;
 	font-weight: 200;
 	margin-bottom: $baseline/2;
+
+	&.p {
+		margin-bottom: $baseline;
+	}
 }
 
 h3, .gamma {
@@ -187,6 +216,10 @@ h3, .gamma {
 h4, .delta {
 	@extend .gamma;
 	font-size: .8333rem;
+}
+
+.mega {
+	font-size: 6rem;
 }
 
 hr {
@@ -240,10 +273,18 @@ hr {
 
 .img--cropper {
 	overflow: hidden;
+	background-size: cover;
+	background-position: center;
 
 	.img, img {
+		opacity: 0;
 		max-width: 100%;
 	}
+}
+
+.img--sml {
+	width: 2rem;
+	height: 2rem;
 }
 
 .img--med {
@@ -295,6 +336,8 @@ hr {
 
 .toggle-menu {
 	cursor: pointer;
+	color: inherit;
+	text-decoration: none;
 }
 
 /*-----------------------------------*\
@@ -302,14 +345,16 @@ hr {
 \*-----------------------------------*/
 
 .butt {
+	text-decoration: none;
+	color: #333;
 	cursor: pointer;
 	@extend .fix3d;
 	-webkit-appearance: none;
 	appearance: none;
 	border: none;
 	border-radius: .25rem;
-	padding: .25rem .75rem;
-	box-shadow: inset 0 1px rgba(255,255,255,.1), inset 0 0 0 1px rgba(255,255,255,.1), 0 1px 1px rgba(0,0,0,.1);
+	padding: .2rem .75rem .3rem;
+	box-shadow: inset 0 1px rgba(255,255,255,.1), inset 0 0 0 1px rgba(255,255,255,.1), 0 1px 1px rgba(0,0,0,.1), inset 0 0 0 1px rgba(0,0,0,.2);
 	font-weight: 700;
 	background-color: #fff;
 	background-image: linear-gradient(rgba(0,0,0,0), rgba(0,0,0,.1));
@@ -320,21 +365,43 @@ hr {
 	}
 
 	&.butt--primary {
-		background-color: $red;
+		background-color: darken($red, 5%);
 		color: #fff;
 		text-shadow: 0 1px 1px rgba(0,0,0,.1);
 
 		&:active, &:focus {
-			background-color: darken($red, 5%);
+			background-color: darken($red, 10%);
 		}
 	}
 }
 
 .input {
+	background-color: #fff;
+	border: none;
+	padding: .25em;
+	box-shadow: inset 0 2px 5px rgba(0,0,0,.1), inset 0 0 0 1px rgba(0,0,0,.1);
+	border-radius: .25rem;
+
+	&:focus {
+		box-shadow: inset 0 2px 5px rgba(0,0,0,.1), inset 0 0 0 1px rgba(0,0,0,.1), inset 0 0 3px #00aced;
+		outline: none;
+	}
 
 	&.error {
 		animation: shake .4s;
 	}
+}
+
+.in {
+	display: inline-block;
+
+	& + .in {
+		margin-left: .3em;
+	}
+}
+
+.error {
+	color: $red;
 }
 
 /*-----------------------------------*\
@@ -348,6 +415,10 @@ hr {
 /*div*/.wrap {
 	max-width: 40rem;
 	margin: 0 auto;
+
+	&.wrap--small {
+		max-width: 30rem;
+	}
 }
 
 .columns--two {
@@ -403,6 +474,11 @@ html {
 	}
 }
 
+.site__home {
+	background-color: #FFF;
+	background-image: linear-gradient(#F9F6F5, #fff);
+}
+
 /*-----------------------------------*\
 	$HEADER
 \*-----------------------------------*/
@@ -414,6 +490,8 @@ html {
 }
 
 	.site__title {
+		text-decoration: none;
+		color: inherit;
 		padding-left: 2rem;
 		background-image: inline-image("header-db.svg");
 		background-repeat: no-repeat;
@@ -426,6 +504,14 @@ html {
 		font-weight: 700;
 		float: left;
 		margin-bottom: 0;
+
+		&.mega {
+			display: inline-block;
+			float: none;
+			font-size: 6rem;
+			background-size: 6rem;
+			padding-left: 7rem;
+		}
 
 		a {
 			color: inherit;
@@ -605,7 +691,6 @@ html {
 	}
 
 
-.post__new-tagged {
 	.tag {
 		animation: fadeInDown .3s;
 		display: inline-block;
@@ -625,6 +710,12 @@ html {
 			top: -.6rem;
 			right: -.5rem;
 		}
+	}
+
+[data-post-id] {
+	.tag {
+		margin-bottom: 0;
+		margin-top: .75rem;
 	}
 }
 
@@ -724,12 +815,13 @@ html {
 		li {
 			display: inline-block;
 			+ li {
-				margin-left: -.28rem;
+				margin-left: -.25em;
 			}
 			width: 50%;
 			font-family: $freight;
 
 			.butt {
+				box-shadow: none;
 				width: 100%;
 				-webkit-appearance: none;
 				background-color: transparent;
@@ -801,11 +893,12 @@ html {
 		color: rgba(0,0,0,.5);
 		text-align: center;
 		cursor: pointer;
+		text-decoration: none;
 	}
 
 .comments {
 	font-family: $freight;
-	font-size: .7778rem;
+	font-size: .85rem;
 	line-height: 1.3;
 	padding-left: 0;
 	list-style: none;

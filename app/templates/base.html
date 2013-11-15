@@ -1,6 +1,6 @@
 <html>
 	<head>
-	<link rel="stylesheet" href="/static/css/style.css" type="text/css" charset="utf-8" />
+	<link rel="stylesheet" href="/static/css/style.min.css" type="text/css" charset="utf-8" />
 	<link href="//netdna.bootstrapcdn.com/font-awesome/4.0.1/css/font-awesome.css" rel="stylesheet">
 	<script type="text/javascript" src="//use.typekit.net/bgx4jzo.js"></script>
 	<script type="text/javascript">try{Typekit.load();}catch(e){}</script>
@@ -30,7 +30,7 @@
 	<body>
 		<header class="site__header" name="navigation">
 			<div class="wrap island cf">
-				<h1 class="site__title standalone"><a href="{{ url_for('index') }}">Kudos</a></h1>
+				<a class="site__title standalone alpha" href="{{ url_for('index') }}">Kudos</a>
 				<nav class="site__navigation nav">
 					<ul class="standalone">
 						{% if g.user.is_authenticated() %}

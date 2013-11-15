@@ -79,6 +79,26 @@
         {{post_object.body}}
       </blockquote>
 
+      <div class="tag-modal cf" data-post-id="{{post_object.id}}" style="display: none;">
+        <form class="new-tag-form" data-post-id="{{post_object.id}}">
+          <div class="tags" data-post-id="{{post_object.id}}">
+            <div class="post__new-tagged">
+
+            </div>
+            <input type="text" class="spit tag_input input in" data-post-id="{{post_object.id}}" placeholder="Who do you want to thank?"/>
+            <div data-id="_tagsinput" class="tagsinput">
+              <div data-id="_addTag">
+                <input data-id="_tag" class="spit input in" value="" data-default="Who do you want to thank?" /><button type="submit" class="new-tag-btn in butt" data-post-id="{{post_object.id}}">Add tags</button>
+              </div>
+            </div>
+          </div>
+
+          {{ reply_form.hidden_post_id(value=post_object.id) }}
+          {{ new_post_form.hidden_tag_ids (class="hidden_tag_ids", id=post_object.id) }}
+          {{ new_post_form.hidden_tag_text (class="hidden_tag_text", id=post_object.id) }}
+        </form>
+      </div>
+
       <div class="post-author post__meta">
 
         <hr>
@@ -91,50 +111,48 @@
     </div><!-- /.post__content -->
   </div><!-- /.post__container -->
 
-  {% if 0 == 1 %}
-
     <div class="post-metadata post__comments island">
-      {% set comments = post.get('comments')|length %}
-      {% if comments == 1 %}
-        <a class="comment-count">{{comments}} Comment</a>
-      {% else %}
-        <a class="comment-count">{{comments}} Comments</a>
-      {% endif %}
-
-      <!-- show # thanks received only if you're tagged in post or you're author -->
-      {% if g_user_tagged_in_post or g.user.username == post_object.author.username%}
-        {% if post.get('thankers')|length == 1 %}
-          <a class="thank-count">{{post.get('thankers')|length}} Thank</a>
+      <div class="count promo">
+        {% set comments = post.get('comments')|length %}
+        {% if comments == 1 %}
+          <a class="comments__count comment-count">{{comments}} Comment</a>
         {% else %}
-          <a class="thank-count">{{post.get('thankers')|length}} Thanks</a>
+          <a class="comments__count comment-count">{{comments}} Comments</a>
         {% endif %}
-      {% endif %}
+
+        <!-- show # thanks received only if you're tagged in post or you're author -->
+        {% if g_user_tagged_in_post or g.user.username == post_object.author.username%}
+          {% if post.get('thankers')|length == 1 %}
+            <a class="comments__count thank-count">{{post.get('thankers')|length}} Thank</a>
+          {% else %}
+            <a class="comments__count thank-count">{{post.get('thankers')|length}} Thanks</a>
+          {% endif %}
+        {% endif %}
+      </div>
 
       <!--{% include 'thanker-modal.html' with context %}-->
 
       <!-- Display comments on post -->
-      <div class="comments" data-post-id="{{post_object.id}}">
+      <ol class="comments" data-post-id="{{post_object.id}}">
         {% for comment in post.get('comments') %}
 
           {% include 'comment.html' with context %}
 
         {% endfor %}
-      </div>
+      </ol>
 
       <!-- new comment -->
-      <div class="comment-modal" data-post-id="{{post_object.id}}">
+      <div class="comment-modal m-t" data-post-id="{{post_object.id}}" style="display: none">
         <form>
           {{new_post_form.csrf_token}}
-          <div class="new-comment-body" data-post-id="{{post_object.id}}">
-            {{reply_form.reply_body (class="reply-body")}}
-            <button type="button" class="new-comment-btn" name="new_reply_btn" data-post-id="{{post_object.id}}"> reply </button>
+          <div class="new-comment-body cf" data-post-id="{{post_object.id}}">
+            {{reply_form.reply_body (class="reply-body span-all h-m input isle")}}
+            <button type="button" class="f-r butt new-comment-btn" name="new_reply_btn" data-post-id="{{post_object.id}}">Reply</button>
           </div>
         </form>
       </div>
 
     </div><!-- /.post__comments -->
-
-  {% endif %}
 
   <div class="toolbar post__footer">
 <!--
@@ -146,35 +164,6 @@
         <li><span class="butt isle toolbar-button comment-button" data-post-id="{{post_object.id}}"><i class="fa fa-comment"></i> Comment</span></li>
       </ul>
     </nav>
-  </div>
-
-  <div class="tag-modal cf" data-post-id="{{post_object.id}}" style="display: none;">
-    <form class="new-tag-form" data-post-id="{{post_object.id}}">
-      <div class="tags" data-post-id="{{post_object.id}}">
-        <div class="post__new-tagged">
-
-        </div>
-        <input type="text" class="tag_input" data-post-id="{{post_object.id}}" placeholder="tags"/>
-        <div data-id="_tagsinput" class="tagsinput">
-          <div data-id="_addTag">
-            <input data-id="_tag" value="" data-default="add a tag" />
-          </div>
-        </div>
-      </div>
-
-      <button type="submit" class="new-tag-btn" data-post-id="{{post_object.id}}">Submit</button>
-      {{ reply_form.hidden_post_id(value=post_object.id) }}
-      {{ new_post_form.hidden_tag_ids (class="hidden_tag_ids", id=post_object.id) }}
-      {{ new_post_form.hidden_tag_text (class="hidden_tag_text", id=post_object.id) }}
-    </form>
-  </div>
-
-  <div class="comments" data-post-id="{{post_object.id}}">
-    {% for comment in post.get('comments') %}
-
-      {% include 'comment.html' with context %}
-
-    {% endfor %}
   </div>
 
 </li>

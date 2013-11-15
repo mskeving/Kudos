@@ -27,6 +27,9 @@ module.exports = function(grunt) {
 	  },
 	  csso: {
       dist: {
+      	options: {
+      		banner: '/*# sourceMappingURL=style.css.map */'
+      	},
         files: {
         	// Output compressed CSS to style.min.css
           'app/static/css/style.min.css': ['app/static/css/style.css']
