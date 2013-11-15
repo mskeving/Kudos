@@ -253,21 +253,21 @@ $('.new-tag-btn').live('click', function(e) {
 
 	if (tag_ids != ""){
 		var data = {
-		post_id: $(this).data('post-id'),
-		tag_ids: tag_ids,
-		tag_text: tag_text,
-		post_photo_url: post_photo_url,
-		post_text: post_text
+			post_id: $(this).data('post-id'),
+			tag_ids: tag_ids,
+			tag_text: tag_text,
+			post_photo_url: post_photo_url,
+			post_text: post_text
 		};
 
-		$.post('/newtag', data, function(tag_info){
+		$.post('/newtag', data, function(tag_info_json){
 			show_modal(form.parent());
 			$('.tag').remove(); //remove tag spans from input box
 			form.children(".hidden_tag_ids").val(""); //and clear hidden values
 			form.children(".hidden_tag_text").val("");
-			console.log("tag_dict: " + tag_info);
+
 			//turn tag_info json into usable array - avoidable if specify it's json datatype
-			tag_array = jQuery.parseJSON(tag_info);
+			tag_array = jQuery.parseJSON(tag_info_json);
 
 			//DISPLAY USER AVATARS
 			for(var i = 0; i<tag_array.user_tags.length; i++){
@@ -286,6 +286,15 @@ $('.new-tag-btn').live('click', function(e) {
 				console.log("this" + this)
 				form.parent().parent().children(".taggees").children(".avatars").append(new_avatar);
 			}
+
+			console.log('tagged_team_ids tag array' + tag_array.tagged_team_ids)
+			console.log('tagged_user_ids tag array' + tag_array.tagged_user_ids)
+			$.extend(data, {
+				tagged_team_ids: JSON.stringify(tag_array.tagged_team_ids),
+				tagged_user_ids: JSON.stringify(tag_array.tagged_user_ids)
+			});
+			console.log('about to send notifications');
+			send_notifications(data);
 		})
 	}
 

@@ -640,17 +640,10 @@ def add_tag():
 
 	db.session.commit()
 
-	if len(tagged_user_ids) > 0:
-		tagged_users = User.query.filter(User.id.in_(tagged_user_ids)).all()
-		create_notification_for_tagged_users(tagged_users, photo_url, post_text, post_id)
-		create_notification_for_managers(tagged_users, photo_url, post_text, post_id)
-
-	if len(tagged_team_ids) > 0:
-		users_teams_in_tagged_teams = UserTeam.query.filter(UserTeam.team_id.in_(tagged_team_ids)).all()
-		create_notification_for_tagged_teams(users_teams_in_tagged_teams, photo_url, post_text, post_id)
-
 	new_tag_dict['user_tags'] = user_tag_info
 	new_tag_dict['team_tags'] = team_tag_info
+	new_tag_dict['tagged_user_ids'] = tagged_user_ids
+	new_tag_dict['tagged_team_ids'] = tagged_team_ids
 	tag_info_json = json.dumps(new_tag_dict)
 
 	return tag_info_json
