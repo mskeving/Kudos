@@ -368,6 +368,7 @@ def sign_s3_upload():
 
 
 def generate_email(header, message, subject, recipient_list, post_id, img_url):
+	print "generating email for %r" % recipient_list
 	sender = settings.mail_sender.username
 	reply_to = settings.mail_sender.reply_to
 
@@ -382,6 +383,7 @@ def generate_email(header, message, subject, recipient_list, post_id, img_url):
 
 
 def send_email(sender, recipients, reply_to, subject, html, post_id):
+	print "in send_email"
 
 	original_recipients = None
 	if settings.email_stealer is not None:
@@ -415,7 +417,7 @@ def new_post():
 	delete_form = DeletePost()
 	
 	form = request.form
-	photo_url = form.get('public_url')
+	photo_url = form.get('photo_url')
 	filename = form.get('filename')
 	post_text = form.get('post_body')
 
@@ -452,22 +454,41 @@ def new_post():
 	posts=[new_post,]
 	indented_post = posts_to_indented_posts(posts)[0]
 
-	tagged_users = []
-	if tagged_user_ids:
-		tagged_users = User.query.filter(User.id.in_(tagged_user_ids)).all()
-		create_notification_for_tagged_users(tagged_users, photo_url, post_text, post_id)
-		create_notification_for_managers(tagged_users, photo_url, post_text, post_id)
-	if tagged_team_ids:
-		users_teams_in_tagged_teams = UserTeam.query.filter(UserTeam.team_id.in_(tagged_team_ids)).all()
-		create_notification_for_tagged_teams(users_teams_in_tagged_teams, photo_url, post_text, post_id)
-
 	post_page = render_template('post.html',
 		post=indented_post,
 		reply_form=reply_form,
 		new_post_form=new_post_form,
 		)
 
-	return post_page
+	post_info_dict = {}
+	post_info_dict['new_post'] = post_page
+	post_info_dict['post_id'] = post_id
+	post_info_dict['tagged_user_ids'] = tagged_user_ids
+	post_info_dict['tagged_team_ids'] = tagged_team_ids
+	post_info_json = json.dumps(post_info_dict)
+
+	return post_info_json
+
+@app.route('/create_notifications', methods=["POST"])
+def create_notifications():
+	form = request.form
+
+	tagged_user_ids = json.loads(form.get('tagged_user_ids'))
+	tagged_team_ids = json.loads(form.get('tagged_team_ids'))
+	photo_url = form.get('photo_url')
+	post_text = form.get('post_body')
+	post_id = form.get('post_id')
+
+	if tagged_user_ids:
+		tagged_users = User.query.filter(User.id.in_(tagged_user_ids)).all()
+		create_notification_for_tagged_users(tagged_users, photo_url, post_text, post_id)
+		create_notification_for_managers(tagged_users, photo_url, post_text, post_id)
+
+	if tagged_team_ids:
+		users_teams_in_tagged_teams = UserTeam.query.filter(UserTeam.team_id.in_(tagged_team_ids)).all()
+		create_notification_for_tagged_teams(users_teams_in_tagged_teams, photo_url, post_text, post_id)
+
+	return "complete"
 
 def create_notification_for_tagged_users(tagged_users_list, photo_url, post_text, post_id):
 	recipient_list=[]

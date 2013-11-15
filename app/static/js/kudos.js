@@ -479,7 +479,7 @@ function create_post(public_url){
 		return
 	}
 	data = {
-		public_url: public_url,
+		photo_url: public_url,
 		post_body: post_body,
 		hidden_tag_ids: $('.hidden_tag_ids').val(),
 		hidden_tag_text: $('.hidden_tag_text').val()
@@ -489,20 +489,50 @@ function create_post(public_url){
 		type: "POST",
 		url: "/createpost",
 		data: data,
-		success: function(new_post){
-			$('.post-column').prepend(new_post);
+		success: function(response){
+			// response includes post markup, and list of tagged team/user ids
+			$('.post-column').prepend(response.new_post);
 			$('ol.posts .post').first().addClass('post--new-in-stream');
 			clear_post_modal_info();
 			console.log("success! created new post");
 			end_show_progress($('.submit-new-post'));
+
+			tagged_user_ids = response.tagged_user_ids;
+			tagged_team_ids = response.tagged_team_ids;
+			post_id = response.post_id;
+
+			$.extend(data, {
+				post_id: post_id,
+				tagged_team_ids: JSON.stringify(tagged_team_ids),
+				tagged_user_ids: JSON.stringify(tagged_user_ids)
+			})
+
+			send_notifications(data);
+
 		},
 		error: function(resp){
 			console.log("error! no new post created");
 			end_show_progress($('.submit-new-post'));
-		}
+		},
+		dataType:'json'
 	});
 }
 
+function send_notifications(data){
+	// data must include post_id, tagged_team_ids, tagged_user_ids, post_text, photo_url
+	$.ajax({
+		type: "POST",
+		url: "/create_notifications",
+		data: data,
+		success: function(){
+			console.log("success sending email notifications");
+		},
+		error: function(){
+			console.log("failed sending email notifications");
+		}
+	})
+
+}
 
 //REMOVE POST
 $('.remove-post-button').live('click', function(e){
