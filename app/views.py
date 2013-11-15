@@ -1,5 +1,5 @@
 import time, os, json, base64, hmac, urllib, hashlib, random
-
+from collections import defaultdict
 from base64 import b64encode, b64decode
 from settings import settings
 
@@ -390,6 +390,7 @@ def send_email(sender, recipients, reply_to, subject, html):
 
 	def send_async_notification(my_app, msg):
 		with my_app.app_context():
+			print "recipients: %r" % msg.recipients
 			print "sending email but not really"
 			mail.send(msg)
 
@@ -447,15 +448,45 @@ def new_post():
 	posts=[new_post,]
 	indented_post = posts_to_indented_posts(posts)[0]
 
-	#Send email notification to taggees that they've been tagged in a post
-	tagged_users = User.query.filter(User.id.in_(tagged_user_ids))
-	recipient_list=[]
-	for user in tagged_users:
-		recipient_list.append(user.email)
-	subject = "You've received a kudos!"
+	tagged_users = []
+	if tagged_user_ids:
+		tagged_users = User.query.filter(User.id.in_(tagged_user_ids)).all()
 
+	recipient_list=[]
+	manager_to_reports_dict = defaultdict(list)
+	for user_object in tagged_users:
+		manager_to_reports_dict[user_object.manager_id].append(user_object)
+		recipient_list.append(user_object.email)
+
+	#create notification for taggees 
+	subject = "Kudos to you!"
 	header = g.user.firstname + " sent you kudos!"
 	create_notification(header, post_text, subject, recipient_list, post_id, photo_url)
+
+	#create notification for their managers that includes a list of their reports tagged in post
+	manager_ids_list = manager_to_reports_dict.keys()
+
+	if len(manager_ids_list) > 0:
+		manager_objects_to_notify = User.query.filter(User.id.in_(manager_ids_list)).all()
+	else:
+		manager_objects_to_notify = []
+
+	for manager in manager_objects_to_notify:
+		reports_objects = manager_to_reports_dict.get(manager.id)
+		recipient_list = [manager.email]
+		subject = "Kudos to your team members!"
+		header = "Someone on your team received kudos"
+		if len(reports_objects) == 1:
+			header = str(reports_objects[0].firstname) + " was tagged in this post:"
+		elif len(reports_objects) == 2:
+			header = str(reports_objects[0].firstname) + " and " + str(reports_objects[1].firstname) + " were tagged in this post:"
+		elif len(reports_objects) > 2:
+			reports_str = ""
+			for report in reports_objects[:-1]:
+				reports_str += str(report.firstname) + ", "
+			header = reports_str + " and " + str(reports_objects[-1].firstname) + " were tagged in this post:"
+
+		create_notification(header, post_text, subject, recipient_list, post_id, photo_url)
 
 	post_page = render_template('post.html',
 		post=indented_post, 
@@ -570,15 +601,22 @@ def add_tag():
 	if len(tagged_user_ids) > 0:
 		tagged_users = User.query.filter(User.id.in_(tagged_user_ids)).all()
 
-	subject = "You've received a kudos!"
+	subject = "Kudos to you!"
 
 	#send notifcation to users tagged
 	recipient_list = []
+	recipient_manager_ids = []
 	if tagged_users:
 		for user in tagged_users:
 			recipient_list.append(user.email)
-		header = g.user.firstname + " sent you kudos!"
+			recipient_manager_ids.append(user.manager_id)
+		header = g.user.firstname + " sent you kudos"
 		create_notification(header, post_text, subject, recipient_list, post_id, img_url)
+		#send notification to manager
+		recipient_list = []
+		#TODO: search users for user.id.in_(recipient_manager_ids) and send emails to them saying their report was tagged
+		for user in tagged_users:
+			recipient_list.append(user.manager_id)
 
 	#send notifications to teams tagged
 	recipient_list = []
@@ -588,7 +626,8 @@ def add_tag():
 	if users_teams_in_tagged_teams:
 		for user_team in users_teams_in_tagged_teams:
 			recipient_list.append(user_team.user.email)
-		header = g.user.firstname + " sent a kudos to your team!"
+		subject = "Kudos to your team!"
+		header = g.user.firstname + " sent kudos to your team"
 		create_notification(header, post_text, subject, recipient_list, post_id, img_url)	
 
 	tag_info_json = json.dumps(new_tag_dict)
