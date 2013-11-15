@@ -13,22 +13,21 @@
 	</a>
 
 	<div class="user-card__info">
-  	<h2 class="gamma">
+  	<h2 class="gamma standalone">
   		<a href="{{ url_for('user', username=user.username) }}">{{user.firstname}} {{user.lastname}}</a>
   	</h2>
+  	<ul class="user-card__meta sl-l h-m">
+  		{% if user.email %}
+  		<li><small>{{user.email}}</small></li>
+  		{% endif %}
+  		{% if user.phone %}
+  		<li><small>{{user.phone}}</small></li>
+  		{% endif %}
+  	</ul>
   	<div>
-  		<hr>
-  		{{user.firstname}} is on the
-  				<a href="{{ url_for('team', team=user_teams_dict.get(user.id)[-1].team.teamname) }}">{{user_teams_dict.get(user.id)[-1].team.teamname}}</a>
-  		team.
-			<ul class="user-card__meta sl-l standalone">
-				{% if user.email %}
-				<li>{{user.email}}</li>
-				{% endif %}
-				{% if user.phone %}
-				<li>{{user.phone}}</li>
-				{% endif %}
-			</ul>
+  		<hr class="h-m">
+  		<small>{{user.firstname}} is on the
+  				<a href="{{ url_for('team', team=user_teams_dict.get(user.id)[-1].team.teamname) }}">{{user_teams_dict.get(user.id)[-1].team.teamname}}</a>&nbsp;team.</small>
 		</div>
   </div>
 </div>

@@ -63,7 +63,7 @@ function end_show_progress(clicked_element){
 }
 
 function clear_post_modal_info(){
-	$('#post_body').val("");
+	$('#post_body').text("");
 	$('.post-modal .tag_input').importTags('');
 	$('.post__new-tagged span').remove();
 	$('.hidden_tag_ids').val("");
@@ -459,7 +459,6 @@ $(document).ready(function(){
 	tag_input = $('#new-post-tag-input');
 	get_tag_list(tag_input);
 
-	$('#post_body').autogrow();
 });
 
 $('.cancel-new-post').live('click', function(e) {
@@ -472,7 +471,7 @@ $('.cancel-new-post').live('click', function(e) {
 
 function create_post(public_url){
 	collect_tags($('.new-post-form'));
-	post_body = $('#post_body').val();
+	post_body = $('#post_body').text();
 
 	if (!post_body){
 		$('.submit-kudos').addClass('error-post');

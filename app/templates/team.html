@@ -6,35 +6,34 @@
 	{{team}} Team
 </h1>
 
+	<div class="columns--two">
 	{% for user in team_members %}
 
-		<div class="user-card cf isle card p">
+		<div class="user-card isle cf card p card--mini" id="user_info">
+			<a class="b user-card__avatar img--cropper img--med img--med--tall f-l" style="background-image: url({{user.photo}})" href="{{ url_for('user', username=user.username) }}">
+		    <img class="img" src="{{user.photo}}" alt="{{user.username}}" />
+			</a>
 
-			<img class="user-card__avatar img img--lrg f-l" src="/static/img/generic_photo.jpg" alt="{{user.username}}" />
-			<!-- <img src="{{user.photo}}" alt="{{user.username}}" /> -->
-
-		  <div class="user-card__info">
-		  	<h2 class="gamma">{{user.firstname}} {{user.lastname}}</h2>
+			<div class="user-card__info">
+		  	<h2 class="gamma standalone">
+		  		<a href="{{ url_for('user', username=user.username) }}">{{user.firstname}} {{user.lastname}}</a>
+		  	</h2>
+		  	<ul class="user-card__meta sl-l h-m">
+		  		{% if user.email %}
+		  		<li><small>{{user.email}}</small></li>
+		  		{% endif %}
+		  		{% if user.phone %}
+		  		<li><small>{{user.phone}}</small></li>
+		  		{% endif %}
+		  	</ul>
 		  	<div>
-		  		<hr>
-					{% if manager %}
-						<a href="{{url_for('user', username=manager.username) }}"> {{manager.firstname}} {{manager.lastname}}</a> is {{user.firstname}}&rsquo;s lead.
-					{% endif %}
-					<ul class="user-card__meta sl-l standalone">
-						{% if user.email %}
-						<li>{{user.email}}</li>
-						{% endif %}
-						{% if user.phone %}
-						<li>{{user.phone}}</li>
-						{% endif %}
-					</ul>
+		  		<hr class="h-m">
 				</div>
 		  </div>
-
 		</div>
 
 	{% endfor %}
-
+	</div>
 
 	<div class="main-column profile">
 		<div class="post-column">
