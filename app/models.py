@@ -145,7 +145,6 @@ class Tag(db.Model):
 	is_deleted = db.Column(db.Boolean, default=False, nullable=False)
 
 
-
 	
 
 
