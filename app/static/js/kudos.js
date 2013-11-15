@@ -293,6 +293,7 @@ $('.new-tag-btn').live('click', function(e) {
 			console.log('tagged_team_ids tag array' + tag_array.tagged_team_ids)
 			console.log('tagged_user_ids tag array' + tag_array.tagged_user_ids)
 			$.extend(data, {
+				post_text: post_text,
 				tagged_team_ids: JSON.stringify(tag_array.tagged_team_ids),
 				tagged_user_ids: JSON.stringify(tag_array.tagged_user_ids)
 			});
@@ -482,9 +483,9 @@ $(document).ready(function(){
 
 function create_post(public_url){
 	collect_tags($('.new-post-form'));
-	post_body = $('#post_body').text();
+	post_text = $('#post_body').text();
 
-	if (!post_body){
+	if (!post_text){
 		$('.post__new-content').focus().addClass('error').one('webkitAnimationEnd oAnimationEnd animationEnd', function(){
 			$(this).removeClass('error');
 		});
@@ -492,7 +493,7 @@ function create_post(public_url){
 	}
 	data = {
 		photo_url: public_url,
-		post_body: post_body,
+		post_text: post_text,
 		hidden_tag_ids: $('.hidden_tag_ids').val(),
 		hidden_tag_text: $('.hidden_tag_text').val()
 	}

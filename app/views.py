@@ -476,7 +476,7 @@ def create_notifications():
 	tagged_user_ids = json.loads(form.get('tagged_user_ids'))
 	tagged_team_ids = json.loads(form.get('tagged_team_ids'))
 	photo_url = form.get('photo_url')
-	post_text = form.get('post_body')
+	post_text = form.get('post_text')
 	post_id = form.get('post_id')
 
 	if tagged_user_ids:
@@ -595,6 +595,7 @@ def add_tag():
 	form = request.form
 	post_id = form.get("post_id")
 	photo_url = form.get("post_photo_url")
+
 	post_text = form.get("post_text")
 
 	tag_ids = request.form['tag_ids'].split('|')
