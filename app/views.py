@@ -37,11 +37,11 @@ def auth_finish(email, next):
 		return redirect(url_for('login'))
 
 	if len(u) == 0:
-		error_msg = "You're not registered on Dropbox Kudos yet - are you a new Dropboxer? If so, contact team-kudos@dropbox.com to get access."
+		error_msg = "You're not registered on Dropbox Kudos yet - are you a new Dropboxer? If so, contact kudos@dropbox.com to get access."
 		return back_to_login_with_error(error_msg)
 
 	if len(u) > 1:
-		error_msg = "Too many entries for %r in database. Please contact team-kudos@dropbox.com" % cred.id_token.get('email')
+		error_msg = "Too many entries for %r in database. Please contact kudos@dropbox.com" % cred.id_token.get('email')
 		return back_to_login_with_error(error_msg)
 
 	#tell flask to remember that u is current logged in user
