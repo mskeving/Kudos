@@ -1187,7 +1187,7 @@ html {
 @-webkit-keyframes remove-from-stream {
   0% {
     opacity: 1;
-    max-height: 600px;
+    max-height: 1000px;
     -webkit-transform-origin: bottom;
     transform-origin: bottom;
   }
@@ -1206,7 +1206,7 @@ html {
 @keyframes remove-from-stream {
   0% {
     opacity: 1;
-    max-height: 600px;
+    max-height: 1000px;
     -webkit-transform-origin: bottom;
     transform-origin: bottom;
   }
