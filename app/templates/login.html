@@ -1,46 +1,25 @@
-<html>
-	<head>
-		<title>Kudos</title>
-		<link rel="shortcut icon" href="/static/img/favicon.ico">
-		<link rel="stylesheet" href="/static/css/login.css" type="text/css" charset="utf-8" />
-	</head>
-	<body style="background: #d6736c;">
-		<div id="login-page-container">
-	      <div id="login-page">
-	        <div class="logo"><img src="/static/img/kudos_logo.png"/></div>
-	        <div class="content">
-	          	<div>
-	            	<a class="login-button" href="{{auth_url}}">Login with Google</a>
-	            </div>
-	            <div class="login-error">
-		            {% with messages = get_flashed_messages() %}
-					{% if messages%}
-					<ul>
-						{% for message in messages %}
-							<li>{{message}} </li>
-						{% endfor %}
-					</ul>
-					{% endif %}
-					{% endwith %}
-				</div>
-	        </div>
-	       
-	            <ul class=flashes>
-	            
-	              <li style="color:white;">Please log in with your Dropbox email account to view this page.</li>
-	            
-	            </ul>
-	          
-	        
-	      </div>
-	    
-	      <div id="footer">
-	        <ul>
-	          <li class="subheader">Help</li>
-	          <li><a href="mailto:team-kudos@dropbox.com">Email</a></li>
-	          <li>Help Docs</li>
-	        </ul>
-	      </div>
-	    </div>
-	</body>
+<html class="site__home">
+<head>
+	<title>Kudos</title>
+	<link rel="shortcut icon" href="/static/img/favicon.ico">
+	<link rel="stylesheet" href="/static/css/style.min.css" type="text/css" charset="utf-8" />
+	<link href="//netdna.bootstrapcdn.com/font-awesome/4.0.1/css/font-awesome.css" rel="stylesheet">
+	<script type="text/javascript" src="//use.typekit.net/bgx4jzo.js"></script>
+	<script type="text/javascript">try{Typekit.load();}catch(e){}</script>
+	<meta name="viewport" content="initial-scale=1, maximum-scale=1" />
+	<link rel="shortcut icon" href="/static/img/favicon.ico">
+</head>
+<body class="cn-c">
+	<div class="wrap cn-w promo island wrap--small">
+		<div class="p"><h1 class="mega site__title site__title--home">Kudos</h1></div>
+		<p><a class="butt" href="mailto:team-kudos@dropbox.com">Contact Team Kudos</a> <a class="login-button butt butt--primary" href="{{auth_url}}">Login with Google</a></p>
+		{% with messages = get_flashed_messages() %}
+			{% if messages%}
+					{% for message in messages %}
+						<p class="error">{{message}}</p>
+					{% endfor %}
+			{% endif %}
+		{% endwith %}
+	</div>
+</body>
 </html>

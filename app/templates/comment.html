@@ -1,12 +1,9 @@
-<div class="one-comment" data-comment-id="{{comment.id}}">
+<li class="one-comment media cf" data-comment-id="{{comment.id}}">
   <div class="clearfix">
-    <a class="avatar" href="{{ url_for('user', username=comment.author.username) }}">
-      <div class="cropper">
-          <img src="/static/img/generic_photo.jpg" alt="{{comment.author.username}}" />
-          <!-- <img src="{{comment.author.photo}}" alt="{{comment.author.username}}" /> -->
-      </div>
+    <a class="media__img img--cropper img--sml" style="background-image: url({{comment.author.photo}})" href="{{ url_for('user', username=comment.author.username) }}">
+      <img class="img" src="{{comment.author.photo}}" alt="{{comment.author.username}}" />
     </a>
-      <div class="comment-body">
+    <div class="media__content comment__content">
       {{comment.body}}
     </div>
 
@@ -19,4 +16,4 @@
       </div>
     {% endif %}
   </div>
-</div>
+</li>

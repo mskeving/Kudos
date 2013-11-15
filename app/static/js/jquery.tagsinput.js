@@ -158,7 +158,7 @@
 				var id = $(this).attr('id');
 				console.log('id: ' + id)
 				var old = $(this).val().split(delimiter[id]);
-				$('.post__new-tagged .tag').remove();
+				$('.tag').remove();
 				str = '';
 				for (i=0; i< old.length; i++) {
 					if (old[i]!=value) {

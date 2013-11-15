@@ -92,20 +92,23 @@ $('.menu *').live('click', function(){
 	$(this).parents('.menu').children('.toggle-menu').toggleClass('fa-angle-down fa-angle-up');
 });
 
-$('#nav-feedback').live('click', function(e){
+$('#nav-feedback, .cancel-feedback-btn').live('click', function(e){
 	e.preventDefault();
-	if ($('.feedback-modal').hasClass('displaying')){
-		$('.feedback-modal').removeClass('displaying');
-	}
-	else{
-		$('.feedback-modal').addClass('displaying');
-	}
-})
+	$('.feedback-modal').toggleClass('displaying')
+});
 
 $('.submit-feedback-btn').live('click', function(e){
 	e.preventDefault();
 	console.log("in submit feedback");
 	var feedback = $('.feedback-input').val();
+
+	if(feedback == "") {
+		$('.feedback-input').focus().addClass('error').one('webkitAnimationEnd oAnimationEnd animationEnd', function(){
+			$(this).removeClass('error');
+		});
+		return false;
+	}
+
 	var data = {
 		feedback: feedback
 	};
@@ -247,9 +250,9 @@ $('.new-tag-btn').live('click', function(e) {
 	collect_tags(form);
 	tag_ids = form.find('.hidden_tag_ids').val();
 	tag_text = form.find('.hidden_tag_text').val();
-	post_id = form.parent('.tag_modal').parent('.post').attr('data-post-id');
-	post_photo_url = form.closest('.post').closest('.post-photo[data-post-id="' + post_id + '"]').attr('src');
-	post_text = form.parent('.tag-modal').parent('.post').children('.white-card').children('blockquote').text()
+	post_id = form.parents('.post').attr('data-post-id');
+	post_photo_url = form.parents('.post').closest('.post-photo[data-post-id="' + post_id + '"]').attr('src');
+	post_text = form.parents('.post').children('.post__container').children('.post__content').children('.p').text()
 
 	if (tag_ids != ""){
 		var data = {
