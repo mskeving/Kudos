@@ -597,10 +597,6 @@ def add_tag():
 	photo_url = form.get("post_photo_url")
 	post_text = form.get("post_text")
 
-	console.log('post_id %r') % post_id
-	console.log('photo_url %r') % photo_url
-	console.log('post_text %r') % post_text
-
 	tag_ids = request.form['tag_ids'].split('|')
 	tag_text = request.form['tag_text'].split('|')
 
