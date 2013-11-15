@@ -113,16 +113,16 @@
 			// add id to each new tag, specific to person or team tagged
 			if (value !='' && skipTag != true) {
 				console.log('tag_id: ' + tag_id)
-                $('<span>').attr('id',tag_id).addClass('tag').append(
-                    $('<span>').text(value),
-                    $('<a>', {
-                        href  : '#',
-                        title : 'Removing tag',
-                        html  : '<i class="fa fa-times"></i>'
-                    }).addClass('post__remove-tag remove-new-tag').click(function () {
-                        return $('#' + id).removeTag(escape(value));
-                    })
-                ).appendTo('.post__new-tagged');
+        $('<span>').attr('id',tag_id).addClass('tag').append(
+            $('<span>').text(value),
+            $('<a>', {
+                href  : '#',
+                title : 'Removing tag',
+                html  : '<i class="fa fa-times"></i>'
+            }).addClass('post__remove-tag remove-new-tag').click(function () {
+                return $('#' + id).removeTag(escape(value));
+            })
+        ).insertAfter('#' + id + '_addTag');
 
 				tagslist.push(value);
 

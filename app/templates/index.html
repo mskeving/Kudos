@@ -11,6 +11,8 @@
 
 		<hr>
 
+{% if posts %}
+
 		<h2 class="gamma">Recent Posts</h2>
 
 	<ol class="post-column posts">
@@ -20,6 +22,16 @@
 		{% endfor %}
 
 	</ol>
+
+{% else %}
+		<p class="alpha promo faded">Oh no!</p>
+		<p class="beta promo faded">No posts yet. Get to it!</p>
+
+		<ol class="post-column posts">
+		</ol>
+
+{% endif %}
+
 </div>
 
 {% endblock %}

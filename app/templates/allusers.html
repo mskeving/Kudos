@@ -2,42 +2,37 @@
 
 {% block content %}
 
-	
+<h1>All Users</h1>
 
+<div class="columns--two">
 {% for user in all_users %}
 
-<div class="user-info" id="user_info">
-	<div class="user-page-avatars">
-	  	<a class="user-page-avatar" href="{{ url_for('user', username=user.username) }}">
-	      	<div class="cropper">
-	        		<img src="{{user.photo}}" alt="{{user.username}}" />
-		 	</div>
-	 	</a>
-	 </div>
+<div class="user-card isle cf card p card--mini" id="user_info">
+	<a class="b user-card__avatar img--cropper img--med img--med--tall f-l" style="background-image: url({{user.photo}})" href="{{ url_for('user', username=user.username) }}">
+    <img class="img" src="{{user.photo}}" alt="{{user.username}}" />
+	</a>
 
-	<div class="white-card">
-		<a href="{{ url_for('user', username=user.username) }}" class="employee-name">
-			<h2>{{user.firstname}} {{user.lastname}}</h2>
-		</a>
-		<ul>
-		<li>
-			{% for team in user_teams_dict.get(user.id) %}
-				<div>
-					<a href="{{ url_for('team', team=team.team.teamname) }}">{{team.team.teamname}}</a>
-				</div>
-			{% endfor %}
-		</li>
-		<li>{{user.email}}</li>
-		<li>{{user.phone}}</li>
-	</ul>
-
-	</div>
+	<div class="user-card__info">
+  	<h2 class="gamma standalone">
+  		<a href="{{ url_for('user', username=user.username) }}">{{user.firstname}} {{user.lastname}}</a>
+  	</h2>
+  	<ul class="user-card__meta sl-l h-m">
+  		{% if user.email %}
+  		<li><small>{{user.email}}</small></li>
+  		{% endif %}
+  		{% if user.phone %}
+  		<li><small>{{user.phone}}</small></li>
+  		{% endif %}
+  	</ul>
+  	<div>
+  		<hr class="h-m">
+  		<small><a href="{{ url_for('team', team=user_teams_dict.get(user.id)[-1].team.teamname) }}">{{user_teams_dict.get(user.id)[-1].team.teamname}}</a></small>
+		</div>
+  </div>
 </div>
-	
+
 
 {% endfor %}
-
-
-
+</div>
 
 {% endblock %}
