@@ -246,13 +246,13 @@ $('.remove-tag').live('click', function(e) {
 $('.new-tag-btn').live('click', function(e) {
 	e.preventDefault();
 
-	form = $(this).parent('.new-tag-form');
+	form = $(this).parents('.new-tag-form');
 	collect_tags(form);
 	tag_ids = form.find('.hidden_tag_ids').val();
 	tag_text = form.find('.hidden_tag_text').val();
-	post_id = form.parent('.tag_modal').parent('.post').attr('data-post-id');
-	post_photo_url = form.closest('.post').closest('.post-photo[data-post-id="' + post_id + '"]').attr('src');
-	post_text = form.closest('.post').closest('.post__content blockquote').text();
+	post_id = form.parents('.post').attr('data-post-id');
+	post_photo_url = form.parents('.post').closest('.post-photo[data-post-id="' + post_id + '"]').attr('src');
+	post_text = form.parents('.post').children('.post__container').children('.post__content').children('.p').text();
 
 	if (tag_ids != ""){
 		var data = {
