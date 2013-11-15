@@ -2,7 +2,7 @@
 #import newrelic.agent
 #newrelic.agent.initialize('newrelic.ini')
 
-import logging
+import logging.handlers
 from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy 
 import os
@@ -18,7 +18,7 @@ m = settings.mail_sender
 app.config.update(**settings.flask_config)
 app.config.update(
 	SQLALCHEMY_DATABASE_URI=settings.database.url,
-	SQLALCHEMY_ECHO=True,
+	# SQLALCHEMY_ECHO=True,
 	MAIL_SERVER=m.server,
 	MAIL_PORT=m.port,
 	MAIL_USERNAME=m.username,
