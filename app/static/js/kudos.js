@@ -249,7 +249,7 @@ $('.new-tag-btn').live('click', function(e) {
 	tag_text = form.find('.hidden_tag_text').val();
 	post_id = form.parent('.tag_modal').parent('.post').attr('data-post-id');
 	post_photo_url = form.closest('.post').closest('.post-photo[data-post-id="' + post_id + '"]').attr('src');
-	post_text = form.parent('.tag-modal').parent('.post').children('.white-card').children('blockquote').text()
+	post_text = form.closest('.post').closest('.post__content blockquote').text();
 
 	if (tag_ids != ""){
 		var data = {
