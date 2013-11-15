@@ -73,7 +73,7 @@
 
     <div class="post__content cf">
       {% if post_object.photo_link %}
-        <img class="post__photo f-r" src='{{post_object.photo_link}}'>
+        <img class="post__photo f-r" src='{{post_object.photo_link}}' data-post-id="{{post.id}}">
       {% endif %}
       <blockquote class="p {% if not post_object.photo_link %}beta{% endif %}">
         {{post_object.body}}
@@ -89,7 +89,6 @@
 
       </div><!-- /.post__meta -->
     </div><!-- /.post__content -->
-
   </div><!-- /.post__container -->
 
   {% if 0 == 1 %}
@@ -149,10 +148,12 @@
     </nav>
   </div>
 
-  <!-- new tag
-  <div class="tag-modal clearfix" data-post-id="{{post_object.id}}">
+  <div class="tag-modal cf" data-post-id="{{post_object.id}}" style="display: none;">
     <form class="new-tag-form" data-post-id="{{post_object.id}}">
       <div class="tags" data-post-id="{{post_object.id}}">
+        <div class="post__new-tagged">
+
+        </div>
         <input type="text" class="tag_input" data-post-id="{{post_object.id}}" placeholder="tags"/>
         <div data-id="_tagsinput" class="tagsinput">
           <div data-id="_addTag">
@@ -167,5 +168,5 @@
       {{ new_post_form.hidden_tag_text (class="hidden_tag_text", id=post_object.id) }}
     </form>
   </div>
--->
+
 </li>

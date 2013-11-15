@@ -409,6 +409,12 @@ html {
 	@extend .fix3d;
 }
 
+.post__new-content {
+	&.error {
+		animation: shake .75s;
+	}
+}
+
 .post {
 	margin-bottom: 3rem;
 	transition: .3s;
@@ -420,13 +426,43 @@ html {
 		box-shadow: 0 1px 1px rgba(0,0,0,.1), inset 0 0 10px 1px #fff;
 	}
 
+.submit-kudos .post__header-meta {
+	min-height: 1rem;
+}
+
+	.post__tagger {
+		border-radius: 200px;
+		box-shadow: -1px 0px 1px rgba(0,0,0,.05);
+		line-height: 4rem;
+		float: left;
+		margin-top: -3.5rem;
+		margin-left: -2rem;
+		margin-bottom: .75rem;
+		clear: both;
+		z-index: 2;
+
+		border: none;
+		-webkit-appearance: none;
+		background-color: darken(#faf9f7, 5%);
+		color: rgba(0,0,0,.3);
+		padding: $baseline/1.2 $baseline;
+		text-align: left;
+		line-height: 1;
+		min-width: 17rem;
+
+		&:focus {
+			outline: none;
+			background-color: #faf9f7;
+		}
+	}
+
 	.post__thanks-to {
 		margin-top: -3.5rem;
 		margin-left: -2rem;
 		margin-bottom: .5rem;
 		z-index: 1;
 
-		li, .post__tagger {
+		li {
 			background-color: #223;
 			background-color: rgba(0,0,0,.8);
 			border-radius: 200px;
@@ -474,25 +510,6 @@ html {
 				}
 			}
 		}
-
-		.post__tagger {
-			clear: both;
-			z-index: 2;
-
-			border: none;
-			-webkit-appearance: none;
-			background-color: darken(#faf9f7, 5%);
-			color: rgba(0,0,0,.3);
-			padding: $baseline/1.2 $baseline;
-			text-align: left;
-			line-height: 1;
-			min-width: 17rem;
-
-			&:focus {
-				outline: none;
-				background-color: #faf9f7;
-			}
-		}
 	}
 
 	.post__remove-tag {
@@ -525,7 +542,7 @@ html {
 		background-color: darken($cream, 20%);
 		border-radius: .25em;
 		margin-right: .75rem;
-		margin-top: .75rem;
+		margin-bottom: .75rem;
 		color: #fff;
 		text-shadow: 0 1px 1px rgba(0,0,0,.1);
 		font-family: $freight;
@@ -652,9 +669,8 @@ html {
 				transition: .3s;
 				perspective: 250px;
 				&:focus {
-					outline: none;
-					box-shadow: inset 0 0 1px 1px transparentize($red, .5);
-					color: $red;
+					outline: 1px dotted;
+					outline-offset: -1px;
 				}
 
 				&:active, &:active:focus {
@@ -873,6 +889,12 @@ html {
 		transform: none;
 		opacity: 1;
 	}
+}
+
+@keyframes shake {
+        0%, 100% {transform: translateX(0);}
+        10%, 30%, 50%, 70%, 90% {transform: translateX(-10px);}
+        20%, 40%, 60%, 80% {transform: translateX(10px);}
 }
 
 /*-----------------------------------*\

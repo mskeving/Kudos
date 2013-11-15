@@ -437,6 +437,11 @@ html {
   perspective: 2000px;
 }
 
+.post__new-content.error {
+  -webkit-animation: shake .75s;
+  animation: shake .75s;
+}
+
 .post {
   margin-bottom: 3rem;
   -webkit-transition: .3s;
@@ -451,6 +456,36 @@ html {
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1), inset 0 0 10px 1px white;
 }
 
+.submit-kudos .post__header-meta {
+  min-height: 1rem;
+}
+
+.post__tagger {
+  border-radius: 200px;
+  -webkit-box-shadow: -1px 0px 1px rgba(0, 0, 0, 0.05);
+  box-shadow: -1px 0px 1px rgba(0, 0, 0, 0.05);
+  line-height: 4rem;
+  float: left;
+  margin-top: -3.5rem;
+  margin-left: -2rem;
+  margin-bottom: .75rem;
+  clear: both;
+  z-index: 2;
+  border: none;
+  -webkit-appearance: none;
+  background-color: #f0ede7;
+  color: rgba(0, 0, 0, 0.3);
+  padding: 1.25rem 1.5rem;
+  text-align: left;
+  line-height: 1;
+  min-width: 17rem;
+}
+
+.post__tagger:focus {
+  outline: none;
+  background-color: #faf9f7;
+}
+
 .post__thanks-to {
   margin-top: -3.5rem;
   margin-left: -2rem;
@@ -458,8 +493,7 @@ html {
   z-index: 1;
 }
 
-.post__thanks-to li,
-.post__thanks-to .post__tagger {
+.post__thanks-to li {
   background-color: #223;
   background-color: rgba(0, 0, 0, 0.8);
   border-radius: 200px;
@@ -470,19 +504,16 @@ html {
   float: left;
 }
 
-.post__thanks-to li + li,
-.post__thanks-to .post__tagger + li {
+.post__thanks-to li + li {
   margin-left: .25rem;
 }
 
-.post__thanks-to li:first-child,
-.post__thanks-to .post__tagger:first-child {
+.post__thanks-to li:first-child {
   -webkit-box-shadow: -1px 0px 1px rgba(0, 0, 0, 0.05);
   box-shadow: -1px 0px 1px rgba(0, 0, 0, 0.05);
 }
 
-.post__thanks-to li img,
-.post__thanks-to .post__tagger img {
+.post__thanks-to li img {
   position: absolute;
   top: 0;
   min-width: 100%;
@@ -490,13 +521,11 @@ html {
   min-height: 100%;
 }
 
-.post__thanks-to li .post__no-tags,
-.post__thanks-to .post__tagger .post__no-tags {
+.post__thanks-to li .post__no-tags {
   font-size: 2rem;
 }
 
-.post__thanks-to li a,
-.post__thanks-to .post__tagger a {
+.post__thanks-to li a {
   overflow: hidden;
   display: block;
   color: #fff;
@@ -510,27 +539,8 @@ html {
   background-position: center top;
 }
 
-.post__thanks-to li a img,
-.post__thanks-to .post__tagger a img {
+.post__thanks-to li a img {
   opacity: 0;
-}
-
-.post__thanks-to .post__tagger {
-  clear: both;
-  z-index: 2;
-  border: none;
-  -webkit-appearance: none;
-  background-color: #f0ede7;
-  color: rgba(0, 0, 0, 0.3);
-  padding: 1.25rem 1.5rem;
-  text-align: left;
-  line-height: 1;
-  min-width: 17rem;
-}
-
-.post__thanks-to .post__tagger:focus {
-  outline: none;
-  background-color: #faf9f7;
 }
 
 .post__remove-tag {
@@ -565,7 +575,7 @@ html {
   background-color: #c0af9e;
   border-radius: .25em;
   margin-right: .75rem;
-  margin-top: .75rem;
+  margin-bottom: .75rem;
   color: #fff;
   text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
   font-family: freight-sans-pro, sans-serif;
@@ -705,10 +715,8 @@ html {
 }
 
 .post__actions li .butt:focus {
-  outline: none;
-  -webkit-box-shadow: inset 0 0 1px 1px rgba(243, 96, 98, 0.5);
-  box-shadow: inset 0 0 1px 1px rgba(243, 96, 98, 0.5);
-  color: #f36062;
+  outline: 1px dotted;
+  outline-offset: -1px;
 }
 
 .post__actions li .butt:active,
@@ -1053,6 +1061,40 @@ html {
     -webkit-transform: none;
     transform: none;
     opacity: 1;
+  }
+}
+
+@-webkit-keyframes shake {
+  0%, 100% {
+    -webkit-transform: translateX(0);
+    transform: translateX(0);
+  }
+
+  10%, 30%, 50%, 70%, 90% {
+    -webkit-transform: translateX(-10px);
+    transform: translateX(-10px);
+  }
+
+  20%, 40%, 60%, 80% {
+    -webkit-transform: translateX(10px);
+    transform: translateX(10px);
+  }
+}
+
+@keyframes shake {
+  0%, 100% {
+    -webkit-transform: translateX(0);
+    transform: translateX(0);
+  }
+
+  10%, 30%, 50%, 70%, 90% {
+    -webkit-transform: translateX(-10px);
+    transform: translateX(-10px);
+  }
+
+  20%, 40%, 60%, 80% {
+    -webkit-transform: translateX(10px);
+    transform: translateX(10px);
   }
 }
 

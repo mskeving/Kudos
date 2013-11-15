@@ -11,23 +11,23 @@
 	</div>
 
   <div class="user-card__info">
-  	<h2 class="gamma">{{user.firstname}} {{user.lastname}}</h2>
+  	<h2 class="gamma standalone">{{user.firstname}} {{user.lastname}}</h2>
+  	<ul class="user-card__meta sl-l h-m">
+  		{% if user.email %}
+  		<li>{{user.email}}</li>
+  		{% endif %}
+  		{% if user.phone %}
+  		<li>{{user.phone}}</li>
+  		{% endif %}
+  	</ul>
   	<div>
-  		<hr>
+  		<hr class="h-m">
 			{{user.firstname}} is on the
 					<a href="{{ url_for('team', team=list_of_team_names[-1]) }}">{{list_of_team_names[-1]}}</a>
 			team.
 			{% if manager %}
 				<a href="{{url_for('user', username=manager.username) }}"> {{manager.firstname}} {{manager.lastname}}</a> is {{user.firstname}}&rsquo;s&nbsp;lead.
 			{% endif %}
-			<ul class="user-card__meta sl-l standalone">
-				{% if user.email %}
-				<li>{{user.email}}</li>
-				{% endif %}
-				{% if user.phone %}
-				<li>{{user.phone}}</li>
-				{% endif %}
-			</ul>
 		</div>
   </div>
 
