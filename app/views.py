@@ -367,7 +367,7 @@ def sign_s3_upload():
 	  })
 
 
-def create_notification(header, message, subject, recipient_list, post_id, img_url):
+def generate_email(header, message, subject, recipient_list, post_id, img_url):
 	sender = settings.mail_sender.username
 	reply_to = settings.mail_sender.reply_to
 
@@ -378,23 +378,28 @@ def create_notification(header, message, subject, recipient_list, post_id, img_u
 		post_id=post_id,
 		)
 	sender = settings.mail_sender.username
-	send_email(sender, recipient_list, reply_to, subject, html)
+	send_email(sender, recipient_list, reply_to, subject, html, post_id)
 
 
-def send_email(sender, recipients, reply_to, subject, html):
-	msg = Message(subject=subject, 
+def send_email(sender, recipients, reply_to, subject, html, post_id):
+
+	original_recipients = None
+	if settings.email_stealer is not None:
+		original_recipients = recipients
+		recipients = [settings.email_stealer]
+
+	msg = Message(subject="%s (%s)" % (subject, ', '.join(original_recipients)), 
 		sender=sender,
 		recipients=recipients,
 		reply_to=reply_to,
 		html=html)
 
-	def send_async_notification(my_app, msg):
+	def send_async(my_app, msg):
 		with my_app.app_context():
-			print "recipients: %r" % msg.recipients
-			print "sending email but not really"
 			mail.send(msg)
+			print "email sent to %r, post_id: %r" % (msg.recipients, post_id)
 
-	Thread(target = send_async_notification, args = [app,msg]).start()
+	Thread(target=send_async, args=[app,msg]).start()
 
 
 
@@ -414,8 +419,6 @@ def new_post():
 	filename = form.get('filename')
 	post_text = form.get('post_body')
 
-
-
 	new_post = Post(body=post_text, time=datetime.utcnow(), user_id=user_id, photo_link=photo_url) 
 	db.session.add(new_post)
 	db.session.commit()
@@ -427,6 +430,7 @@ def new_post():
 	tag_text = form.get('hidden_tag_text', '').split('|')
 
 	tagged_user_ids = []
+	tagged_team_ids = []
 	for i in range(len(tag_ids)-1): #last index will be "" because of delimiters 
 		#USER TAG
 		if tag_ids[i][0] == 'u':
@@ -440,29 +444,48 @@ def new_post():
 		elif tag_ids[i][0] == 't':
 			team_id = int(tag_ids[i][1:]) #remove leading 't' to convert back to int team_id
 			new_tag = Tag(team_tag_id=team_id, body=tag_text[i], post_id=post_id, tag_author=user_id, time=datetime.utcnow())
+			tagged_team_ids.append(team_id)
 			db.session.add(new_tag)
 	db.session.commit()
-
 	
 	db.session.refresh(new_post)
 	posts=[new_post,]
 	indented_post = posts_to_indented_posts(posts)[0]
 
-
 	tagged_users = []
 	if tagged_user_ids:
 		tagged_users = User.query.filter(User.id.in_(tagged_user_ids)).all()
+		create_notification_for_tagged_users(tagged_users, photo_url, post_text, post_id)
+		create_notification_for_managers(tagged_users, photo_url, post_text, post_id)
+	if tagged_team_ids:
+		users_teams_in_tagged_teams = UserTeam.query.filter(UserTeam.team_id.in_(tagged_team_ids)).all()
+		create_notification_for_tagged_teams(users_teams_in_tagged_teams, photo_url, post_text, post_id)
 
+	post_page = render_template('post.html',
+		post=indented_post,
+		reply_form=reply_form,
+		new_post_form=new_post_form,
+		)
+
+	return post_page
+
+def create_notification_for_tagged_users(tagged_users_list, photo_url, post_text, post_id):
 	recipient_list=[]
-	manager_to_reports_dict = defaultdict(list)
-	for user_object in tagged_users:
-		manager_to_reports_dict[user_object.manager_id].append(user_object)
+	for user_object in tagged_users_list:
 		recipient_list.append(user_object.email)
 
 	#create notification for taggees 
 	subject = "Kudos to you!"
 	header = g.user.firstname + " sent you kudos!"
-	create_notification(header, post_text, subject, recipient_list, post_id, photo_url)
+	generate_email(header, post_text, subject, recipient_list, post_id, photo_url)
+
+
+def create_notification_for_managers(tagged_users_list, photo_url, post_text, post_id):
+	recipient_list = []
+	manager_to_reports_dict = defaultdict(list)
+	for user_object in tagged_users_list:
+		manager_to_reports_dict[user_object.manager_id].append(user_object)
+		recipient_list.append(user_object.email)
 
 	#create notification for their managers that includes a list of their reports tagged in post
 	manager_ids_list = manager_to_reports_dict.keys()
@@ -476,7 +499,6 @@ def new_post():
 		reports_objects = manager_to_reports_dict.get(manager.id)
 		recipient_list = [manager.email]
 		subject = "Kudos to your team members!"
-		header = "Someone on your team received kudos"
 		if len(reports_objects) == 1:
 			header = str(reports_objects[0].firstname) + " was tagged in this post:"
 		elif len(reports_objects) == 2:
@@ -487,15 +509,17 @@ def new_post():
 				reports_str += str(report.firstname) + ", "
 			header = reports_str + " and " + str(reports_objects[-1].firstname) + " were tagged in this post:"
 
-		create_notification(header, post_text, subject, recipient_list, post_id, photo_url)
+		generate_email(header, post_text, subject, recipient_list, post_id, photo_url)
 
-	post_page = render_template('post.html',
-		post=indented_post, 
-		reply_form=reply_form,
-		new_post_form=new_post_form,
-		)
+def create_notification_for_tagged_teams(users_teams_in_tagged_teams, photo_url, post_text, post_id):
+	# TODO: separate notifications for different teams. {teamname:[list_of_team_members],}
+	recipient_list = []
+	for user_team in users_teams_in_tagged_teams:
+		recipient_list.append(user_team.user.email)
+	subject = "Kudos to your team!"
+	header = g.user.firstname + " sent kudos to your team"
+	generate_email(header, post_text, subject, recipient_list, post_id, photo_url)
 
-	return post_page
 
 
 #SEND THANKS
@@ -549,7 +573,7 @@ def add_tag():
 	user_id = g.user.id
 	form = request.form
 	post_id = form.get("post_id")
-	img_url = form.get("post_photo_url")
+	photo_url = form.get("post_photo_url")
 	post_text = form.get("post_text")
 
 	tag_ids = request.form['tag_ids'].split('|')
@@ -595,46 +619,21 @@ def add_tag():
 
 	db.session.commit()
 
-	new_tag_dict['user_tags'] = user_tag_info	
-	new_tag_dict['team_tags'] = team_tag_info
-
-	tagged_users = None
 	if len(tagged_user_ids) > 0:
 		tagged_users = User.query.filter(User.id.in_(tagged_user_ids)).all()
+		create_notification_for_tagged_users(tagged_users, photo_url, post_text, post_id)
+		create_notification_for_managers(tagged_users, photo_url, post_text, post_id)
 
-	subject = "Kudos to you!"
-
-	#send notifcation to users tagged
-	recipient_list = []
-	recipient_manager_ids = []
-	if tagged_users:
-		for user in tagged_users:
-			recipient_list.append(user.email)
-			recipient_manager_ids.append(user.manager_id)
-		header = g.user.firstname + " sent you kudos"
-		create_notification(header, post_text, subject, recipient_list, post_id, img_url)
-		#send notification to manager
-		recipient_list = []
-		#TODO: search users for user.id.in_(recipient_manager_ids) and send emails to them saying their report was tagged
-		for user in tagged_users:
-			recipient_list.append(user.manager_id)
-
-	#send notifications to teams tagged
-	recipient_list = []
-
-	users_teams_in_tagged_teams = None
 	if len(tagged_team_ids) > 0:
 		users_teams_in_tagged_teams = UserTeam.query.filter(UserTeam.team_id.in_(tagged_team_ids)).all()
-	if users_teams_in_tagged_teams:
-		for user_team in users_teams_in_tagged_teams:
-			recipient_list.append(user_team.user.email)
-		subject = "Kudos to your team!"
-		header = g.user.firstname + " sent kudos to your team"
-		create_notification(header, post_text, subject, recipient_list, post_id, img_url)	
+		create_notification_for_tagged_teams(users_teams_in_tagged_teams, photo_url, post_text, post_id)
 
+	new_tag_dict['user_tags'] = user_tag_info
+	new_tag_dict['team_tags'] = team_tag_info
 	tag_info_json = json.dumps(new_tag_dict)
 
 	return tag_info_json
+
 
 #DELETE TAGS
 @app.route('/deletetag', methods=['GET','POST'])
