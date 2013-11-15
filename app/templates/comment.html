@@ -9,11 +9,7 @@
 
     <a href="{{ url_for('user', username=comment.author.username) }}" class="comment-author">{{comment.author.firstname}} {{comment.author.lastname}}</a>
     {% if comment.author.username == g.user.username %}
-      <div class="remove-comment" data-comment-id="{{comment.id}}">
-        <a>
-          Remove
-        </a>
-      </div>
+      <a href="#" class="f-r remove-comment" data-comment-id="{{comment.id}}">Remove</a>
     {% endif %}
   </div>
 </li>

@@ -232,7 +232,9 @@ $('.remove-tag').live('click', function(e) {
 		url: '/deletetag',
 		data: data,
 		success: function(status){
-			avatar.remove();
+			avatar.addClass('tag--removing').one('webkitAnimationEnd oAnimationEnd animationEnd', function(){
+				avatar.remove();
+			})
 		},
 		error: function(){
 			console.log("error removing tag");
@@ -277,15 +279,15 @@ $('.new-tag-btn').live('click', function(e) {
 				var username = $.trim(tag_array.user_tags[i].username);
 				var user_id = tag_array.user_tags[i].user_id;
 				var photo = tag_array.user_tags[i].photo;
-				var new_avatar = $('<li><a class="avatar" href="/user/' + username + '"><img src=' + photo +' alt=' + username + '></a></li>');
-				form.parent().parent().children(".taggees").children(".avatars").append(new_avatar);
+				var new_avatar = $('<li><a class="avatar" style="background-image: url(' + photo + ')" href="/user/' + username + '"><img src=' + photo +' alt=' + username + '></a></li>');
+				form.parents('.post__container').children('.post__header-meta').children(".taggees").children(".avatars").append(new_avatar);
 			}
 
 			//DISPLAY TEAM AVATARS
 			for(var i = 0; i<tag_array.team_tags.length; i++){
 				var teamname = tag_array.team_tags[i].teamname;
 				var photo = tag_array.team_tags[i].photo;
-				var new_avatar = $('<li><a class="avatar" href="/team/' + teamname + '""><img src=' + photo +' alt=' + teamname + '></a></li>');
+				var new_avatar = $('<li><a class="avatar" style="background-image: url(/static/img/team_photo.jpg)" href="/team/' + teamname + '""><img src=' + photo +' alt=' + teamname + '></a></li>');
 				console.log("this" + this)
 				form.parent().parent().children(".taggees").children(".avatars").append(new_avatar);
 			}
@@ -379,6 +381,11 @@ $('.new-comment-btn').live('click', function(e){
 		}
 	});
 })
+
+$('.comment-count').live('click', function() {
+	var id = $(this).parents('.post').attr('data-post-id');
+	$('.comments[data-post-id=' + id + ']').toggle();
+});
 
 
 function change_count(jquery_selector, add_value){
