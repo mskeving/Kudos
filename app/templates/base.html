@@ -31,19 +31,23 @@
 		<header class="site__header" name="navigation">
 			<div class="wrap island cf">
 				<a class="site__title standalone alpha" href="{{ url_for('index') }}">Kudos</a>
-				<nav class="site__navigation nav">
-					<ul class="standalone">
-						{% if g.user.is_authenticated() %}
-						<!-- If user is logged in, allow them to logout -->
-						<li><a href="{{ url_for('user', username = g.user.username) }}">Your Profile</a></li>
-						<li><a href="{{ url_for('all_users') }}">All Users</a></li>
-						<li><a href="{{ url_for('logout') }}">Logout</a></li>
-						<li id="nav-feedback"><a href="#">Feedback</a></li>
-						{% endif %}
-					</ul>
-				</nav>
+
+				<a class="f-r" href="{{ url_for('logout') }}">Logout</a>
 			</div>
 		</header>
+
+		<nav class="site__navigation nav">
+			<div class="isle wrap">
+				<ul class="standalone">
+					{% if g.user.is_authenticated() %}
+					<!-- If user is logged in, allow them to logout -->
+					<li><a href="{{ url_for('user', username = g.user.username) }}">Your Profile</a></li>
+					<li><a href="{{ url_for('all_users') }}">All Dropboxers</a></li>
+					<li id="nav-feedback"><a href="#">Feedback</a></li>
+					{% endif %}
+				</ul>
+			</div>
+		</nav>
 
 		<div class="feedback-modal">
 			{% include 'feedback-modal.html' with context %}

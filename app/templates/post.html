@@ -101,7 +101,6 @@
 
       <div class="post-author post__meta">
 
-        <hr>
         <small>
           Posted by <a href="{{ url_for('user', username=post_object.author.username) }}">{{post_object.author.firstname}} {{post_object.author.lastname}}</a>,
           <a href="{{ url_for('team', team=post.get('author_teams')[0].teamname)}}">{{post.get('author_teams')[0].teamname}}</a>
@@ -112,28 +111,28 @@
   </div><!-- /.post__container -->
 
     <div class="post-metadata post__comments island">
-      <div class="count promo">
+      <div class="count cf">
+        <!-- show # thanks received only if you're tagged in post or you're author -->
+        {% if g_user_tagged_in_post or g.user.username == post_object.author.username%}
+          {% if post.get('thankers')|length == 1 %}
+            <a class="comments__count thank-count">{{post.get('thankers')|length}} Thank</a>,
+          {% else %}
+            <a class="comments__count thank-count">{{post.get('thankers')|length}} Thanks</a>,
+          {% endif %}
+        {% endif %}
+
         {% set comments = post.get('comments')|length %}
         {% if comments == 1 %}
           <a class="comments__count comment-count">{{comments}} Comment</a>
         {% else %}
           <a class="comments__count comment-count">{{comments}} Comments</a>
         {% endif %}
-
-        <!-- show # thanks received only if you're tagged in post or you're author -->
-        {% if g_user_tagged_in_post or g.user.username == post_object.author.username%}
-          {% if post.get('thankers')|length == 1 %}
-            <a class="comments__count thank-count">{{post.get('thankers')|length}} Thank</a>
-          {% else %}
-            <a class="comments__count thank-count">{{post.get('thankers')|length}} Thanks</a>
-          {% endif %}
-        {% endif %}
       </div>
 
       <!--{% include 'thanker-modal.html' with context %}-->
 
       <!-- Display comments on post -->
-      <ol class="comments" data-post-id="{{post_object.id}}">
+      <ol class="comments standalone" data-post-id="{{post_object.id}}" style="display: none">
         {% for comment in post.get('comments') %}
 
           {% include 'comment.html' with context %}
