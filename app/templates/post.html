@@ -113,13 +113,11 @@
     <div class="post-metadata post__comments island">
       <div class="count cf">
         <!-- show # thanks received only if you're tagged in post or you're author -->
-        {% if g_user_tagged_in_post or g.user.username == post_object.author.username%}
           {% if post.get('thankers')|length == 1 %}
             <a class="comments__count thank-count">{{post.get('thankers')|length}} Thank</a>,
           {% else %}
             <a class="comments__count thank-count">{{post.get('thankers')|length}} Thanks</a>,
           {% endif %}
-        {% endif %}
 
         {% set comments = post.get('comments')|length %}
         {% if comments == 1 %}
