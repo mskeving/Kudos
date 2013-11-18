@@ -642,6 +642,10 @@ html {
 			line-height: 4rem;
 			float: left;
 
+			@media (max-width: 600px) {
+				line-height: 3rem;
+			}
+
 			& + li {
 				margin-left: .25rem;
 			}
@@ -660,6 +664,10 @@ html {
 
 			.post__no-tags {
 				font-size: 2rem;
+
+				@media (max-width: 600px) {
+					font-size: 1.5rem;
+				}
 			}
 
 			a {
@@ -674,6 +682,11 @@ html {
 				height: 4rem;
 				background-size: cover;
 				background-position: center top;
+
+				@media (max-width: 600px) {
+					width: 3rem;
+					height: 3rem;
+				}
 
 				img {
 					opacity: 0;
@@ -793,7 +806,7 @@ html {
 				border-radius: .25rem .25rem 0 0;
 				max-width: calc(100% + 3rem);
 				width: calc(100% + 3rem);
-				margin: calc(-2.25rem) calc(-1.5rem) 1.5rem;
+				margin: calc(-1.8rem) calc(-1.5rem) 1.5rem;
 			}
 		}
 
@@ -824,9 +837,8 @@ html {
 		border-radius: 0 0 .25rem .25rem;
 		li {
 			display: inline-block;
-			+ li {
-				margin-left: -.25em;
-			}
+			margin-right: -.25em;
+			margin-left: -1px;
 			width: 50%;
 
 			.butt {

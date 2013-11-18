@@ -685,6 +685,12 @@ html {
   float: left;
 }
 
+@media (max-width: 600px) {
+  .post__thanks-to li {
+    line-height: 3rem;
+  }
+}
+
 .post__thanks-to li + li {
   margin-left: .25rem;
 }
@@ -706,6 +712,12 @@ html {
   font-size: 2rem;
 }
 
+@media (max-width: 600px) {
+  .post__thanks-to li .post__no-tags {
+    font-size: 1.5rem;
+  }
+}
+
 .post__thanks-to li a {
   overflow: hidden;
   display: block;
@@ -718,6 +730,13 @@ html {
   height: 4rem;
   background-size: cover;
   background-position: center top;
+}
+
+@media (max-width: 600px) {
+  .post__thanks-to li a {
+    width: 3rem;
+    height: 3rem;
+  }
 }
 
 .post__thanks-to li a img {
@@ -841,8 +860,8 @@ html {
     max-width: calc(100% + 3rem);
     width: -webkit-calc(100% + 3rem);
     width: calc(100% + 3rem);
-    margin: -webkit-calc(-2.25rem) -webkit-calc(-1.5rem) 1.5rem;
-    margin: calc(-2.25rem) calc(-1.5rem) 1.5rem;
+    margin: -webkit-calc(-1.8rem) -webkit-calc(-1.5rem) 1.5rem;
+    margin: calc(-1.8rem) calc(-1.5rem) 1.5rem;
   }
 }
 
@@ -875,11 +894,9 @@ html {
 
 .post__actions li {
   display: inline-block;
+  margin-right: -.25em;
+  margin-left: -1px;
   width: 50%;
-}
-
-.post__actions li + li {
-  margin-left: -.25em;
 }
 
 .post__actions li .butt {
