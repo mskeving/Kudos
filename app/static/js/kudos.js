@@ -489,23 +489,27 @@ $(document).ready(function(){
 
 
 function create_post(public_url){
-	collect_tags($('.new-post-form'));
 	post_text = $('#post_body').text();
+
+	data = {
+		photo_url: public_url,
+		post_text: post_text
+	};
 
 	if (!post_text){
 		$('.post__new-content').focus().addClass('error').one('webkitAnimationEnd oAnimationEnd animationEnd', function(){
 			$(this).removeClass('error');
 		});
-		return
+		return;
 	}
 
+	collect_tags($('.new-post-form'));
 
-	data = {
-		photo_url: public_url,
-		post_text: post_text,
+	$.extend(data, {
 		hidden_tag_ids: $('.hidden_tag_ids').val(),
 		hidden_tag_text: $('.hidden_tag_text').val()
-	}
+	});
+
 	show_progress($('.submit-new-post'));
 	$.ajax({
 		type: "POST",
