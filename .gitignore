@@ -13,9 +13,7 @@ employee_data_10_10_13.csv
 /settings.py
 
 get_dropbook_data.py
-employee_data_10_30_13.csv
-employee_data_hire_date9.csv
-employee_data_test.csv
+*.csv
 
 newrelic.ini
 
