@@ -4,12 +4,9 @@ app.db
 tmp/
 db_repository/
 heroku_only/
-app.db
-css help.rtf
 user_data.rtf
 dropbox to hackbright.rtf
 install_instructions.rtf
-employee_data_10_10_13.csv
 /settings.py
 
 get_dropbook_data.py
@@ -22,10 +19,13 @@ newrelic.ini
 /app/static/hackbright_users.txt
 flask/*
 .DS_Store
-/app/static/css/img/missy.psd
 
 /heroku-build-output
 /heroku-settings.py
+/heroku-test-build-output
+heroku-test-build
+heroku-test-push
+heroku-test-settings.py
 
 # Design-related dirs/files to ignore
 .sass-cache

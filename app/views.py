@@ -44,6 +44,10 @@ def auth_finish(email, next):
 		error_msg = "Too many entries for %r in database. Please contact kudos@dropbox.com" % cred.id_token.get('email')
 		return back_to_login_with_error(error_msg)
 
+	if u[0].is_deleted == True:
+		error_msg = "Looks like you no longer have access to Dropbox Kudos. If you think this is in error, contact kudos@dropbox.com to get access."
+		return back_to_login_with_error(error_msg)
+
 	#tell flask to remember that u is current logged in user
 	login_user(u[0], remember=True)
 
@@ -120,7 +124,7 @@ def index():
 	delete_form = DeletePost()
 
 	#query for all parent posts
-	posts = Post.query.filter(Post.parent_post_id==None).order_by(Post.time.desc()).limit(3).all()
+	posts = Post.query.filter(and_(Post.parent_post_id==None, Post.is_deleted==False)).order_by(Post.time.desc()).limit(3).all()
 
 	if posts != None:
 		indented_posts = posts_to_indented_posts(posts)
@@ -146,7 +150,7 @@ def get_more_posts():
 	last_post_id = form.get('last_post_id')
 
 	#older posts will have smaller post_id
-	total_posts_left = db.session.query(Post).filter(and_(Post.parent_post_id==None, Post.id<last_post_id)).all()
+	total_posts_left = db.session.query(Post).filter(and_(Post.parent_post_id==None, Post.is_deleted==False, Post.id<last_post_id)).all()
 
 	posts_to_display = []
 	count_total_posts_left = len(total_posts_left)
@@ -177,8 +181,8 @@ def create_tag_list():
 	form = request.form
 	post_id = form.get('post_id')
 
-	user_tags = db.session.query(User).all()
-	team_tags = db.session.query(Team).all()
+	user_tags = User.query.filter_by(is_deleted=False).all()
+	team_tags = Team.query.filter_by(is_deleted=False).all()
 	all_tags = user_tags + team_tags
 
 	used_tags_dict = {}
@@ -385,12 +389,12 @@ def generate_email(header, message, subject, recipient_list, post_id, img_url):
 def send_email(sender, recipients, reply_to, subject, html, post_id):
 	print "in send_email"
 
-	original_recipients = None
 	if settings.email_stealer is not None:
-		original_recipients = recipients
+		subject = "%s (%s)" % (subject, ', '.join(recipients))
 		recipients = [settings.email_stealer]
 
-	msg = Message(subject="%s (%s)" % (subject, ', '.join(original_recipients)), 
+	msg = Message(
+		subject=subject, 
 		sender=sender,
 		recipients=recipients,
 		reply_to=reply_to,
@@ -712,20 +716,18 @@ def delete_post():
 	form = request.form
 	post_id = form.get('post_id')
 
-	delete_post = db.session.query(Post).filter_by(id=post_id).one()
+	delete_post = db.session.query(Post).filter_by(id=post_id).first()
+	delete_post.is_deleted = True
 
 	#delete post, replies, associatated tags, and thanks 
 	to_delete_list = []
 	to_delete_list.append(delete_post)
 	for tag in delete_post.tags:
-		to_delete_list.append(tag)
-	for child in delete_post.children:
-		to_delete_list.append(child)
+		tag.is_deleted = True
+	for comment in delete_post.children:
+		child.is_deleted = True
 	for thank in delete_post.thanks:
-		to_delete_list.append(thank)
-
-	for obj_to_delete in to_delete_list: #delete everything associated with post ie. tags, comments, thanks
-		db.session.delete(obj_to_delete)
+		thank.is_deleted = True
 
 	db.session.commit()
 
@@ -754,8 +756,8 @@ def permalink_for_post_with_id(post_id):
 @app.route('/all_users')
 @login_required
 def all_users():
-	all_users = db.session.query(User).order_by(User.firstname).all()
 
+	all_users = User.query.filter(User.is_deleted==False).order_by(User.firstname).all()
 
 	dict_of_users_teams={}
 	for user in all_users:
