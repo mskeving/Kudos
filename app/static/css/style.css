@@ -3,11 +3,11 @@
 
 /*-----------------------------------*\
 
-	$RESET
+  $RESET
 
-	Blanket reset. For something less
-	volatile, I’d recommend Eric
-	Meyer’s reset.
+  Blanket reset. For something less
+  volatile, I’d recommend Eric
+  Meyer’s reset.
 
 \*-----------------------------------*/
 
@@ -19,10 +19,10 @@
   margin: 0;
   padding: 0;
   /* Layout for dummies */
+  position: relative;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
-  position: relative;
   -webkit-animation-fill-mode: both;
   animation-fill-mode: both;
 }
@@ -51,9 +51,9 @@ button {
 
 /*-----------------------------------*\
 
-	$UTILITIES
+  $UTILITIES
 
-	Helper classes, clearfixes, etc.
+  Helper classes, clearfixes, etc.
 
 \*-----------------------------------*/
 
@@ -144,7 +144,6 @@ input,
 textarea,
 button,
 .butt,
-html,
 .posts,
 .tag .post__remove-tag {
   -webkit-transform: translateZ(0);
@@ -157,10 +156,10 @@ html,
 
 /*-----------------------------------*\
 
-	$SHARED
+  $SHARED
 
-	Reserved for html-level shared
-	properties and simple helpers.
+  Reserved for html-level shared
+  properties and simple helpers.
 
 \*-----------------------------------*/
 
@@ -199,10 +198,10 @@ li > ol {
 
 /*-----------------------------------*\
 
-	$TYPE
+  $TYPE
 
-	Low-level type things. Headings,
-	links, blockquotes, etc.
+  Low-level type things. Headings,
+  links, blockquotes, etc.
 
 \*-----------------------------------*/
 
@@ -257,11 +256,11 @@ hr {
 
 /*-----------------------------------*\
 
-	$OBJECTS
+  $OBJECTS
 
-	Abstracted things and common
-	patterns go here. Not to be
-	confused with helpers.
+  Abstracted things and common
+  patterns go here. Not to be
+  confused with helpers.
 
 \*-----------------------------------*/
 
@@ -335,6 +334,7 @@ hr {
   float: left;
   margin-right: .75rem;
   max-width: 2rem;
+  z-index: 1;
 }
 
 .media .media__img.img--lrg {
@@ -360,7 +360,7 @@ hr {
 }
 
 /*-----------------------------------*\
-	$FORMS
+  $FORMS
 \*-----------------------------------*/
 
 .butt {
@@ -408,8 +408,8 @@ hr {
 }
 
 .input:focus {
-  -webkit-box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1), inset 0 0 0 1px rgba(0, 0, 0, 0.1), inset 0 0 3px #00aced;
-  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1), inset 0 0 0 1px rgba(0, 0, 0, 0.1), inset 0 0 3px #00aced;
+  -webkit-box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1), inset 0 0 0 1px rgba(0, 0, 0, 0.1), inset 0 0 3px #f36062;
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1), inset 0 0 0 1px rgba(0, 0, 0, 0.1), inset 0 0 3px #f36062;
   outline: none;
 }
 
@@ -432,9 +432,9 @@ hr {
 
 /*-----------------------------------*\
 
-	$LAYOUT
+  $LAYOUT
 
-	Basic layout objects.
+  Basic layout objects.
 
 \*-----------------------------------*/
 
@@ -467,11 +467,11 @@ hr {
 
 /*-----------------------------------*\
 
-	$MAIN
+  $MAIN
 
-	Anything that can’t be abstracted
-	or assigned to another section.
-	Low-level stuff.
+  Anything that can’t be abstracted
+  or assigned to another section.
+  Low-level stuff.
 
 \*-----------------------------------*/
 
@@ -491,6 +491,7 @@ html {
   font: 112.5%/1.5 freight-sans-pro, sans-serif;
   color: #2b2b29;
   -webkit-font-smoothing: antialiased;
+  -webkit-font-size-adjust: none;
   background-color: #e8e2dc;
 }
 
@@ -500,6 +501,10 @@ html {
   }
 }
 
+body {
+  height: 100%;
+}
+
 .site__home {
   background-color: #FFF;
   background-image: -webkit-gradient(linear, top left, bottom left, from(#f9f6f5), to(white));
@@ -507,8 +512,12 @@ html {
   background-image: linear-gradient(#f9f6f5, white);
 }
 
+.site__home .island {
+  padding: 0;
+}
+
 /*-----------------------------------*\
-	$HEADER
+  $HEADER
 \*-----------------------------------*/
 
 .site__header {
@@ -544,6 +553,14 @@ html {
   padding-left: 7rem;
 }
 
+@media (max-width: 500px) {
+  .site__title.mega {
+    font-size: 4rem;
+    background-size: 3rem;
+    padding-left: 3.5rem;
+  }
+}
+
 .site__title a {
   color: inherit;
   text-decoration: none;
@@ -573,12 +590,13 @@ html {
 }
 
 /*-----------------------------------*\
-	$FEEDBACK
+  $FEEDBACK
 \*-----------------------------------*/
 
 .feedback-modal {
   background-color: #4c4946;
   color: #e8e2dc;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
   -webkit-transition: .5s;
   transition: .5s;
   max-height: 0;
@@ -608,7 +626,17 @@ html {
 }
 
 /*-----------------------------------*\
-	$POSTS
+  $CONTENT
+\*-----------------------------------*/
+
+@media (max-width: 600px) {
+  .site__content {
+    padding: 1rem;
+  }
+}
+
+/*-----------------------------------*\
+  $POSTS
 \*-----------------------------------*/
 
 .posts {
@@ -638,6 +666,16 @@ html {
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1), inset 0 0 10px 1px white;
 }
 
+.post--photo .post__container,
+.post--photo .user-card {
+  padding-bottom: 0;
+}
+
+.post--photo .post__meta,
+.post--photo .post__meta:last-child {
+  margin-bottom: 1.5rem;
+}
+
 .submit-kudos .post__header-meta {
   min-height: 1rem;
 }
@@ -659,7 +697,7 @@ html {
   color: rgba(0, 0, 0, 0.3);
   padding: 1.25rem 1.5rem;
   text-align: left;
-  line-height: 1;
+  line-height: 1.3;
   min-width: 17rem;
 }
 
@@ -672,7 +710,7 @@ html {
   margin-top: -3.5rem;
   margin-left: -2rem;
   margin-bottom: .5rem;
-  z-index: 1;
+  z-index: 4;
 }
 
 .post__thanks-to li {
@@ -709,6 +747,7 @@ html {
 }
 
 .post__thanks-to li .post__no-tags {
+  background-image: none;
   font-size: 2rem;
 }
 
@@ -728,6 +767,7 @@ html {
   text-decoration: none;
   width: 4rem;
   height: 4rem;
+  background-image: url("/static/img/generic_photo.jpg");
   background-size: cover;
   background-position: center top;
 }
@@ -795,7 +835,7 @@ html {
   position: absolute;
   top: 0;
   right: 0;
-  z-index: 2;
+  z-index: 4;
   background-color: #f6f4f2;
   border-bottom: 1px solid #ece7e2;
   border-left: 1px solid #ece7e2;
@@ -844,10 +884,13 @@ html {
   color: #534d4a;
 }
 
+.post__content .js--lightbox {
+  z-index: 2;
+}
+
 .post__content .post__photo {
   margin: -2.7rem -1.5rem 0 1.5rem;
   width: 37.5%;
-  margin-bottom: -1.5rem;
   border-radius: 0 .25rem 0 0;
 }
 
@@ -886,7 +929,6 @@ html {
 }
 
 .post__actions {
-  text-align: center;
   border-top: 1px solid rgba(0, 0, 0, 0.1);
   overflow: hidden;
   border-radius: 0 0 .25rem .25rem;
@@ -900,6 +942,7 @@ html {
 }
 
 .post__actions li .butt {
+  text-align: center;
   -webkit-box-shadow: none;
   box-shadow: none;
   width: 100%;
@@ -970,7 +1013,7 @@ html {
 }
 
 /*-----------------------------------*\
-	$COMMENTS
+  $COMMENTS
 \*-----------------------------------*/
 
 .post__comments {
@@ -1020,7 +1063,7 @@ html {
 }
 
 /*-----------------------------------*\
-	$PROFILES
+  $PROFILES
 \*-----------------------------------*/
 
 .user-card {
@@ -1064,7 +1107,7 @@ html {
 }
 
 /*-----------------------------------*\
-	$FOOTER
+  $FOOTER
 \*-----------------------------------*/
 
 .site__footer {
@@ -1076,7 +1119,7 @@ html {
 }
 
 /*-----------------------------------*\
-	$ANIMATIONS
+  $ANIMATIONS
 \*-----------------------------------*/
 
 @-webkit-keyframes throb {
@@ -1168,7 +1211,7 @@ html {
 
   100% {
     opacity: 1;
-    max-height: 700px;
+    max-height: 1000px;
     -webkit-transform: scale(1);
     transform: scale(1);
     -webkit-transition-timing-function: ease-in-out;
@@ -1193,7 +1236,7 @@ html {
 
   100% {
     opacity: 1;
-    max-height: 700px;
+    max-height: 1000px;
     -webkit-transform: scale(1);
     transform: scale(1);
     -webkit-transition-timing-function: ease-in-out;
@@ -1364,7 +1407,7 @@ html {
 }
 
 /*-----------------------------------*\
-	$JS-HELPERS
+  $JS-HELPERS
 \*-----------------------------------*/
 
 .ui-autocomplete {
@@ -1395,6 +1438,40 @@ html {
 .tag--removing {
   -webkit-animation: shrink .25s;
   animation: shrink .25s;
+}
+
+.lightbox {
+  background: rgba(0, 0, 0, 0.9);
+  white-space: nowrap;
+  position: fixed;
+  right: 0px;
+  top: 0px;
+  left: 0px;
+  bottom: 0px;
+  display: block;
+  overflow: hidden;
+  z-index: 138483;
+  height: 100%;
+  width: 100%;
+}
+
+.lightbox__img img {
+  max-height: 100%;
+}
+
+.lightbox__img:after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  -webkit-box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1), 0 2px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1), 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.js--lightbox-open body {
+  overflow: hidden;
 }
 
 /*# sourceMappingURL=style.css.map */

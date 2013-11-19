@@ -3,8 +3,6 @@
 
 {% block content %}
 
-<script type="text/javascript" src="/static/js/index.js"></script>
-
 <div class="main-column">
 
 		{% include 'post-modal.html' with context %}
@@ -15,7 +13,7 @@
 
 		<h2 class="gamma">Recent Posts</h2>
 
-	<ol class="post-column posts">
+	<ol class="post-column posts posts__home">
 
 		{% for post in posts %}
 		  {% include 'post.html' with context %}
