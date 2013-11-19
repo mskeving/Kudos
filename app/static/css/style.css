@@ -3,11 +3,11 @@
 
 /*-----------------------------------*\
 
-	$RESET
+  $RESET
 
-	Blanket reset. For something less
-	volatile, I’d recommend Eric
-	Meyer’s reset.
+  Blanket reset. For something less
+  volatile, I’d recommend Eric
+  Meyer’s reset.
 
 \*-----------------------------------*/
 
@@ -19,10 +19,10 @@
   margin: 0;
   padding: 0;
   /* Layout for dummies */
+  position: relative;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
-  position: relative;
   -webkit-animation-fill-mode: both;
   animation-fill-mode: both;
 }
@@ -51,9 +51,9 @@ button {
 
 /*-----------------------------------*\
 
-	$UTILITIES
+  $UTILITIES
 
-	Helper classes, clearfixes, etc.
+  Helper classes, clearfixes, etc.
 
 \*-----------------------------------*/
 
@@ -144,7 +144,6 @@ input,
 textarea,
 button,
 .butt,
-html,
 .posts,
 .tag .post__remove-tag {
   -webkit-transform: translateZ(0);
@@ -157,10 +156,10 @@ html,
 
 /*-----------------------------------*\
 
-	$SHARED
+  $SHARED
 
-	Reserved for html-level shared
-	properties and simple helpers.
+  Reserved for html-level shared
+  properties and simple helpers.
 
 \*-----------------------------------*/
 
@@ -199,10 +198,10 @@ li > ol {
 
 /*-----------------------------------*\
 
-	$TYPE
+  $TYPE
 
-	Low-level type things. Headings,
-	links, blockquotes, etc.
+  Low-level type things. Headings,
+  links, blockquotes, etc.
 
 \*-----------------------------------*/
 
@@ -257,11 +256,11 @@ hr {
 
 /*-----------------------------------*\
 
-	$OBJECTS
+  $OBJECTS
 
-	Abstracted things and common
-	patterns go here. Not to be
-	confused with helpers.
+  Abstracted things and common
+  patterns go here. Not to be
+  confused with helpers.
 
 \*-----------------------------------*/
 
@@ -361,7 +360,7 @@ hr {
 }
 
 /*-----------------------------------*\
-	$FORMS
+  $FORMS
 \*-----------------------------------*/
 
 .butt {
@@ -433,9 +432,9 @@ hr {
 
 /*-----------------------------------*\
 
-	$LAYOUT
+  $LAYOUT
 
-	Basic layout objects.
+  Basic layout objects.
 
 \*-----------------------------------*/
 
@@ -468,11 +467,11 @@ hr {
 
 /*-----------------------------------*\
 
-	$MAIN
+  $MAIN
 
-	Anything that can’t be abstracted
-	or assigned to another section.
-	Low-level stuff.
+  Anything that can’t be abstracted
+  or assigned to another section.
+  Low-level stuff.
 
 \*-----------------------------------*/
 
@@ -492,8 +491,8 @@ html {
   font: 112.5%/1.5 freight-sans-pro, sans-serif;
   color: #2b2b29;
   -webkit-font-smoothing: antialiased;
+  -webkit-font-size-adjust: none;
   background-color: #e8e2dc;
-  position: initial;
 }
 
 @media (max-width: 500px) {
@@ -504,7 +503,6 @@ html {
 
 body {
   height: 100%;
-  position: initial;
 }
 
 .site__home {
@@ -514,8 +512,12 @@ body {
   background-image: linear-gradient(#f9f6f5, white);
 }
 
+.site__home .island {
+  padding: 0;
+}
+
 /*-----------------------------------*\
-	$HEADER
+  $HEADER
 \*-----------------------------------*/
 
 .site__header {
@@ -588,7 +590,7 @@ body {
 }
 
 /*-----------------------------------*\
-	$FEEDBACK
+  $FEEDBACK
 \*-----------------------------------*/
 
 .feedback-modal {
@@ -624,7 +626,7 @@ body {
 }
 
 /*-----------------------------------*\
-	$CONTENT
+  $CONTENT
 \*-----------------------------------*/
 
 @media (max-width: 600px) {
@@ -634,7 +636,7 @@ body {
 }
 
 /*-----------------------------------*\
-	$POSTS
+  $POSTS
 \*-----------------------------------*/
 
 .posts {
@@ -1011,7 +1013,7 @@ body {
 }
 
 /*-----------------------------------*\
-	$COMMENTS
+  $COMMENTS
 \*-----------------------------------*/
 
 .post__comments {
@@ -1061,7 +1063,7 @@ body {
 }
 
 /*-----------------------------------*\
-	$PROFILES
+  $PROFILES
 \*-----------------------------------*/
 
 .user-card {
@@ -1105,7 +1107,7 @@ body {
 }
 
 /*-----------------------------------*\
-	$FOOTER
+  $FOOTER
 \*-----------------------------------*/
 
 .site__footer {
@@ -1117,7 +1119,7 @@ body {
 }
 
 /*-----------------------------------*\
-	$ANIMATIONS
+  $ANIMATIONS
 \*-----------------------------------*/
 
 @-webkit-keyframes throb {
@@ -1405,7 +1407,7 @@ body {
 }
 
 /*-----------------------------------*\
-	$JS-HELPERS
+  $JS-HELPERS
 \*-----------------------------------*/
 
 .ui-autocomplete {
@@ -1451,6 +1453,21 @@ body {
   z-index: 138483;
   height: 100%;
   width: 100%;
+}
+
+.lightbox__img img {
+  max-height: 100%;
+}
+
+.lightbox__img:after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  -webkit-box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1), 0 2px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1), 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .js--lightbox-open body {
