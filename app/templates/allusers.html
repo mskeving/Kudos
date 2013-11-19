@@ -26,7 +26,9 @@
   	</ul>
   	<div>
   		<hr class="h-m">
-  		<small><a href="{{ url_for('team', team=user_teams_dict.get(user.id)[-1].team.teamname) }}">{{user_teams_dict.get(user.id)[-1].team.teamname}}</a></small>
+      {% if user_teams_dict.get(user.id) %}
+      <small><a href="{{ url_for('team', team=user_teams_dict.get(user.id)[-1].team.teamname) }}">{{user_teams_dict.get(user.id)[-1].team.teamname}}</a></small>
+      {% endif %}
 		</div>
   </div>
 </div>

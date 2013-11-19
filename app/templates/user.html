@@ -22,9 +22,11 @@
   	</ul>
   	<div>
   		<hr class="h-m">
-			{{user.firstname}} is on the
-					<a href="{{ url_for('team', team=list_of_team_names[-1]) }}">{{list_of_team_names[-1]}}</a>
-			team.
+			{% if list_of_team_names %}
+				{{user.firstname}} is on the
+						<a href="{{ url_for('team', team=list_of_team_names[-1]) }}">{{list_of_team_names[-1]}}</a>
+				team.
+			{% endif %}
 			{% if manager %}
 				<a href="{{url_for('user', username=manager.username) }}"> {{manager.firstname}} {{manager.lastname}}</a> is {{user.firstname}}&rsquo;s&nbsp;lead.
 			{% endif %}
