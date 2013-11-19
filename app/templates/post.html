@@ -73,7 +73,9 @@
 
     <div class="post__content cf">
       {% if post_object.photo_link %}
-        <img class="post__photo f-r" src='{{post_object.photo_link}}' data-post-id="{{post.id}}">
+        <a href="{{post_object.photo_link}}" class="js--lightbox b">
+          <img class="post__photo f-r" src='{{post_object.photo_link}}' data-post-id="{{post.id}}" />
+        </a>
       {% endif %}
       <blockquote class="p {% if not post_object.photo_link %}beta{% endif %}">
         {{post_object.body}}
