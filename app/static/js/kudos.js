@@ -70,8 +70,7 @@ function clear_post_modal_info(){
 	$('.hidden_tag_text').val("");
 	$('#chosen').text("");
 	$('.submit-kudos').removeClass('error-post');
-	$('.dropbox-dropin-btn').removeClass('dropbox-dropin-success');
-	$('.dropbox-dropin-btn').addClass('dropbox-dropin-default');
+	$('.dropbox-dropin-btn').removeClass('dropbox-dropin-success').addClass('dropbox-dropin-default');
 };
 
 $('.toggle-menu').live('click', function(e) {
@@ -89,7 +88,7 @@ $('.toggle-menu').live('click', function(e) {
 
 $('.menu *').live('click', function(){
 	$(this).parents('.menu').addClass('menu--hidden');
-	$(this).parents('.menu').children('.toggle-menu').toggleClass('fa-angle-down fa-angle-up');
+	$(this).parents('.post__edit-actions').children('.toggle-menu').toggleClass('fa-angle-down fa-angle-up');
 });
 
 $('#nav-feedback, .cancel-feedback-btn').live('click', function(e){
@@ -103,7 +102,7 @@ $('.submit-feedback-btn').live('click', function(e){
 	var feedback = $('.feedback-input').val();
 
 	if(feedback == "") {
-		$('.feedback-input').focus().addClass('error').one('webkitAnimationEnd oAnimationEnd animationEnd', function(){
+		$('.feedback-input').focus().addClass('error').one('webkitAnimationEnd mozAnimationEnd oAnimationEnd animationEnd', function(){
 			$(this).removeClass('error');
 		});
 		return false;
@@ -232,7 +231,7 @@ $('.remove-tag').live('click', function(e) {
 		url: '/deletetag',
 		data: data,
 		success: function(status){
-			avatar.addClass('tag--removing').one('webkitAnimationEnd oAnimationEnd animationEnd', function(){
+			avatar.addClass('tag--removing').one('webkitAnimationEnd mozAnimationEnd oAnimationEnd animationEnd', function(){
 				avatar.remove();
 			})
 		},
@@ -497,7 +496,7 @@ function create_post(public_url){
 	};
 
 	if (!post_text){
-		$('.post__new-content').focus().addClass('error').one('webkitAnimationEnd oAnimationEnd animationEnd', function(){
+		$('.post__new-content').focus().addClass('error').one('webkitAnimationEnd mozAnimationEnd oAnimationEnd animationEnd', function(){
 			$(this).removeClass('error');
 		});
 		return;
@@ -574,7 +573,7 @@ $('.remove-post-button').live('click', function(e){
 		data: data,
 		success: function(resp){
 			parent_post.addClass('post--remove-from-stream');
-			parent_post.one('webkitAnimationEnd oAnimationEnd animationEnd', function(){
+			parent_post.one('webkitAnimationEnd mozAnimationEnd oAnimationEnd animationEnd', function(){
 				$(this).remove();
 			});
 			console.log("success deleting post");

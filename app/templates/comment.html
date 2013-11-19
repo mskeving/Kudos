@@ -1,6 +1,6 @@
 <li class="one-comment media cf" data-comment-id="{{comment.id}}">
   <div class="clearfix">
-    <a class="media__img img--cropper img--sml" style="background-image: url({{comment.author.photo}})" href="{{ url_for('user', username=comment.author.username) }}">
+    <a class="media__img img--cropper img--sml b" style="background-image: url({{comment.author.photo}})" href="{{ url_for('user', username=comment.author.username) }}">
       <img class="img" src="{{comment.author.photo}}" alt="{{comment.author.username}}" />
     </a>
     <div class="media__content comment__content">
