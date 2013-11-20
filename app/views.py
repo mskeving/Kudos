@@ -577,11 +577,10 @@ def remove_thanks():
 	delete_thanks = Thanks.query.filter(and_(Thanks.thanks_sender==thanks_sender, Thanks.post_id==post_id)).all() 
 
 	for thank in delete_thanks:
-		db.session.delete(thank)
+		thank.is_deleted = True
 	db.session.commit()
 
-	status = "complete"
-	return status
+	return "complete"
 
 @app.route('/displaythanks', methods=['POST'])
 @login_required
@@ -668,12 +667,10 @@ def delete_tag():
 	
 	delete_tag = db.session.query(Tag).filter_by(id=tag_id).one()
 
-	db.session.delete(delete_tag)
+	delete_tag.is_deleted = True
 	db.session.commit()
 
-	status = "complete"
-
-	return status
+	return "complete"
 
 
 #SUBMIT NEW COMMENT
@@ -704,7 +701,7 @@ def new_comment():
 def delete_comment(postid):
 	
 	delete_comment = db.session.query(Post).filter_by(id=postid).one()
-	db.session.delete(delete_comment)
+	delete_comment.is_deleted = True
 	db.session.commit()
 
 	status = "complete"
@@ -743,15 +740,20 @@ def delete_post():
 def permalink_for_post_with_id(post_id):
 	new_post_form = EditPost() 
 	reply_form = NewReply()
-	posts = Post.query.filter(Post.id==int(post_id)).all()
-	post = posts_to_indented_posts(posts)[0]
-
-	return render_template('postpage.html',
+	posts = Post.query.filter(and_(Post.id==int(post_id), Post.is_deleted==False)).all()
+	if posts:
+		post = posts_to_indented_posts(posts)[0]
+		return render_template('postpage.html',
 		user=g.user,
 		post=post,
 		new_post=new_post,
 		reply_form=reply_form,
 		new_post_form=new_post_form,
+		)
+
+	else:
+		return render_template('postpage.html',
+			error_msg="Sorry! This post has been removed"
 		)
 
 

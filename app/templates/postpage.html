@@ -8,7 +8,11 @@
 		{% extends "base.html" %}
 		{% block content %}
 
-			{% include 'post.html' with context %}
+			{% if error_msg %}
+				{{error_msg}}
+			{% else %}
+				{% include 'post.html' with context %}
+			{% endif %}
 
 		{% endblock %}
 	</body>
