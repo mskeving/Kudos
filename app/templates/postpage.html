@@ -1,19 +1,12 @@
-<html>
-	<head>
-		<div class="title">
-			<title>Kudos</title>
-		</div>
-	</head>
-	<body>
-		{% extends "base.html" %}
-		{% block content %}
 
-			{% if error_msg %}
-				{{error_msg}}
-			{% else %}
-				{% include 'post.html' with context %}
-			{% endif %}
+{% extends "base.html" %}
+{% block content %}
 
-		{% endblock %}
-	</body>
-</html>
+	{% if error_msg %}
+		{{error_msg}}
+	{% else %}
+		{% include 'post.html' with context %}
+	{% endif %}
+
+{% endblock %}
+
