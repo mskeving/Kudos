@@ -492,7 +492,7 @@ def create_notifications():
 	is_comment = form.get('is_comment')
 	if is_comment:
 		subject = "New comment on your Kudos"
-		header = "There's a new comment on a post you're tagged in: "
+		header = "There's a new comment on a post you're tagged in"
 		if tagged_user_ids:
 			tagged_users = User.query.filter(User.id.in_(tagged_user_ids)).all()
 			create_notification_for_tagged_users(tagged_users, photo_url, post_text, parent_post_id, subject, header)
@@ -504,7 +504,7 @@ def create_notifications():
 	is_new_post = form.get('is_new_post')
 	if is_new_post:
 		subject = "Kudos to you!"
-		header = g.user.firstname + " sent you Kudos!"
+		header = g.user.firstname + " sent you Kudos"
 		if tagged_user_ids:
 			tagged_users = User.query.filter(User.id.in_(tagged_user_ids)).all()
 			create_notification_for_tagged_users(tagged_users, photo_url, post_text, parent_post_id, subject, header)
