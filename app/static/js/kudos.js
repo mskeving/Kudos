@@ -251,13 +251,13 @@ $('.new-tag-btn').live('click', function(e) {
 	collect_tags(form);
 	tag_ids = form.find('.hidden_tag_ids').val();
 	tag_text = form.find('.hidden_tag_text').val();
-	post_id = form.parents('.post').attr('data-post-id');
-	post_photo_url = form.parents('.post').closest('.post-photo[data-post-id="' + post_id + '"]').attr('src');
+	parent_post_id = $(this).data('post-id');
+	post_photo_url = form.parents('.post').closest('.post-photo[data-post-id="' + parent_post_id + '"]').attr('src');
 	post_text = form.parents('.post').children('.post__container').children('.post__content').children('.p').text();
 
 	if (tag_ids != ""){
 		var data = {
-			post_id: $(this).data('post-id'),
+			parent_post_id: parent_post_id,
 			tag_ids: tag_ids,
 			tag_text: tag_text,
 			post_photo_url: post_photo_url,
@@ -355,31 +355,59 @@ $('.new-comment-btn').live('click', function(e){
 	e.preventDefault();
 	var new_comment_btn = $(this);
 	var data = {
-		post_id: $(this).parent().data('post-id'),
-		body: $(this).siblings('.reply-body').val()
+		parent_post_id: $(this).parent().data('post-id'),
+		post_text: $(this).siblings('.reply-body').val()
 	}
 
-	var all_comments = $('.comments[data-post-id=' + data.post_id + ']');
+	var all_comments = $('.comments[data-post-id=' + data.parent_post_id + ']');
 
 	$.ajax({
 		type: "POST",
 		url: '/newcomment',
 		data: data,
-		success: function(comment_template){
-			all_comments.append(comment_template);
+		success: function(response){
 
-			comment_count_selector = $('[data-post-id=' + data.post_id + '] .comment-count');
+			$.extend(data, {
+				tagged_team_ids: JSON.stringify(response.tagged_team_ids),
+				tagged_user_ids: JSON.stringify(response.tagged_user_ids),
+				is_comment: true
+			})
+
+			all_comments.append(response.comment_template);
+
+			comment_count_selector = $('[data-post-id=' + data.parent_post_id + '] .comment-count');
 			change_count(comment_count_selector, 1);
 
 			//clear and hide comment modal
 			new_comment_btn.siblings('.reply-body').val("");
-			show_modal($('.comment-modal[data-post-id=' + data.post_id + ']'));
+			show_modal($('.comment-modal[data-post-id=' + data.parent_post_id + ']'));
+
+			if (data.post_text){
+				send_notifications(data);
+			}
 		},
 		error: function(e){
 			console.log('error creating new reply');
-		}
+		},
+		dataType: 'json'
 	});
 })
+
+function send_notifications(data){
+	// data must include post_id, tagged_team_ids, tagged_user_ids, post_text, photo_url
+	$.ajax({
+		type: "POST",
+		url: "/create_notifications",
+		data: data,
+		success: function(){
+			console.log("success sending email notifications");
+		},
+		error: function(){
+			console.log("failed sending email notifications");
+		}
+	})
+
+}
 
 $('.comment-count').live('click', function() {
 	var id = $(this).parents('.post').attr('data-post-id');
@@ -522,14 +550,11 @@ function create_post(public_url){
 			console.log("success! created new post");
 			end_show_progress($('.submit-new-post'));
 
-			tagged_user_ids = response.tagged_user_ids;
-			tagged_team_ids = response.tagged_team_ids;
-			post_id = response.post_id;
-
 			$.extend(data, {
-				post_id: post_id,
-				tagged_team_ids: JSON.stringify(tagged_team_ids),
-				tagged_user_ids: JSON.stringify(tagged_user_ids)
+				parent_post_id: response.post_id,
+				tagged_team_ids: JSON.stringify(response.tagged_team_ids),
+				tagged_user_ids: JSON.stringify(response.tagged_user_ids),
+				is_new_post: true
 			})
 
 			send_notifications(data);
@@ -543,21 +568,6 @@ function create_post(public_url){
 	});
 }
 
-function send_notifications(data){
-	// data must include post_id, tagged_team_ids, tagged_user_ids, post_text, photo_url
-	$.ajax({
-		type: "POST",
-		url: "/create_notifications",
-		data: data,
-		success: function(){
-			console.log("success sending email notifications");
-		},
-		error: function(){
-			console.log("failed sending email notifications");
-		}
-	})
-
-}
 
 //REMOVE POST
 $('.remove-post-button').live('click', function(e){
