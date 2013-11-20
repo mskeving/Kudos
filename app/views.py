@@ -876,21 +876,25 @@ def posts_to_indented_posts(posts):
 		author_teams = []
 		user_teams= UserTeam.query.filter(UserTeam.user_id==p.author.id).all()
 		for team in user_teams:
-			author_teams.append(team.team)
+			if team.is_deleted == False:
+				author_teams.append(team.team)
 		d['author_teams'] = author_teams
 
 		children = []
 		for child in p.children:
-			children.append(child)
+			if child.is_deleted == False:
+				children.append(child)
 		d['comments'] = children
 
 		tagged_users = []
 		tagged_teams = []
 		for tag in p.tags:
 			if tag.user_tag_id:
-				tagged_users.append(tag) #send in all user information
+				if tag.is_deleted == False:
+					tagged_users.append(tag) #send in all user information
 			elif tag.team_tag_id:
-				tagged_teams.append(tag) #just teamname
+				if tag.is_deleted == False:
+					tagged_teams.append(tag) #just teamname
 			else:
 				print "no tags for this post.id: %r" % p.id 
 
