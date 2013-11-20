@@ -383,7 +383,7 @@ $('.new-comment-btn').live('click', function(e){
 
 $('.comment-count').live('click', function() {
 	var id = $(this).parents('.post').attr('data-post-id');
-	$('.comments[data-post-id=' + id + ']').toggle();
+	show_modal($('.comments[data-post-id=' + id + ']'));
 });
 
 
