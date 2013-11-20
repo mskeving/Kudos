@@ -149,8 +149,11 @@ def get_more_posts():
 
 	last_post_id = form.get('last_post_id')
 
-	#older posts will have smaller post_id
-	total_posts_left = db.session.query(Post).filter(and_(Post.parent_post_id==None, Post.is_deleted==False, Post.id<last_post_id)).all()
+	if last_post_id:
+		#older posts will have smaller post_id
+		total_posts_left = db.session.query(Post).filter(and_(Post.parent_post_id==None, Post.is_deleted==False, Post.id<last_post_id)).all()
+	else:
+		total_posts_left = []
 
 	posts_to_display = []
 	count_total_posts_left = len(total_posts_left)

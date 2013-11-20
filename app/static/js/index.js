@@ -1,13 +1,13 @@
 $(document).ready(function(){
 
-	if($('.posts__home')) {
+	if($('.post-column')) {
 
 		$(window).scroll(function() {
 			var scrollInAction = false;
 
 			return function() {
-				var post_column_height = $('.post-column.posts__home').height();
-				var post_column_offset_top = $('.post-column.posts__home').offset().top;
+				var post_column_height = $('.post-column').height();
+				var post_column_offset_top = $('.post-column').offset().top;
 
 				if($(window).scrollTop() + $(window).height() >= post_column_offset_top + post_column_height ){
 
