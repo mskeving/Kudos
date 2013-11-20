@@ -37,7 +37,6 @@ class User(db.Model):
 	employee_id = db.Column(db.Integer)
 	firstname = db.Column(db.String(64), index=True)
 	lastname = db.Column(db.String(64), index=True)
-	#change nickname unique=false
 	nickname = db.Column(db.String(64), index=True)
 	email = db.Column(db.String(120), index=True, unique=True)
 	photo = db.Column(db.String(120))

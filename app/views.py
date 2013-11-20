@@ -683,8 +683,6 @@ def new_comment():
 	body = form.get('body')
 	post_id = form.get('post_id')
 	
-	print "post_id: %r" % post_id
-
 	new_comment = Post(body=body, parent_post_id=post_id, time=datetime.utcnow(), user_id=g.user.id)
 	db.session.add(new_comment)
 	db.session.commit()
