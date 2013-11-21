@@ -466,7 +466,6 @@ $(function () {
 	//Submit new post
 	$('.submit-new-post').live('click', function(e){
 		//Check if file selected from dropbox chooser
-		console.log('data' + data)
 		if ($.isEmptyObject(data)===false){
 			console.log('not empty data')
 			//can only send binary data using blob
@@ -523,6 +522,14 @@ function create_post(public_url){
 		photo_url: public_url,
 		post_text: post_text
 	};
+
+	if($('.new-post-form .tagsinput > span.tag').html() == null) {
+		$('.post__tagger').focus().addClass('error').one('webkitAnimationEnd mozAnimationEnd oAnimationEnd animationEnd', function(){
+			$(this).removeClass('error');
+		});
+		return;
+		console.log('No tags');
+	}
 
 	if (!post_text){
 		$('.post__new-content').focus().addClass('error').one('webkitAnimationEnd mozAnimationEnd oAnimationEnd animationEnd', function(){
