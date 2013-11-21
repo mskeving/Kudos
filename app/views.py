@@ -125,7 +125,7 @@ def index():
 	delete_form = DeletePost()
 
 	#query for all parent posts
-	posts = Post.query.filter(and_(Post.parent_post_id==None, Post.is_deleted==False)).order_by(Post.time.desc()).limit(3).all()
+	posts = Post.query.filter(and_(Post.parent_post_id==None, Post.is_deleted==False)).order_by(Post.time.desc()).limit(10).all()
 
 	if posts != None:
 		indented_posts = posts_to_indented_posts(posts)
