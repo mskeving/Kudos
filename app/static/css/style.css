@@ -710,7 +710,8 @@ body {
   min-height: 1rem;
 }
 
-.post__tagger {
+.post__tagger,
+.post__tagger.input--plain {
   border-radius: 200px;
   -webkit-box-shadow: -1px 0px 1px rgba(0, 0, 0, 0.05);
   box-shadow: -1px 0px 1px rgba(0, 0, 0, 0.05);
@@ -731,7 +732,8 @@ body {
   min-width: 17rem;
 }
 
-.post__tagger:focus {
+.post__tagger:focus,
+.post__tagger.input--plain:focus {
   outline: none;
   background-color: #faf9f7;
 }
