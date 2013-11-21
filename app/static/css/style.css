@@ -182,6 +182,16 @@ h1,
   margin-bottom: 1.5rem;
 }
 
+p,
+.p {
+  -webkit-hyphens: auto;
+  -moz-hyphens: auto;
+  -ms-hyphens: auto;
+  hyphens: auto;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
 /* Remove this for hanging bullets */
 
 ul,
@@ -948,7 +958,16 @@ body {
 }
 
 .post__meta {
-  color: rgba(0, 0, 0, 0.5);
+  color: rgba(0, 0, 0, 0.4);
+}
+
+.post__meta a {
+  text-decoration: none;
+  color: #58493a;
+}
+
+.post__meta a:hover {
+  text-decoration: underline;
 }
 
 .post__footer {

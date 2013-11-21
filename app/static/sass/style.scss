@@ -168,6 +168,12 @@ h1, .alpha, .mega, .ultra {
   margin-bottom: $baseline;
 }
 
+p, .p {
+  hyphens: auto;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
 /* Remove this for hanging bullets */
 ul, ol {
   padding-left: 1.3em;
@@ -887,7 +893,16 @@ body {
   }
 
   .post__meta {
-    color: rgba(0,0,0,.5);
+    color: rgba(0,0,0,.4);
+
+    a {
+      text-decoration: none;
+      color: darken($cream, 60%);
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
   }
 
   .post__footer {
