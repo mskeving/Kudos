@@ -250,7 +250,7 @@ def team(team):
 	this_team = Team.query.filter(Team.teamname==team).first()
 	name = "the " + this_team.teamname + " Team"
 	team_members = UserTeam.query.filter(UserTeam.team_id==this_team.id).all()
-	tags = Tag.query.filter(and_(Tag.team_tag_id==this_team.id, Post.parent_post_id==None)).all() 
+	tags = Tag.query.filter(and_(Tag.team_tag_id==this_team.id, Tag.is_deleted==False)).order_by(Tag.time.desc()).all() 
 
 	tagged_posts = []
 	for tag in tags:
