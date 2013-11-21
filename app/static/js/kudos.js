@@ -557,8 +557,14 @@ function create_post(public_url){
 				is_new_post: true
 			})
 
-			send_notifications(data);
-
+			if (data.tagged_team_ids || data.tagged_user_ids){
+				console.log('team ids: ' + data.tagged_team_ids);
+				console.log('user ids:' + data.tagged_user_ids);
+				send_notifications(data);
+			}
+			else{
+				console.log('no one tagged - no emails sent');
+			}
 		},
 		error: function(resp){
 			console.log("error! no new post created");
