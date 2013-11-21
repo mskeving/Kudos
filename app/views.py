@@ -297,7 +297,7 @@ def user(username):
 	tagged_posts = []
 
 	#get all tags that user is tagged in 
-	tags = Tag.query.filter(and_(Tag.user_tag_id==user.id, Post.parent_post_id==None)).all() 
+	tags = Tag.query.filter(and_(Tag.user_tag_id==user.id, Tag.is_deleted==False)).all() 
 
 	tagged_posts = []
 	#for each tag, find post associated with it
@@ -317,15 +317,11 @@ def user(username):
 		list_of_team_names.append(team.team.teamname)
 	dict_of_users_teams[user.id]=list_of_team_names
 
-	print "user's list of teams: "
-	print list_of_team_names
-
 
 	if user == None:
 		flash('User ' + username + ' not found.')
 		return redirect(url_for('index'))
 
-	print "user before rendering template: %r " % user
 	return render_template('user.html', 
 		new_post_form=new_post_form,
 		reply_form=reply_form,
@@ -492,26 +488,30 @@ def create_notifications():
 
 	is_comment = form.get('is_comment')
 	if is_comment:
-		subject = "New comment on your Kudos"
-		header = g.user.firstname + " " + g.user.lastname + " commented on a post you're tagged in"
 		if tagged_user_ids:
+			subject = "New comment on your Kudos"
+			header = g.user.firstname + " " + g.user.lastname + " commented on a Kudos you're tagged in"
 			tagged_users = User.query.filter(User.id.in_(tagged_user_ids)).all()
 			create_notification_for_tagged_users(tagged_users, photo_url, post_text, parent_post_id, subject, header)
 		if tagged_team_ids:
+			subject = "New comment on your Kudos"
+			header = g.user.firstname + " " + g.user.lastname + " commented on a Kudos your team is tagged in"
 			users_teams_in_tagged_teams = UserTeam.query.filter(UserTeam.team_id.in_(tagged_team_ids)).all()
 			create_notification_for_tagged_teams(users_teams_in_tagged_teams, photo_url, post_text, parent_post_id, subject, header)
 		return "complete"
 
 	is_new_post = form.get('is_new_post')
 	if is_new_post:
-		subject = "Kudos to you!"
-		header = g.user.firstname + " " + g.user.lastname + " sent you Kudos"
 		if tagged_user_ids:
+			subject = "Kudos to you!"
+			header = g.user.firstname + " " + g.user.lastname + " sent you a Kudos"
 			tagged_users = User.query.filter(User.id.in_(tagged_user_ids)).all()
 			create_notification_for_tagged_users(tagged_users, photo_url, post_text, parent_post_id, subject, header)
 			create_notification_for_managers(tagged_users, photo_url, post_text, parent_post_id)
 
 		if tagged_team_ids:
+			subject = "Kudos to your team!"
+			header = g.user.firstname + " " + g.user.lastname + " sent your team a Kudos"
 			users_teams_in_tagged_teams = UserTeam.query.filter(UserTeam.team_id.in_(tagged_team_ids)).all()
 			create_notification_for_tagged_teams(users_teams_in_tagged_teams, photo_url, post_text, parent_post_id, subject, header)
 
@@ -555,14 +555,14 @@ def create_notification_for_managers(tagged_users_list, photo_url, post_text, po
 		recipient_list = [manager.email]
 		subject = "Kudos to your team members!"
 		if len(reports_objects) == 1:
-			header = str(reports_objects[0].firstname) + " was tagged in this post:"
+			header = "As " + str(reports_objects[0].firstname) + "'s team lead, we wanted to let you know they were tagged in this Kudos:"
 		elif len(reports_objects) == 2:
-			header = str(reports_objects[0].firstname) + " and " + str(reports_objects[1].firstname) + " were tagged in this post:"
+			header = "As " + str(reports_objects[0].firstname) + " and " + str(reports_objects[1].firstname) + "'s team lead, we wanted to let you know they were tagged in this Kudos:"
 		elif len(reports_objects) > 2:
 			reports_str = ""
 			for report in reports_objects[:-1]:
 				reports_str += str(report.firstname) + ", "
-			header = reports_str + " and " + str(reports_objects[-1].firstname) + " were tagged in this post:"
+			header = "As " + reports_str + " and " + str(reports_objects[-1].firstname) + "'s team lead, we wanted to let you know they were tagged in this Kudos:"
 
 		generate_email(header, post_text, subject, recipient_list, post_id, photo_url)
 
