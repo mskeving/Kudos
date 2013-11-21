@@ -69,12 +69,6 @@
             {% endfor %}
           {% endif %}
 
-          {% if not post.get('tagged_teams') and not post.get('tagged_users') %}
-            <li>
-              <a class="avatar post__no-tags" title="No one tagged yet.">?</a>
-            </li>
-          {% endif %}
-
         </ul><!-- /.avatars -->
       </div><!-- /.taggees -->
     </div><!-- /.post__header-meta -->
