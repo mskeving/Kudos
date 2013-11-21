@@ -16,7 +16,7 @@
 	<ol class="post-column posts posts__home">
 
 		{% for post in posts %}
-		  {% include 'post.html' with context %}
+		  <li>{% include 'post.html' with context %}</li>
 		{% endfor %}
 
 	</ol>

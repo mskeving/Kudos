@@ -5,10 +5,19 @@
 
 <div class="user-card cf isle card p">
 
+	{% if not user.photo == "None" %}
+
 	<div class="user-card__avatar img--cropper img--lrg f-l" style="background-image: url({{user.photo}})">
 		<img class="img" src="{{user.photo}}" alt="{{user.username}}" />
-		<!-- <img src="{{user.photo}}" alt="{{user.username}}" /> -->
 	</div>
+
+	{% else %}
+
+	<div class="user-card__avatar img--cropper img--lrg f-l">
+		<img class="img" src="//dropabout.appspot.com/img?id=1" alt="{{user.username}}" />
+	</div>
+
+	{% endif %}
 
   <div class="user-card__info">
   	<h2 class="gamma standalone">{{user.firstname}} {{user.lastname}}</h2>

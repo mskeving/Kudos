@@ -1,15 +1,9 @@
-<html>
-	<head>
-		<div class="title">
-			<title>Kudos</title>
-		</div>
-	</head>
-	<body>
+
 		{% extends "base.html" %}
 		{% block content %}
 
-			{% include 'post.html' with context %}
+			<div class="posts">
+				{% include 'post.html' with context %}
+			</div>
 
 		{% endblock %}
-	</body>
-</html>
