@@ -4,7 +4,7 @@
 
 <h1>All Dropboxers</h1>
 
-<div class="columns--two">
+<div class="columns--two js--allusers">
 {% for user in all_users %}
 
 <div class="user-card isle cf card p card--mini" id="user_info">
@@ -12,7 +12,7 @@
     <img class="img" src="{{user.photo}}" alt="{{user.username}}" />
 	</a>
 
-	<div class="user-card__info">
+	<div class="user-card__info" data-user-id="{{user.id}}">
   	<h2 class="gamma standalone">
   		<a href="{{ url_for('user', username=user.username) }}">{{user.firstname}} {{user.lastname}}</a>
   	</h2>
@@ -27,7 +27,7 @@
   	<div>
   		<hr class="h-m">
       {% if user_teams_dict.get(user.id) %}
-      <small><a href="{{ url_for('team', team=user_teams_dict.get(user.id)[-1].team.teamname) }}">{{user_teams_dict.get(user.id)[-1].team.teamname}}</a></small>
+      <small><a href="{{ url_for('team', team=user_teams_dict.get(user.id)[-1].teamname) }}">{{user_teams_dict.get(user.id)[-1].teamname}}</a></small>
       {% endif %}
 		</div>
   </div>

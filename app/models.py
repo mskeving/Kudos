@@ -46,7 +46,7 @@ class User(db.Model):
 	is_deleted = db.Column(db.Boolean, default=False, nullable=False)
 
 	posts = db.relationship('Post', backref='author', lazy='dynamic')
-	users = db.relationship('UserTeam', backref='user', primaryjoin="User.id==UserTeam.user_id")
+	users_teams = db.relationship('UserTeam', backref='user', primaryjoin="User.id==UserTeam.user_id")
 	tagged_in = db.relationship('Tag', backref='user_tag', primaryjoin="User.id==Tag.user_tag_id", lazy="dynamic'")
 	thanker = db.relationship('Thanks', backref='user')
 

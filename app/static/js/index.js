@@ -1,6 +1,6 @@
 $(document).ready(function(){
 
-	if($('.post-column')) {
+	if(document.contains($('.post-column'))) {
 
 		$(window).scroll(function() {
 			var scrollInAction = false;

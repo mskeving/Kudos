@@ -73,6 +73,7 @@ function clear_post_modal_info(){
 	$('.dropbox-dropin-btn').removeClass('dropbox-dropin-success').addClass('dropbox-dropin-default');
 };
 
+
 $('.toggle-menu').live('click', function(e) {
 	e.preventDefault();
 	var menu = $(this).siblings('.menu').first();

@@ -18,6 +18,7 @@ from models import (User, Post, UserTeam, Team, Tag,
 from datetime import datetime
 from flask.ext.sqlalchemy import sqlalchemy
 from sqlalchemy import and_, or_, func
+from sqlalchemy.orm import joinedload_all
 from threading import Thread
 
 from flask.ext.mail import Message
@@ -792,25 +793,28 @@ def permalink_for_post_with_id(post_id):
 @app.route('/all_users')
 @login_required
 def all_users():
+	all_users = User.query.filter(User.is_deleted==False).options(joinedload_all(User.users_teams, 'team')).order_by(User.firstname, User.lastname, User.employee_id).all()
 
-	all_users = User.query.filter(User.is_deleted==False).order_by(User.firstname).all()
-
-	dict_of_users_teams={}
+	all_user_ids = []
 	for user in all_users:
-		list_of_teams = []
-		teams = db.session.query(UserTeam).filter_by(user_id=user.id).all()
-		for team in teams:
-			list_of_teams.append(team)
-		dict_of_users_teams[user.id]=list_of_teams
+		all_user_ids.append(user.id)
 
+	#users_teams = UserTeam.query.filter(UserTeam.user_id.in_(all_user_ids)).all()
 
-	users_list_of_teams = []
-	#users_list_of_teams = db.session.query(Team).filter_by()
+	# {user_id: [team1, team2]}
+	#dict_of_users_teams2 = {ut: (ut.user_id, ut.team_id) for ut in users_teams}
+
+	#dict_of_users_teams=defaultdict(list)
+	#for ut in dict_of_users_teams2.keys():
+	#	dict_of_users_teams[ut.user_id].append(ut.team)
+	dict_of_users_teams = {}
+	for user in all_users:
+		dict_of_users_teams[user.id] = [ut.team for ut in user.users_teams]
+
 	return render_template('allusers.html', 
 		all_users=all_users,
 		user_teams_dict=dict_of_users_teams,
 		)
-
 
 
 # @app.errorhandler(404)
