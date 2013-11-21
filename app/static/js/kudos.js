@@ -140,7 +140,7 @@ document.onkeydown = function(evt) {
 //REMOVE/GIVE THANKS
 $('.thank-button').live('click', function(e){
 	e.preventDefault();
-	var button = $(e.target);
+	var button = $(this);
 	var post_id = $(this).data('post-id');
 	thank_count_selector = $('[data-post-id=' + post_id + '] .thank-count');
 	//REMOVE THANKS
