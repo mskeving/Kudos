@@ -248,6 +248,7 @@ def team(team):
 	new_post_form = EditPost()
 
 	this_team = Team.query.filter(Team.teamname==team).first()
+	name = this_team.teamname
 	team_members = UserTeam.query.filter(UserTeam.team_id==this_team.id).all()
 	tags = Tag.query.filter(and_(Tag.team_tag_id==this_team.id, Post.parent_post_id==None)).all() 
 
@@ -279,10 +280,11 @@ def team(team):
 	return render_template('team.html',
 		new_post_form=new_post_form,
 		reply_form=reply_form,
-		team=this_team.teamname,
+		team=this_team,
 		team_members=list_of_users,
 		posts=indented_posts,
 		dict_of_users_teams=dict_of_users_teams,
+		name=name,
 		)
 
 
@@ -294,7 +296,7 @@ def user(username):
 	new_post_form = EditPost()
 	user = User.query.filter_by(username=username).first()
 	manager = User.query.filter_by(id=user.manager_id).first()
-	tagged_posts = []
+	name = user.firstname
 
 	#get all tags that user is tagged in 
 	tags = Tag.query.filter(and_(Tag.user_tag_id==user.id, Tag.is_deleted==False)).all() 
@@ -329,6 +331,7 @@ def user(username):
 		posts=indented_posts,
 		list_of_team_names=list_of_team_names,
 		manager=manager,
+		name=name,
 		)
 
 

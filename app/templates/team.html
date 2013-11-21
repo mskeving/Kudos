@@ -2,9 +2,9 @@
 
 {% block content %}
 
-<h1 class="team__title">
-	{{team}} Team
-</h1>
+	<h1 class="team__title">
+		{{team.teamname}} Team
+	</h1>
 
 	<div class="columns--two">
 	{% for user in team_members %}
@@ -38,14 +38,11 @@
 	<div class="main-column profile">
 		<div class="post-column">
 			<div class="new-post">
-
 				{% include 'post-modal.html' with context %}
-
 			</div>
-
-			<hr>
+			<hr/>
 			{% if posts %}
-				<h2 class="gamma">Posts thanking {{team}} Team</h2>
+				<h2 class="gamma">Posts thanking {{team.teamname}} Team</h2>
 
 				<ol class="posts">
 				{% for post in posts %}
@@ -53,10 +50,18 @@
 				{% endfor %}
 				</ol>
 			{% else %}
-				<p class="beta promo faded">No posts thanking the {{team}} Team yet. Why not <a href="#">be the first?</a></p>
+				<p class="beta promo faded">No posts thanking the {{team.teamname}} Team yet. Why not <a href="#">be the first?</a></p>
 			{% endif %}
 		</div>
-
 	</div>
+{% endblock %}
 
+{% block onload %}
+	<script type="text/javascript">
+		$(function(){
+			var teamname = "{{team.teamname}}";
+			var team_id  = {{team.id}};
+			$('.tag_input#new-post-tag-input').addTag(teamname, null, null, team_id);
+		})
+	</script>
 {% endblock %}

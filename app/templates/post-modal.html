@@ -1,3 +1,6 @@
+	{% if not name %}
+		{% set name='someone' %}
+	{% endif %}
 	<form class="new-post-form new-post posts post-modal">
 		{{ new_post_form.csrf_token }}
 			<div class="post post--single">
@@ -13,7 +16,7 @@
 				    </div>
 					</div>
 					<div class="input-group">
-						<p id="post_body" tabindex="2" class="post__new-content beta p new-post-body-holder" data-placeholder="What great thing did someone do?" contenteditable></p>
+						<p id="post_body" tabindex="2" class="post__new-content beta p new-post-body-holder" data-placeholder="What awesome thing did {{name}} do?" contenteditable></p>
 					</div>
 
 					<div class="post__new-tagged">

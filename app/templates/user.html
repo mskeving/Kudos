@@ -2,77 +2,85 @@
 
 {% block content %}
 
+	<div class="user-card cf isle card p">
 
-<div class="user-card cf isle card p">
+		{% if not user.photo == "None" %}
 
-	{% if not user.photo == "None" %}
-
-	<div class="user-card__avatar img--cropper img--lrg f-l" style="background-image: url({{user.photo}})">
-		<img class="img" src="{{user.photo}}" alt="{{user.username}}" />
-	</div>
-
-	{% else %}
-
-	<div class="user-card__avatar img--cropper img--lrg f-l">
-		<img class="img" src="//dropabout.appspot.com/img?id=1" alt="{{user.username}}" />
-	</div>
-
-	{% endif %}
-
-  <div class="user-card__info">
-  	<h2 class="gamma standalone">{{user.firstname}} {{user.lastname}}</h2>
-  	<ul class="user-card__meta sl-l h-m">
-  		{% if user.email %}
-  		<li>{{user.email}}</li>
-  		{% endif %}
-  		{% if user.phone %}
-  		<li>{{user.phone}}</li>
-  		{% endif %}
-  	</ul>
-  	<div>
-  		<hr class="h-m">
-			{% if list_of_team_names %}
-				{{user.firstname}} is on the
-						<a href="{{ url_for('team', team=list_of_team_names[-1]) }}">{{list_of_team_names[-1]}}</a>
-				team.
-			{% endif %}
-			{% if manager %}
-				<a href="{{url_for('user', username=manager.username) }}"> {{manager.firstname}} {{manager.lastname}}</a> is {{user.firstname}}&rsquo;s&nbsp;lead.
-			{% endif %}
+		<div class="user-card__avatar img--cropper img--lrg f-l" style="background-image: url({{user.photo}})">
+			<img class="img" src="{{user.photo}}" alt="{{user.username}}" />
 		</div>
-  </div>
 
-</div>
+		{% else %}
 
-<div class="main-column profile">
-	<div class="new-post">
+		<div class="user-card__avatar img--cropper img--lrg f-l">
+			<img class="img" src="//dropabout.appspot.com/img?id=1" alt="{{user.username}}" />
+		</div>
 
-		{% include 'post-modal.html' with context %}
+		{% endif %}
+
+	  <div class="user-card__info">
+	  	<h2 class="gamma standalone">{{user.firstname}} {{user.lastname}}</h2>
+	  	<ul class="user-card__meta sl-l h-m">
+	  		{% if user.email %}
+	  		<li>{{user.email}}</li>
+	  		{% endif %}
+	  		{% if user.phone %}
+	  		<li>{{user.phone}}</li>
+	  		{% endif %}
+	  	</ul>
+	  	<div>
+	  		<hr class="h-m">
+				{% if list_of_team_names %}
+					{{user.firstname}} is on the
+							<a href="{{ url_for('team', team=list_of_team_names[-1]) }}">{{list_of_team_names[-1]}}</a>
+					team.
+				{% endif %}
+				{% if manager %}
+					<a href="{{url_for('user', username=manager.username) }}"> {{manager.firstname}} {{manager.lastname}}</a> is {{user.firstname}}&rsquo;s&nbsp;lead.
+				{% endif %}
+			</div>
+	  </div>
 
 	</div>
 
-	<hr>
-	{% if posts %}
-		<h2 class="gamma">Posts thanking {{user.firstname}}</h2>
+	<div class="main-column profile">
+		<div class="new-post">
 
-			<ol class="posts post-column">
-			{% for post in posts %}
-			  {% include 'post.html' with context %}
-			{% endfor %}
+			{% include 'post-modal.html' with context %}
+
+		</div>
+
+		<hr>
+		{% if posts %}
+			<h2 class="gamma">Posts thanking {{user.firstname}}</h2>
+
+				<ol class="posts post-column">
+				{% for post in posts %}
+				  {% include 'post.html' with context %}
+				{% endfor %}
+				</ol>
+		{% else %}
+			<p class="beta promo faded">No posts thanking
+				{% if g.user.username == user.username %}
+					you yet.
+				{% else %}
+					{{user.firstname}} yet. Why not <a href="#">be the first?</a></p>
+				{% endif %}
+
+			<ol class="post-column posts">
 			</ol>
-	{% else %}
-		<p class="beta promo faded">No posts thanking
-			{% if g.user.username == user.username %}
-				you yet.
-			{% else %}
-				{{user.firstname}} yet. Why not <a href="#">be the first?</a></p>
-			{% endif %}
+		{% endif %}
 
-		<ol class="post-column posts">
-		</ol>
-	{% endif %}
+	</div>
 
-</div>
+{% endblock %}
 
-
+{% block onload %}
+	<script type="text/javascript">
+		$(function(){
+			var full_name = "{{user.firstname}} {{user.lastname}}";
+			var user_id  = {{user.id}};
+			$('.tag_input#new-post-tag-input').addTag(full_name, null, null, user_id);
+		})
+	</script>
 {% endblock %}
