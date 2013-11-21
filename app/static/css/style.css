@@ -255,6 +255,90 @@ hr {
 }
 
 /*-----------------------------------*\
+  $FORMS
+\*-----------------------------------*/
+
+.butt {
+  text-decoration: none;
+  color: #333;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  border: none;
+  border-radius: .25rem;
+  padding: .2rem .75rem .3rem;
+  -webkit-box-shadow: inset 0 1px rgba(255, 255, 255, 0.1), inset 0 0 0 1px rgba(255, 255, 255, 0.1), 0 1px 1px rgba(0, 0, 0, 0.1), inset 0 0 0 1px rgba(0, 0, 0, 0.2);
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.1), inset 0 0 0 1px rgba(255, 255, 255, 0.1), 0 1px 1px rgba(0, 0, 0, 0.1), inset 0 0 0 1px rgba(0, 0, 0, 0.2);
+  font-weight: 700;
+  background-color: #fff;
+  background-image: -webkit-gradient(linear, top left, bottom left, from(transparent), to(rgba(0, 0, 0, 0.1)));
+  background-image: -webkit-linear-gradient(transparent, rgba(0, 0, 0, 0.1));
+  background-image: linear-gradient(transparent, rgba(0, 0, 0, 0.1));
+}
+
+.butt:active,
+.butt:focus {
+  outline: none;
+  background-color: #f2f2f2;
+}
+
+.butt.butt--primary {
+  background-color: #f1484b;
+  color: #fff;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+.butt.butt--primary:active,
+.butt.butt--primary:focus {
+  background-color: #ef3133;
+}
+
+.input {
+  background-color: #fff;
+  border: none;
+  padding: .25em;
+  -webkit-box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1), inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1), inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+  border-radius: .25rem;
+}
+
+.input:focus {
+  -webkit-box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1), inset 0 0 0 1px rgba(0, 0, 0, 0.1), inset 0 0 2px 1px #f36062;
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1), inset 0 0 0 1px rgba(0, 0, 0, 0.1), inset 0 0 2px 1px #f36062;
+  outline: none;
+}
+
+.input.error {
+  -webkit-animation: shake .4s;
+  animation: shake .4s;
+}
+
+.input.input--plain {
+  background-color: transparent;
+  color: inherit;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+
+.input.input--plain:focus {
+  background-color: rgba(241, 229, 183, 0.5);
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+
+.in {
+  display: inline-block;
+}
+
+.in + .in {
+  margin-left: .3em;
+}
+
+.error {
+  color: #f36062;
+}
+
+/*-----------------------------------*\
 
   $OBJECTS
 
@@ -360,77 +444,6 @@ hr {
 }
 
 /*-----------------------------------*\
-  $FORMS
-\*-----------------------------------*/
-
-.butt {
-  text-decoration: none;
-  color: #333;
-  cursor: pointer;
-  -webkit-appearance: none;
-  appearance: none;
-  border: none;
-  border-radius: .25rem;
-  padding: .2rem .75rem .3rem;
-  -webkit-box-shadow: inset 0 1px rgba(255, 255, 255, 0.1), inset 0 0 0 1px rgba(255, 255, 255, 0.1), 0 1px 1px rgba(0, 0, 0, 0.1), inset 0 0 0 1px rgba(0, 0, 0, 0.2);
-  box-shadow: inset 0 1px rgba(255, 255, 255, 0.1), inset 0 0 0 1px rgba(255, 255, 255, 0.1), 0 1px 1px rgba(0, 0, 0, 0.1), inset 0 0 0 1px rgba(0, 0, 0, 0.2);
-  font-weight: 700;
-  background-color: #fff;
-  background-image: -webkit-gradient(linear, top left, bottom left, from(transparent), to(rgba(0, 0, 0, 0.1)));
-  background-image: -webkit-linear-gradient(transparent, rgba(0, 0, 0, 0.1));
-  background-image: linear-gradient(transparent, rgba(0, 0, 0, 0.1));
-}
-
-.butt:active,
-.butt:focus {
-  outline: none;
-  background-color: #f2f2f2;
-}
-
-.butt.butt--primary {
-  background-color: #f1484b;
-  color: #fff;
-  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
-}
-
-.butt.butt--primary:active,
-.butt.butt--primary:focus {
-  background-color: #ef3133;
-}
-
-.input {
-  background-color: #fff;
-  border: none;
-  padding: .25em;
-  -webkit-box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1), inset 0 0 0 1px rgba(0, 0, 0, 0.1);
-  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1), inset 0 0 0 1px rgba(0, 0, 0, 0.1);
-  border-radius: .25rem;
-}
-
-.input:focus {
-  -webkit-box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1), inset 0 0 0 1px rgba(0, 0, 0, 0.1), inset 0 0 3px #f36062;
-  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1), inset 0 0 0 1px rgba(0, 0, 0, 0.1), inset 0 0 3px #f36062;
-  outline: none;
-}
-
-.input.error {
-  -webkit-animation: shake .4s;
-  animation: shake .4s;
-}
-
-.in {
-  display: inline-block;
-}
-
-.in + .in {
-  margin-left: .3em;
-}
-
-.error {
-  color: #f36062;
-}
-
-/*-----------------------------------*\
 
   $LAYOUT
 
@@ -463,6 +476,23 @@ hr {
   float: right;
   margin-left: 2.5%;
   clear: right;
+}
+
+.g {
+  display: inline-block;
+  margin-right: -.24em;
+}
+
+.g.g--one-third {
+  width: 33.333%;
+}
+
+.g.g--two-thirds {
+  width: 66.666%;
+}
+
+.g.g--one-half {
+  width: 50%;
 }
 
 /*-----------------------------------*\
@@ -666,14 +696,14 @@ body {
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1), inset 0 0 10px 1px white;
 }
 
+.post--photo {
+  padding-top: 1rem;
+}
+
 .post--photo .post__container,
 .post--photo .user-card {
   padding-bottom: 0;
-}
-
-.post--photo .post__meta,
-.post--photo .post__meta:last-child {
-  margin-bottom: 1.5rem;
+  padding-top: .5rem;
 }
 
 .submit-kudos .post__header-meta {
@@ -767,9 +797,9 @@ body {
   text-decoration: none;
   width: 4rem;
   height: 4rem;
-  background-image: url("/static/img/generic_photo.jpg");
+  background-image: url("//dropabout.appspot.com/img?id=1");
   background-size: cover;
-  background-position: center top;
+  background-position: center;
 }
 
 @media (max-width: 600px) {
@@ -889,9 +919,8 @@ body {
 }
 
 .post__content .post__photo {
-  margin: -2.7rem -1.5rem 0 1.5rem;
-  width: 37.5%;
-  border-radius: 0 .25rem 0 0;
+  margin: -1.725rem 1.5rem 0 -1.5rem;
+  width: 36.5%;
 }
 
 @media (max-width: 600px) {
@@ -934,23 +963,26 @@ body {
   border-radius: 0 0 .25rem .25rem;
 }
 
-.post__actions li {
-  display: inline-block;
-  margin-right: -.25em;
-  margin-left: -1px;
-  width: 50%;
+.post__actions .input {
+  border-radius: 0;
 }
 
-.post__actions li .butt {
+.post__actions > * + * {
+  border-left: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.post__actions .input--plain {
+  color: #77624e;
+}
+
+.post__actions .butt {
   text-align: center;
   -webkit-box-shadow: none;
   box-shadow: none;
-  width: 100%;
   -webkit-appearance: none;
   background-color: transparent;
   background-image: none;
-  border: none;
-  display: block;
+  border-radius: 0 0 0 0;
   color: rgba(0, 0, 0, 0.5);
   font-weight: 700;
   text-decoration: none;
@@ -961,13 +993,13 @@ body {
   padding: .75rem;
 }
 
-.post__actions li .butt:focus {
+.post__actions .butt:focus {
   outline: 1px dotted;
   outline-offset: -1px;
 }
 
-.post__actions li .butt:active,
-.post__actions li .butt:active:focus {
+.post__actions .butt:active,
+.post__actions .butt:active:focus {
   background-image: -webkit-gradient(linear, top left, bottom left, from(rgba(100, 80, 0, 0.05)), to(rgba(100, 80, 0, 0)));
   background-image: -webkit-linear-gradient(rgba(100, 80, 0, 0.05), rgba(100, 80, 0, 0));
   background-image: linear-gradient(rgba(100, 80, 0, 0.05), rgba(100, 80, 0, 0));
@@ -976,20 +1008,15 @@ body {
   color: rgba(0, 0, 0, 0.5);
 }
 
-.post__actions li + li {
-  border-left: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-.post__actions li .thanked {
+.post__actions .thanked {
   color: #fff;
   text-shadow: 0 1px 1px rgba(150, 0, 0, 0.25);
   background-color: #f36062;
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.1);
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.1);
-  border-radius: 0 0 0 .25rem;
 }
 
-.post__actions li .thanked.js--pressed .fa-heart {
+.post__actions .thanked.js--pressed .fa-heart {
   z-index: 5;
   -webkit-transform-style: preserve-3d;
   transform-style: preserve-3d;
@@ -1083,7 +1110,7 @@ body {
   margin: -.75rem;
   margin-right: .75rem;
   background-size: cover;
-  background-position: center top;
+  background-position: center;
 }
 
 .user-card__avatar img {
@@ -1441,7 +1468,7 @@ body {
 }
 
 .lightbox {
-  background: rgba(0, 0, 0, 0.9);
+  background: rgba(0, 0, 0, 0.85);
   white-space: nowrap;
   position: fixed;
   right: 0px;
@@ -1453,6 +1480,13 @@ body {
   z-index: 138483;
   height: 100%;
   width: 100%;
+}
+
+.lightbox__img {
+  border-radius: .25rem;
+  overflow: hidden;
+  -webkit-box-shadow: 0 1px 10px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 1px 10px rgba(0, 0, 0, 0.3);
 }
 
 .lightbox__img img {
@@ -1468,6 +1502,22 @@ body {
   left: 0;
   -webkit-box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1), 0 2px 5px rgba(0, 0, 0, 0.1);
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1), 0 2px 5px rgba(0, 0, 0, 0.1);
+  border-radius: .25rem;
+  pointer-events: none;
+}
+
+.lightbox__close {
+  color: rgba(255, 255, 255, 0.8);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 0.75rem;
+  cursor: pointer;
+}
+
+.lightbox__close:hover {
+  color: #fff;
 }
 
 .js--lightbox-open body {

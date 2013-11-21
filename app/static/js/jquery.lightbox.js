@@ -7,7 +7,7 @@ $(document).ready(function(){
 
 		var img = $(this).attr('href');
 
-		$('body').append('<div class="lightbox cn-c"><div class="lightbox__img cn-w"><img src="' + img + '" /></div></div>');
+		$('body').append('<div class="lightbox cn-c"><i title="Close" class="fa fa-times lightbox__close"></i><div class="lightbox__img cn-w"><img src="' + img + '" /></div></div>');
 
 		initLightbox();
 

@@ -8,9 +8,20 @@
 {% for user in all_users %}
 
 <div class="user-card isle cf card p card--mini" id="user_info">
-	<a class="b user-card__avatar img--cropper img--med img--med--tall f-l" style="background-image: url({{user.photo}})" href="{{ url_for('user', username=user.username) }}">
-    <img class="img" src="{{user.photo}}" alt="{{user.username}}" />
-	</a>
+
+  {% if not user.photo == "None" %}
+
+    <a class="b user-card__avatar img--cropper img--med img--med--tall f-l" style="background-image: url({{user.photo}})" href="{{ url_for('user', username=user.username) }}">
+      <img class="img" src="{{user.photo}}" alt="{{user.username}}" />
+  	</a>
+
+  {% else %}
+
+    <a class="b user-card__avatar img--cropper img--med img--med--tall f-l" href="{{ url_for('user', username=user.username) }}">
+      <img class="img" src="//dropabout.appspot.com/img?id=1" alt="{{user.username}}" />
+    </a>
+
+  {% endif %}
 
 	<div class="user-card__info" data-user-id="{{user.id}}">
   	<h2 class="gamma standalone">
