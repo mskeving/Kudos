@@ -410,11 +410,19 @@ function send_notifications(data){
 
 }
 
+
+// Reveal comments
 $('.comment-count').live('click', function() {
 	var id = $(this).parents('.post').attr('data-post-id');
 	show_modal($('.comments[data-post-id=' + id + ']'));
 });
 
+
+// Focus post body
+$('.js--hocus-focus').live('click', function(e){
+	e.preventDefault();
+	$('.post__new-content').focus();
+});
 
 function change_count(jquery_selector, add_value){
 	//add or subtract counts on white card (ex thanks or comments)
@@ -508,13 +516,13 @@ $('.new-post-modal-btn').live('click', function(e) {
 
 });
 
+// Prepare tags input
 $(document).ready(function(){
 	tag_input = $('#new-post-tag-input');
 	get_tag_list(tag_input);
-
 });
 
-
+// Create post
 function create_post(public_url){
 	post_text = $('#post_body').text();
 

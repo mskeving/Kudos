@@ -32,11 +32,10 @@
 	  		<hr class="h-m">
 				{% if list_of_team_names %}
 					{{user.firstname}} is on the
-							<a href="{{ url_for('team', team=list_of_team_names[-1]) }}">{{list_of_team_names[-1]}}</a>
-					team.
+							<a href="{{ url_for('team', team=list_of_team_names[-1]) }}">{{list_of_team_names[-1]}} Team</a>.
 				{% endif %}
 				{% if manager %}
-					<a href="{{url_for('user', username=manager.username) }}"> {{manager.firstname}} {{manager.lastname}}</a> is {{user.firstname}}&rsquo;s&nbsp;lead.
+					{{user.firstname}}&rsquo;s&nbsp;lead is <a href="{{url_for('user', username=manager.username) }}"> {{manager.firstname}} {{manager.lastname}}</a>.
 				{% endif %}
 			</div>
 	  </div>
@@ -44,15 +43,18 @@
 	</div>
 
 	<div class="main-column profile">
-		<div class="new-post">
 
-			{% include 'post-modal.html' with context %}
+		{% if not user.username == g.user.username %}
+			<div class="new-post">
 
-		</div>
+				{% include 'post-modal.html' with context %}
+
+			</div>
+		{% endif %}
 
 		<hr>
 		{% if posts %}
-			<h2 class="gamma">Posts thanking {{user.firstname}}</h2>
+			<h2 class="gamma">Posts thanking {{'you' if user.username == g.user.username else user.firstname }}</h2>
 
 				<ol class="posts post-column">
 				{% for post in posts %}
@@ -64,7 +66,7 @@
 				{% if g.user.username == user.username %}
 					you yet.
 				{% else %}
-					{{user.firstname}} yet. Why not <a href="#">be the first?</a></p>
+					{{user.firstname}} yet. Why not <a href="#" class="js--hocus-focus">be the first?</a></p>
 				{% endif %}
 
 			<ol class="post-column posts">
