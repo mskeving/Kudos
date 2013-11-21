@@ -1,12 +1,13 @@
-
 {% extends "base.html" %}
+
 {% block content %}
 
 	{% if error_msg %}
 		{{error_msg}}
 	{% else %}
-		{% include 'post.html' with context %}
+		<div class="posts">
+			{% include 'post.html' with context %}
+		</div>
 	{% endif %}
 
 {% endblock %}
-
