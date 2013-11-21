@@ -27,7 +27,7 @@
                   <!-- <img src="{{tag.team_tag.photo}}" alt="{{tag.team_tag.teamname}}" /> -->
                 </a>
 
-                {% if g_user_tagged_in_post or g.user.username == post_object.author.username%}
+                {% if g.user.username == post_object.author.username%}
                   <div class="post__remove-tag remove-tag">
                     <i class="fa fa-times"></i>
                   </div>
@@ -37,9 +37,8 @@
             {% endfor %}
           {% endif %}
 
-          {% set g_user_tagged_in_post = [] %}
-
           {% if post.get('tagged_users') %}
+            {% set g_user_tagged_in_post = [] %}
             {% for tag in post.get('tagged_users') %}
               {% if tag.user_tag.username == g.user.username %}
                 {% do g_user_tagged_in_post.append(1) %}

@@ -37,7 +37,6 @@ class User(db.Model):
 	employee_id = db.Column(db.Integer)
 	firstname = db.Column(db.String(64), index=True)
 	lastname = db.Column(db.String(64), index=True)
-	#change nickname unique=false
 	nickname = db.Column(db.String(64), index=True)
 	email = db.Column(db.String(120), index=True, unique=True)
 	photo = db.Column(db.String(120))
@@ -47,7 +46,7 @@ class User(db.Model):
 	is_deleted = db.Column(db.Boolean, default=False, nullable=False)
 
 	posts = db.relationship('Post', backref='author', lazy='dynamic')
-	users = db.relationship('UserTeam', backref='user', primaryjoin="User.id==UserTeam.user_id")
+	users_teams = db.relationship('UserTeam', backref='user', primaryjoin="User.id==UserTeam.user_id")
 	tagged_in = db.relationship('Tag', backref='user_tag', primaryjoin="User.id==Tag.user_tag_id", lazy="dynamic'")
 	thanker = db.relationship('Thanks', backref='user')
 

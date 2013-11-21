@@ -18,6 +18,7 @@ from models import (User, Post, UserTeam, Team, Tag,
 from datetime import datetime
 from flask.ext.sqlalchemy import sqlalchemy
 from sqlalchemy import and_, or_, func
+from sqlalchemy.orm import joinedload_all
 from threading import Thread
 
 from flask.ext.mail import Message
@@ -124,7 +125,7 @@ def index():
 	delete_form = DeletePost()
 
 	#query for all parent posts
-	posts = Post.query.filter(and_(Post.parent_post_id==None, Post.is_deleted==False)).order_by(Post.time.desc()).limit(3).all()
+	posts = Post.query.filter(and_(Post.parent_post_id==None, Post.is_deleted==False)).order_by(Post.time.desc()).limit(10).all()
 
 	if posts != None:
 		indented_posts = posts_to_indented_posts(posts)
@@ -149,8 +150,11 @@ def get_more_posts():
 
 	last_post_id = form.get('last_post_id')
 
-	#older posts will have smaller post_id
-	total_posts_left = db.session.query(Post).filter(and_(Post.parent_post_id==None, Post.is_deleted==False, Post.id<last_post_id)).all()
+	if last_post_id:
+		#older posts will have smaller post_id
+		total_posts_left = db.session.query(Post).filter(and_(Post.parent_post_id==None, Post.is_deleted==False, Post.id<last_post_id)).all()
+	else:
+		total_posts_left = []
 
 	posts_to_display = []
 	count_total_posts_left = len(total_posts_left)
@@ -465,14 +469,16 @@ def new_post():
 		new_post_form=new_post_form,
 		)
 
-	post_info_dict = {}
-	post_info_dict['new_post'] = post_page
-	post_info_dict['post_id'] = post_id
-	post_info_dict['tagged_user_ids'] = tagged_user_ids
-	post_info_dict['tagged_team_ids'] = tagged_team_ids
-	post_info_json = json.dumps(post_info_dict)
 
-	return post_info_json
+	post_info_dict = {
+		'new_post': post_page,
+		'post_id': post_id,
+		'tagged_user_ids': tagged_user_ids,
+		'tagged_team_ids': tagged_team_ids
+	}
+
+
+	return json.dumps(post_info_dict)
 
 @app.route('/create_notifications', methods=["POST"])
 def create_notifications():
@@ -482,31 +488,54 @@ def create_notifications():
 	tagged_team_ids = json.loads(form.get('tagged_team_ids'))
 	photo_url = form.get('photo_url')
 	post_text = form.get('post_text')
-	post_id = form.get('post_id')
+	parent_post_id = form.get('parent_post_id')
 
-	if tagged_user_ids:
-		tagged_users = User.query.filter(User.id.in_(tagged_user_ids)).all()
-		create_notification_for_tagged_users(tagged_users, photo_url, post_text, post_id)
-		create_notification_for_managers(tagged_users, photo_url, post_text, post_id)
+	is_comment = form.get('is_comment')
+	if is_comment:
+		subject = "New comment on your Kudos"
+		header = g.user.firstname + " " + g.user.lastname + " commented on a post you're tagged in"
+		if tagged_user_ids:
+			tagged_users = User.query.filter(User.id.in_(tagged_user_ids)).all()
+			create_notification_for_tagged_users(tagged_users, photo_url, post_text, parent_post_id, subject, header)
+		if tagged_team_ids:
+			users_teams_in_tagged_teams = UserTeam.query.filter(UserTeam.team_id.in_(tagged_team_ids)).all()
+			create_notification_for_tagged_teams(users_teams_in_tagged_teams, photo_url, post_text, parent_post_id, subject, header)
+		return "complete"
 
-	if tagged_team_ids:
-		users_teams_in_tagged_teams = UserTeam.query.filter(UserTeam.team_id.in_(tagged_team_ids)).all()
-		create_notification_for_tagged_teams(users_teams_in_tagged_teams, photo_url, post_text, post_id)
+	is_new_post = form.get('is_new_post')
+	if is_new_post:
+		subject = "Kudos to you!"
+		header = g.user.firstname + " " + g.user.lastname + " sent you Kudos"
+		if tagged_user_ids:
+			tagged_users = User.query.filter(User.id.in_(tagged_user_ids)).all()
+			create_notification_for_tagged_users(tagged_users, photo_url, post_text, parent_post_id, subject, header)
+			create_notification_for_managers(tagged_users, photo_url, post_text, parent_post_id)
+
+		if tagged_team_ids:
+			users_teams_in_tagged_teams = UserTeam.query.filter(UserTeam.team_id.in_(tagged_team_ids)).all()
+			create_notification_for_tagged_teams(users_teams_in_tagged_teams, photo_url, post_text, parent_post_id, subject, header)
 
 	return "complete"
 
-def create_notification_for_tagged_users(tagged_users_list, photo_url, post_text, post_id):
+def create_notification_for_tagged_users(tagged_users_list, photo_url, post_text, parent_post_id, subject, header):
 	recipient_list=[]
 	for user_object in tagged_users_list:
 		recipient_list.append(user_object.email)
 
 	#create notification for taggees 
-	subject = "Kudos to you!"
-	header = g.user.firstname + " sent you kudos!"
+	generate_email(header, post_text, subject, recipient_list, parent_post_id, photo_url)
+
+
+def create_notification_for_tagged_teams(users_teams_in_tagged_teams, photo_url, post_text, post_id, subject, header):
+	# TODO: separate notifications for different teams. {teamname:[list_of_team_members],}
+	recipient_list = []
+	for user_team in users_teams_in_tagged_teams:
+		recipient_list.append(user_team.user.email)
 	generate_email(header, post_text, subject, recipient_list, post_id, photo_url)
 
 
 def create_notification_for_managers(tagged_users_list, photo_url, post_text, post_id):
+	#Managers will only receive notifications when their reports are first tagged in a post. Nothing for comments
 	recipient_list = []
 	manager_to_reports_dict = defaultdict(list)
 	for user_object in tagged_users_list:
@@ -537,16 +566,6 @@ def create_notification_for_managers(tagged_users_list, photo_url, post_text, po
 
 		generate_email(header, post_text, subject, recipient_list, post_id, photo_url)
 
-def create_notification_for_tagged_teams(users_teams_in_tagged_teams, photo_url, post_text, post_id):
-	# TODO: separate notifications for different teams. {teamname:[list_of_team_members],}
-	recipient_list = []
-	for user_team in users_teams_in_tagged_teams:
-		recipient_list.append(user_team.user.email)
-	subject = "Kudos to your team!"
-	header = g.user.firstname + " sent kudos to your team"
-	generate_email(header, post_text, subject, recipient_list, post_id, photo_url)
-
-
 
 #SEND THANKS
 @app.route('/sendthanks', methods=['POST'])
@@ -574,11 +593,10 @@ def remove_thanks():
 	delete_thanks = Thanks.query.filter(and_(Thanks.thanks_sender==thanks_sender, Thanks.post_id==post_id)).all() 
 
 	for thank in delete_thanks:
-		db.session.delete(thank)
+		thank.is_deleted = True
 	db.session.commit()
 
-	status = "complete"
-	return status
+	return "complete"
 
 @app.route('/displaythanks', methods=['POST'])
 @login_required
@@ -598,7 +616,7 @@ def display_thanks():
 def add_tag():	
 	user_id = g.user.id
 	form = request.form
-	post_id = form.get("post_id")
+	post_id = form.get("parent_post_id")
 	photo_url = form.get("post_photo_url")
 
 	post_text = form.get("post_text")
@@ -665,12 +683,10 @@ def delete_tag():
 	
 	delete_tag = db.session.query(Tag).filter_by(id=tag_id).one()
 
-	db.session.delete(delete_tag)
+	delete_tag.is_deleted = True
 	db.session.commit()
 
-	status = "complete"
-
-	return status
+	return "complete"
 
 
 #SUBMIT NEW COMMENT
@@ -680,20 +696,36 @@ def new_comment():
 
 	form = request.form
 
-	body = form.get('body')
-	post_id = form.get('post_id')
+	body = form.get('post_text')
+	parent_post_id = form.get('parent_post_id')
 	
-	print "post_id: %r" % post_id
-
-	new_comment = Post(body=body, parent_post_id=post_id, time=datetime.utcnow(), user_id=g.user.id)
+	new_comment = Post(body=body, parent_post_id=parent_post_id, time=datetime.utcnow(), user_id=g.user.id)
 	db.session.add(new_comment)
 	db.session.commit()
 
-	print "submitted new comment"
+	tag_ids = form.get('hidden_tag_ids', '').split('|')
+	tag_text = form.get('hidden_tag_text', '').split('|')
+
+	tags_for_parent_post = db.session.query(Tag).filter_by(post_id=parent_post_id).all()
+
+	tagged_user_ids = []
+	tagged_team_ids = []
+	for tag in tags_for_parent_post:
+		if tag.user_tag_id:
+			tagged_user_ids.append(tag.user_tag_id)
+		if tag.team_tag_id:
+			tagged_team_ids.append(tag.team_tag_id)
+
 	comment_template = render_template("comment.html",
-		comment=new_comment)
-	print "rendered comment_template"
-	return comment_template
+			comment=new_comment)
+
+	comment_info = {
+		'comment_template': comment_template,
+		'tagged_user_ids': tagged_user_ids,
+		'tagged_team_ids': tagged_team_ids
+	}
+
+	return json.dumps(comment_info)
 
 #DELETE COMMENT
 @app.route('/deletecomment/<postid>', methods=['POST'])
@@ -701,7 +733,7 @@ def new_comment():
 def delete_comment(postid):
 	
 	delete_comment = db.session.query(Post).filter_by(id=postid).one()
-	db.session.delete(delete_comment)
+	delete_comment.is_deleted = True
 	db.session.commit()
 
 	status = "complete"
@@ -725,7 +757,7 @@ def delete_post():
 	for tag in delete_post.tags:
 		tag.is_deleted = True
 	for comment in delete_post.children:
-		child.is_deleted = True
+		comment.is_deleted = True
 	for thank in delete_post.thanks:
 		thank.is_deleted = True
 
@@ -740,10 +772,10 @@ def delete_post():
 def permalink_for_post_with_id(post_id):
 	new_post_form = EditPost() 
 	reply_form = NewReply()
-	posts = Post.query.filter(Post.id==int(post_id)).all()
-	post = posts_to_indented_posts(posts)[0]
-
-	return render_template('postpage.html',
+	posts = Post.query.filter(and_(Post.id==int(post_id), Post.is_deleted==False)).all()
+	if posts:
+		post = posts_to_indented_posts(posts)[0]
+		return render_template('postpage.html',
 		user=g.user,
 		post=post,
 		new_post=new_post,
@@ -751,30 +783,38 @@ def permalink_for_post_with_id(post_id):
 		new_post_form=new_post_form,
 		)
 
+	else:
+		return render_template('postpage.html',
+			error_msg="Sorry! This post has been removed"
+		)
+
 
 #ALL USERS
 @app.route('/all_users')
 @login_required
 def all_users():
+	all_users = User.query.filter(User.is_deleted==False).options(joinedload_all(User.users_teams, 'team')).order_by(User.firstname, User.lastname, User.employee_id).all()
 
-	all_users = User.query.filter(User.is_deleted==False).order_by(User.firstname).all()
-
-	dict_of_users_teams={}
+	all_user_ids = []
 	for user in all_users:
-		list_of_teams = []
-		teams = db.session.query(UserTeam).filter_by(user_id=user.id).all()
-		for team in teams:
-			list_of_teams.append(team)
-		dict_of_users_teams[user.id]=list_of_teams
+		all_user_ids.append(user.id)
 
+	#users_teams = UserTeam.query.filter(UserTeam.user_id.in_(all_user_ids)).all()
 
-	users_list_of_teams = []
-	#users_list_of_teams = db.session.query(Team).filter_by()
+	# {user_id: [team1, team2]}
+	#dict_of_users_teams2 = {ut: (ut.user_id, ut.team_id) for ut in users_teams}
+
+	#dict_of_users_teams=defaultdict(list)
+	#for ut in dict_of_users_teams2.keys():
+	#	dict_of_users_teams[ut.user_id].append(ut.team)
+	dict_of_users_teams = {}
+	for user in all_users:
+		dict_of_users_teams[user.id] = [ut.team for ut in user.users_teams]
+
 	return render_template('allusers.html', 
 		all_users=all_users,
 		user_teams_dict=dict_of_users_teams,
 		)
-
 
 
 # @app.errorhandler(404)
@@ -873,21 +913,25 @@ def posts_to_indented_posts(posts):
 		author_teams = []
 		user_teams= UserTeam.query.filter(UserTeam.user_id==p.author.id).all()
 		for team in user_teams:
-			author_teams.append(team.team)
+			if team.is_deleted == False:
+				author_teams.append(team.team)
 		d['author_teams'] = author_teams
 
 		children = []
 		for child in p.children:
-			children.append(child)
+			if child.is_deleted == False:
+				children.append(child)
 		d['comments'] = children
 
 		tagged_users = []
 		tagged_teams = []
 		for tag in p.tags:
 			if tag.user_tag_id:
-				tagged_users.append(tag) #send in all user information
+				if tag.is_deleted == False:
+					tagged_users.append(tag) #send in all user information
 			elif tag.team_tag_id:
-				tagged_teams.append(tag) #just teamname
+				if tag.is_deleted == False:
+					tagged_teams.append(tag) #just teamname
 			else:
 				print "no tags for this post.id: %r" % p.id 
 

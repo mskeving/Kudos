@@ -2,7 +2,6 @@
 app.db
 *.pyc
 tmp/
-db_repository/
 heroku_only/
 user_data.rtf
 dropbox to hackbright.rtf
