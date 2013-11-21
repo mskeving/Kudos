@@ -297,7 +297,7 @@ def user(username):
 	tagged_posts = []
 
 	#get all tags that user is tagged in 
-	tags = Tag.query.filter(and_(Tag.user_tag_id==user.id, Post.parent_post_id==None)).all() 
+	tags = Tag.query.filter(and_(Tag.user_tag_id==user.id, Tag.is_deleted==False)).all() 
 
 	tagged_posts = []
 	#for each tag, find post associated with it
@@ -317,15 +317,11 @@ def user(username):
 		list_of_team_names.append(team.team.teamname)
 	dict_of_users_teams[user.id]=list_of_team_names
 
-	print "user's list of teams: "
-	print list_of_team_names
-
 
 	if user == None:
 		flash('User ' + username + ' not found.')
 		return redirect(url_for('index'))
 
-	print "user before rendering template: %r " % user
 	return render_template('user.html', 
 		new_post_form=new_post_form,
 		reply_form=reply_form,
