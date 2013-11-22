@@ -26,6 +26,7 @@ $(document).ready(function(){
 						success: function(new_posts){
 							if( initCommentButtons($(new_posts)) ){
 								scrollInAction = false;
+								$('.post-column.posts__home').append(new_posts);
 							}
 
 						},

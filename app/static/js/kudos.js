@@ -340,7 +340,6 @@ window.initCommentButtons = function($jqObject){
 		dataType: 'json'
 	});
 })
-	$('.post-column.posts__home').append($jqObject);
 	return true;
 }
 
@@ -506,6 +505,7 @@ function create_post(public_url){
 			// response includes post markup, and list of tagged team/user ids
 			$('.post-column').prepend(response.new_post);
 			$('ol.posts .post').first().addClass('post--new-in-stream');
+			initCommentButtons($('.post[data-post-id]'));
 			clear_post_modal_info();
 			console.log("success! created new post");
 			end_show_progress($('.submit-new-post'));
@@ -603,5 +603,5 @@ function s3_upload(data, callback){
 $(document).ready(function(){
 	tag_input = $('#new-post-tag-input');
 	get_tag_list(tag_input);
-	initCommentButtons($('.post'));
+	initCommentButtons($('.post[data-post-id]'));
 });

@@ -199,8 +199,8 @@
     <a class="toolbar-button comment-button" data-post-id="{{post_object.id}}">Comment</a>
 -->
     <nav class="post__actions nav">
-      {% if g.user.id in post.get('comments') %}
-        <button class="butt isle toolbar-button g span-all thanked" data-post-id="{{post_object.id}}"><i class="fa fa-heart"></i> Thank</button>
+      {% if g.user in post.get('commenters') %}
+        <button class="butt isle toolbar-button g span-all thanked" data-post-id="{{post_object.id}}"><i class="fa fa-heart"></i> Thanked</button>
       {% else %}
         <input class="input input--plain isle input--float-label g g--two-thirds" name="comment-body" id="comment-body-{{post_object.id}}" placeholder="Leave a note with your Thanks">
         <button class="butt isle toolbar-button comment-button g g--one-third" data-post-id="{{post_object.id}}"><i class="fa fa-heart"></i> Thank</button>
