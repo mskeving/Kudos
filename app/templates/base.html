@@ -16,6 +16,7 @@
 		<link rel="apple-touch-icon-precomposed" href="/static/img/touch-icon.png" />
 		<link rel="shortcut icon" href="/static/img/favicon.png" />
 
+		<script type="text/javascript" src="/static/js/jquery1_4_4.min.js"></script>
 		<script type="text/javascript" src="//use.typekit.net/bgx4jzo.js"></script>
 		<script type="text/javascript">try{Typekit.load();}catch(e){}</script>
 	</head>
@@ -60,16 +61,19 @@
 			{% block content %}{% endblock %}
 		</div>
 
-		<script type="text/javascript" src="/static/js/jquery1_4_4.min.js"></script>
-		<script type='text/javascript' src="/static/js/jquery-ui.min.js"></script>
+		{% if env and env == 'prod' %}
+			<script type="text/javascript" src="/static/js/kudos.min.js"></script>
+		{% else %}
+			<script type='text/javascript' src="/static/js/jquery-ui.min.js"></script>
 
-		<script type="text/javascript" src="/static/js/s3upload.js"></script>
-		<script type="text/javascript" src="/static/js/jquery.tagsinput.js"></script>
-		<script type="text/javascript" src="/static/js/kudos.js"></script>
-		<script type="text/javascript" src="/static/js/dropboxchooser.js" id="dropboxjs" data-app-key="vi9myl48jsb166j"></script>
-		<script type="text/javascript" src="/static/js/jquery.lightbox.js"></script>
+			<script type="text/javascript" src="/static/js/s3upload.js"></script>
+			<script type="text/javascript" src="/static/js/jquery.tagsinput.js"></script>
+			<script type="text/javascript" src="/static/js/kudos.js"></script>
+			<script type="text/javascript" src="/static/js/dropboxchooser.js" id="dropboxjs" data-app-key="vi9myl48jsb166j"></script>
+			<script type="text/javascript" src="/static/js/jquery.lightbox.js"></script>
 
-		<script type="text/javascript" src="/static/js/index.js"></script>
+			<script type="text/javascript" src="/static/js/index.js"></script>
+		{% endif %}
 		{% block onload %}{% endblock %}
 	</body>
 

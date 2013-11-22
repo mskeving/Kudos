@@ -1072,6 +1072,22 @@ body {
   $COMMENTS
 \*-----------------------------------*/
 
+.comment__input::-webkit-input-placeholder {
+  border-bottom: 1px dashed rgba(0, 0, 0, 0.15);
+}
+
+.comment__input::-moz-input-placeholder {
+  border-bottom: 1px dashed rgba(0, 0, 0, 0.15);
+}
+
+.comment__input::-o-input-placeholder {
+  border-bottom: 1px dashed rgba(0, 0, 0, 0.15);
+}
+
+.comment__input::input-placeholder {
+  border-bottom: 1px dashed rgba(0, 0, 0, 0.15);
+}
+
 .post__comments {
   padding-top: .75rem;
   padding-bottom: .75rem;
