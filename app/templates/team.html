@@ -36,7 +36,7 @@
 	</div>
 
 	<div class="main-column profile">
-		<div class="post-column">
+		<div>
 			<div class="new-post">
 				{% include 'post-modal.html' with context %}
 			</div>
@@ -44,7 +44,7 @@
 			{% if posts %}
 				<h2 class="gamma">Posts thanking {{team.teamname}} Team</h2>
 
-				<ol class="posts">
+				<ol class="posts post-column">
 				{% for post in posts %}
 				  {% include 'post.html' with context %}
 				{% endfor %}
@@ -57,11 +57,4 @@
 {% endblock %}
 
 {% block onload %}
-	<script type="text/javascript">
-		$(function(){
-			var teamname = "{{team.teamname}}";
-			var team_id  = {{team.id}};
-			$('.tag_input#new-post-tag-input').addTag(teamname, null, null, team_id);
-		})
-	</script>
 {% endblock %}

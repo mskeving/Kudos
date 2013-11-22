@@ -78,11 +78,4 @@
 {% endblock %}
 
 {% block onload %}
-	<script type="text/javascript">
-		$(function(){
-			var full_name = "{{user.firstname}} {{user.lastname}}";
-			var user_id  = {{user.id}};
-			$('.tag_input#new-post-tag-input').addTag(full_name, null, null, user_id);
-		})
-	</script>
 {% endblock %}

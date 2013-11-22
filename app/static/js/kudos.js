@@ -473,6 +473,7 @@ $(function () {
 
 	//Submit new post
 	$('.submit-new-post').live('click', function(e){
+		console.log('clickkkkk');
 		//Check if file selected from dropbox chooser
 		if ($.isEmptyObject(data)===false){
 			console.log('not empty data')
@@ -523,7 +524,12 @@ $(document).ready(function(){
 });
 
 // Create post
-function create_post(public_url){
+function create_post(public_url) {
+	if ($('.new-post-form').hasClass('submitting')) {
+		return;
+	}
+	$('.new-post-form').addClass('submitting');
+
 	post_text = $('#post_body').text();
 
 	data = {
@@ -531,26 +537,28 @@ function create_post(public_url){
 		post_text: post_text
 	};
 
-	if($('.new-post-form .tagsinput > span.tag').html() == null) {
+	if($('.new-post-form .tagsinput > span.tag').html() == null && !$('.prefilled_tag_ids').val()) {
+		console.log('No tags');
 		$('.post__tagger').focus().addClass('error').one('webkitAnimationEnd mozAnimationEnd oAnimationEnd animationEnd', function(){
 			$(this).removeClass('error');
 		});
+		$('.new-post-form').removeClass('submitting');
 		return;
-		console.log('No tags');
 	}
 
 	if (!post_text){
 		$('.post__new-content').focus().addClass('error').one('webkitAnimationEnd mozAnimationEnd oAnimationEnd animationEnd', function(){
 			$(this).removeClass('error');
 		});
+		$('.new-post-form').removeClass('submitting');
 		return;
 	}
 
 	collect_tags($('.new-post-form'));
 
 	$.extend(data, {
-		hidden_tag_ids: $('.hidden_tag_ids').val(),
-		hidden_tag_text: $('.hidden_tag_text').val()
+		hidden_tag_ids: $('.hidden_tag_ids').val() || $('.prefilled_tag_ids').val(),
+		hidden_tag_text: $('.hidden_tag_text').val() || $('.prefilled_tag_text').val()
 	});
 
 	show_progress($('.submit-new-post'));
@@ -563,7 +571,6 @@ function create_post(public_url){
 			$('.post-column').prepend(response.new_post);
 			$('ol.posts .post').first().addClass('post--new-in-stream');
 			clear_post_modal_info();
-			console.log("success! created new post");
 			end_show_progress($('.submit-new-post'));
 
 			$.extend(data, {
@@ -572,6 +579,8 @@ function create_post(public_url){
 				tagged_user_ids: JSON.stringify(response.tagged_user_ids),
 				is_new_post: true
 			})
+
+			$('.new-post-form').removeClass('submitting');
 
 			if (data.tagged_team_ids || data.tagged_user_ids){
 				console.log('team ids: ' + data.tagged_team_ids);
@@ -585,6 +594,7 @@ function create_post(public_url){
 		error: function(resp){
 			console.log("error! no new post created");
 			end_show_progress($('.submit-new-post'));
+			$('.new-post-form').removeClass('submitting');
 		},
 		dataType:'json'
 	});

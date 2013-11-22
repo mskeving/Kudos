@@ -209,6 +209,7 @@ def create_tag_list():
 		if tag.id in used_tags_dict:
 			continue
 
+		# Needs to match the tag ids in user prefill_data
 		tag_user_id = "u" + str(tag.id)
 		#Available User Tags: full name, last name, nickname, teamname
 		if tag.firstname and tag.lastname and tag.nickname:
@@ -228,6 +229,7 @@ def create_tag_list():
 	for tag in team_tags:
 		if tag.id in used_tags_dict:
 			continue
+		# Needs to match the tag ids in team prefill_data
 		tag_team_id = "t" + str(tag.id)
 		tag_dict[tag.teamname] = tag_team_id
 
@@ -275,6 +277,13 @@ def team(team):
 		#keep all user info 
 		dict_of_users_teams[member.user] = list_of_teams 
 
+	# Prefilled tag data for post creation flow
+	prefill_data = {
+		# Needs to match the team ids in create_tag_list
+		'id': 't' + str(this_team.id),
+		'name': this_team.teamname,
+	}
+
 	print "dict_of_users_teams %r" % dict_of_users_teams
 
 	return render_template('team.html',
@@ -285,7 +294,8 @@ def team(team):
 		posts=indented_posts,
 		dict_of_users_teams=dict_of_users_teams,
 		name=name,
-		)
+		prefill_data=prefill_data,
+	)
 
 
 #USER PROFILE
@@ -324,6 +334,12 @@ def user(username):
 		flash('User ' + username + ' not found.')
 		return redirect(url_for('index'))
 
+	prefill_data = {
+		# Needs to match the user tag ids in create_tag_list
+		'id': 'u' + str(user.id),
+		'name': user.firstname + ' ' + user.lastname,
+	}
+
 	return render_template('user.html', 
 		new_post_form=new_post_form,
 		reply_form=reply_form,
@@ -332,7 +348,8 @@ def user(username):
 		list_of_team_names=list_of_team_names,
 		manager=manager,
 		name=name,
-		)
+		prefill_data=prefill_data,
+	)
 
 
 
@@ -438,11 +455,17 @@ def new_post():
 	#Submit tags
 	tag_ids = form.get('hidden_tag_ids', '').split('|')
 	tag_text = form.get('hidden_tag_text', '').split('|')
+	seen_already = set()
 
 	tagged_user_ids = []
 	tagged_team_ids = []
 	for i in range(len(tag_ids)-1): #last index will be "" because of delimiters 
 		#USER TAG
+		if tag_ids[i] in seen_already:
+			continue
+
+		seen_already.add(tag_ids[i])
+
 		if tag_ids[i][0] == 'u':
 			user_id = int(tag_ids[i][1:]) #remove leading 'u' to convert back to int user_id
 			new_tag = Tag(user_tag_id=user_id, body=tag_text[i], post_id=post_id, tag_author=user_id, time=datetime.utcnow())
