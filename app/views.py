@@ -189,7 +189,10 @@ def create_tag_list():
 	team_tags = Team.query.filter_by(is_deleted=False).all()
 	all_tags = user_tags + team_tags
 
-	used_tags_dict = {}
+	used_tags_dict = {
+		g.user.id: 'user'
+	}
+
 	if post_id:
 		#query for tags already associated with given post
 		#there won't be a post_id if you're getting tag list to submit new post
