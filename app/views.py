@@ -812,7 +812,8 @@ def all_users():
 	#	dict_of_users_teams[ut.user_id].append(ut.team)
 	dict_of_users_teams = {}
 	for user in all_users:
-		dict_of_users_teams[user.id] = [ut.team for ut in user.users_teams]
+		user_teams = sorted(user.users_teams, cmp=lambda x, y: cmp(x.id, y.id))
+		dict_of_users_teams[user.id] = [ut.team for ut in user_teams]
 
 	return render_template('allusers.html', 
 		all_users=all_users,
