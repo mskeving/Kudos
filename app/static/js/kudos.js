@@ -480,15 +480,6 @@ function create_post(public_url) {
 		post_text: post_text
 	};
 
-	if($('.new-post-form .tagsinput > span.tag').html() == null && !$('.prefilled_tag_ids').val()) {
-		console.log('No tags');
-		$('.post__tagger').focus().addClass('error').one('webkitAnimationEnd mozAnimationEnd oAnimationEnd animationEnd', function(){
-			$(this).removeClass('error');
-		});
-		$('.new-post-form').removeClass('submitting');
-		return;
-	}
-
 	if (!post_text){
 		$('.post__new-content').focus().addClass('error').one('webkitAnimationEnd mozAnimationEnd oAnimationEnd animationEnd', function(){
 			$(this).removeClass('error');
