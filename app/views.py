@@ -921,9 +921,12 @@ def posts_to_indented_posts(posts):
 		d['author_teams'] = author_teams
 
 		children = []
+		commenters = []
 		for child in p.children:
 			if child.is_deleted == False:
 				children.append(child)
+				commenters.append(child.author)
+		d['commenters'] = commenters
 		d['comments'] = children
 
 		tagged_users = []
