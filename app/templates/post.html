@@ -171,6 +171,7 @@
     </div><!-- /.post__content -->
   </div><!-- /.post__container -->
 
+
     <div class="post-metadata post__comments island">
       <div class="count cf">
         {% if post.get('thankers')|length == 1 %}
@@ -187,7 +188,7 @@
       {% endif %}
     </div>
 
-    <!--{% include 'thanker-modal.html' with context %}-->
+    {{post.get('time')}}
 
     <!-- Display comments on post -->
     <ol class="comments standalone" data-post-id="{{post_object.id}}" style="display: none">

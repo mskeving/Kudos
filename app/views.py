@@ -980,6 +980,8 @@ def posts_to_indented_posts(posts):
 			thankers.append(thank.user)
 		d['thankers'] = thankers
 
+		d['time'] = p.time.strftime("%m/%d/%Y")
+
 		indented_posts.append(d)
 
 	return indented_posts
