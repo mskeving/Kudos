@@ -146,7 +146,7 @@ def get_more_posts():
 	new_post_form = EditPost()
 	reply_form = NewReply()
 	form = request.form
-	num_posts_to_display = 3
+	num_posts_to_display = 5
 
 	last_post_id = form.get('last_post_id')
 

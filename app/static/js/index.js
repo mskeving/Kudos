@@ -1,7 +1,6 @@
 $(document).ready(function(){
 
 	if($('.post-column')) {
-		console.log('scrolling')
 		$(window).scroll(function() {
 			var scrollInAction = false;
 
