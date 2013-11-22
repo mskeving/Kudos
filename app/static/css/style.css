@@ -511,8 +511,8 @@ hr {
 }
 
 .an-w {
-  -webkit-transition: .4s ease !important;
-  transition: .4s ease !important;
+  -webkit-transition: 0.35s cubic-bezier(0.77, 0, 0.175, 1) !important;
+  transition: 0.35s cubic-bezier(0.77, 0, 0.175, 1) !important;
 }
 
 /*-----------------------------------*\
@@ -625,7 +625,7 @@ body {
 }
 
 .site__navigation ul li + li {
-  margin-left: .4em;
+  margin-left: .75em;
 }
 
 .site__navigation a {
@@ -1049,6 +1049,8 @@ body {
   transform-style: preserve-3d;
   -webkit-animation: throb .8s ease-in-out;
   animation: throb .8s ease-in-out;
+  -webkit-animation-delay: .2s;
+  animation-delay: .2s;
 }
 
 .post--new-in-stream {

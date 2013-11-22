@@ -477,7 +477,7 @@ hr {
 }
 
 .an-w {
-  transition: .4s ease !important;
+  transition: .35s cubic-bezier(0.770, 0.000, 0.175, 1.000) !important;
 }
 
 /*-----------------------------------*\
@@ -580,7 +580,7 @@ body {
     }
 
     ul li + li {
-      margin-left: .4em;
+      margin-left: .75em;
     }
 
     a {
@@ -969,6 +969,7 @@ body {
         z-index: 5;
         transform-style: preserve-3d;
         animation: throb .8s ease-in-out;
+        animation-delay: .2s;
       }
     }
   }
