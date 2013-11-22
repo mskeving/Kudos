@@ -1,37 +1,41 @@
-	<form class="new-post-form new-post posts post-modal">
-		{{ new_post_form.csrf_token }}
-			<div class="post post--single">
-				<div class ="submit-kudos post__container island">
-					<div class="tags post__header-meta" style="{{ '' if not name else 'display: none;'}}">
-						<div class="cf h-l post__new-tagged">
-								<input type="text" class="tag_input post__tagger vi-hd" id="new-post-tag-input" value placeholder="Who do you want to thank?"/>
-								<div data-id="_tagsinput" class="tagsinput">
-			            <div data-id="_addTag" class="cf">
+<form class="new-post-form new-post posts post-modal">
+	{{ new_post_form.csrf_token }}
+	{% if prefill_data %}
+		<input type="hidden" name="prefilled_tag_ids" value="{{prefill_data['id']}}|" class="prefilled_tag_ids" />
+		<input type="hidden" name="prefilled_tag_text" value="{{prefill_data['name']}}|" class="prefilled_tag_text" />
+	{% endif %}
+	<div class="post post--single">
+		<div class ="submit-kudos post__container island">
+			<div class="tags post__header-meta" style="{{ '' if not name else 'display: none;'}}">
+				<div class="cf h-l post__new-tagged">
+					<input type="text" class="tag_input post__tagger vi-hd" id="new-post-tag-input" value placeholder="Who do you want to thank?"/>
+					<div data-id="_tagsinput" class="tagsinput">
+						<div data-id="_addTag" class="cf">
 				            <input data-id="_tag" tabindex="1" value="" class="post__tagger input input--plain" data-default="Who do you want to thank?" placeholder="Who do you want to thank?" />
-				        	</div>
-				        </div>
-				    </div>
-					</div>
-					<div class="input-group">
-						{% if not name %}
-							{% set name='someone' %}
-						{% endif %}
-						<p id="post_body" tabindex="2" class="post__new-content beta p new-post-body-holder" data-placeholder="What awesome thing did {{name}} do?" contenteditable></p>
-					</div>
-
-					<div class="post__new-tagged">
-
-					</div>
-
-					{{ new_post_form.hidden_tag_ids (class="hidden_tag_ids", id="hidden_tag_ids") }}
-					{{ new_post_form.hidden_tag_text (class="hidden_tag_text", id="hidden_tag_text") }}
-
-				</div>
-				<footer class="post__footer">
-					<nav class="post__actions nav">
-							<div class="isle promo g g--one-half"><input type="dropbox-chooser" id="chooser" name="selected-file" data-link-type="direct" data-extensions="images"/></div>
-							<button tabindex="3" class="butt isle post-button submit-new-post i g g--one-half" type="button"><i class="fa fa-heart"></i>Submit</button>
-					</nav>
-				</footer>
+			        	</div>
+			        </div>
+			    </div>
 			</div>
-	</form>
+			<div class="input-group">
+				{% if not name %}
+					{% set name='someone' %}
+				{% endif %}
+				<p id="post_body" tabindex="2" class="post__new-content beta p new-post-body-holder" data-placeholder="What awesome thing did {{name}} do?" contenteditable></p>
+			</div>
+
+			<div class="post__new-tagged">
+
+			</div>
+
+			{{ new_post_form.hidden_tag_ids (class="hidden_tag_ids", id="hidden_tag_ids") }}
+			{{ new_post_form.hidden_tag_text (class="hidden_tag_text", id="hidden_tag_text") }}
+
+		</div>
+		<footer class="post__footer">
+			<nav class="post__actions nav">
+					<div class="isle promo g g--one-half"><input type="dropbox-chooser" id="chooser" name="selected-file" data-link-type="direct" data-extensions="images"/></div>
+					<button tabindex="3" class="butt isle post-button submit-new-post i g g--one-half" type="button"><i class="fa fa-heart"></i>Submit</button>
+			</nav>
+		</footer>
+	</div>
+</form>
