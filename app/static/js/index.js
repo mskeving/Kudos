@@ -1,10 +1,16 @@
 $(document).ready(function(){
 
-	if($('.post-column')) {
-		$(window).scroll(function() {
-			var scrollInAction = false;
+	$(window).scroll(function() {
+		var scrollInAction = false;
 
-			return function() {
+		return function() {
+
+			if($('.post-column').length > 0) {
+				//only index, user, and team pages will have .post-column
+				if ($('.loaded').length > 0){
+					//if all posts are loaded, don't try to fetch more until page refresh
+					return
+				}
 				var post_column_height = $('.post-column').height();
 				var post_column_offset_top = $('.post-column').offset().top;
 
@@ -12,6 +18,7 @@ $(document).ready(function(){
 
 					if (scrollInAction) return false;
 					scrollInAction = true;
+					$('.post-column.posts__home').append('<p class="js--loading-posts promo loading"><i class="fa fa-heart"></i>  Loading more posts</p>');
 					// pass in last post_id on page to specify where next group of posts should start
 					last_post_on_page = $('.posts__home .post').last();
 					last_post_id = last_post_on_page.data('post-id');
@@ -23,20 +30,25 @@ $(document).ready(function(){
 						type: 'POST',
 						data: data,
 						success: function(new_posts){
-							$('.post-column.posts__home').append(new_posts);
+							$('.loading').remove()
+							if (new_posts){
+								$('.post-column.posts__home').append(new_posts);
+							}
+							else if (!$('.loaded').length>0) {
+								$('.post-column.posts__home').append('<p class="js--loading-posts promo loaded"><i class="fa fa-heart"></i>  No New Posts</p>');
+							}
 							scrollInAction = false;
 
 						},
 						error: function(){
-							console.log('failed to load more posts');
+
+							$('.post-column.posts__home').append('<p class="js--loading-posts promo error-loading"><i class="fa fa-heart"></i>  Error loading posts</p>');
 							scrollInAction = false;
 						},
 						dataType: 'json'
 					})
 				}
 			}
-		}());
-
-	}
-
+		}
+	}());
 });
