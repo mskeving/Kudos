@@ -138,51 +138,6 @@ document.onkeydown = function(evt) {
 	}
 };
 
-//REMOVE/GIVE THANKS
-$('.thank-button').live('click', function(e){
-	e.preventDefault();
-	var button = $(this);
-	var post_id = $(this).data('post-id');
-	thank_count_selector = $('[data-post-id=' + post_id + '] .thank-count');
-	//REMOVE THANKS
-	if (button.hasClass('thanked')){
-		var data = {
-			post_id: post_id
-		}
-	 	$.ajax({
-	 		type: 'POST',
-	 		url: '/removethanks',
-	 		data: data,
-	 		success: function(response){
-	 			console.log("success removing thanks");
-	 			button.removeClass('thanked');
-				change_count(thank_count_selector, -1);
-	 		},
-	 		error: function(){
-	 			console.log("error removing thanks");
-	 		}
-	 	})
-	}
-	//SEND THANKS
-	else{
-		var data = {
-          post_id: post_id
-        };
-        $.ajax({
-        	type: 'POST',
-        	url: '/sendthanks',
-        	data: data,
-        	success: function(response){
-        		console.log("success giving thanks");
-		    	button.addClass('thanked js--pressed');
-				change_count(thank_count_selector, 1);
-        	},
-        	error: function(){
-        		console.log("error sending thanks");
-        	}
-        })
-	}
-});
 
 //DISPLAY THANKER MODAL
 $('.thank-count').live('click', function(e){
@@ -314,15 +269,6 @@ $('.new-tag-btn').live('click', function(e) {
 });
 
 
-
-//SHOW COMMENT MODAL
-$('.comment-button').live('click', function(e){
-	e.preventDefault();
-	var post_id = $(this).data('post-id')
-	show_modal($('.comment-modal[data-post-id=' + post_id + ']'));
-});
-
-
 //REMOVE COMMENT
 $('.remove-comment').live('click', function(e){
 	e.preventDefault();
@@ -352,12 +298,13 @@ $('.remove-comment').live('click', function(e){
 
 
 //SUBMIT NEW COMMENT
-$('.new-comment-btn').live('click', function(e){
+window.initCommentButtons = function($jqObject){
+	$jqObject.find('.comment-button').one('click', function(e){
 	e.preventDefault();
 	var new_comment_btn = $(this);
 	var data = {
-		parent_post_id: $(this).parent().data('post-id'),
-		post_text: $(this).siblings('.reply-body').val()
+		parent_post_id: $(this).parents('.post').data('post-id'),
+		post_text: $('#comment-body-' + $(this).parents('.post').data('post-id')).val()
 	}
 
 	var all_comments = $('.comments[data-post-id=' + data.parent_post_id + ']');
@@ -380,8 +327,8 @@ $('.new-comment-btn').live('click', function(e){
 			change_count(comment_count_selector, 1);
 
 			//clear and hide comment modal
-			new_comment_btn.siblings('.reply-body').val("");
-			show_modal($('.comment-modal[data-post-id=' + data.parent_post_id + ']'));
+			new_comment_btn.addClass('thanked js--pressed span-all an-w').append('ed');
+			$('#comment-body-' + data.parent_post_id).addClass('an-w no-w');
 
 			if (data.post_text){
 				send_notifications(data);
@@ -393,6 +340,9 @@ $('.new-comment-btn').live('click', function(e){
 		dataType: 'json'
 	});
 })
+	$('.post-column.posts__home').append($jqObject);
+	return true;
+}
 
 function send_notifications(data){
 	// data must include post_id, tagged_team_ids, tagged_user_ids, post_text, photo_url
@@ -514,12 +464,6 @@ $('.new-post-modal-btn').live('click', function(e) {
 	post_modal.addClass('pressed');
 	};
 
-});
-
-// Prepare tags input
-$(document).ready(function(){
-	tag_input = $('#new-post-tag-input');
-	get_tag_list(tag_input);
 });
 
 // Create post
@@ -653,5 +597,11 @@ function s3_upload(data, callback){
     var s3upload = new S3Upload(settings);
 };
 
+// Ready when you are
 
-
+// Prepare tags input
+$(document).ready(function(){
+	tag_input = $('#new-post-tag-input');
+	get_tag_list(tag_input);
+	initCommentButtons($('.post'));
+});

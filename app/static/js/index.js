@@ -24,8 +24,9 @@ $(document).ready(function(){
 						type: 'POST',
 						data: data,
 						success: function(new_posts){
-							$('.post-column.posts__home').append(new_posts);
-							scrollInAction = false;
+							if( initCommentButtons($(new_posts)) ){
+								scrollInAction = false;
+							}
 
 						},
 						error: function(){

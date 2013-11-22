@@ -173,48 +173,38 @@
 
     <div class="post-metadata post__comments island">
       <div class="count cf">
-        {% if post.get('thankers')|length == 1 %}
-          <a class="comments__count thank-count">{{post.get('thankers')|length}} Thank</a>,
+        {% set comments = post.get('comments')|length %}
+        {% if comments == 1 %}
+          <a class="comments__count comment-count">{{comments}} Thank</a>
         {% else %}
-          <a class="comments__count thank-count">{{post.get('thankers')|length}} Thanks</a>,
+          <a class="comments__count comment-count">{{comments}} Thanks</a>
         {% endif %}
+      </div>
 
-      {% set comments = post.get('comments')|length %}
-      {% if comments == 1 %}
-        <a class="comments__count comment-count">{{comments}} Comment</a>
-      {% else %}
-        <a class="comments__count comment-count">{{comments}} Comments</a>
-      {% endif %}
-    </div>
+      <!--{% include 'thanker-modal.html' with context %}-->
 
-    <!--{% include 'thanker-modal.html' with context %}-->
+      <!-- Display comments on post -->
+      <ol class="comments standalone" data-post-id="{{post_object.id}}" style="display: none">
+        {% for comment in post.get('comments') %}
 
-    <!-- Display comments on post -->
-    <ol class="comments standalone" data-post-id="{{post_object.id}}" style="display: none">
-      {% for comment in post.get('comments') %}
+          {% include 'comment.html' with context %}
 
-        {% include 'comment.html' with context %}
+        {% endfor %}
+      </ol>
 
-      {% endfor %}
-    </ol>
-
-    <!-- new comment -->
-    <div class="comment-modal m-t" data-post-id="{{post_object.id}}" style="display: none">
-      <form>
-        {{new_post_form.csrf_token}}
-        <div class="new-comment-body cf" data-post-id="{{post_object.id}}">
-          {{reply_form.reply_body (class="reply-body span-all h-m input isle")}}
-          <button type="button" class="f-r butt new-comment-btn" name="new_reply_btn" data-post-id="{{post_object.id}}">Reply</button>
-        </div>
-      </form>
-    </div>
-
-  </div><!-- /.post__comments -->
+    </div><!-- /.post__comments -->
 
   <div class="toolbar post__footer">
+<!--
+    <a class="toolbar-button comment-button" data-post-id="{{post_object.id}}">Comment</a>
+-->
     <nav class="post__actions nav">
-      <button class="butt isle toolbar-button thank-button g g--one-half" data-post-id="{{post_object.id}}"><i class="fa fa-heart"></i> Thank</button>
-      <button class="butt isle toolbar-button comment-button g g--one-half" data-post-id="{{post_object.id}}"><i class="fa fa-comment"></i> Comment</button>
+      {% if g.user.id in post.get('comments') %}
+        <button class="butt isle toolbar-button g span-all thanked" data-post-id="{{post_object.id}}"><i class="fa fa-heart"></i> Thank</button>
+      {% else %}
+        <input class="input input--plain isle input--float-label g g--two-thirds" name="comment-body" id="comment-body-{{post_object.id}}" placeholder="Leave a note with your Thanks">
+        <button class="butt isle toolbar-button comment-button g g--one-third" data-post-id="{{post_object.id}}"><i class="fa fa-heart"></i> Thank</button>
+      {% endif %}
     </nav>
   </div>
 
