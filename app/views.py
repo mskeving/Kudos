@@ -248,9 +248,9 @@ def team(team):
 	new_post_form = EditPost()
 
 	this_team = Team.query.filter(Team.teamname==team).first()
-	name = this_team.teamname
+	name = "the " + this_team.teamname + " Team"
 	team_members = UserTeam.query.filter(UserTeam.team_id==this_team.id).all()
-	tags = Tag.query.filter(and_(Tag.team_tag_id==this_team.id, Post.parent_post_id==None)).all() 
+	tags = Tag.query.filter(and_(Tag.team_tag_id==this_team.id, Tag.is_deleted==False)).order_by(Tag.time.desc()).all() 
 
 	tagged_posts = []
 	for tag in tags:
@@ -299,7 +299,7 @@ def user(username):
 	name = user.firstname
 
 	#get all tags that user is tagged in 
-	tags = Tag.query.filter(and_(Tag.user_tag_id==user.id, Tag.is_deleted==False)).all() 
+	tags = Tag.query.filter(and_(Tag.user_tag_id==user.id, Tag.is_deleted==False)).order_by(Tag.time.desc()).all() 
 
 	tagged_posts = []
 	#for each tag, find post associated with it

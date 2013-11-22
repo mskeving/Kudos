@@ -1,11 +1,8 @@
-	{% if not name %}
-		{% set name='someone' %}
-	{% endif %}
 	<form class="new-post-form new-post posts post-modal">
 		{{ new_post_form.csrf_token }}
 			<div class="post post--single">
 				<div class ="submit-kudos post__container island">
-					<div class="tags post__header-meta">
+					<div class="tags post__header-meta" style="{{ '' if not name else 'display: none;'}}">
 						<div class="cf h-l post__new-tagged">
 								<input type="text" class="tag_input post__tagger vi-hd" id="new-post-tag-input" value placeholder="Who do you want to thank?"/>
 								<div data-id="_tagsinput" class="tagsinput">
@@ -16,6 +13,9 @@
 				    </div>
 					</div>
 					<div class="input-group">
+						{% if not name %}
+							{% set name='someone' %}
+						{% endif %}
 						<p id="post_body" tabindex="2" class="post__new-content beta p new-post-body-holder" data-placeholder="What awesome thing did {{name}} do?" contenteditable></p>
 					</div>
 
