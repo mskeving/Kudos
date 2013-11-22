@@ -1085,6 +1085,7 @@ body {
 
 .user-card {
   @extend .post__container;
+  padding-bottom: .75rem;
   border-radius: .25rem;
   border: none;
   overflow: hidden;
