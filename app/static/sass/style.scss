@@ -129,6 +129,29 @@ input, textarea, button {
   }
 }
 
+[data-character-count][data-chars-remain] {
+  padding-right: 2.5rem !important;
+
+  &:focus:after, &.js--invalid:after {
+    content: attr(data-chars-remain);
+    position: absolute;
+    bottom: .375rem;
+    right: .375rem;
+    background-color: rgba(255,255,255,.75);
+    box-shadow: 0 1px 1px rgba(0,0,0,.1);
+    color: rgba(0,0,0,.3);
+    font-weight: 700;
+    font-size: .75rem;
+    font-family: $proxima;
+    padding: .375rem .375rem ;
+    border-radius: .25rem;
+  }
+
+  &.js--invalid:after {
+    color: $red;
+  }
+}
+
 // Floats
 .f-r {
   float: right;
@@ -775,7 +798,7 @@ body {
     }
   }
 
-  .post__remove-tag {
+  .post__remove-tag, [data-role=remove] {
     cursor: pointer;
     position: absolute;
     z-index: 2;
@@ -1320,5 +1343,12 @@ body {
 .js--lightbox-open {
   body {
     overflow: hidden;
+  }
+}
+
+.js--loading-posts {
+  color: rgba(0,0,0,.6);
+  .fa {
+    animation: infinite throb .8s ease-in-out;
   }
 }

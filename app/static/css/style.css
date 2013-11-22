@@ -127,6 +127,31 @@ button {
   color: rgba(0, 0, 0, 0.3);
 }
 
+[data-character-count][data-chars-remain] {
+  padding-right: 2.5rem !important;
+}
+
+[data-character-count][data-chars-remain]:focus:after,
+[data-character-count][data-chars-remain].js--invalid:after {
+  content: attr(data-chars-remain);
+  position: absolute;
+  bottom: .375rem;
+  right: .375rem;
+  background-color: rgba(255, 255, 255, 0.75);
+  -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+  color: rgba(0, 0, 0, 0.3);
+  font-weight: 700;
+  font-size: .75rem;
+  font-family: proxima-nova, sans-serif;
+  padding: 0.375rem 0.375rem;
+  border-radius: .25rem;
+}
+
+[data-character-count][data-chars-remain].js--invalid:after {
+  color: #f36062;
+}
+
 .f-r {
   float: right;
 }
@@ -835,7 +860,8 @@ body {
   opacity: 0;
 }
 
-.post__remove-tag {
+.post__remove-tag,
+[data-role=remove] {
   cursor: pointer;
   position: absolute;
   z-index: 2;
@@ -1567,6 +1593,15 @@ body {
 
 .js--lightbox-open body {
   overflow: hidden;
+}
+
+.js--loading-posts {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.js--loading-posts .fa {
+  -webkit-animation: infinite throb .8s ease-in-out;
+  animation: infinite throb .8s ease-in-out;
 }
 
 /*# sourceMappingURL=style.css.map */
