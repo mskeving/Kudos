@@ -227,7 +227,6 @@ h2, .beta {
   font-size: 1.45rem;
   line-height: 1.2;
   font-weight: 200;
-  margin-bottom: $baseline/2;
 }
 
 h3, .gamma {
@@ -688,12 +687,16 @@ body {
     border-radius: .25rem .25rem 0 0;
     background-color: #faf9f7;
     box-shadow: 0 1px 1px rgba(0,0,0,.1), inset 0 0 10px 1px #fff;
+    padding-bottom: 0;
+
+    &.submit-kudos {
+      padding-bottom: 1.5rem;
+    }
   }
 
   .post--photo {
     padding-top: 1rem;
     .post__container {
-      padding-bottom: 0;
       padding-top: .5rem;
     }
   }
@@ -1034,8 +1037,8 @@ body {
 .post__comments {
   padding-top: .75rem;
   padding-bottom: .75rem;
-  background-color: #F6F5F4;
-  box-shadow: inset 0 1px 1px rgba(0,0,0,.1), inset 0 -50px 50px rgba(255,255,255,.4);
+  border-top: 1px solid rgba(0,0,0,.1);
+  margin-top: -1px;
 }
 
 .count {

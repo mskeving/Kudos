@@ -169,9 +169,7 @@
         </form>
       </div>
     </div><!-- /.post__content -->
-  </div><!-- /.post__container -->
-
-    <div class="post-metadata post__comments island">
+    <div class="post-metadata post__comments">
       <div class="count cf">
         {% set comments = post.get('comments')|length %}
         {% if comments == 1 %}
@@ -193,6 +191,7 @@
       </ol>
 
     </div><!-- /.post__comments -->
+  </div><!-- /.post__container -->
 
   <div class="toolbar post__footer">
 <!--
