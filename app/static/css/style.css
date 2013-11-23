@@ -207,8 +207,8 @@ h1,
   margin-bottom: 1.5rem;
 }
 
-p,
-.p {
+.post p,
+.post .p {
   -webkit-hyphens: auto;
   -moz-hyphens: auto;
   -ms-hyphens: auto;
@@ -285,7 +285,7 @@ hr {
 }
 
 .faded {
-  opacity: .5;
+  opacity: .65;
 }
 
 /*-----------------------------------*\
@@ -799,10 +799,9 @@ body {
 }
 
 .post__thanks-to li {
-  background-color: #223;
-  background-color: rgba(0, 0, 0, 0.8);
+  background-color: #faf9f7;
   border-radius: 200px;
-  border: 2px solid #faf9f7;
+  border: 3px solid #faf9f7;
   text-align: center;
   line-height: 4rem;
   float: left;
@@ -1130,8 +1129,16 @@ body {
 }
 
 .count {
-  color: rgba(0, 0, 0, 0.5);
   font-family: proxima-nova, sans-serif;
+}
+
+.count a {
+  color: rgba(0, 0, 0, 0.5);
+  text-decoration: none;
+}
+
+.count a:hover {
+  text-decoration: underline;
 }
 
 .comments__count {
