@@ -731,7 +731,7 @@ body {
 }
 
 .post {
-  margin-bottom: 3rem;
+  margin-bottom: 4.5rem;
   -webkit-transition: .3s;
   transition: .3s;
 }
@@ -743,20 +743,13 @@ body {
   -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1), inset 0 0 10px 1px white;
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1), inset 0 0 10px 1px white;
   padding-bottom: 0;
+  overflow: hidden;
 }
 
 .post__container.submit-kudos,
 .submit-kudos.user-card {
   padding-bottom: 1.5rem;
-}
-
-.post--photo {
-  padding-top: 1rem;
-}
-
-.post--photo .post__container,
-.post--photo .user-card {
-  padding-top: .5rem;
+  overflow: visible;
 }
 
 .submit-kudos .post__header-meta {
@@ -788,14 +781,7 @@ body {
 .post__tagger:focus,
 .post__tagger.input--plain:focus {
   outline: none;
-  background-color: #faf9f7;
-}
-
-.post__thanks-to {
-  margin-top: -3.5rem;
-  margin-left: -2rem;
-  margin-bottom: .5rem;
-  z-index: 4;
+  background-color: #f0ede7;
 }
 
 .post__thanks-to li {
@@ -965,6 +951,20 @@ body {
   outline: none;
 }
 
+.post__taggees {
+  position: absolute;
+  z-index: 4;
+  top: -3rem;
+  left: -1rem;
+}
+
+@media (max-width: 600px) {
+  .post__taggees {
+    top: -2rem;
+    left: -.75rem;
+  }
+}
+
 .post__content {
   color: #534d4a;
 }
@@ -974,8 +974,25 @@ body {
 }
 
 .post__content .post__photo {
-  margin: -1.725rem 1.5rem 0 -1.5rem;
+  margin: -1.5rem 1.5rem 0 -1.5rem;
   width: 36.5%;
+}
+
+.post__content .post__photo img {
+  width: 100%;
+}
+
+.post__content .post__photo:after {
+  content: '';
+  pointer-events: none;
+  -webkit-box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  border-top-left-radius: .25rem;
 }
 
 @media (max-width: 600px) {
@@ -990,14 +1007,14 @@ body {
     margin: -webkit-calc(-1.8rem) -webkit-calc(-1.5rem) 1.5rem;
     margin: calc(-1.8rem) calc(-1.5rem) 1.5rem;
   }
+
+  .post__content .post__photo:after {
+    border-radius: 0;
+  }
 }
 
 .post__content > :last-child {
   margin-bottom: 0;
-}
-
-.post__header-meta {
-  min-height: 3rem;
 }
 
 .post__meta {

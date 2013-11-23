@@ -54,7 +54,7 @@
 
 		<hr>
 		{% if posts %}
-			<h2 class="gamma">Posts thanking {{'you' if user.username == g.user.username else user.firstname }}</h2>
+			<h2 class="gamma p">Posts thanking {{'you' if user.username == g.user.username else user.firstname }}</h2>
 
 				<ol class="posts post-column">
 				{% for post in posts %}
