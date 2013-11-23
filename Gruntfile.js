@@ -36,6 +36,15 @@ module.exports = function(grunt) {
         }
       }
     },
+    concat: {
+      options: {
+        separator: ';',
+      },
+      dist: {
+        src: ['!app/static/js/jquery1_4_4.min.js', 'app/static/js/*.js', '!app/static/js/kudos.min.js'],
+        dest: 'app/static/js/kudos.min.js',
+      },
+    },
     // Watch files for changes
     watch: {
       css: {
@@ -46,6 +55,13 @@ module.exports = function(grunt) {
           spawn: false,
         },
       },
+      js: {
+      	files: ['app/static/js/*.js', '!app/static/js/kudos.min.js'],
+      	tasks: ['concat'],
+      	options: {
+      		spawn: false,
+      	}
+      }
     }
 	});
 
@@ -53,6 +69,7 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-watch');
 	grunt.loadNpmTasks('grunt-autoprefixer');
 	grunt.loadNpmTasks('grunt-contrib-sass');
+	grunt.loadNpmTasks('grunt-contrib-concat');
 	grunt.loadNpmTasks('grunt-csso');
 	grunt.registerTask('default', ['watch']);
 };

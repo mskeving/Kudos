@@ -31,18 +31,17 @@ $(document).ready(function(){
 						data: data,
 						success: function(new_posts){
 							$('.loading').remove()
-							if (new_posts){
+							if (new_posts && initCommentButtons($(new_posts))){
 								$('.post-column.posts__home').append(new_posts);
 							}
 							else if (!$('.loaded').length>0) {
-								$('.post-column.posts__home').append('<p class="js--loading-posts promo loaded"><i class="fa fa-heart"></i>  No New Posts</p>');
+								$('.post-column.posts__home').append('<p class="promo loaded"><i class="fa fa-heart"></i>  No New Posts</p>');
 							}
 							scrollInAction = false;
-
 						},
 						error: function(){
 
-							$('.post-column.posts__home').append('<p class="js--loading-posts promo error-loading"><i class="fa fa-heart"></i>  Error loading posts</p>');
+							$('.post-column.posts__home').append('<p class="promo error-loading"><i class="fa fa-times"></i>  Error loading posts</p>');
 							scrollInAction = false;
 						},
 						dataType: 'json'
