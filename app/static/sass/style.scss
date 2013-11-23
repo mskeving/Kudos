@@ -191,7 +191,7 @@ h1, .alpha, .mega, .ultra {
   margin-bottom: $baseline;
 }
 
-p, .p {
+.post p, .post .p {
   hyphens: auto;
   text-overflow: ellipsis;
   overflow: hidden;
@@ -256,7 +256,7 @@ hr {
 }
 
 .faded {
-  opacity: .5;
+  opacity: .65;
 }
 
 /*-----------------------------------*\
@@ -739,10 +739,9 @@ body {
     z-index: 4;
 
     li {
-      background-color: #223;
-      background-color: rgba(0,0,0,.8);
+      background-color: #faf9f7;
       border-radius: 200px;
-      border: 2px solid #faf9f7;
+      border: 3px solid #faf9f7;
       text-align: center;
       line-height: 4rem;
       float: left;
@@ -1043,8 +1042,15 @@ body {
 }
 
 .count {
-  color: rgba(0,0,0,.5);
   font-family: $proxima;
+
+  a {
+    color: rgba(0,0,0,.5);
+    text-decoration: none;
+      &:hover {
+        text-decoration: underline;
+      }
+  }
 }
 
   .comments__count {

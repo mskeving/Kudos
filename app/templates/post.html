@@ -178,9 +178,8 @@
         {% else %}
           <a class="comments__count comment-count">{{comments}} Thanks</a>
         {% endif %}
+        <small class="f-r"><strong><a title="Permalink to this post" href="/post/{{post_object.id}}">{{post.get('time')}}</a></strong></small>
       </div>
-
-      {{post.get('time')}}
 
       <!-- Display comments on post -->
       <ol class="comments standalone" data-post-id="{{post_object.id}}" style="display: none">
