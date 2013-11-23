@@ -682,7 +682,6 @@ body {
 .post {
   margin-bottom: 2rem;
   transition: .3s;
-  padding-top: 1.75rem;
 }
 
   .post__container {
@@ -690,7 +689,6 @@ body {
     background-color: #faf9f7;
     box-shadow: 0 1px 1px rgba(0,0,0,.1), inset 0 0 10px 1px #fff;
     padding-bottom: 0;
-    padding-top: 1.75rem;
     overflow: hidden;
 
     &.submit-kudos {
@@ -892,12 +890,16 @@ body {
   .post__taggees {
     position: absolute;
     z-index: 4;
-    top: -1rem;
-    left: -.75rem;
+    top: -2.75rem;
+    left: -1rem;
 
     @media (max-width: 600px) {
       top: -2rem;
       left: -.75rem;
+    }
+
+    & ~ .post__footer {
+      margin-bottom: 4rem;
     }
   }
 
@@ -909,7 +911,7 @@ body {
     }
 
     .post__photo {
-      margin: -2rem 1.5rem 0 -1.5rem;
+      margin: -1.5rem 1.5rem 0 -1.5rem;
       width: 36.5%;
 
       img {
@@ -965,6 +967,7 @@ body {
     overflow: hidden;
     background-color: #f5f1f0;
     box-shadow: 0 1px 2px rgba(0,0,0,.1);
+    margin-bottom: 0;
   }
 
   .post__actions {

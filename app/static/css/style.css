@@ -734,7 +734,6 @@ body {
   margin-bottom: 2rem;
   -webkit-transition: .3s;
   transition: .3s;
-  padding-top: 1.75rem;
 }
 
 .post__container,
@@ -744,7 +743,6 @@ body {
   -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1), inset 0 0 10px 1px white;
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1), inset 0 0 10px 1px white;
   padding-bottom: 0;
-  padding-top: 1.75rem;
   overflow: hidden;
 }
 
@@ -956,8 +954,8 @@ body {
 .post__taggees {
   position: absolute;
   z-index: 4;
-  top: -1rem;
-  left: -.75rem;
+  top: -2.75rem;
+  left: -1rem;
 }
 
 @media (max-width: 600px) {
@@ -965,6 +963,10 @@ body {
     top: -2rem;
     left: -.75rem;
   }
+}
+
+.post__taggees ~ .post__footer {
+  margin-bottom: 4rem;
 }
 
 .post__content {
@@ -976,7 +978,7 @@ body {
 }
 
 .post__content .post__photo {
-  margin: -2rem 1.5rem 0 -1.5rem;
+  margin: -1.5rem 1.5rem 0 -1.5rem;
   width: 36.5%;
 }
 
@@ -1038,6 +1040,7 @@ body {
   background-color: #f5f1f0;
   -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  margin-bottom: 0;
 }
 
 .post__actions {
