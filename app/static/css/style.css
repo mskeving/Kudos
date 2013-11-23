@@ -721,6 +721,10 @@ body {
   perspective: 2000px;
 }
 
+.post__new-content {
+  margin-bottom: 0.75rem;
+}
+
 .post__new-content.error {
   -webkit-animation: shake .4s;
   animation: shake .4s;

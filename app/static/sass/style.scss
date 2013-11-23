@@ -673,6 +673,7 @@ body {
 }
 
 .post__new-content {
+  margin-bottom: $baseline/2;
   &.error {
     animation: shake .4s;
   }

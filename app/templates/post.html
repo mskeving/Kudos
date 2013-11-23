@@ -169,6 +169,7 @@
         </form>
       </div>
     </div><!-- /.post__content -->
+
     <div class="post-metadata post__comments">
       <div class="count cf">
         {% set comments = post.get('comments')|length %}
@@ -179,7 +180,7 @@
         {% endif %}
       </div>
 
-      <!--{% include 'thanker-modal.html' with context %}-->
+      {{post.get('time')}}
 
       <!-- Display comments on post -->
       <ol class="comments standalone" data-post-id="{{post_object.id}}" style="display: none">
