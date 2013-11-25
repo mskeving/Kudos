@@ -1,3 +1,73 @@
+// Detect support for CSS animations
+function CSSAnimation(){
+	/*
+	    webkitAnimationName => Safari/Chrome
+	    MozAnimationName => Mozilla Firefox
+	    OAnimationName => Opera
+	    animationName => compliant browsers (inc. IE10)
+	 */
+	var supported = false;
+	var prefixes = ['webkit', 'Moz', 'O', ''];
+	var limit = prefixes.length;
+	var doc = document.documentElement.style;
+	var prefix, start, end;
+
+	while (limit--) {
+	    // If the compliant browser check (in this case an empty string value) then we need to check against different string (animationName and not prefix + AnimationName)
+	    if (!prefixes[limit]) {
+	        // If not undefined then we've found a successful match
+	        if (doc['animationName'] !== undefined) {
+	            prefix = prefixes[limit];
+	            start = 'animationstart';
+	            end = 'animationend';
+	            supported = true;
+	            break;
+	        }
+	    }
+	    // Other brower prefixes to be checked
+	    else {
+	        // If not undefined then we've found a successful match
+	        if (doc[prefixes[limit] + 'AnimationName'] !== undefined) {
+	            prefix = prefixes[limit];
+
+	            switch (limit) {
+	                case 0:
+	                    //  webkitAnimationStart && webkitAnimationEnd
+	                    start = prefix.toLowerCase() + 'AnimationStart';
+	                    end = prefix.toLowerCase() + 'AnimationEnd';
+	                    supported = true;
+	                    break;
+
+	                case 1:
+	                    // animationstart && animationend
+	                    start = 'animationstart';
+	                    end = 'animationend';
+	                    supported = true;
+	                    break;
+
+	                case 2:
+	                    // oanimationstart && oanimationend
+	                    start = prefix.toLowerCase() + 'animationstart';
+	                    end = prefix.toLowerCase() + 'animationend';
+	                    supported = true;
+	                    break;
+	            }
+
+	            break;
+	        }
+	    }
+	}
+
+	return {
+	    supported: supported,
+	    prefix: prefix,
+	    start: start,
+	    end: end
+	};
+}
+
+var animations = CSSAnimation();
+
 function show_modal(obj){
        obj.slideToggle(300);
 }
@@ -253,14 +323,18 @@ $('.remove-tag').live('click', function(e) {
 		url: '/deletetag',
 		data: data,
 		success: function(tag_info){
-			avatar.addClass('tag--removing').one('webkitAnimationEnd mozAnimationEnd oAnimationEnd animationEnd', function(){
+			if(animations.supported) {
+				avatar.addClass('tag--removing').one('webkitAnimationEnd mozAnimationEnd oAnimationEnd animationEnd', function(){
+					avatar.remove();
+				});
+			} else {
 				avatar.remove();
-			})
+			}
+
 			if (tag_info.user_id == user_id){
 				remove_post();
-			}
-			else if (tag_info.team_id == team_id){
-				remove_post()
+			} else if (tag_info.team_id == team_id){
+				remove_post();
 			}
 
 			function remove_post(){
@@ -370,7 +444,19 @@ $('.remove-comment').live('click', function(e){
 		data: data,
 		url: '/deletepost',
 		success: function(comment_id){
-			comment.remove();
+
+			var remove = function(){
+				comment.remove();
+				$('#comment-body-' + parent_post_id).removeAttr('disabled').removeClass('no-w').addClass('g--two-thirds');
+				$('.comment-button[data-post-id=' + parent_post_id + ']').removeClass('span-all thanked').addClass('g--one-third');
+				initCommentButtons('.post[data-post-id' + parent_post_id + ']')
+			};
+
+			if(animations.supported) {
+				comment.addClass("js--comment-remove").one('webkitAnimationEnd oAnimationEnd mozAnimationEnd animationEnd', remove);
+			} else {
+				remove;
+			}
 
 			comment_count_selector = $('[data-post-id=' + parent_post_id + '] .comment-count');
 			change_count(comment_count_selector, -1);
@@ -422,7 +508,7 @@ window.initCommentButtons = function($jqObject){
 
 			//clear and hide comment modal
 			new_comment_btn.addClass('thanked js--pressed span-all an-w').append('ed');
-			$('#comment-body-' + data.parent_post_id).addClass('an-w no-w');
+			$('#comment-body-' + data.parent_post_id).addClass('an-w no-w').attr('disabled', 'true').val('');
 
 			if (data.post_text){
 				send_notifications(data);
@@ -461,13 +547,6 @@ function send_notifications(data){
 	})
 
 }
-
-
-// Reveal comments
-$('.comment-count').live('click', function() {
-	var id = $(this).parents('.post').attr('data-post-id');
-	show_modal($('.comments[data-post-id=' + id + ']'));
-});
 
 
 // Focus post body
@@ -658,9 +737,13 @@ $('.remove-post-button').live('click', function(e){
 		data: data,
 		success: function(resp){
 			parent_post.addClass('post--remove-from-stream');
-			parent_post.one('webkitAnimationEnd mozAnimationEnd oAnimationEnd animationEnd', function(){
+			if(animations.supported) {
+				parent_post.one('webkitAnimationEnd mozAnimationEnd oAnimationEnd animationEnd', function(){
+					$(this).remove();
+				});
+			} else {
 				$(this).remove();
-			});
+			}
 			console.log("success deleting post");
 		},
 		error: function(resp){
