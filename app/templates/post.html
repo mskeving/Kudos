@@ -25,7 +25,7 @@
 
       {% if post.get('tagged_users') %}
         {% set g_user_tagged_in_post = [] %}
-        {% for tag in post.get('tagged_users') %}
+        {% for tag in post.get('tagged_users')[:3] %}
           {% if tag.user_tag.username == g.user.username %}
             {% do g_user_tagged_in_post.append(1) %}
           {% endif %}
@@ -53,6 +53,11 @@
 
           </li>
         {% endfor %}
+          {% if ((post.get('tagged_users')|length) + (post.get('tagged_teams')|length) - 3) > 0  %}
+            <li>
+              <a class="other-tags" href="#" title="{{((post.get('tagged_users')|length) + (post.get('tagged_teams')|length) - 3)}} other people tagged">+{{((post.get('tagged_users')|length) + (post.get('tagged_teams')|length) - 3)}}</a>
+            </li>
+          {% endif %}
       {% endif %}
 
     </ul><!-- /.avatars -->
@@ -117,11 +122,20 @@
                 <a href="{{ url_for('user', username=tag.user_tag.username) }}">{{tag.user_tag.firstname}} {{tag.user_tag.lastname}}</a>
               {% endfor %}
 
-            {% elif users|length >= 3 %}
+            {% elif users|length == 3 %}
+
+              {% for tag in users %}
+                {% if loop.index == 3 %}
+                  and
+                {% endif %}
+                <a href="{{ url_for('user', username=tag.user_tag.username) }}">{{tag.user_tag.firstname}} {{tag.user_tag.lastname}}</a>{{ '' if loop.index == 3 else ',' }}
+              {% endfor %}
+
+            {% elif users|length > 3 %}
 
               {% set count = 0 %}
 
-              {% for tag in users[:2] %}
+              {% for tag in users[:3] %}
 
                 <a href="{{ url_for('user', username=tag.user_tag.username) }}">{{tag.user_tag.firstname}} {{tag.user_tag.lastname}}</a>,
 
@@ -129,7 +143,7 @@
 
               {% endfor %}
 
-              and {{users|length - 2}} other {{ 'people' if users|length - 2 > 1 else 'person' }}
+              and {{users|length - 3}} other {{ 'people' if users|length - 3 > 1 else 'person' }}
 
 
             {% endif %}

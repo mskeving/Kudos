@@ -1536,31 +1536,63 @@ body {
   }
 }
 
-@-webkit-keyframes shrink-y {
+@-webkit-keyframes grow {
   0% {
-    opacity: 1;
-    max-height: 500px;
-  }
-
-  100% {
     opacity: 0;
     -webkit-transform: scale(0.5);
     transform: scale(0.5);
+    max-width: 0;
     max-height: 0;
+  }
+
+  100% {
+    opacity: 1;
+    max-width: 500px;
+    max-height: 500px;
   }
 }
 
-@keyframes shrink-y {
+@keyframes grow {
   0% {
-    opacity: 1;
-    max-height: 500px;
+    opacity: 0;
+    -webkit-transform: scale(0.5);
+    transform: scale(0.5);
+    max-width: 0;
+    max-height: 0;
   }
 
   100% {
+    opacity: 1;
+    max-width: 500px;
+    max-height: 500px;
+  }
+}
+
+@-webkit-keyframes grow-y {
+  0% {
     opacity: 0;
     -webkit-transform: scale(0.5);
     transform: scale(0.5);
     max-height: 0;
+  }
+
+  100% {
+    opacity: 1;
+    max-height: 500px;
+  }
+}
+
+@keyframes grow-y {
+  0% {
+    opacity: 0;
+    -webkit-transform: scale(0.5);
+    transform: scale(0.5);
+    max-height: 0;
+  }
+
+  100% {
+    opacity: 1;
+    max-height: 500px;
   }
 }
 
@@ -1667,6 +1699,11 @@ body {
 .js--comment-remove {
   -webkit-animation: shrink-y .3s;
   animation: shrink-y .3s;
+}
+
+.js--new-comment {
+  -webkit-animation: grow-y .3s;
+  animation: grow-y .3s;
 }
 
 /*-----------------------------------*\
