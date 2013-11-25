@@ -259,6 +259,7 @@ h3,
 .gamma,
 h4,
 .delta {
+  font-family: proxima-nova, sans-serif;
   font-size: 1rem;
   text-transform: uppercase;
   letter-spacing: .1em;
@@ -716,7 +717,6 @@ body {
 .posts {
   list-style: none;
   padding-left: 0;
-  padding-top: 2.25rem;
   -webkit-perspective: 2000px;
   perspective: 2000px;
 }
@@ -731,7 +731,8 @@ body {
 }
 
 .post {
-  margin-bottom: 4.5rem;
+  padding-top: 1.5rem;
+  margin-bottom: 1rem;
   -webkit-transition: .3s;
   transition: .3s;
 }
@@ -789,14 +790,8 @@ body {
   border-radius: 200px;
   border: 3px solid #faf9f7;
   text-align: center;
-  line-height: 4rem;
+  line-height: 3.5rem;
   float: left;
-}
-
-@media (max-width: 600px) {
-  .post__thanks-to li {
-    line-height: 3rem;
-  }
 }
 
 .post__thanks-to li + li {
@@ -835,18 +830,11 @@ body {
   border-radius: 50%;
   font-weight: 700;
   text-decoration: none;
-  width: 4rem;
-  height: 4rem;
+  width: 3.5rem;
+  height: 3.5rem;
   background-image: url("//dropabout.appspot.com/img?id=1");
   background-size: cover;
   background-position: center;
-}
-
-@media (max-width: 600px) {
-  .post__thanks-to li a {
-    width: 3rem;
-    height: 3rem;
-  }
 }
 
 .post__thanks-to li a img {
@@ -954,7 +942,7 @@ body {
 .post__taggees {
   position: absolute;
   z-index: 4;
-  top: -3rem;
+  top: -1rem;
   left: -1rem;
 }
 
@@ -1036,6 +1024,7 @@ body {
   background-color: #f5f1f0;
   -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
 }
 
 .post__actions {
@@ -1091,6 +1080,11 @@ body {
 
 .post__actions .thanked {
   color: #f36062;
+}
+
+.post__actions .thanked:active,
+.post__actions .thanked:focus {
+  outline: none;
 }
 
 .post__actions .thanked.js--pressed .fa-heart {
@@ -1179,7 +1173,7 @@ body {
 
 .comments li:first-child {
   margin-top: .75rem;
-  border-top: 2px solid rgba(0, 0, 0, 0.1);
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .comments li + li {
@@ -1536,6 +1530,34 @@ body {
   }
 }
 
+@-webkit-keyframes shrink-y {
+  0% {
+    opacity: 1;
+    max-height: 500px;
+  }
+
+  100% {
+    opacity: 0;
+    -webkit-transform: scale(0.5);
+    transform: scale(0.5);
+    max-height: 0;
+  }
+}
+
+@keyframes shrink-y {
+  0% {
+    opacity: 1;
+    max-height: 500px;
+  }
+
+  100% {
+    opacity: 0;
+    -webkit-transform: scale(0.5);
+    transform: scale(0.5);
+    max-height: 0;
+  }
+}
+
 /*-----------------------------------*\
   $JS-HELPERS
 \*-----------------------------------*/
@@ -1634,6 +1656,37 @@ body {
 .js--loading-posts .fa {
   -webkit-animation: infinite throb .8s ease-in-out;
   animation: infinite throb .8s ease-in-out;
+}
+
+.js--comment-remove {
+  -webkit-animation: shrink-y .3s;
+  animation: shrink-y .3s;
+}
+
+/*-----------------------------------*\
+  $BANNERS
+\*-----------------------------------*/
+
+.banner {
+  position: fixed;
+  top: .75rem;
+  left: 0;
+  right: 0;
+  max-width: 30rem;
+  font-size: .9rem;
+  font-weight: 700;
+  border-radius: .5rem;
+  -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.banner.banner--error {
+  background-color: rgba(243, 96, 98, 0.97);
+  background-image: -webkit-gradient(linear, top left, bottom left, from(rgba(255, 255, 255, 0)), to(rgba(255, 255, 255, 0.1)));
+  background-image: -webkit-linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.1));
+  background-image: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.1));
+  color: #fff;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
 }
 
 /*# sourceMappingURL=style.css.map */
