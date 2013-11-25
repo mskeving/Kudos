@@ -10,9 +10,9 @@ function display_error(error_msg){
 	$('body').prepend(error_html);
 }
 
-function send_error_msg(fnc_name){
+function send_error_msg(error_info){
 	//TODO: include browser info and more relevant details
-	error_msg = "something went wrong in function: " + fnc_name;
+	error_msg = "something went wrong in function: " + error_info.fnc_name;
 	data = {
 		'error_msg': error_msg
 	}
@@ -24,6 +24,11 @@ function send_error_msg(fnc_name){
 			console.log('sent error message to team kudos')
 		},
 		error: function(){
+			display_error();
+			error_info = {
+				'func_name': '/send_error_msg'
+			}
+			send_error_msg(error_info);
 			console.log('failed sending error message to team kudos')
 		}
 	})
@@ -57,6 +62,10 @@ function get_tag_list(obj, post_id){
 		},
 		error: function(){
 			display_error();
+			error_info = {
+				'func_name': '/create_tag_list'
+			}
+			send_error_msg(error_info);
 		},
 		dataType: 'json'
 	})
@@ -149,6 +158,11 @@ $('.submit-feedback-btn').live('click', function(e){
 			$('.feedback-modal').removeClass('displaying');
 		},
 		error: function(){
+			display_error();
+			error_info = {
+				'func_name': '/feedback'
+			}
+			send_error_msg(error_info);
 			console.log("could not submit feedback");
 		}
 	})
@@ -236,6 +250,11 @@ $('.remove-tag').live('click', function(e) {
 			})
 		},
 		error: function(){
+			display_error();
+			error_info = {
+				'func_name': '/deletetag'
+			}
+			send_error_msg(error_info);
 			console.log("error removing tag");
 		}
 	});
@@ -335,7 +354,11 @@ $('.remove-comment').live('click', function(e){
 
 		},
 		error: function(){
-			console.log("error");
+			display_error();
+			error_info = {
+				'func_name': '/deletepost'
+			}
+			send_error_msg(error_info);
 		}
 	})
 })
@@ -384,8 +407,10 @@ window.initCommentButtons = function($jqObject){
 		},
 		error: function(e){
 			display_error();
-			fnc_name = '/newcomment';
-			send_error_msg(fnc_name);
+			error_info = {
+				'func_name': '/newcomment'
+			}
+			send_error_msg(error_info);
 		},
 		dataType: 'json'
 	});
@@ -403,6 +428,11 @@ function send_notifications(data){
 			console.log("success sending email notifications");
 		},
 		error: function(){
+			display_error();
+			error_info = {
+				'func_name': '/create_notifications. failed sending.'
+			}
+			send_error_msg(error_info);
 			console.log("failed sending email notifications");
 		}
 	})
@@ -577,7 +607,12 @@ function create_post(public_url) {
 			}
 		},
 		error: function(resp){
-			console.log("error! no new post created");
+			display_error();
+			error_info = {
+				'func_name': '/createpost'
+			}
+			send_error_msg(error_info);
+
 			end_show_progress($('.submit-new-post'));
 			$('.new-post-form').removeClass('submitting');
 		},
@@ -606,7 +641,11 @@ $('.remove-post-button').live('click', function(e){
 			console.log("success deleting post");
 		},
 		error: function(resp){
-			console.log("error deleting post");
+			display_error();
+			error_info = {
+				'func_name': '/remove-post-button'
+			}
+			send_error_msg(error_info);
 		}
 	})
 
@@ -632,6 +671,11 @@ function s3_upload(data, callback){
         },
         onError: function(status) {
         	console.log("error uploading file: " + status);
+			display_error();
+			error_info = {
+				'func_name': 's3_upload in kudos.js'
+			}
+			send_error_msg(error_info);
         }
     };
 
