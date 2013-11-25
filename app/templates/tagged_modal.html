@@ -1,0 +1,14 @@
+<div class="lightbox lightbox--modal cn-c">
+    <div class="cn-w card card--modal">
+    	{% if error_msg %}
+    		{{error_msg}}
+    	{% endif %}
+    	
+    	{% for user in tagged_users %}
+    		{{user.user_tag.firstname}} {{user.user_tag.lastname}}
+    	{% endfor %}
+    	{% for team in tagged_teams %}
+    		{{team.team_tag.teamname}}
+    	{% endfor %}
+    </div>
+</div>
