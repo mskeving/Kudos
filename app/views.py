@@ -398,7 +398,7 @@ def send_error_msg():
 	sender = g.user.email
 	reply_to = sender
 	recipient_list = ["mskeving@gmail.com"]
-	subject = "Kudos Error!"
+	subject = "Kudos Error from %s!" %(g.user.username)
 	text = form.get('error_msg')
 
 	kudos_header = "Error from %s" %(g.user.username)

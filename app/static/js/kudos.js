@@ -12,7 +12,7 @@ function display_error(error_msg){
 
 function send_error_msg(error_info){
 	//TODO: include browser info and more relevant details
-	error_msg = "something went wrong in function: " + error_info.fnc_name;
+	error_msg = "something went wrong in function: " + error_info.func_name;
 	data = {
 		'error_msg': error_msg
 	}
