@@ -230,6 +230,7 @@ h2, .beta {
 }
 
 h3, .gamma {
+  font-family: $proxima;
   font-size: 1rem;
   text-transform: uppercase;
   letter-spacing: .1em;
@@ -667,7 +668,6 @@ body {
 .posts {
   list-style: none;
   padding-left: 0;
-  padding-top: 2.25rem;
   perspective: 2000px;
   @extend .fix3d;
 }
@@ -680,7 +680,8 @@ body {
 }
 
 .post {
-  margin-bottom: 2rem;
+  padding-top: 1.5rem;
+  margin-bottom: 1rem;
   transition: .3s;
 }
 
@@ -733,12 +734,8 @@ body {
       border-radius: 200px;
       border: 3px solid #faf9f7;
       text-align: center;
-      line-height: 4rem;
+      line-height: 3.5rem;
       float: left;
-
-      @media (max-width: 600px) {
-        line-height: 3rem;
-      }
 
       & + li {
         margin-left: .25rem;
@@ -773,16 +770,11 @@ body {
         border-radius: 50%;
         font-weight: 700;
         text-decoration: none;
-        width: 4rem;
-        height: 4rem;
+        width: 3.5rem;
+        height: 3.5rem;
         background-image: url('//dropabout.appspot.com/img?id=1');
         background-size: cover;
         background-position: center;
-
-        @media (max-width: 600px) {
-          width: 3rem;
-          height: 3rem;
-        }
 
         img {
           opacity: 0;
@@ -890,16 +882,12 @@ body {
   .post__taggees {
     position: absolute;
     z-index: 4;
-    top: -2.75rem;
+    top: -1rem;
     left: -1rem;
 
     @media (max-width: 600px) {
       top: -2rem;
       left: -.75rem;
-    }
-
-    & ~ .post__footer {
-      margin-bottom: 4rem;
     }
   }
 
@@ -967,7 +955,7 @@ body {
     overflow: hidden;
     background-color: #f5f1f0;
     box-shadow: 0 1px 2px rgba(0,0,0,.1);
-    margin-bottom: 0;
+    margin-bottom: 2rem;
   }
 
   .post__actions {
@@ -1014,6 +1002,11 @@ body {
 
     .thanked {
       color: $red;
+
+      &:active, &:focus {
+        outline: none;
+      }
+
       &.js--pressed .fa-heart {
         z-index: 5;
         transform-style: preserve-3d;
@@ -1095,7 +1088,7 @@ body {
 
     &:first-child {
       margin-top: .75rem;
-      border-top: 2px solid rgba(0,0,0,.1);
+      border-top: 1px solid rgba(0,0,0,.1);
     }
 
     & + li {
@@ -1286,6 +1279,19 @@ body {
   }
 }
 
+@keyframes shrink-y {
+  0% {
+    opacity: 1;
+    max-height: 500px;
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(.5);
+    max-height: 0;
+  }
+}
+
 /*-----------------------------------*\
   $JS-HELPERS
 \*-----------------------------------*/
@@ -1384,5 +1390,32 @@ body {
   color: rgba(0,0,0,.6);
   .fa {
     animation: infinite throb .8s ease-in-out;
+  }
+}
+
+.js--comment-remove {
+  animation: shrink-y .3s;
+}
+
+/*-----------------------------------*\
+  $BANNERS
+\*-----------------------------------*/
+
+.banner {
+  position: fixed;
+  top: .75rem;
+  left: 0;
+  right: 0;
+  max-width: 30rem;
+  font-size: .9rem;
+  font-weight: 700;
+  border-radius: .5rem;
+  box-shadow: 0 1px 2px rgba(0,0,0,.1);
+
+  &.banner--error {
+    background-color: transparentize($red, .03);
+    background-image: linear-gradient(rgba(255,255,255,0), rgba(255,255,255,.1));
+    color: #fff;
+    text-shadow: 0 1px 1px rgba(0,0,0,.1);
   }
 }

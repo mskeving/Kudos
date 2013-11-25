@@ -180,7 +180,7 @@
       </div>
 
       <!-- Display comments on post -->
-      <ol class="comments standalone" data-post-id="{{post_object.id}}" style="display: none">
+      <ol class="comments standalone" data-post-id="{{post_object.id}}">
         {% for comment in post.get('comments') %}
 
           {% include 'comment.html' with context %}
@@ -197,7 +197,8 @@
 -->
     <nav class="post__actions nav">
       {% if g.user in post.get('commenters') %}
-        <button class="butt isle toolbar-button g span-all thanked" data-post-id="{{post_object.id}}"><i class="fa fa-heart"></i> Thanked</button>
+        <input class="comment__input input input--plain isle input--float-label g an-w no-w" name="comment-body" id="comment-body-{{post_object.id}}" placeholder="Leave a note with your Thanks" disabled>
+        <button class="butt isle toolbar-button comment-button g span-all thanked" data-post-id="{{post_object.id}}"><i class="fa fa-heart"></i> Thanked</button>
       {% else %}
         <input class="comment__input input input--plain isle input--float-label g g--two-thirds" name="comment-body" id="comment-body-{{post_object.id}}" placeholder="Leave a note with your Thanks">
         <button class="butt isle toolbar-button comment-button g g--one-third" data-post-id="{{post_object.id}}"><i class="fa fa-heart"></i> Thank</button>
