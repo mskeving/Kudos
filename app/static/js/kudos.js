@@ -449,7 +449,7 @@ $('.remove-comment').live('click', function(e){
 				comment.remove();
 				$('#comment-body-' + parent_post_id).removeAttr('disabled').removeClass('no-w').addClass('g--two-thirds');
 				$('.comment-button[data-post-id=' + parent_post_id + ']').removeClass('span-all thanked').addClass('g--one-third');
-				initCommentButtons('.post[data-post-id' + parent_post_id + ']')
+				initCommentButtons('.post[data-post-id]')
 			};
 
 			if(animations.supported) {
