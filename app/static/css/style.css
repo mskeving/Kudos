@@ -328,6 +328,10 @@ hr {
   background-color: #ef3133;
 }
 
+.toolbar-button.f-r {
+  margin-left: 1.5rem;
+}
+
 .input {
   background-color: #fff;
   border: none;
@@ -466,6 +470,11 @@ hr {
 
 .card.card--mini {
   padding-left: 5.75rem;
+}
+
+.card.card--modal {
+  width: 70%;
+  border-radius: .25rem;
 }
 
 .menu--hidden {
@@ -871,6 +880,19 @@ body {
   color: #333;
 }
 
+.post__remove-button {
+  position: absolute;
+  top: .5rem;
+  right: .5rem;
+  z-index: 5;
+  color: #c0af9e;
+  display: none;
+}
+
+.post:hover .post__remove-button {
+  display: block;
+}
+
 .tag {
   -webkit-animation: fadeInDown .3s;
   animation: fadeInDown .3s;
@@ -1005,10 +1027,6 @@ body {
   .post__content .post__photo:after {
     border-radius: 0;
   }
-}
-
-.post__content > :last-child {
-  margin-bottom: 0;
 }
 
 .post__meta {

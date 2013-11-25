@@ -295,6 +295,10 @@ hr {
   }
 }
 
+.toolbar-button.f-r {
+  margin-left: 1.5rem;
+}
+
 .input {
   background-color: #fff;
   border: none;
@@ -427,6 +431,11 @@ hr {
 
   &.card--mini {
     padding-left: 5.75rem;
+  }
+
+  &.card--modal {
+    width: 70%;
+    border-radius: .25rem;
   }
 }
 
@@ -809,6 +818,19 @@ body {
     color: #333;
   }
 
+.post__remove-button {
+  position: absolute;
+  top: .5rem;
+  right: .5rem;
+  z-index: 5;
+  color: darken($cream, 20%);
+  display: none;
+
+  .post:hover & {
+    display: block;
+  }
+}
+
 
   .tag {
     animation: fadeInDown .3s;
@@ -936,10 +958,6 @@ body {
           border-radius: 0;
         }
       }
-    }
-
-    > :last-child {
-      margin-bottom: 0;
     }
   }
 

@@ -66,7 +66,17 @@ function CSSAnimation(){
 	};
 }
 
+// Set up check for animation support
 var animations = CSSAnimation();
+
+// Prepare modal closing links/buttons
+function prepModals() {
+	$('.js--close-modal').on('click', function(e){
+		e.preventDefault();
+		$(this).parents('.lightbox--modal').remove();
+		$('html').removeClass('js--lightbox-open');
+	});
+}
 
 function show_modal(obj){
        obj.slideToggle(300);
@@ -143,25 +153,6 @@ function clear_post_modal_info(){
 	$('.submit-kudos').removeClass('error-post');
 	$('.dropbox-dropin-btn').removeClass('dropbox-dropin-success').addClass('dropbox-dropin-default');
 };
-
-
-$('.toggle-menu').live('click', function(e) {
-	e.preventDefault();
-	var menu = $(this).siblings('.menu').first();
-	if($(menu).hasClass('menu--hidden')) {
-		$(menu).removeClass('menu--hidden');
-	} else {
-		$(menu).addClass('menu--hidden');
-	}
-
-	$(this).toggleClass('fa-angle-down fa-angle-up');
-
-});
-
-$('.menu *').live('click', function(){
-	$(this).parents('.menu').addClass('menu--hidden');
-	$(this).parents('.post__edit-actions').children('.toggle-menu').toggleClass('fa-angle-down fa-angle-up');
-});
 
 $('#nav-feedback, .cancel-feedback-btn').live('click', function(e){
 	e.preventDefault();
@@ -242,23 +233,37 @@ $('.thank-count').live('click', function(e){
 //TAG MODAL
 $('.addtag-button').live('click', function(e){
 	e.preventDefault();
-	var post_id = $(this).data('post-id'),
-		tag_input = $('.tag_input[data-post-id=' + post_id + ']'),
-		tag_modal = $('.tag-modal[data-post-id=' + post_id + ']');
+	var post_id = $(this).data('post-id');
 
-	show_modal(tag_modal);
+	$('body').append('<div class="lightbox lightbox--modal cn-c tag-modal cf" data-post-id="' + post_id + '">\
+				<i class="lightbox-close js--close-modal fa fa-times" title="Cancel"></i>\
+        <form class="cn-w wrap new-tag-form" data-post-id="' + post_id + '">\
+          <div class="cf card island tags" data-post-id="' + post_id + '">\
+            <input type="text" class="spit tag_input input in" data-post-id="' + post_id + '" placeholder="Who do you want to thank?"/>\
+            <div data-id="_tagsinput" class="tagsinput">\
+              <div data-id="_addTag">\
+                <input data-id="_tag" class="spit input in" value="" data-default="Who do you want to thank?" />\
+                <hr>\
+                <button type="submit" class="f-r new-tag-btn in butt" data-post-id="' + post_id + '">Add tags</button>\
+                <a href="#" class="js--close-modal">Cancel</a>\
+              </div>\
+            </div>\
+          </div>\
+          <input id="hidden_post_id" name="hidden_post_id" type="hidden" value="' + post_id + '">\
+          <input class="hidden_tag_ids" id="' + post_id + '" name="hidden_tag_ids" type="hidden" value="">\
+          <input class="hidden_tag_text" id="' + post_id + '" name="hidden_tag_text" type="hidden" value="">\
+        </form>\
+      </div>');
 
-	if (!tag_modal.hasClass('pressed')){
-		get_tag_list(tag_input, post_id);
-		tag_modal.addClass('pressed');
-	};
+$('html').addClass('js--lightbox-open');
+
+	var tag_input = $('.tag_input[data-post-id=' + post_id + ']'),
+	    tag_modal = $('.tag-modal[data-post-id=' + post_id + ']');
+
+	prepModals();
+	get_tag_list(tag_input, post_id);
 
 });
-
-$('.no_new_tag_btn').live('click', function(e){
-	e.preventDefault();
-	show_modal($(this).parent());
-})
 
 //REMOVE TAG
 $('.remove-tag').live('click', function(e) {
@@ -303,6 +308,8 @@ $('.new-tag-btn').live('click', function(e) {
 	post_photo_url = form.parents('.post').closest('.post-photo[data-post-id="' + parent_post_id + '"]').attr('src');
 	post_text = form.parents('.post').children('.post__container').children('.post__content').children('.p').text();
 
+	$('html').removeClass('js--lightbox-open');
+
 	if (tag_ids != ""){
 		var data = {
 			parent_post_id: parent_post_id,
@@ -313,10 +320,7 @@ $('.new-tag-btn').live('click', function(e) {
 		};
 
 		$.post('/newtag', data, function(tag_info_json){
-			show_modal(form.parent());
-			$('.tag').remove(); //remove tag spans from input box
-			form.children(".hidden_tag_ids").val(""); //and clear hidden values
-			form.children(".hidden_tag_text").val("");
+			$('.js--close-modal').trigger('click');
 
 			//turn tag_info json into usable array - avoidable if specify it's json datatype
 			tag_array = jQuery.parseJSON(tag_info_json);
@@ -327,7 +331,7 @@ $('.new-tag-btn').live('click', function(e) {
 				var user_id = tag_array.user_tags[i].user_id;
 				var photo = tag_array.user_tags[i].photo;
 				var new_avatar = $('<li><a class="avatar" style="background-image: url(' + photo + ')" href="/user/' + username + '"><img src=' + photo +' alt=' + username + '></a></li>');
-				form.parents('.post__container').children('.post__header-meta').children(".taggees").children(".avatars").append(new_avatar);
+				$('.post__container[data-post-id=' + data.parent_post_id + ']').find(".avatars").append(new_avatar);
 			}
 
 			//DISPLAY TEAM AVATARS
@@ -336,7 +340,7 @@ $('.new-tag-btn').live('click', function(e) {
 				var photo = tag_array.team_tags[i].photo;
 				var new_avatar = $('<li><a class="avatar" style="background-image: url(/static/img/team_photo.jpg)" href="/team/' + teamname + '""><img src=' + photo +' alt=' + teamname + '></a></li>');
 				console.log("this" + this)
-				form.parent().parent().children(".taggees").children(".avatars").append(new_avatar);
+				$('.post__container[data-post-id=' + data.parent_post_id + ']').find(".avatars").append(new_avatar);
 			}
 
 			console.log('tagged_team_ids tag array' + tag_array.tagged_team_ids)
