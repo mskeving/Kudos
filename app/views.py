@@ -825,6 +825,23 @@ def delete_post():
 
 	return post_id
 
+@app.route('/tagged_in_post', methods=['POST'])
+def tagged_in_post():
+	form = request.form
+	post_id = form.get('post_id')
+
+	post = Post.query.filter(and_(Post.id==post_id, Post.is_deleted==False)).all()
+
+	indented_post = posts_to_indented_posts(post)[0]
+	tagged_users_tag_objects = indented_post['tagged_users']
+	tagged_teams_tag_objects = indented_post['tagged_teams']
+
+	if post:
+		return render_template('tagged_modal.html',
+			tagged_teams=tagged_teams_tag_objects,
+			tagged_users=tagged_users_tag_objects)
+	return render_template('tagged_modal.html',
+			error_msg="No Post Found")
 
 #POST PAGE
 @app.route('/post/<post_id>', methods=['GET'])
@@ -992,10 +1009,10 @@ def posts_to_indented_posts(posts):
 		for tag in p.tags:
 			if tag.user_tag_id:
 				if tag.is_deleted == False:
-					tagged_users.append(tag) #send in all user information
+					tagged_users.append(tag)
 			elif tag.team_tag_id:
 				if tag.is_deleted == False:
-					tagged_teams.append(tag) #just teamname
+					tagged_teams.append(tag)
 			else:
 				print "no tags for this post.id: %r" % p.id 
 

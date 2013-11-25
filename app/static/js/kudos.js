@@ -482,7 +482,7 @@ window.initCommentButtons = function($jqObject){
 		parent_post_id: $(this).parents('.post').data('post-id'),
 		post_text: $('#comment-body-' + $(this).parents('.post').data('post-id')).val()
 	}
-
+	
 	var all_comments = $('.comments[data-post-id=' + data.parent_post_id + ']');
 
 	$.ajax({
