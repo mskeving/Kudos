@@ -765,10 +765,11 @@ body {
       a {
         overflow: hidden;
         display: block;
-        color: #fff;
-        text-shadow: 0 1px 1px rgba(0,0,0,.1);
+        color: darken($cream, 25%);
         border-radius: 50%;
         font-weight: 700;
+        font-size: 1.25rem;
+        font-family: $proxima;
         text-decoration: none;
         width: 3.5rem;
         height: 3.5rem;
@@ -778,6 +779,11 @@ body {
 
         img {
           opacity: 0;
+        }
+
+        &.other-tags {
+          background-image: none;
+          background-color: #F0EDE7;
         }
       }
     }
