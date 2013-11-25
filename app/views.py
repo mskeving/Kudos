@@ -204,7 +204,6 @@ def create_tag_list():
 				used_tags_dict[used_tag.user_tag_id] = 'user'
 		print "used_tags_dict: %r " % used_tags_dict
 
-
 	tag_dict = {}
 
 	for tag in user_tags:
@@ -397,7 +396,7 @@ def sign_s3_upload():
 def generate_email(header, message, subject, recipient_list, post_id, img_url):
 	print "generating email for %r" % recipient_list
 	sender = settings.mail_sender.username
-	reply_to = settings.mail_sender.reply_to
+	reply_to = g.user.email
 
 	html = render_template('notification_email.html',
 		kudos_header=header,
@@ -549,7 +548,8 @@ def create_notifications():
 def create_notification_for_tagged_users(tagged_users_list, photo_url, post_text, parent_post_id, subject, header):
 	recipient_list=[]
 	for user_object in tagged_users_list:
-		recipient_list.append(user_object.email)
+		if user_object != g.user:
+			recipient_list.append(user_object.email)
 
 	#create notification for taggees 
 	generate_email(header, post_text, subject, recipient_list, parent_post_id, photo_url)
@@ -559,39 +559,41 @@ def create_notification_for_tagged_teams(users_teams_in_tagged_teams, photo_url,
 	# TODO: separate notifications for different teams. {teamname:[list_of_team_members],}
 	recipient_list = []
 	for user_team in users_teams_in_tagged_teams:
-		recipient_list.append(user_team.user.email)
+		if user_team.user_id != g.user.id:
+			recipient_list.append(user_team.user.email)
 	generate_email(header, post_text, subject, recipient_list, post_id, photo_url)
 
 
 def create_notification_for_managers(tagged_users_list, photo_url, post_text, post_id):
 	#Managers will only receive notifications when their reports are first tagged in a post. Nothing for comments
-	recipient_list = []
 	manager_to_reports_dict = defaultdict(list)
 	for user_object in tagged_users_list:
 		manager_to_reports_dict[user_object.manager_id].append(user_object)
-		recipient_list.append(user_object.email)
 
-	#create notification for their managers that includes a list of their reports tagged in post
 	manager_ids_list = manager_to_reports_dict.keys()
 
+	manager_objects_to_notify = []
 	if len(manager_ids_list) > 0:
 		manager_objects_to_notify = User.query.filter(User.id.in_(manager_ids_list)).all()
-	else:
-		manager_objects_to_notify = []
 
 	for manager in manager_objects_to_notify:
 		reports_objects = manager_to_reports_dict.get(manager.id)
+		if g.user == manager:
+			continue
+
 		recipient_list = [manager.email]
 		subject = "Kudos to your team members!"
 		if len(reports_objects) == 1:
-			header = "As " + str(reports_objects[0].firstname) + "'s team lead, we wanted to let you know they were tagged in this Kudos:"
+			subject = "Kudos to your team member, " + str(reports_objects[0].firstname) + "!"
+			header = "As " + str(reports_objects[0].firstname) + "'s team lead, we wanted to let you know " + g.user.firstname + " " + g.user.lastname + " sent them this Kudos:"
 		elif len(reports_objects) == 2:
-			header = "As " + str(reports_objects[0].firstname) + " and " + str(reports_objects[1].firstname) + "'s team lead, we wanted to let you know they were tagged in this Kudos:"
+			subject = "Kudos to your team members, " + str(reports_objects[0].firstname) + " and " + str(reports_objects[1].firstname) + "!"
+			header = "As their team lead, we wanted to let you know " + g.user.firstname + " " + g.user.lastname + " sent them this Kudos:"
 		elif len(reports_objects) > 2:
 			reports_str = ""
 			for report in reports_objects[:-1]:
 				reports_str += str(report.firstname) + ", "
-			header = "As " + reports_str + " and " + str(reports_objects[-1].firstname) + "'s team lead, we wanted to let you know they were tagged in this Kudos:"
+			header = "As " + reports_str + " and " + str(reports_objects[-1].firstname) + "'s team lead, we wanted to let you know" + g.user.firstname + " " + g.user.lastname + " sent them this Kudos:"
 
 		generate_email(header, post_text, subject, recipient_list, post_id, photo_url)
 
