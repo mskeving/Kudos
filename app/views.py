@@ -102,7 +102,6 @@ def feedback():
 	recipient_list = ["kudos@dropbox.com"]
 	subject = "Kudos Feedback"
 	text = form.get('feedback')
-	subject = "kudos feedback"
 
 	kudos_header = "feedback from %s %s" %(g.user.firstname, g.user.lastname)
 	html = render_template('feedback_email.html',
@@ -392,10 +391,29 @@ def sign_s3_upload():
 		 'public_url': public_url
 	  })
 
+@app.route('/send_error_msg', methods=['POST'])
+def send_error_msg():
+	form = request.form
+
+	sender = g.user.email
+	reply_to = sender
+	recipient_list = ["mskeving@gmail.com"]
+	subject = "Kudos Error!"
+	text = form.get('error_msg')
+
+	kudos_header = "Error from %s" %(g.user.username)
+	html = render_template('feedback_email.html',
+		text=text,
+		kudos_header=kudos_header,
+		)
+	post_id = None
+	send_email(sender, recipient_list, reply_to, subject, html, post_id)
+
+	return "complete"
+
 
 def generate_email(header, message, subject, recipient_list, post_id, img_url):
 	print "generating email for %r" % recipient_list
-	sender = settings.mail_sender.username
 	reply_to = g.user.email
 
 	html = render_template('notification_email.html',
@@ -729,6 +747,11 @@ def new_comment():
 
 	body = form.get('post_text')
 	parent_post_id = form.get('parent_post_id')
+
+	parent_post = Post.query.filter(and_(Post.id==parent_post_id, Post.is_deleted==False)).first()
+	if not parent_post:
+		comment_info = {"is_error": True}
+		return json.dumps(comment_info)
 	
 	new_comment = Post(body=body, parent_post_id=parent_post_id, time=datetime.utcnow(), user_id=g.user.id)
 	db.session.add(new_comment)
@@ -737,7 +760,7 @@ def new_comment():
 	tag_ids = form.get('hidden_tag_ids', '').split('|')
 	tag_text = form.get('hidden_tag_text', '').split('|')
 
-	tags_for_parent_post = db.session.query(Tag).filter_by(post_id=parent_post_id).all()
+	tags_for_parent_post = Tag.query.filter(and_(Tag.post_id==parent_post_id, Tag.is_deleted==False)).all()
 
 	tagged_user_ids = []
 	tagged_team_ids = []

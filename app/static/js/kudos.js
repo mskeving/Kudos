@@ -2,6 +2,32 @@ function show_modal(obj){
        obj.slideToggle(300);
 }
 
+function display_error(error_msg){
+	if (!error_msg){
+		error_msg = "Uh oh. Something went wrong. Try refreshing the page and hope that it helps!"
+	}
+	var error_html = '<div class="banner banner--error isle wrap">' + error_msg + '</div>';
+	$('body').prepend(error_html);
+}
+
+function send_error_msg(fnc_name){
+	//TODO: include browser info and more relevant details
+	error_msg = "something went wrong in function: " + fnc_name;
+	data = {
+		'error_msg': error_msg
+	}
+	$.ajax({
+		data: data,
+		url: '/send_error_msg',
+		type: 'POST',
+		success: function(){
+			console.log('sent error message to team kudos')
+		},
+		error: function(){
+			console.log('failed sending error message to team kudos')
+		}
+	})
+}
 
 function get_tag_list(obj, post_id){
 	//gets tag list from db to populate autocomplete for tag modals
@@ -30,7 +56,7 @@ function get_tag_list(obj, post_id){
 			});
 		},
 		error: function(){
-			console.log('error');
+			display_error();
 		},
 		dataType: 'json'
 	})
@@ -332,6 +358,10 @@ window.initCommentButtons = function($jqObject){
 		url: '/newcomment',
 		data: data,
 		success: function(response){
+			if (response.is_error) {
+				display_error("Sorry! This post had already been removed.");
+				return
+			}
 
 			$.extend(data, {
 				tagged_team_ids: JSON.stringify(response.tagged_team_ids),
@@ -353,7 +383,9 @@ window.initCommentButtons = function($jqObject){
 			}
 		},
 		error: function(e){
-			console.log('error creating new reply');
+			display_error();
+			fnc_name = '/newcomment';
+			send_error_msg(fnc_name);
 		},
 		dataType: 'json'
 	});
