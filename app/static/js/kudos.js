@@ -234,20 +234,42 @@ $('.no_new_tag_btn').live('click', function(e){
 $('.remove-tag').live('click', function(e) {
 	e.preventDefault();
 	var avatar = $(this).parent('.avatar-container'),
+		post_id = $(this).parents('.post').data('post-id'),
 		tag_id = avatar.data('tag-id'),
 		data = {
 			tag_id: tag_id
 		};
-
+	var user_id = ""
+	var team_id = ""
+	if ($('.user-card').data('user-id')){
+		user_id = $('.user-card').data('user-id')
+	}
+	if ($('.team__title').data('team-id')){
+		team_id = $('.team__title').data('team-id')
+	}
 
 	$.ajax({
 		type: "POST",
 		url: '/deletetag',
 		data: data,
-		success: function(status){
+		success: function(tag_info){
 			avatar.addClass('tag--removing').one('webkitAnimationEnd mozAnimationEnd oAnimationEnd animationEnd', function(){
 				avatar.remove();
 			})
+			if (tag_info.user_id == user_id){
+				remove_post();
+			}
+			else if (tag_info.team_id == team_id){
+				remove_post()
+			}
+
+			function remove_post(){
+				post = $('.post[data-post-id=' + post_id +']');
+				post.addClass('post--remove-from-stream');
+				post.one('webkitAnimationEnd mozAnimationEnd oAnimationEnd animationEnd', function(){
+					post.remove();
+				});
+			}
 		},
 		error: function(){
 			display_error();
@@ -256,7 +278,8 @@ $('.remove-tag').live('click', function(e) {
 			}
 			send_error_msg(error_info);
 			console.log("error removing tag");
-		}
+		},
+		dataType: 'json'
 	});
 
 });

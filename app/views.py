@@ -731,11 +731,15 @@ def delete_tag():
 	tag_id = form.get('tag_id')
 	
 	delete_tag = db.session.query(Tag).filter_by(id=tag_id).one()
+	if delete_tag.user_tag_id:
+		tag_info = {'user_id': delete_tag.user_tag_id}
+	elif delete_tag.team_tag_id:
+		tag_info = {'team_id': delete_tag.team_tag_id}
 
 	delete_tag.is_deleted = True
 	db.session.commit()
 
-	return "complete"
+	return json.dumps(tag_info)
 
 
 #SUBMIT NEW COMMENT
