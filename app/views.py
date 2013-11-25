@@ -407,7 +407,9 @@ def send_error_msg():
 		kudos_header=kudos_header,
 		)
 	post_id = None
-	send_email(sender, recipient_list, reply_to, subject, html, post_id)
+
+	if settings.email_stealer is None:
+		send_email(sender, recipient_list, reply_to, subject, html, post_id)
 
 	return "complete"
 
