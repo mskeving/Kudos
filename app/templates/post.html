@@ -14,7 +14,7 @@
             </a>
 
             {% if g.user.username == post_object.author.username%}
-              <div class="post__remove-tag remove-tag">
+              <div class="post__remove-tag remove-tag mobile-hidden">
                 <i class="fa fa-times"></i>
               </div>
             {% endif %}
@@ -46,7 +46,7 @@
             {% endif %}
 
             {% if g_user_tagged_in_post or g.user.username == post_object.author.username%}
-              <div class="post__remove-tag remove-tag">
+              <div class="post__remove-tag mobile-hidden remove-tag">
                 <i class="fa fa-times"></i>
               </div>
             {% endif %}
@@ -55,7 +55,7 @@
         {% endfor %}
           {% if ((post.get('tagged_users')|length) + (post.get('tagged_teams')|length) - 3) > 0  %}
             <li>
-              <a class="other-tags" href="#" title="{{((post.get('tagged_users')|length) + (post.get('tagged_teams')|length) - 3)}} other people tagged">+{{((post.get('tagged_users')|length) + (post.get('tagged_teams')|length) - 3)}}</a>
+              <a class="other-tags js--show-all-taggees" href="#" title="{{((post.get('tagged_users')|length) + (post.get('tagged_teams')|length) - 3)}} other people tagged">+{{((post.get('tagged_users')|length) + (post.get('tagged_teams')|length) - 3)}}</a>
             </li>
           {% endif %}
       {% endif %}
@@ -77,7 +77,7 @@
 
         <p class="standalone"><small>
 
-          <a class="toolbar-button addtag-button f-r" data-post-id="{{post_object.id}}" href="#"><i class="fa fa-plus-circle"></i> Add a Tag</a>
+          <a class="toolbar-button addtag-button f-r mobile-hidden" data-post-id="{{post_object.id}}" href="#"><i class="fa fa-plus-circle"></i> Add a Tag</a>
 
           {% set teams = post.get('tagged_teams') %}
           {% set users = post.get('tagged_users') %}
@@ -88,15 +88,15 @@
 
             {% if teams|length == 1 %}
 
-              <a href="{{ url_for('team', team=teams[0].team_tag.teamname) }}">{{teams[0].team_tag.teamname}} Team</a>{% if users|length > 0 %} and {{ users|length }}&nbsp;other{{ 's' if users|length > 1 else '' }} {% endif %}
+              <a href="{{ url_for('team', team=teams[0].team_tag.teamname) }}">{{teams[0].team_tag.teamname}} Team</a>{% if users|length > 0 %} and <a href="#" class="js--show-all-taggees">{{ users|length }}&nbsp;other{{ 's' if users|length > 1 else '' }}</a>{% endif %}
 
             {% elif teams|length == 2 %}
 
-              <a href="{{ url_for('team', team=teams[0].team_tag.teamname) }}">{{teams[0].team_tag.teamname}} Team</a>{{ ', ' if users|length > 0 else ' and' }} <a href="{{ url_for('team', team=teams[1].team_tag.teamname) }}">{{teams[1].team_tag.teamname}} Team</a>{% if users|length > 0 %} and {{ users|length }}&nbsp;other{{ 's' if users|length > 1 else '' }} {% endif %}
+              <a href="{{ url_for('team', team=teams[0].team_tag.teamname) }}">{{teams[0].team_tag.teamname}} Team</a>{{ ', ' if users|length > 0 else ' and' }} <a href="{{ url_for('team', team=teams[1].team_tag.teamname) }}">{{teams[1].team_tag.teamname}} Team</a>{% if users|length > 0 %} and <a href="#" class="js--show-all-taggees">{{ users|length }}&nbsp;other{{ 's' if users|length > 1 else '' }}</a> {% endif %}
 
             {% else %}
 
-              <a href="{{ url_for('team', team=teams[0].team_tag.teamname) }}">{{teams[0].team_tag.teamname}} Team</a>, <a href="{{ url_for('team', team=teams[1].team_tag.teamname) }}">{{teams[1].team_tag.teamname}} Team</a>, and&nbsp;{{(teams|length + users|length) - 2}}&nbsp;other{{ 's' if (teams|length + users|length) - 2 > 1 else '' }}
+              <a href="{{ url_for('team', team=teams[0].team_tag.teamname) }}">{{teams[0].team_tag.teamname}} Team</a>, <a href="{{ url_for('team', team=teams[1].team_tag.teamname) }}">{{teams[1].team_tag.teamname}} Team</a>, and&nbsp;<a href="#" class="js--show-all-taggees">{{(teams|length + users|length) - 2}}&nbsp;other{{ 's' if (teams|length + users|length) - 2 > 1 else '' }}</a>
 
             {% endif %}
           {% elif users|length > 0 %}
@@ -136,7 +136,7 @@
 
               {% endfor %}
 
-              and&nbsp;{{users|length - 3}}&nbsp;other{{ 's' if users|length - 3 > 1 else '' }}
+              and&nbsp;<a href="#" class="js--show-all-taggees">{{users|length - 3}}&nbsp;other{{ 's' if users|length - 3 > 1 else '' }}</a>
 
 
             {% endif %}
