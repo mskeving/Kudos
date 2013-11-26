@@ -5,9 +5,9 @@
 	{% if error_msg %}
 		{{error_msg}}
 	{% else %}
-		<div class="posts">
+		<ol class="posts">
 			{% include 'post.html' with context %}
-		</div>
+		</ol>
 	{% endif %}
 
 {% endblock %}
