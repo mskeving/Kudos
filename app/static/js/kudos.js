@@ -734,7 +734,7 @@ function create_post(public_url) {
 
 
 //REMOVE POST
-$('.remove-post-button').on('click', function(e){
+$('.remove-post-button').on('click', function(e) {
 	e.preventDefault();
 	var post_id = $(this).closest('.post').data('post-id');
 	var parent_post = $(this).closest('.post');
