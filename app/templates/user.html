@@ -54,7 +54,7 @@
 
 		<hr>
 		{% if posts %}
-			<h2 class="gamma p">Posts thanking {{'you' if user.username == g.user.username else user.firstname + ' ' + user.lastname}} user.html</h2>
+			<h2 class="gamma p post-column-title">Posts thanking {{'you' if user.username == g.user.username else user.firstname + ' ' + user.lastname}} user.html</h2>
 
 				<ol class="posts post-column">
 				{% for post in posts %}
@@ -62,11 +62,11 @@
 				{% endfor %}
 				</ol>
 		{% else %}
-			<p class="beta promo faded no-posts">No posts thanking
+			<p class="beta promo faded no-posts post-column-title">No posts thanking
 				{% if g.user.username == user.username %}
 					you yet.
 				{% else %}
-					{{user.firstname}} yet. Why not <a href="#" class="js--hocus-focus">be the first?</a></p>
+					{{user.firstname}} {{user.lastname}} yet. Why not <a href="#" class="js--hocus-focus">be the first?</a></p>
 				{% endif %}
 		{% endif %}
 

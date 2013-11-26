@@ -367,11 +367,14 @@ $('.remove-tag').live('click', function(e) {
 			}
 
 			function remove_post(){
-				post = $('.post[data-post-id=' + post_id +']');
+				post = $('.post[data-post-id=' + post_id +']').parent('li');
 				post.addClass('post--remove-from-stream');
 				post.one('webkitAnimationEnd mozAnimationEnd oAnimationEnd animationEnd', function(){
 					post.remove();
 				});
+				if ($('ol.posts').children('li').length == 1){
+					change_to_no_posts_yet_title();
+				}
 			}
 
 			replace_one_post(post_id);
@@ -735,7 +738,7 @@ function create_post(public_url) {
 				$('.no-posts').removeClass('no-posts');
 				var full_name = data.hidden_tag_text;
 				full_name = full_name.substring(0, full_name.length -1); // remove trailing '|' from hidden_tag_text
-				var new_post_column = '<h2 class="gamma p">Posts thanking ' + full_name + '</h2>\
+				var new_post_column = '<h2 class="gamma p post-column-title">Posts thanking ' + full_name + '</h2>\
 									<ol class="posts post-column">' + response.new_post + '</ol>'
 				$('.main-column').append(new_post_column)
 			}
@@ -779,12 +782,21 @@ function create_post(public_url) {
 	});
 }
 
+function change_to_no_posts_yet_title() {
+	full_name = $('.prefilled_tag_text').val();
+	full_name = full_name.substring(0, full_name.length -1); // remove trailing '|' from hidden_tag_text
+	$('.post-column-title').remove();
+	var post_column_title = '<p class="beta promo faded no-posts post-column-title">\
+	No posts thanking ' + full_name + ' yet. Why not <a href="#" class="js--hocus-focus">\
+	be the first?</a></p>'
+	$('.main-column').append(post_column_title);
+}
 
 //REMOVE POST
 $('.remove-post-button').live('click', function(e){
 	e.preventDefault();
 	var post_id = $(this).closest('.post').data('post-id');
-	var parent_post = $(this).closest('.post');
+	var parent_post = $(this).closest('.post').parent('li');
 	data = {
 		post_id : post_id
 	}
@@ -800,6 +812,9 @@ $('.remove-post-button').live('click', function(e){
 				});
 			} else {
 				$(this).remove();
+			}
+			if ($('ol.posts').children('li').length == 1){
+				change_to_no_posts_yet_title();
 			}
 			console.log("success deleting post");
 		},
