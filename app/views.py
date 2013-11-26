@@ -785,6 +785,7 @@ def new_comment():
 
 	tags_for_parent_post = Tag.query.filter(and_(Tag.post_id==parent_post_id, Tag.is_deleted==False)).all()
 
+	#get tag information to send notifications
 	tagged_user_ids = []
 	tagged_team_ids = []
 	for tag in tags_for_parent_post:
@@ -826,19 +827,20 @@ def delete_post():
 	post_id = form.get('post_id')
 
 	delete_post = db.session.query(Post).filter_by(id=post_id).first()
-	delete_post.is_deleted = True
+	if delete_post:
+		delete_post.is_deleted = True
 
-	#delete post, replies, associatated tags, and thanks 
-	to_delete_list = []
-	to_delete_list.append(delete_post)
-	for tag in delete_post.tags:
-		tag.is_deleted = True
-	for comment in delete_post.children:
-		comment.is_deleted = True
-	for thank in delete_post.thanks:
-		thank.is_deleted = True
+		#delete post, replies, associatated tags, and thanks 
+		to_delete_list = []
+		to_delete_list.append(delete_post)
+		for tag in delete_post.tags:
+			tag.is_deleted = True
+		for comment in delete_post.children:
+			comment.is_deleted = True
+		for thank in delete_post.thanks:
+			thank.is_deleted = True
 
-	db.session.commit()
+		db.session.commit()
 
 	return post_id
 
