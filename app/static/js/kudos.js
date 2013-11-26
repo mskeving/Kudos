@@ -151,37 +151,6 @@ function get_tag_list(obj, post_id){
 	})
 }
 
-function show_all_tags(post_id) {
-	var result;
-	var data = {
-		post_id: post_id
-	};
-
-	$.ajax({
-		url: '/tagged_in_post',
-		type: 'POST',
-		data: data,
-		success: function(data) {
-			$('body').append(data);
-			$('html').addClass('js--lightbox-open');
-			prepModals();
-		},
-		error: function(message) {
-			console.log('Error fetching taggees for post #' + data.post_id);
-			console.log(message);
-			return false;
-		}
-	});
-
-	return result;
-};
-
-$('.js--show-all-taggees').on('click', function(e){
-	e.preventDefault();
-	var post_id = $(this).parents('.post[data-post-id]').data('post-id'),
-	    taggees = show_all_tags(post_id);
-});
-
 function collect_tags(form){
 	//collects tags that you have chosen to submit with new post
 
@@ -310,7 +279,7 @@ $('.addtag-button').live('click', function(e){
 				<i class="lightbox-close js--close-modal fa fa-times" title="Cancel"></i>\
         <form class="cn-w wrap new-tag-form" data-post-id="' + post_id + '">\
           <div class="cf card island tags" data-post-id="' + post_id + '">\
-            <input type="text" class="spit tag_input input in vi-hd" data-post-id="' + post_id + '" placeholder="Who do you want to thank?"/>\
+            <input type="text" class="spit tag_input input in" data-post-id="' + post_id + '" placeholder="Who do you want to thank?"/>\
             <div data-id="_tagsinput" class="tagsinput">\
               <div data-id="_addTag">\
                 <input data-id="_tag" class="spit input in" value="" data-default="Who do you want to thank?" />\
@@ -339,7 +308,8 @@ $('html').addClass('js--lightbox-open');
 //REMOVE TAG
 $('.remove-tag').live('click', function(e) {
 	e.preventDefault();
-	var post_id = $(this).parents('.post').data('post-id'),
+	var avatar = $(this).parent('.avatar-container'),
+		post_id = $(this).parents('.post').data('post-id'),
 		tag_id = avatar.data('tag-id'),
 		data = {
 			tag_id: tag_id
