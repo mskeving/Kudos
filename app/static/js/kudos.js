@@ -279,7 +279,7 @@ $('.addtag-button').live('click', function(e){
 				<i class="lightbox-close js--close-modal fa fa-times" title="Cancel"></i>\
         <form class="cn-w wrap new-tag-form" data-post-id="' + post_id + '">\
           <div class="cf card island tags" data-post-id="' + post_id + '">\
-            <input type="text" class="spit tag_input input in" data-post-id="' + post_id + '" placeholder="Who do you want to thank?"/>\
+            <input type="text" class="spit tag_input input in vi-hd" data-post-id="' + post_id + '" placeholder="Who do you want to thank?"/>\
             <div data-id="_tagsinput" class="tagsinput">\
               <div data-id="_addTag">\
                 <input data-id="_tag" class="spit input in" value="" data-default="Who do you want to thank?" />\

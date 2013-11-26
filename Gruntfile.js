@@ -36,15 +36,6 @@ module.exports = function(grunt) {
         }
       }
     },
-    concat: {
-      options: {
-        separator: ';',
-      },
-      dist: {
-        src: ['!app/static/js/jquery1_4_4.min.js', 'app/static/js/*.js', '!app/static/js/kudos.min.js'],
-        dest: 'app/static/js/kudos.min.js',
-      },
-    },
     // Watch files for changes
     watch: {
       css: {
@@ -54,13 +45,6 @@ module.exports = function(grunt) {
         options: {
           spawn: false,
         },
-      },
-      js: {
-      	files: ['app/static/js/*.js', '!app/static/js/kudos.min.js'],
-      	tasks: ['concat'],
-      	options: {
-      		spawn: false,
-      	}
       }
     }
 	});
