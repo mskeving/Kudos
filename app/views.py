@@ -102,7 +102,6 @@ def feedback():
 	recipient_list = ["kudos@dropbox.com"]
 	subject = "Kudos Feedback"
 	text = form.get('feedback')
-	subject = "kudos feedback"
 
 	kudos_header = "feedback from %s %s" %(g.user.firstname, g.user.lastname)
 	html = render_template('feedback_email.html',
@@ -203,7 +202,6 @@ def create_tag_list():
 			else:
 				used_tags_dict[used_tag.user_tag_id] = 'user'
 		print "used_tags_dict: %r " % used_tags_dict
-
 
 	tag_dict = {}
 
@@ -393,11 +391,32 @@ def sign_s3_upload():
 		 'public_url': public_url
 	  })
 
+@app.route('/send_error_msg', methods=['POST'])
+def send_error_msg():
+	form = request.form
+
+	sender = g.user.email
+	reply_to = sender
+	recipient_list = ["mskeving@gmail.com"]
+	subject = "Kudos Error from %s!" %(g.user.username)
+	text = form.get('error_msg')
+
+	kudos_header = "Error from %s" %(g.user.username)
+	html = render_template('feedback_email.html',
+		text=text,
+		kudos_header=kudos_header,
+		)
+	post_id = None
+
+	if settings.email_stealer is None:
+		send_email(sender, recipient_list, reply_to, subject, html, post_id)
+
+	return "complete"
+
 
 def generate_email(header, message, subject, recipient_list, post_id, img_url):
 	print "generating email for %r" % recipient_list
-	sender = settings.mail_sender.username
-	reply_to = settings.mail_sender.reply_to
+	reply_to = g.user.email
 
 	html = render_template('notification_email.html',
 		kudos_header=header,
@@ -549,7 +568,8 @@ def create_notifications():
 def create_notification_for_tagged_users(tagged_users_list, photo_url, post_text, parent_post_id, subject, header):
 	recipient_list=[]
 	for user_object in tagged_users_list:
-		recipient_list.append(user_object.email)
+		if user_object != g.user:
+			recipient_list.append(user_object.email)
 
 	#create notification for taggees 
 	generate_email(header, post_text, subject, recipient_list, parent_post_id, photo_url)
@@ -559,39 +579,41 @@ def create_notification_for_tagged_teams(users_teams_in_tagged_teams, photo_url,
 	# TODO: separate notifications for different teams. {teamname:[list_of_team_members],}
 	recipient_list = []
 	for user_team in users_teams_in_tagged_teams:
-		recipient_list.append(user_team.user.email)
+		if user_team.user_id != g.user.id:
+			recipient_list.append(user_team.user.email)
 	generate_email(header, post_text, subject, recipient_list, post_id, photo_url)
 
 
 def create_notification_for_managers(tagged_users_list, photo_url, post_text, post_id):
 	#Managers will only receive notifications when their reports are first tagged in a post. Nothing for comments
-	recipient_list = []
 	manager_to_reports_dict = defaultdict(list)
 	for user_object in tagged_users_list:
 		manager_to_reports_dict[user_object.manager_id].append(user_object)
-		recipient_list.append(user_object.email)
 
-	#create notification for their managers that includes a list of their reports tagged in post
 	manager_ids_list = manager_to_reports_dict.keys()
 
+	manager_objects_to_notify = []
 	if len(manager_ids_list) > 0:
 		manager_objects_to_notify = User.query.filter(User.id.in_(manager_ids_list)).all()
-	else:
-		manager_objects_to_notify = []
 
 	for manager in manager_objects_to_notify:
 		reports_objects = manager_to_reports_dict.get(manager.id)
+		if g.user == manager:
+			continue
+
 		recipient_list = [manager.email]
 		subject = "Kudos to your team members!"
 		if len(reports_objects) == 1:
-			header = "As " + str(reports_objects[0].firstname) + "'s team lead, we wanted to let you know they were tagged in this Kudos:"
+			subject = "Kudos to your team member, " + str(reports_objects[0].firstname) + "!"
+			header = "As " + str(reports_objects[0].firstname) + "'s team lead, we wanted to let you know " + g.user.firstname + " " + g.user.lastname + " sent them this Kudos:"
 		elif len(reports_objects) == 2:
-			header = "As " + str(reports_objects[0].firstname) + " and " + str(reports_objects[1].firstname) + "'s team lead, we wanted to let you know they were tagged in this Kudos:"
+			subject = "Kudos to your team members, " + str(reports_objects[0].firstname) + " and " + str(reports_objects[1].firstname) + "!"
+			header = "As their team lead, we wanted to let you know " + g.user.firstname + " " + g.user.lastname + " sent them this Kudos:"
 		elif len(reports_objects) > 2:
 			reports_str = ""
 			for report in reports_objects[:-1]:
 				reports_str += str(report.firstname) + ", "
-			header = "As " + reports_str + " and " + str(reports_objects[-1].firstname) + "'s team lead, we wanted to let you know they were tagged in this Kudos:"
+			header = "As " + reports_str + " and " + str(reports_objects[-1].firstname) + "'s team lead, we wanted to let you know" + g.user.firstname + " " + g.user.lastname + " sent them this Kudos:"
 
 		generate_email(header, post_text, subject, recipient_list, post_id, photo_url)
 
@@ -711,11 +733,15 @@ def delete_tag():
 	tag_id = form.get('tag_id')
 	
 	delete_tag = db.session.query(Tag).filter_by(id=tag_id).one()
+	if delete_tag.user_tag_id:
+		tag_info = {'user_id': delete_tag.user_tag_id}
+	elif delete_tag.team_tag_id:
+		tag_info = {'team_id': delete_tag.team_tag_id}
 
 	delete_tag.is_deleted = True
 	db.session.commit()
 
-	return "complete"
+	return json.dumps(tag_info)
 
 
 #SUBMIT NEW COMMENT
@@ -727,6 +753,11 @@ def new_comment():
 
 	body = form.get('post_text')
 	parent_post_id = form.get('parent_post_id')
+
+	parent_post = Post.query.filter(and_(Post.id==parent_post_id, Post.is_deleted==False)).first()
+	if not parent_post:
+		comment_info = {"is_error": True}
+		return json.dumps(comment_info)
 	
 	new_comment = Post(body=body, parent_post_id=parent_post_id, time=datetime.utcnow(), user_id=g.user.id)
 	db.session.add(new_comment)
@@ -735,7 +766,7 @@ def new_comment():
 	tag_ids = form.get('hidden_tag_ids', '').split('|')
 	tag_text = form.get('hidden_tag_text', '').split('|')
 
-	tags_for_parent_post = db.session.query(Tag).filter_by(post_id=parent_post_id).all()
+	tags_for_parent_post = Tag.query.filter(and_(Tag.post_id==parent_post_id, Tag.is_deleted==False)).all()
 
 	tagged_user_ids = []
 	tagged_team_ids = []
@@ -794,6 +825,23 @@ def delete_post():
 
 	return post_id
 
+@app.route('/tagged_in_post', methods=['POST'])
+def tagged_in_post():
+	form = request.form
+	post_id = form.get('post_id')
+
+	post = Post.query.filter(and_(Post.id==post_id, Post.is_deleted==False)).all()
+
+	indented_post = posts_to_indented_posts(post)[0]
+	tagged_users_tag_objects = indented_post['tagged_users']
+	tagged_teams_tag_objects = indented_post['tagged_teams']
+
+	if post:
+		return render_template('tagged_modal.html',
+			tagged_teams=tagged_teams_tag_objects,
+			tagged_users=tagged_users_tag_objects)
+	return render_template('tagged_modal.html',
+			error_msg="No Post Found")
 
 #POST PAGE
 @app.route('/post/<post_id>', methods=['GET'])
@@ -961,10 +1009,10 @@ def posts_to_indented_posts(posts):
 		for tag in p.tags:
 			if tag.user_tag_id:
 				if tag.is_deleted == False:
-					tagged_users.append(tag) #send in all user information
+					tagged_users.append(tag)
 			elif tag.team_tag_id:
 				if tag.is_deleted == False:
-					tagged_teams.append(tag) #just teamname
+					tagged_teams.append(tag)
 			else:
 				print "no tags for this post.id: %r" % p.id 
 
