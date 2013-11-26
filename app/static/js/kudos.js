@@ -308,8 +308,7 @@ $('html').addClass('js--lightbox-open');
 //REMOVE TAG
 $('.remove-tag').live('click', function(e) {
 	e.preventDefault();
-	var avatar = $(this).parent('.avatar-container'),
-		post_id = $(this).parents('.post').data('post-id'),
+	var post_id = $(this).parents('.post').data('post-id'),
 		tag_id = avatar.data('tag-id'),
 		data = {
 			tag_id: tag_id
@@ -328,18 +327,13 @@ $('.remove-tag').live('click', function(e) {
 		url: '/deletetag',
 		data: data,
 		success: function(tag_info){
-			if(animations.supported) {
-				avatar.addClass('tag--removing').one('webkitAnimationEnd mozAnimationEnd oAnimationEnd animationEnd', function(){
-					avatar.remove();
-				});
-			} else {
-				avatar.remove();
-			}
-
+			//remove post from user or team page if removing their tag
 			if (tag_info.user_id == user_id){
 				remove_post();
+				return
 			} else if (tag_info.team_id == team_id){
 				remove_post();
+				return
 			}
 
 			function remove_post(){
@@ -349,6 +343,8 @@ $('.remove-tag').live('click', function(e) {
 					post.remove();
 				});
 			}
+
+			replace_one_post(post_id);
 		},
 		error: function(){
 			display_error();
