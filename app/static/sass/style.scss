@@ -331,6 +331,15 @@ hr {
       background-color: rgba(255,255,255,.5);
       box-shadow: none;
     }
+
+    &.input--plain-highlight {
+      border-bottom: 1px dashed rgba(0,0,0,.1);
+
+      &:focus {
+        outline: none;
+        background-color: darken(#faf9f7, 5%);
+      }
+    }
   }
 }
 
@@ -446,7 +455,7 @@ hr {
     max-width: 25rem;
     border-radius: .25rem;
 
-    :last-child {
+    >:last-child {
       margin-bottom: 0;
     }
 
@@ -1401,6 +1410,10 @@ body {
   z-index: 138483;
   height: 100%;
   width: 100%;
+
+  &.lightbox--modal {
+    white-space: initial;
+  }
 }
 
 .lightbox__img {

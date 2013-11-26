@@ -276,18 +276,16 @@ $('.addtag-button').live('click', function(e){
 	var post_id = $(this).data('post-id');
 
 	$('body').append('<div class="lightbox lightbox--modal cn-c tag-modal cf" data-post-id="' + post_id + '">\
-				<i class="lightbox-close js--close-modal fa fa-times" title="Cancel"></i>\
-        <form class="cn-w wrap new-tag-form" data-post-id="' + post_id + '">\
-          <div class="cf card island tags" data-post-id="' + post_id + '">\
-            <input type="text" class="spit tag_input input in" data-post-id="' + post_id + '" placeholder="Who do you want to thank?"/>\
-            <div data-id="_tagsinput" class="tagsinput">\
+        <form class="cn-w card card--modal island wrap new-tag-form" data-post-id="' + post_id + '">\
+        	<i class="lightbox-close js--close-modal fa fa-times" title="Cancel"></i>\
+          <div class="cf tags" data-post-id="' + post_id + '">\
+            <input type="text" class="tag_input vi-hd" data-post-id="' + post_id + '"/>\
+            <div data-id="_tagsinput" class="tagsinput h-m">\
               <div data-id="_addTag">\
-                <input data-id="_tag" class="spit input in" value="" data-default="Who do you want to thank?" />\
-                <hr>\
-                <button type="submit" class="f-r new-tag-btn in butt" data-post-id="' + post_id + '">Add tags</button>\
-                <a href="#" class="js--close-modal">Cancel</a>\
+                <input data-id="_tag" class="spit input span-all input--plain input--plain-highlight" value="" data-default="Who do you want to thank?" placeholder="Who do you want to thank?"/>\
               </div>\
             </div>\
+            <button type="submit" class="f-r new-tag-btn in butt" data-post-id="' + post_id + '">Add tags</button>\
           </div>\
           <input id="hidden_post_id" name="hidden_post_id" type="hidden" value="' + post_id + '">\
           <input class="hidden_tag_ids" id="' + post_id + '" name="hidden_tag_ids" type="hidden" value="">\

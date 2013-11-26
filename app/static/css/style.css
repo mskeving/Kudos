@@ -372,6 +372,15 @@ hr {
   box-shadow: none;
 }
 
+.input.input--plain.input--plain-highlight {
+  border-bottom: 1px dashed rgba(0, 0, 0, 0.1);
+}
+
+.input.input--plain.input--plain-highlight:focus {
+  outline: none;
+  background-color: #f0ede7;
+}
+
 .in {
   display: inline-block;
 }
@@ -486,7 +495,7 @@ hr {
   border-radius: .25rem;
 }
 
-.card.card--modal :last-child {
+.card.card--modal > :last-child {
   margin-bottom: 0;
 }
 
@@ -1682,6 +1691,10 @@ body {
   z-index: 138483;
   height: 100%;
   width: 100%;
+}
+
+.lightbox.lightbox--modal {
+  white-space: initial;
 }
 
 .lightbox__img {
