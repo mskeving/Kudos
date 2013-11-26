@@ -4,21 +4,14 @@
       <img class="img" src="{{comment.author.photo}}" alt="{{comment.author.username}}" />
     </a>
 
-    {% if comment.body %}
-      <div class="media__content comment__content">
-        {{comment.body}}
-      </div>
-
       <a href="{{ url_for('user', username=comment.author.username) }}" class="comment-author">{{comment.author.firstname}} {{comment.author.lastname}}</a>
       {% if comment.author.username == g.user.username %}
         <a href="#" class="f-r remove-comment" data-comment-id="{{comment.id}}">Remove</a>
       {% endif %}
-
-    {% else %}
-      <a href="{{ url_for('user', username=comment.author.username) }}" class="comment-author">{{comment.author.firstname}} {{comment.author.lastname}}</a> 
-      {% if comment.author.username == g.user.username %}
-        <a href="#" class="f-r remove-comment" data-comment-id="{{comment.id}}">Remove</a>
+      {% if comment.body %}
+        <div class="media__content comment__content">
+          {{comment.body}}
+        </div>
       {% endif %}
-    {% endif %}
   </div>
 </li>

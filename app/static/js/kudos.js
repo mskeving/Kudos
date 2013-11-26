@@ -561,6 +561,15 @@ window.initCommentButtons = function($jqObject){
 	return true;
 }
 
+$('.comment__input').each(function(){
+	var parent_post_id = $(this).parents('[data-post-id]').data('post-id');
+	$(this).keyup(function(e){
+		if(e.keyCode == 13) {
+			$('.comment-button[data-post-id=' + parent_post_id + ']').trigger('click');
+		}
+	});
+})
+
 function send_notifications(data){
 	// data must include post_id, tagged_team_ids, tagged_user_ids, post_text, photo_url
 	$.ajax({
