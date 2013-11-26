@@ -1,196 +1,198 @@
 {% set post_object = post.get('post_object') %}
-<div class="post post--single {% if post_object.photo_link %}post--photo{% endif %}" data-post-id="{{post_object.id}}">
+<li>
+  <div class="post post--single {% if post_object.photo_link %}post--photo{% endif %}" data-post-id="{{post_object.id}}">
 
-  <div class="taggees post__taggees">
-    <ul class="avatars cf post__thanks-to h-l standalone">
+    <div class="taggees post__taggees">
+      <ul class="avatars cf post__thanks-to h-l standalone">
 
-      {% if post.get('tagged_teams') %}
-        {% for tag in post.get('tagged_teams') %}
-          <li class="avatar-container" data-tag-id="{{tag.id}}">
+        {% if post.get('tagged_teams') %}
+          {% for tag in post.get('tagged_teams') %}
+            <li class="avatar-container" data-tag-id="{{tag.id}}">
 
-            <a class="avatar" style="background-image: url(/static/img/team_photo.jpg)" href="{{ url_for('team', team=tag.team_tag.teamname) }}">
-              <img src="/static/img/team_photo.jpg" title="{{tag.team_tag.teamname}}" alt="{{tag.username}}" />
-              <!-- <img src="{{tag.team_tag.photo}}" alt="{{tag.team_tag.teamname}}" /> -->
-            </a>
+              <a class="avatar" style="background-image: url(/static/img/team_photo.jpg)" href="{{ url_for('team', team=tag.team_tag.teamname) }}">
+                <img src="/static/img/team_photo.jpg" title="{{tag.team_tag.teamname}}" alt="{{tag.username}}" />
+                <!-- <img src="{{tag.team_tag.photo}}" alt="{{tag.team_tag.teamname}}" /> -->
+              </a>
 
-            {% if g.user.username == post_object.author.username%}
-              <div class="post__remove-tag remove-tag mobile-hidden">
-                <i class="fa fa-times"></i>
-              </div>
-            {% endif %}
+              {% if g.user.username == post_object.author.username%}
+                <div class="post__remove-tag remove-tag mobile-hidden">
+                  <i class="fa fa-times"></i>
+                </div>
+              {% endif %}
 
-          </li>
-        {% endfor %}
-      {% endif %}
-
-      {% if post.get('tagged_users') %}
-        {% set g_user_tagged_in_post = [] %}
-        {% for tag in post.get('tagged_users')[:3] %}
-          {% if tag.user_tag.username == g.user.username %}
-            {% do g_user_tagged_in_post.append(1) %}
-          {% endif %}
-          <li class="avatar-container" data-tag-id="{{tag.id}}">
-
-            {% if not tag.user_tag.photo == "None" %}
-
-            <a class="avatar" style="background-image: url({{tag.user_tag.photo}})" href="{{ url_for('user', username=tag.user_tag.username) }}">
-              <img src="{{tag.user_tag.photo}}" title="{{tag.user_tag.firstname}} {{tag.user_tag.lastname}}" alt="{{tag.username}}" />
-            </a>
-
-            {% else %}
-
-            <a class="avatar" href="{{ url_for('user', username=tag.user_tag.username) }}">
-              <img src="//dropabout.appspot.com/img?id=1" title="{{tag.user_tag.firstname}} {{tag.user_tag.lastname}}" alt="{{tag.username}}" />
-            </a>
-
-            {% endif %}
-
-            {% if g_user_tagged_in_post or g.user.username == post_object.author.username%}
-              <div class="post__remove-tag mobile-hidden remove-tag">
-                <i class="fa fa-times"></i>
-              </div>
-            {% endif %}
-
-          </li>
-        {% endfor %}
-          {% if ((post.get('tagged_users')|length) + (post.get('tagged_teams')|length) - 3) > 0  %}
-            <li>
-              <a class="other-tags js--show-all-taggees" href="#" title="{{((post.get('tagged_users')|length) + (post.get('tagged_teams')|length) - 3)}} other people tagged">+{{((post.get('tagged_users')|length) + (post.get('tagged_teams')|length) - 3)}}</a>
             </li>
-          {% endif %}
+          {% endfor %}
+        {% endif %}
+
+        {% if post.get('tagged_users') %}
+          {% set g_user_tagged_in_post = [] %}
+          {% for tag in post.get('tagged_users')[:3] %}
+            {% if tag.user_tag.username == g.user.username %}
+              {% do g_user_tagged_in_post.append(1) %}
+            {% endif %}
+            <li class="avatar-container" data-tag-id="{{tag.id}}">
+
+              {% if not tag.user_tag.photo == "None" %}
+
+              <a class="avatar" style="background-image: url({{tag.user_tag.photo}})" href="{{ url_for('user', username=tag.user_tag.username) }}">
+                <img src="{{tag.user_tag.photo}}" title="{{tag.user_tag.firstname}} {{tag.user_tag.lastname}}" alt="{{tag.username}}" />
+              </a>
+
+              {% else %}
+
+              <a class="avatar" href="{{ url_for('user', username=tag.user_tag.username) }}">
+                <img src="//dropabout.appspot.com/img?id=1" title="{{tag.user_tag.firstname}} {{tag.user_tag.lastname}}" alt="{{tag.username}}" />
+              </a>
+
+              {% endif %}
+
+              {% if g_user_tagged_in_post or g.user.username == post_object.author.username%}
+                <div class="post__remove-tag mobile-hidden remove-tag">
+                  <i class="fa fa-times"></i>
+                </div>
+              {% endif %}
+
+            </li>
+          {% endfor %}
+            {% if ((post.get('tagged_users')|length) + (post.get('tagged_teams')|length) - 3) > 0  %}
+              <li>
+                <a class="other-tags js--show-all-taggees" href="#" title="{{((post.get('tagged_users')|length) + (post.get('tagged_teams')|length) - 3)}} other people tagged">+{{((post.get('tagged_users')|length) + (post.get('tagged_teams')|length) - 3)}}</a>
+              </li>
+            {% endif %}
+        {% endif %}
+
+      </ul><!-- /.avatars -->
+    </div><!-- /.taggees -->
+
+    <div class="post__container island">
+      {% if g.user.username == post_object.author.username %}
+        <a class="post__remove-button remove-post-button" title="Delete this post" href="{{ url_for('delete_post', postid=post_object.id) }}"><i class="fa fa-times"></i></a>
       {% endif %}
+      <div class="post__content cf">
+        {% if post_object.photo_link %}
+          <a href="{{post_object.photo_link}}" class="js--lightbox b f-l post__photo">
+            <img src='{{post_object.photo_link}}' data-post-id="{{post.id}}" />
+          </a>
+        {% endif %}
+        <div class="post-author post__meta h-m">
 
-    </ul><!-- /.avatars -->
-  </div><!-- /.taggees -->
+          <p class="standalone"><small>
 
-  <div class="post__container island">
-    {% if g.user.username == post_object.author.username %}
-      <a class="post__remove-button remove-post-button" title="Delete this post" href="{{ url_for('delete_post', postid=post_object.id) }}"><i class="fa fa-times"></i></a>
-    {% endif %}
-    <div class="post__content cf">
-      {% if post_object.photo_link %}
-        <a href="{{post_object.photo_link}}" class="js--lightbox b f-l post__photo">
-          <img src='{{post_object.photo_link}}' data-post-id="{{post.id}}" />
-        </a>
-      {% endif %}
-      <div class="post-author post__meta h-m">
+            <a class="toolbar-button addtag-button f-r mobile-hidden" data-post-id="{{post_object.id}}" href="#"><i class="fa fa-plus-circle"></i> Add a Tag</a>
 
-        <p class="standalone"><small>
+            {% set teams = post.get('tagged_teams') %}
+            {% set users = post.get('tagged_users') %}
 
-          <a class="toolbar-button addtag-button f-r mobile-hidden" data-post-id="{{post_object.id}}" href="#"><i class="fa fa-plus-circle"></i> Add a Tag</a>
+            {% if teams|length > 0 %}
 
-          {% set teams = post.get('tagged_teams') %}
-          {% set users = post.get('tagged_users') %}
+              <a href="{{ url_for('user', username=post_object.author.username) }}">{{post_object.author.firstname}} {{post_object.author.lastname}}</a> thanked the
 
-          {% if teams|length > 0 %}
+              {% if teams|length == 1 %}
 
-            <a href="{{ url_for('user', username=post_object.author.username) }}">{{post_object.author.firstname}} {{post_object.author.lastname}}</a> thanked the
+                <a href="{{ url_for('team', team=teams[0].team_tag.teamname) }}">{{teams[0].team_tag.teamname}} Team</a>{% if users|length > 0 %} and <a href="#" class="js--show-all-taggees">{{ users|length }}&nbsp;other{{ 's' if users|length > 1 else '' }}</a>{% endif %}
 
-            {% if teams|length == 1 %}
+              {% elif teams|length == 2 %}
 
-              <a href="{{ url_for('team', team=teams[0].team_tag.teamname) }}">{{teams[0].team_tag.teamname}} Team</a>{% if users|length > 0 %} and <a href="#" class="js--show-all-taggees">{{ users|length }}&nbsp;other{{ 's' if users|length > 1 else '' }}</a>{% endif %}
+                <a href="{{ url_for('team', team=teams[0].team_tag.teamname) }}">{{teams[0].team_tag.teamname}} Team</a>{{ ', ' if users|length > 0 else ' and' }} <a href="{{ url_for('team', team=teams[1].team_tag.teamname) }}">{{teams[1].team_tag.teamname}} Team</a>{% if users|length > 0 %} and <a href="#" class="js--show-all-taggees">{{ users|length }}&nbsp;other{{ 's' if users|length > 1 else '' }}</a> {% endif %}
 
-            {% elif teams|length == 2 %}
+              {% else %}
 
-              <a href="{{ url_for('team', team=teams[0].team_tag.teamname) }}">{{teams[0].team_tag.teamname}} Team</a>{{ ', ' if users|length > 0 else ' and' }} <a href="{{ url_for('team', team=teams[1].team_tag.teamname) }}">{{teams[1].team_tag.teamname}} Team</a>{% if users|length > 0 %} and <a href="#" class="js--show-all-taggees">{{ users|length }}&nbsp;other{{ 's' if users|length > 1 else '' }}</a> {% endif %}
+                <a href="{{ url_for('team', team=teams[0].team_tag.teamname) }}">{{teams[0].team_tag.teamname}} Team</a>, <a href="{{ url_for('team', team=teams[1].team_tag.teamname) }}">{{teams[1].team_tag.teamname}} Team</a>, and&nbsp;<a href="#" class="js--show-all-taggees">{{(teams|length + users|length) - 2}}&nbsp;other{{ 's' if (teams|length + users|length) - 2 > 1 else '' }}</a>
+
+              {% endif %}
+            {% elif users|length > 0 %}
+              <a href="{{ url_for('user', username=post_object.author.username) }}">{{post_object.author.firstname}} {{post_object.author.lastname}}</a> thanked
+
+              {% if users|length == 1 %}
+
+                <a href="{{ url_for('user', username=users[0].user_tag.username) }}">{{users[0].user_tag.firstname}} {{users[0].user_tag.lastname}}</a>
+
+              {% elif users|length == 2 %}
+
+                {% for tag in users %}
+                  {% if loop.index == 2 %}
+                    and
+                  {% endif %}
+                  <a href="{{ url_for('user', username=tag.user_tag.username) }}">{{tag.user_tag.firstname}} {{tag.user_tag.lastname}}</a>
+                {% endfor %}
+
+              {% elif users|length == 3 %}
+
+                {% for tag in users %}
+                  {% if loop.index == 3 %}
+                    and
+                  {% endif %}
+                  <a href="{{ url_for('user', username=tag.user_tag.username) }}">{{tag.user_tag.firstname}} {{tag.user_tag.lastname}}</a>{{ '' if loop.index == 3 else ',' }}
+                {% endfor %}
+
+              {% elif users|length > 3 %}
+
+                {% set count = 0 %}
+
+                {% for tag in users[:3] %}
+
+                  <a href="{{ url_for('user', username=tag.user_tag.username) }}">{{tag.user_tag.firstname}} {{tag.user_tag.lastname}}</a>,
+
+                  {% set count = count + 1 %}
+
+                {% endfor %}
+
+                and&nbsp;<a href="#" class="js--show-all-taggees">{{users|length - 3}}&nbsp;other{{ 's' if users|length - 3 > 1 else '' }}</a>
+
+
+              {% endif %}
 
             {% else %}
 
-              <a href="{{ url_for('team', team=teams[0].team_tag.teamname) }}">{{teams[0].team_tag.teamname}} Team</a>, <a href="{{ url_for('team', team=teams[1].team_tag.teamname) }}">{{teams[1].team_tag.teamname}} Team</a>, and&nbsp;<a href="#" class="js--show-all-taggees">{{(teams|length + users|length) - 2}}&nbsp;other{{ 's' if (teams|length + users|length) - 2 > 1 else '' }}</a>
+              <a href="{{ url_for('user', username=post_object.author.username) }}">{{post_object.author.firstname}} {{post_object.author.lastname}}</a> wants to thank someone for their work
 
             {% endif %}
-          {% elif users|length > 0 %}
-            <a href="{{ url_for('user', username=post_object.author.username) }}">{{post_object.author.firstname}} {{post_object.author.lastname}}</a> thanked
+          </small></p>
 
-            {% if users|length == 1 %}
+        </div><!-- /.post__meta -->
+        <blockquote class="p {% if not post_object.photo_link %}beta{% endif %}">
+          {{post_object.body}}
+        </blockquote>
 
-              <a href="{{ url_for('user', username=users[0].user_tag.username) }}">{{users[0].user_tag.firstname}} {{users[0].user_tag.lastname}}</a>
+      </div><!-- /.post__content -->
 
-            {% elif users|length == 2 %}
-
-              {% for tag in users %}
-                {% if loop.index == 2 %}
-                  and
-                {% endif %}
-                <a href="{{ url_for('user', username=tag.user_tag.username) }}">{{tag.user_tag.firstname}} {{tag.user_tag.lastname}}</a>
-              {% endfor %}
-
-            {% elif users|length == 3 %}
-
-              {% for tag in users %}
-                {% if loop.index == 3 %}
-                  and
-                {% endif %}
-                <a href="{{ url_for('user', username=tag.user_tag.username) }}">{{tag.user_tag.firstname}} {{tag.user_tag.lastname}}</a>{{ '' if loop.index == 3 else ',' }}
-              {% endfor %}
-
-            {% elif users|length > 3 %}
-
-              {% set count = 0 %}
-
-              {% for tag in users[:3] %}
-
-                <a href="{{ url_for('user', username=tag.user_tag.username) }}">{{tag.user_tag.firstname}} {{tag.user_tag.lastname}}</a>,
-
-                {% set count = count + 1 %}
-
-              {% endfor %}
-
-              and&nbsp;<a href="#" class="js--show-all-taggees">{{users|length - 3}}&nbsp;other{{ 's' if users|length - 3 > 1 else '' }}</a>
-
-
-            {% endif %}
-
+      <div class="post-metadata post__comments">
+        <div class="count cf">
+          {% set comments = post.get('comments')|length %}
+          {% if comments == 1 %}
+            <a class="comments__count comment-count">{{comments}} Thank</a>
           {% else %}
-
-            <a href="{{ url_for('user', username=post_object.author.username) }}">{{post_object.author.firstname}} {{post_object.author.lastname}}</a> wants to thank someone for their work
-
+            <a class="comments__count comment-count">{{comments}} Thanks</a>
           {% endif %}
-        </small></p>
+          <small class="f-r"><a title="Permalink to this post" href="/post/{{post_object.id}}">{{post.get('time')}}</a></small>
+        </div>
 
-      </div><!-- /.post__meta -->
-      <blockquote class="p {% if not post_object.photo_link %}beta{% endif %}">
-        {{post_object.body}}
-      </blockquote>
+        <!-- Display comments on post -->
+        <ol class="comments standalone" data-post-id="{{post_object.id}}">
+          {% for comment in post.get('comments') %}
 
-    </div><!-- /.post__content -->
+            {% include 'comment.html' with context %}
 
-    <div class="post-metadata post__comments">
-      <div class="count cf">
-        {% set comments = post.get('comments')|length %}
-        {% if comments == 1 %}
-          <a class="comments__count comment-count">{{comments}} Thank</a>
+          {% endfor %}
+        </ol>
+
+      </div><!-- /.post__comments -->
+    </div><!-- /.post__container -->
+
+    <div class="toolbar post__footer">
+  <!--
+      <a class="toolbar-button comment-button" data-post-id="{{post_object.id}}">Comment</a>
+  -->
+      <nav class="post__actions nav">
+        {% if g.user in post.get('commenters') %}
+          <input class="comment__input input input--plain isle input--float-label g an-w no-w" name="comment-body" id="comment-body-{{post_object.id}}" placeholder="Leave a note with your Thanks" disabled>
+          <button class="butt isle toolbar-button comment-button g span-all thanked" data-post-id="{{post_object.id}}"><i class="fa fa-heart"></i> Thanked</button>
         {% else %}
-          <a class="comments__count comment-count">{{comments}} Thanks</a>
+          <input class="comment__input input input--plain isle input--float-label g g--two-thirds" name="comment-body" id="comment-body-{{post_object.id}}" placeholder="Leave a note with your Thanks">
+          <button class="butt isle toolbar-button comment-button g g--one-third" data-post-id="{{post_object.id}}"><i class="fa fa-heart"></i> Thank</button>
         {% endif %}
-        <small class="f-r"><a title="Permalink to this post" href="/post/{{post_object.id}}">{{post.get('time')}}</a></small>
-      </div>
+      </nav>
+    </div>
 
-      <!-- Display comments on post -->
-      <ol class="comments standalone" data-post-id="{{post_object.id}}">
-        {% for comment in post.get('comments') %}
-
-          {% include 'comment.html' with context %}
-
-        {% endfor %}
-      </ol>
-
-    </div><!-- /.post__comments -->
-  </div><!-- /.post__container -->
-
-  <div class="toolbar post__footer">
-<!--
-    <a class="toolbar-button comment-button" data-post-id="{{post_object.id}}">Comment</a>
--->
-    <nav class="post__actions nav">
-      {% if g.user in post.get('commenters') %}
-        <input class="comment__input input input--plain isle input--float-label g an-w no-w" name="comment-body" id="comment-body-{{post_object.id}}" placeholder="Leave a note with your Thanks" disabled>
-        <button class="butt isle toolbar-button comment-button g span-all thanked" data-post-id="{{post_object.id}}"><i class="fa fa-heart"></i> Thanked</button>
-      {% else %}
-        <input class="comment__input input input--plain isle input--float-label g g--two-thirds" name="comment-body" id="comment-body-{{post_object.id}}" placeholder="Leave a note with your Thanks">
-        <button class="butt isle toolbar-button comment-button g g--one-third" data-post-id="{{post_object.id}}"><i class="fa fa-heart"></i> Thank</button>
-      {% endif %}
-    </nav>
   </div>
-
-</div>
+</li>
