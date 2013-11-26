@@ -1,14 +1,28 @@
 <div class="lightbox lightbox--modal cn-c">
-    <div class="cn-w card card--modal">
+    <div class="cn-w wrap card card--modal island">
+        <i class="js--close-modal fa fa-times"></i>
     	{% if error_msg %}
     		{{error_msg}}
     	{% endif %}
-    	
-    	{% for user in tagged_users %}
-    		{{user.user_tag.firstname}} {{user.user_tag.lastname}}
-    	{% endfor %}
-    	{% for team in tagged_teams %}
-    		{{team.team_tag.teamname}}
-    	{% endfor %}
+
+        {% if tagged_teams|length > 0 %}
+        <h4 class="h-m">{{tagged_teams|length}} Teams Tagged</h4>
+        <hr class="h-m">
+        <ul class="sl-l">
+        	{% for team in tagged_teams %}
+                <li><a href="/team/{{team.team_tag.teamname}}">{{team.team_tag.teamname}}</a></li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+
+        {% if tagged_users|length > 0 %}
+        <h4 class="h-m">{{tagged_users|length}} People Tagged</h4>
+        <hr class="h-m">
+        <ul class="sl-l">
+        	{% for user in tagged_users %}
+        		<li><a href="/user/{{user.user_tag.username}}">{{user.user_tag.firstname}} {{user.user_tag.lastname}}</a></li>
+        	{% endfor %}
+        </ul>
+        {% endif %}
     </div>
 </div>

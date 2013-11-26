@@ -72,6 +72,7 @@ button {
 
 .cn-c {
   text-align: center;
+  overflow: scroll;
 }
 
 .cn-c:before {
@@ -112,6 +113,12 @@ button {
 .vi-hd {
   position: absolute;
   left: -9999px;
+}
+
+@media (max-width: 600px) {
+  .mobile-hidden {
+    display: none;
+  }
 }
 
 .h-m {
@@ -465,6 +472,7 @@ hr {
 }
 
 .card {
+  text-align: left;
   background-color: #faf9f7;
 }
 
@@ -473,8 +481,21 @@ hr {
 }
 
 .card.card--modal {
-  width: 70%;
+  width: 100%;
+  max-width: 25rem;
   border-radius: .25rem;
+}
+
+.card.card--modal :last-child {
+  margin-bottom: 0;
+}
+
+.card.card--modal .js--close-modal {
+  position: absolute;
+  top: .5rem;
+  right: .5rem;
+  color: #c0af9e;
+  cursor: pointer;
 }
 
 .menu--hidden {
@@ -976,7 +997,7 @@ body {
 
 @media (max-width: 600px) {
   .post__taggees {
-    top: -2rem;
+    top: -1.25rem;
     left: -.75rem;
   }
 }

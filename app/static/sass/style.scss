@@ -68,6 +68,7 @@ input, textarea, button {
 // Centering in the unknown
 .cn-c {
   text-align: center;
+  overflow: scroll;
 
   &:before {
     content: '';
@@ -112,6 +113,12 @@ input, textarea, button {
 .vi-hd {
   position: absolute;
   left: -9999px;
+}
+
+@media (max-width: 600px) {
+  .mobile-hidden {
+    display: none;
+  }
 }
 
 .h-m {
@@ -427,6 +434,7 @@ hr {
 }
 
 .card {
+  text-align: left;
   background-color: #faf9f7;
 
   &.card--mini {
@@ -434,8 +442,21 @@ hr {
   }
 
   &.card--modal {
-    width: 70%;
+    width: 100%;
+    max-width: 25rem;
     border-radius: .25rem;
+
+    :last-child {
+      margin-bottom: 0;
+    }
+
+    .js--close-modal {
+      position: absolute;
+      top: .5rem;
+      right: .5rem;
+      color: darken($cream, 20%);
+      cursor: pointer;
+    }
   }
 }
 
@@ -914,7 +935,7 @@ body {
     left: -1rem;
 
     @media (max-width: 600px) {
-      top: -2rem;
+      top: -1.25rem;
       left: -.75rem;
     }
   }

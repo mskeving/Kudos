@@ -151,6 +151,37 @@ function get_tag_list(obj, post_id){
 	})
 }
 
+function show_all_tags(post_id) {
+	var result;
+	var data = {
+		post_id: post_id
+	};
+
+	$.ajax({
+		url: '/tagged_in_post',
+		type: 'POST',
+		data: data,
+		success: function(data) {
+			$('body').append(data);
+			$('html').addClass('js--lightbox-open');
+			prepModals();
+		},
+		error: function(message) {
+			console.log('Error fetching taggees for post #' + data.post_id);
+			console.log(message);
+			return false;
+		}
+	});
+
+	return result;
+};
+
+$('.js--show-all-taggees').on('click', function(e){
+	e.preventDefault();
+	var post_id = $(this).parents('.post[data-post-id]').data('post-id'),
+	    taggees = show_all_tags(post_id);
+});
+
 function collect_tags(form){
 	//collects tags that you have chosen to submit with new post
 
