@@ -111,7 +111,7 @@ function send_error_msg(error_info){
 			send_error_msg(error_info);
 			console.log('failed sending error message to team kudos')
 		}
-	})
+	});
 }
 
 function get_tag_list(obj, post_id){
@@ -147,7 +147,7 @@ function get_tag_list(obj, post_id){
 			send_error_msg(error_info);
 		},
 		dataType: 'json'
-	})
+	});
 };
 
 function show_all_tags(post_id) {
@@ -256,8 +256,8 @@ $('.submit-feedback-btn').on('click', function(e){
 			send_error_msg(error_info);
 			console.log("could not submit feedback");
 		}
-	})
-})
+	});
+});
 
 //escape key to exit out of feedback modal
 document.onkeydown = function(evt) {
@@ -421,7 +421,7 @@ $('.new-tag-btn').live('click', function(e) {
 				console.log('error');
 			},
 			dataType: 'json'
-		})
+		});
 	}
 
 	else{
@@ -445,7 +445,7 @@ function replace_one_post(post_id) {
 		error: function(){
 
 		}
-	})
+	});
 }
 
 
@@ -489,8 +489,8 @@ $('.remove-comment').on('click', function(e){
 			}
 			send_error_msg(error_info);
 		}
-	})
-})
+	});
+});
 
 
 //SUBMIT NEW COMMENT
@@ -519,7 +519,7 @@ window.initCommentButtons = function($jqObject){
 				tagged_team_ids: JSON.stringify(response.tagged_team_ids),
 				tagged_user_ids: JSON.stringify(response.tagged_user_ids),
 				is_comment: true
-			})
+			});
 
 			all_comments.append(response.comment_template);
 			all_comments.children('.one-comment').last().addClass('js--new-comment');
@@ -544,7 +544,7 @@ window.initCommentButtons = function($jqObject){
 		},
 		dataType: 'json'
 	});
-})
+});
 	return true;
 }
 
@@ -555,7 +555,7 @@ $('.comment__input').each(function(){
 			$('.comment-button[data-post-id=' + parent_post_id + ']').trigger('click');
 		}
 	});
-})
+});
 
 function send_notifications(data){
 	// data must include post_id, tagged_team_ids, tagged_user_ids, post_text, photo_url
@@ -574,7 +574,7 @@ function send_notifications(data){
 			send_error_msg(error_info);
 			console.log("failed sending email notifications");
 		}
-	})
+	});
 
 }
 
@@ -703,9 +703,10 @@ function create_post(public_url) {
 				tagged_team_ids: JSON.stringify(response.tagged_team_ids),
 				tagged_user_ids: JSON.stringify(response.tagged_user_ids),
 				is_new_post: true
-			})
+			});
 
 			initCommentButtons($('.post[data-post-id=' + data.parent_post_id + ']'));
+			initRemoveButton($('.post[data-post-id=' + data.parent_post_id + '] .remove-post-button'));
 
 			$('.new-post-form').removeClass('submitting');
 
@@ -734,38 +735,41 @@ function create_post(public_url) {
 
 
 //REMOVE POST
-$('.remove-post-button').on('click', function(e) {
-	e.preventDefault();
-	var post_id = $(this).closest('.post').data('post-id');
-	var parent_post = $(this).closest('.post');
-	data = {
-		post_id : post_id
-	}
-	$.ajax({
-		type: "POST",
-		url: '/deletepost',
-		data: data,
-		success: function(resp){
-			parent_post.addClass('post--remove-from-stream');
-			if(animations.supported) {
-				parent_post.one('webkitAnimationEnd mozAnimationEnd oAnimationEnd animationEnd', function(){
-					$(this).remove();
-				});
-			} else {
-				$(this).remove();
+window.initRemoveButton = function($jqObject) {
+	$jqObject.each(function(){
+		$(this).on('click', function(e) {
+			e.preventDefault();
+			var post_id = $(this).closest('.post').data('post-id');
+			var parent_post = $(this).closest('.post');
+			data = {
+				post_id : post_id
 			}
-			console.log("success deleting post");
-		},
-		error: function(resp){
-			display_error();
-			error_info = {
-				'func_name': '/remove-post-button'
-			}
-			send_error_msg(error_info);
-		}
-	})
-
-});
+			$.ajax({
+				type: "POST",
+				url: '/deletepost',
+				data: data,
+				success: function(resp){
+					parent_post.addClass('post--remove-from-stream');
+					if(animations.supported) {
+						parent_post.one('webkitAnimationEnd mozAnimationEnd oAnimationEnd animationEnd', function(){
+							$(this).remove();
+						});
+					} else {
+						$(this).remove();
+					}
+					console.log("success deleting post");
+				},
+				error: function(resp){
+					display_error();
+					error_info = {
+						'func_name': '/remove-post-button'
+					}
+					send_error_msg(error_info);
+				}
+			});
+		});
+	});
+};
 
 //Called if file chosen with dropbox chooser
 function s3_upload(data, callback){
@@ -816,4 +820,5 @@ $(document).ready(function(){
 	get_tag_list(tag_input);
 	initCommentButtons($('.post[data-post-id]'));
 	initCharCount($('[data-character-count]'));
+	initRemoveButton($('.remove-post-button'));
 });

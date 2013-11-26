@@ -200,7 +200,6 @@
 					);
 
 					$(data.fake_input).autocomplete({source: settings.autocomplete_list});
-					console.log($(data.fake_input).autocomplete({source: settings.autocomplete_list}));
 					$(data.fake_input).bind('autocompleteselect',data,function(event,ui) {
 						tokentext = ui.item.value;
 						$(event.data.real_input).addTag(tokentext,{focus:true,unique:(settings.unique)}, settings);
