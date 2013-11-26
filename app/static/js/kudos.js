@@ -368,13 +368,14 @@ $('.remove-tag').live('click', function(e) {
 $('.new-tag-btn').live('click', function(e) {
 	e.preventDefault();
 
-	form = $(this).parents('.new-tag-form');
+	var form = $(this).parents('.new-tag-form');
 	collect_tags(form);
-	tag_ids = form.find('.hidden_tag_ids').val();
-	tag_text = form.find('.hidden_tag_text').val();
-	parent_post_id = $(this).data('post-id');
-	post_photo_url = form.parents('.post').closest('.post-photo[data-post-id="' + parent_post_id + '"]').attr('src');
-	post_text = form.parents('.post').children('.post__container').children('.post__content').children('.p').text();
+	var	tag_ids = form.find('.hidden_tag_ids').val(),
+		tag_text = form.find('.hidden_tag_text').val(),
+		parent_post_id = $(this).data('post-id'),
+		post_photo_url = form.parents('.post').closest('.post-photo[data-post-id="' + parent_post_id + '"]').attr('src'),
+		post_text = form.parents('.post').children('.post__container').children('.post__content').children('.p').text();
+
 
 	$('html').removeClass('js--lightbox-open');
 
@@ -387,39 +388,26 @@ $('.new-tag-btn').live('click', function(e) {
 			post_text: post_text
 		};
 
-		$.post('/newtag', data, function(tag_info_json){
-			$('.js--close-modal').trigger('click');
+		$.ajax({
+			type: "POST",
+			data: data,
+			url: '/newtag',
+			success: function(tag_info){
+				$('.js--close-modal').trigger('click');
 
-			//turn tag_info json into usable array - avoidable if specify it's json datatype
-			tag_array = jQuery.parseJSON(tag_info_json);
+				$.extend(data, {
+					post_text: post_text,
+					tagged_team_ids: JSON.stringify(tag_info.tagged_team_ids),
+					tagged_user_ids: JSON.stringify(tag_info.tagged_user_ids)
+				});
 
-			//DISPLAY USER AVATARS
-			for(var i = 0; i<tag_array.user_tags.length; i++){
-				var username = $.trim(tag_array.user_tags[i].username);
-				var user_id = tag_array.user_tags[i].user_id;
-				var photo = tag_array.user_tags[i].photo;
-				var new_avatar = $('<li><a class="avatar" style="background-image: url(' + photo + ')" href="/user/' + username + '"><img src=' + photo +' alt=' + username + '></a></li>');
-				$('.post__container[data-post-id=' + data.parent_post_id + ']').find(".avatars").append(new_avatar);
-			}
-
-			//DISPLAY TEAM AVATARS
-			for(var i = 0; i<tag_array.team_tags.length; i++){
-				var teamname = tag_array.team_tags[i].teamname;
-				var photo = tag_array.team_tags[i].photo;
-				var new_avatar = $('<li><a class="avatar" style="background-image: url(/static/img/team_photo.jpg)" href="/team/' + teamname + '""><img src=' + photo +' alt=' + teamname + '></a></li>');
-				console.log("this" + this)
-				$('.post__container[data-post-id=' + data.parent_post_id + ']').find(".avatars").append(new_avatar);
-			}
-
-			console.log('tagged_team_ids tag array' + tag_array.tagged_team_ids)
-			console.log('tagged_user_ids tag array' + tag_array.tagged_user_ids)
-			$.extend(data, {
-				post_text: post_text,
-				tagged_team_ids: JSON.stringify(tag_array.tagged_team_ids),
-				tagged_user_ids: JSON.stringify(tag_array.tagged_user_ids)
-			});
-			console.log('about to send notifications');
-			send_notifications(data);
+				replace_one_post(data.parent_post_id);
+				send_notifications(data);
+			},
+			error: function(){
+				console.log('error');
+			},
+			dataType: 'json'
 		})
 	}
 
@@ -428,9 +416,24 @@ $('.new-tag-btn').live('click', function(e) {
 		e.preventDefault();
 		console.log('no new tags');
 	}
-
-
 });
+
+function replace_one_post(post_id) {
+	old_post = $('.post[data-post-id=' + post_id + ']');
+	data = {'post_id': post_id};
+	$.ajax({
+		data: data,
+		url: '/display_single_post',
+		type: 'POST',
+		success: function(new_post){
+			old_post.parent('li').prepend(new_post);
+			old_post.remove();
+		},
+		error: function(){
+
+		}
+	})
+}
 
 
 //REMOVE COMMENT

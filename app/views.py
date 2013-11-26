@@ -450,7 +450,6 @@ def send_email(sender, recipients, reply_to, subject, html, post_id):
 	Thread(target=send_async, args=[app,msg]).start()
 
 
-
 #ADD NEW POST
 @app.route('/createpost', methods=['POST'])
 @login_required
@@ -523,6 +522,24 @@ def new_post():
 
 
 	return json.dumps(post_info_dict)
+
+@app.route('/display_single_post', methods=['POST'])
+@login_required
+def display_single_post():
+	new_post_form = EditPost()
+	reply_form = NewReply()
+	form = request.form
+	post_id = form.get('post_id')
+
+	post = Post.query.filter(and_(Post.id==post_id, Post.is_deleted==False)).one()
+	indented_post = posts_to_indented_posts([post,])[0]
+
+	return render_template('post.html',
+		post=indented_post,
+		reply_form=reply_form,
+		new_post_form=new_post_form,
+		)
+
 
 @app.route('/create_notifications', methods=["POST"])
 def create_notifications():
@@ -842,6 +859,7 @@ def tagged_in_post():
 			tagged_users=tagged_users_tag_objects)
 	return render_template('tagged_modal.html',
 			error_msg="No Post Found")
+
 
 #POST PAGE
 @app.route('/post/<post_id>', methods=['GET'])
