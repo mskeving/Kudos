@@ -25,7 +25,7 @@
 
       {% if post.get('tagged_users') %}
         {% set g_user_tagged_in_post = [] %}
-        {% for tag in post.get('tagged_users') %}
+        {% for tag in post.get('tagged_users')[:3] %}
           {% if tag.user_tag.username == g.user.username %}
             {% do g_user_tagged_in_post.append(1) %}
           {% endif %}
@@ -53,24 +53,20 @@
 
           </li>
         {% endfor %}
+          {% if ((post.get('tagged_users')|length) + (post.get('tagged_teams')|length) - 3) > 0  %}
+            <li>
+              <a class="other-tags" href="#" title="{{((post.get('tagged_users')|length) + (post.get('tagged_teams')|length) - 3)}} other people tagged">+{{((post.get('tagged_users')|length) + (post.get('tagged_teams')|length) - 3)}}</a>
+            </li>
+          {% endif %}
       {% endif %}
 
     </ul><!-- /.avatars -->
   </div><!-- /.taggees -->
 
   <div class="post__container island">
-
-    <div class="post__edit-actions spit">
-      <a href="#" class="fa fa-angle-down toggle-menu"></a>
-      <ul class="menu menu--hidden sl-l">
-        <li><a class="toolbar-button addtag-button spit" data-post-id="{{post_object.id}}" href="#"><i class="fa fa-plus"></i> Add Tag</a></li>
-
-      {% if g.user.username == post_object.author.username %}
-        <li><a class="toolbar-button remove-post-button spit" href="{{ url_for('delete_post', postid=post_object.id) }}">Remove Kudos</a></li>
-      {% endif %}
-      </ul>
-    </div>
-
+    {% if g.user.username == post_object.author.username %}
+      <a class="post__remove-button remove-post-button" title="Delete this post" href="{{ url_for('delete_post', postid=post_object.id) }}"><i class="fa fa-times"></i></a>
+    {% endif %}
     <div class="post__content cf">
       {% if post_object.photo_link %}
         <a href="{{post_object.photo_link}}" class="js--lightbox b f-l post__photo">
@@ -79,7 +75,9 @@
       {% endif %}
       <div class="post-author post__meta h-m">
 
-        <small>
+        <p class="standalone"><small>
+
+          <a class="toolbar-button addtag-button f-r" data-post-id="{{post_object.id}}" href="#"><i class="fa fa-plus-circle"></i> Add a Tag</a>
 
           {% set teams = post.get('tagged_teams') %}
           {% set users = post.get('tagged_users') %}
@@ -90,15 +88,15 @@
 
             {% if teams|length == 1 %}
 
-              <a href="{{ url_for('team', team=teams[0].team_tag.teamname) }}">{{teams[0].team_tag.teamname}} Team</a>{% if users|length > 0 %} and {{ users|length }} other{{ 's' if users|length > 1 else '' }} {% endif %}
+              <a href="{{ url_for('team', team=teams[0].team_tag.teamname) }}">{{teams[0].team_tag.teamname}} Team</a>{% if users|length > 0 %} and {{ users|length }}&nbsp;other{{ 's' if users|length > 1 else '' }} {% endif %}
 
             {% elif teams|length == 2 %}
 
-              <a href="{{ url_for('team', team=teams[0].team_tag.teamname) }}">{{teams[0].team_tag.teamname}} Team</a>{{ ', ' if users|length > 0 else ' and' }} <a href="{{ url_for('team', team=teams[1].team_tag.teamname) }}">{{teams[1].team_tag.teamname}} Team</a>{% if users|length > 0 %} and {{ users|length }} other{{ 's' if users|length > 1 else '' }} {% endif %}
+              <a href="{{ url_for('team', team=teams[0].team_tag.teamname) }}">{{teams[0].team_tag.teamname}} Team</a>{{ ', ' if users|length > 0 else ' and' }} <a href="{{ url_for('team', team=teams[1].team_tag.teamname) }}">{{teams[1].team_tag.teamname}} Team</a>{% if users|length > 0 %} and {{ users|length }}&nbsp;other{{ 's' if users|length > 1 else '' }} {% endif %}
 
             {% else %}
 
-              <a href="{{ url_for('team', team=teams[0].team_tag.teamname) }}">{{teams[0].team_tag.teamname}} Team</a>, <a href="{{ url_for('team', team=teams[1].team_tag.teamname) }}">{{teams[1].team_tag.teamname}} Team</a>, and {{(teams|length + users|length) - 2}} other{{ 's' if (teams|length + users|length) - 2 > 1 else '' }}
+              <a href="{{ url_for('team', team=teams[0].team_tag.teamname) }}">{{teams[0].team_tag.teamname}} Team</a>, <a href="{{ url_for('team', team=teams[1].team_tag.teamname) }}">{{teams[1].team_tag.teamname}} Team</a>, and&nbsp;{{(teams|length + users|length) - 2}}&nbsp;other{{ 's' if (teams|length + users|length) - 2 > 1 else '' }}
 
             {% endif %}
           {% elif users|length > 0 %}
@@ -117,11 +115,20 @@
                 <a href="{{ url_for('user', username=tag.user_tag.username) }}">{{tag.user_tag.firstname}} {{tag.user_tag.lastname}}</a>
               {% endfor %}
 
-            {% elif users|length >= 3 %}
+            {% elif users|length == 3 %}
+
+              {% for tag in users %}
+                {% if loop.index == 3 %}
+                  and
+                {% endif %}
+                <a href="{{ url_for('user', username=tag.user_tag.username) }}">{{tag.user_tag.firstname}} {{tag.user_tag.lastname}}</a>{{ '' if loop.index == 3 else ',' }}
+              {% endfor %}
+
+            {% elif users|length > 3 %}
 
               {% set count = 0 %}
 
-              {% for tag in users[:2] %}
+              {% for tag in users[:3] %}
 
                 <a href="{{ url_for('user', username=tag.user_tag.username) }}">{{tag.user_tag.firstname}} {{tag.user_tag.lastname}}</a>,
 
@@ -129,7 +136,7 @@
 
               {% endfor %}
 
-              and {{users|length - 2}} other {{ 'people' if users|length - 2 > 1 else 'person' }}
+              and&nbsp;{{users|length - 3}}&nbsp;other{{ 's' if users|length - 3 > 1 else '' }}
 
 
             {% endif %}
@@ -139,33 +146,13 @@
             <a href="{{ url_for('user', username=post_object.author.username) }}">{{post_object.author.firstname}} {{post_object.author.lastname}}</a> wants to thank someone for their work
 
           {% endif %}
-
-        </small>
+        </small></p>
 
       </div><!-- /.post__meta -->
       <blockquote class="p {% if not post_object.photo_link %}beta{% endif %}">
         {{post_object.body}}
       </blockquote>
 
-      <div class="tag-modal cf" data-post-id="{{post_object.id}}" style="display: none;">
-        <form class="new-tag-form" data-post-id="{{post_object.id}}">
-          <div class="tags" data-post-id="{{post_object.id}}">
-            <div class="post__new-tagged">
-
-            </div>
-            <input type="text" class="spit tag_input input in" data-post-id="{{post_object.id}}" placeholder="Who do you want to thank?"/>
-            <div data-id="_tagsinput" class="tagsinput">
-              <div data-id="_addTag">
-                <input data-id="_tag" class="spit input in" value="" data-default="Who do you want to thank?" /><button type="submit" class="new-tag-btn in butt" data-post-id="{{post_object.id}}">Add tags</button>
-              </div>
-            </div>
-          </div>
-
-          {{ reply_form.hidden_post_id(value=post_object.id) }}
-          {{ new_post_form.hidden_tag_ids (class="hidden_tag_ids", id=post_object.id) }}
-          {{ new_post_form.hidden_tag_text (class="hidden_tag_text", id=post_object.id) }}
-        </form>
-      </div>
     </div><!-- /.post__content -->
 
     <div class="post-metadata post__comments">

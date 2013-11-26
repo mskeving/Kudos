@@ -328,6 +328,10 @@ hr {
   background-color: #ef3133;
 }
 
+.toolbar-button.f-r {
+  margin-left: 1.5rem;
+}
+
 .input {
   background-color: #fff;
   border: none;
@@ -466,6 +470,11 @@ hr {
 
 .card.card--mini {
   padding-left: 5.75rem;
+}
+
+.card.card--modal {
+  width: 70%;
+  border-radius: .25rem;
 }
 
 .menu--hidden {
@@ -825,10 +834,11 @@ body {
 .post__thanks-to li a {
   overflow: hidden;
   display: block;
-  color: #fff;
-  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+  color: #b5a28f;
   border-radius: 50%;
   font-weight: 700;
+  font-size: 1.25rem;
+  font-family: proxima-nova, sans-serif;
   text-decoration: none;
   width: 3.5rem;
   height: 3.5rem;
@@ -839,6 +849,11 @@ body {
 
 .post__thanks-to li a img {
   opacity: 0;
+}
+
+.post__thanks-to li a.other-tags {
+  background-image: none;
+  background-color: #F0EDE7;
 }
 
 .post__remove-tag,
@@ -863,6 +878,19 @@ body {
   text-shadow: none;
   border-radius: 100%;
   color: #333;
+}
+
+.post__remove-button {
+  position: absolute;
+  top: .5rem;
+  right: .5rem;
+  z-index: 5;
+  color: #c0af9e;
+  display: none;
+}
+
+.post:hover .post__remove-button {
+  display: block;
 }
 
 .tag {
@@ -999,10 +1027,6 @@ body {
   .post__content .post__photo:after {
     border-radius: 0;
   }
-}
-
-.post__content > :last-child {
-  margin-bottom: 0;
 }
 
 .post__meta {
@@ -1530,31 +1554,63 @@ body {
   }
 }
 
-@-webkit-keyframes shrink-y {
+@-webkit-keyframes grow {
   0% {
-    opacity: 1;
-    max-height: 500px;
-  }
-
-  100% {
     opacity: 0;
     -webkit-transform: scale(0.5);
     transform: scale(0.5);
+    max-width: 0;
     max-height: 0;
+  }
+
+  100% {
+    opacity: 1;
+    max-width: 500px;
+    max-height: 500px;
   }
 }
 
-@keyframes shrink-y {
+@keyframes grow {
   0% {
-    opacity: 1;
-    max-height: 500px;
+    opacity: 0;
+    -webkit-transform: scale(0.5);
+    transform: scale(0.5);
+    max-width: 0;
+    max-height: 0;
   }
 
   100% {
+    opacity: 1;
+    max-width: 500px;
+    max-height: 500px;
+  }
+}
+
+@-webkit-keyframes grow-y {
+  0% {
     opacity: 0;
     -webkit-transform: scale(0.5);
     transform: scale(0.5);
     max-height: 0;
+  }
+
+  100% {
+    opacity: 1;
+    max-height: 500px;
+  }
+}
+
+@keyframes grow-y {
+  0% {
+    opacity: 0;
+    -webkit-transform: scale(0.5);
+    transform: scale(0.5);
+    max-height: 0;
+  }
+
+  100% {
+    opacity: 1;
+    max-height: 500px;
   }
 }
 
@@ -1661,6 +1717,11 @@ body {
 .js--comment-remove {
   -webkit-animation: shrink-y .3s;
   animation: shrink-y .3s;
+}
+
+.js--new-comment {
+  -webkit-animation: grow-y .3s;
+  animation: grow-y .3s;
 }
 
 /*-----------------------------------*\
