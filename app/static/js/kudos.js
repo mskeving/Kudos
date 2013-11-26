@@ -134,7 +134,6 @@ function get_tag_list(obj, post_id){
 
 			// this makes the tag input work for all tag autocompleters. uses tagsinput.js
 			obj.tagsInput({
-				width: 'auto',
 				autocomplete_list: tag_words,
 				autocomplete_dict: tag_dict,
 				tag_ids: tag_ids,
@@ -220,12 +219,12 @@ function clear_post_modal_info(){
 	$('.dropbox-dropin-btn').removeClass('dropbox-dropin-success').addClass('dropbox-dropin-default');
 };
 
-$('#nav-feedback, .cancel-feedback-btn').live('click', function(e){
+$('#nav-feedback, .cancel-feedback-btn').on('click', function(e){
 	e.preventDefault();
 	$('.feedback-modal').toggleClass('displaying')
 });
 
-$('.submit-feedback-btn').live('click', function(e){
+$('.submit-feedback-btn').on('click', function(e){
 	e.preventDefault();
 	console.log("in submit feedback");
 	var feedback = $('.feedback-input').val();
@@ -289,20 +288,8 @@ window.initCharCount = function($obj) {
 };
 
 
-//DISPLAY THANKER MODAL
-$('.thank-count').live('click', function(e){
-	e.preventDefault()
-	thanker_modal = $(this).parent().children('.thanker-modal').clone();
-	thanker_modal.dialog({
-		title: "Thanks for your work!",
-		close: function(){
-			thanker_modal.remove();
-		}
-	});
-})
-
 //TAG MODAL
-$('.addtag-button').live('click', function(e){
+$('.addtag-button').on('click', function(e){
 	e.preventDefault();
 	var post_id = $(this).data('post-id');
 
@@ -335,7 +322,7 @@ $('html').addClass('js--lightbox-open');
 });
 
 //REMOVE TAG
-$('.remove-tag').live('click', function(e) {
+$('.remove-tag').on('click', function(e) {
 	e.preventDefault();
 	var avatar = $(this).parent('.avatar-container'),
 		post_id = $(this).parents('.post').data('post-id'),
@@ -463,7 +450,7 @@ function replace_one_post(post_id) {
 
 
 //REMOVE COMMENT
-$('.remove-comment').live('click', function(e){
+$('.remove-comment').on('click', function(e){
 	e.preventDefault();
 	var post_id = $(this).data('comment-id');
 	var parent_post_id = $(this).closest('.comments').data('post-id');
@@ -593,7 +580,7 @@ function send_notifications(data){
 
 
 // Focus post body
-$('.js--hocus-focus').live('click', function(e){
+$('.js--hocus-focus').on('click', function(e){
 	e.preventDefault();
 	$('.post__new-content').focus();
 });
@@ -625,7 +612,7 @@ function change_count(jquery_selector, add_value){
 //Dropbox Chooser file selection
 $(function () {
 	var data = {};
-	$('#chooser').live('DbxChooserSuccess', function (e) {
+	$('#chooser').on('DbxChooserSuccess', function (e) {
 		console.log('chooser success');
 		data = {
 			url: e.originalEvent.files[0].link,
@@ -637,16 +624,8 @@ $(function () {
 		$('#filename').text(data['filename']);
 	});
 
-	$('#remove').live('click', function (e) {
-		e.preventDefault();
-		data = {}
-		$('#chosen').hide();
-		$('.dropbox-dropin-btn').removeClass('dropbox-dropin-success');
-		$('.dropbox-dropin-btn').addClass('dropbox-dropin-default');
-	});
-
 	//Submit new post
-	$('.submit-new-post').live('click', function(e){
+	$('.submit-new-post').on('click', function(e){
 		console.log('clickkkkk');
 		//Check if file selected from dropbox chooser
 		if ($.isEmptyObject(data)===false){
@@ -676,19 +655,6 @@ $(function () {
 			create_post();
 		}
 	});
-});
-
-//NEW POST MODAL
-$('.new-post-modal-btn').live('click', function(e) {
-	post_modal = $('.post-modal');
-	tag_input = $('#new-post-tag-input');
-	show_modal(post_modal);
-
-	if (!post_modal.hasClass('pressed')){
-		get_tag_list(tag_input);
-	post_modal.addClass('pressed');
-	};
-
 });
 
 // Create post
@@ -768,7 +734,7 @@ function create_post(public_url) {
 
 
 //REMOVE POST
-$('.remove-post-button').live('click', function(e){
+$('.remove-post-button').on('click', function(e){
 	e.preventDefault();
 	var post_id = $(this).closest('.post').data('post-id');
 	var parent_post = $(this).closest('.post');
