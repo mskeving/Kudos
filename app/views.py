@@ -820,7 +820,7 @@ def delete_comment(postid):
 
 
 #DELETE POSTS
-@app.route('/deletepost', methods=['POST'])
+@app.route('/deletepost', methods=['POST', 'GET'])
 @login_required
 def delete_post():
 	form = request.form
