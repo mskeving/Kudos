@@ -111,7 +111,7 @@ function send_error_msg(error_info){
 			send_error_msg(error_info);
 			console.log('failed sending error message to team kudos')
 		}
-	})
+	});
 }
 
 function get_tag_list(obj, post_id){
@@ -134,7 +134,6 @@ function get_tag_list(obj, post_id){
 
 			// this makes the tag input work for all tag autocompleters. uses tagsinput.js
 			obj.tagsInput({
-				width: 'auto',
 				autocomplete_list: tag_words,
 				autocomplete_dict: tag_dict,
 				tag_ids: tag_ids,
@@ -148,7 +147,7 @@ function get_tag_list(obj, post_id){
 			send_error_msg(error_info);
 		},
 		dataType: 'json'
-	})
+	});
 };
 
 function show_all_tags(post_id) {
@@ -220,12 +219,12 @@ function clear_post_modal_info(){
 	$('.dropbox-dropin-btn').removeClass('dropbox-dropin-success').addClass('dropbox-dropin-default');
 };
 
-$('#nav-feedback, .cancel-feedback-btn').live('click', function(e){
+$('#nav-feedback, .cancel-feedback-btn').on('click', function(e){
 	e.preventDefault();
 	$('.feedback-modal').toggleClass('displaying')
 });
 
-$('.submit-feedback-btn').live('click', function(e){
+$('.submit-feedback-btn').on('click', function(e){
 	e.preventDefault();
 	console.log("in submit feedback");
 	var feedback = $('.feedback-input').val();
@@ -257,8 +256,8 @@ $('.submit-feedback-btn').live('click', function(e){
 			send_error_msg(error_info);
 			console.log("could not submit feedback");
 		}
-	})
-})
+	});
+});
 
 //escape key to exit out of feedback modal
 document.onkeydown = function(evt) {
@@ -289,20 +288,8 @@ window.initCharCount = function($obj) {
 };
 
 
-//DISPLAY THANKER MODAL
-$('.thank-count').live('click', function(e){
-	e.preventDefault()
-	thanker_modal = $(this).parent().children('.thanker-modal').clone();
-	thanker_modal.dialog({
-		title: "Thanks for your work!",
-		close: function(){
-			thanker_modal.remove();
-		}
-	});
-})
-
 //TAG MODAL
-$('.addtag-button').live('click', function(e){
+$('.addtag-button').on('click', function(e){
 	e.preventDefault();
 	var post_id = $(this).data('post-id');
 
@@ -335,7 +322,7 @@ $('html').addClass('js--lightbox-open');
 });
 
 //REMOVE TAG
-$('.remove-tag').live('click', function(e) {
+$('.remove-tag').on('click', function(e) {
 	e.preventDefault();
 	var avatar = $(this).parent('.avatar-container'),
 		post_id = $(this).parents('.post').data('post-id'),
@@ -437,7 +424,7 @@ $('.new-tag-btn').live('click', function(e) {
 				console.log('error');
 			},
 			dataType: 'json'
-		})
+		});
 	}
 
 	else{
@@ -461,12 +448,12 @@ function replace_one_post(post_id) {
 		error: function(){
 
 		}
-	})
+	});
 }
 
 
 //REMOVE COMMENT
-$('.remove-comment').live('click', function(e){
+$('.remove-comment').on('click', function(e){
 	e.preventDefault();
 	var post_id = $(this).data('comment-id');
 	var parent_post_id = $(this).closest('.comments').data('post-id');
@@ -505,8 +492,8 @@ $('.remove-comment').live('click', function(e){
 			}
 			send_error_msg(error_info);
 		}
-	})
-})
+	});
+});
 
 
 //SUBMIT NEW COMMENT
@@ -561,7 +548,7 @@ window.initCommentButtons = function($jqObject){
 		},
 		dataType: 'json'
 	});
-})
+});
 	return true;
 }
 
@@ -572,7 +559,7 @@ $('.comment__input').each(function(){
 			$('.comment-button[data-post-id=' + parent_post_id + ']').trigger('click');
 		}
 	});
-})
+});
 
 function send_notifications(data){
 	// data must include post_id, tagged_team_ids, tagged_user_ids, post_text, photo_url
@@ -591,13 +578,13 @@ function send_notifications(data){
 			send_error_msg(error_info);
 			console.log("failed sending email notifications");
 		}
-	})
+	});
 
 }
 
 
 // Focus post body
-$('.js--hocus-focus').live('click', function(e){
+$('.js--hocus-focus').on('click', function(e){
 	e.preventDefault();
 	$('.post__new-content').focus();
 });
@@ -629,7 +616,7 @@ function change_count(jquery_selector, add_value){
 //Dropbox Chooser file selection
 $(function () {
 	var data = {};
-	$('#chooser').live('DbxChooserSuccess', function (e) {
+	$('#chooser').on('DbxChooserSuccess', function (e) {
 		console.log('chooser success');
 		data = {
 			url: e.originalEvent.files[0].link,
@@ -641,16 +628,8 @@ $(function () {
 		$('#filename').text(data['filename']);
 	});
 
-	$('#remove').live('click', function (e) {
-		e.preventDefault();
-		data = {}
-		$('#chosen').hide();
-		$('.dropbox-dropin-btn').removeClass('dropbox-dropin-success');
-		$('.dropbox-dropin-btn').addClass('dropbox-dropin-default');
-	});
-
 	//Submit new post
-	$('.submit-new-post').live('click', function(e){
+	$('.submit-new-post').on('click', function(e){
 		console.log('clickkkkk');
 		//Check if file selected from dropbox chooser
 		if ($.isEmptyObject(data)===false){
@@ -680,19 +659,6 @@ $(function () {
 			create_post();
 		}
 	});
-});
-
-//NEW POST MODAL
-$('.new-post-modal-btn').live('click', function(e) {
-	post_modal = $('.post-modal');
-	tag_input = $('#new-post-tag-input');
-	show_modal(post_modal);
-
-	if (!post_modal.hasClass('pressed')){
-		get_tag_list(tag_input);
-	post_modal.addClass('pressed');
-	};
-
 });
 
 // Create post
@@ -756,9 +722,10 @@ function create_post(public_url) {
 				tagged_team_ids: JSON.stringify(response.tagged_team_ids),
 				tagged_user_ids: JSON.stringify(response.tagged_user_ids),
 				is_new_post: true
-			})
+			});
 
 			initCommentButtons($('.post[data-post-id=' + data.parent_post_id + ']'));
+			initRemoveButton($('.post[data-post-id=' + data.parent_post_id + '] .remove-post-button'));
 
 			$('.new-post-form').removeClass('submitting');
 
@@ -793,41 +760,44 @@ function change_to_no_posts_yet_title() {
 }
 
 //REMOVE POST
-$('.remove-post-button').live('click', function(e){
-	e.preventDefault();
-	var post_id = $(this).closest('.post').data('post-id');
-	var parent_post = $(this).closest('.post').parent('li');
-	data = {
-		post_id : post_id
-	}
-	$.ajax({
-		type: "POST",
-		url: '/deletepost',
-		data: data,
-		success: function(resp){
-			parent_post.addClass('post--remove-from-stream');
-			if(animations.supported) {
-				parent_post.one('webkitAnimationEnd mozAnimationEnd oAnimationEnd animationEnd', function(){
-					$(this).remove();
-				});
-			} else {
-				$(this).remove();
+window.initRemoveButton = function($jqObject) {
+	$jqObject.each(function(){
+		$(this).on('click', function(e){
+			e.preventDefault();
+			var post_id = $(this).closest('.post').data('post-id');
+			var parent_post = $(this).closest('.post').parent('li');
+			data = {
+				post_id : post_id
 			}
-			if ($('ol.posts').children('li').length == 1){
-				change_to_no_posts_yet_title();
-			}
-			console.log("success deleting post");
-		},
-		error: function(resp){
-			display_error();
-			error_info = {
-				'func_name': '/remove-post-button'
-			}
-			send_error_msg(error_info);
-		}
-	})
-
-});
+			$.ajax({
+				type: "POST",
+				url: '/deletepost',
+				data: data,
+				success: function(resp){
+					parent_post.addClass('post--remove-from-stream');
+					if(animations.supported) {
+						parent_post.one('webkitAnimationEnd mozAnimationEnd oAnimationEnd animationEnd', function(){
+							$(this).remove();
+						});
+					} else {
+						$(this).remove();
+					}
+					if ($('ol.posts').children('li').length == 1){
+						change_to_no_posts_yet_title();
+					}
+					console.log("success deleting post");
+				},
+				error: function(resp){
+					display_error();
+					error_info = {
+						'func_name': '/remove-post-button'
+					}
+					send_error_msg(error_info);
+				}
+			});
+		});
+	});
+};
 
 //Called if file chosen with dropbox chooser
 function s3_upload(data, callback){
@@ -878,4 +848,5 @@ $(document).ready(function(){
 	get_tag_list(tag_input);
 	initCommentButtons($('.post[data-post-id]'));
 	initCharCount($('[data-character-count]'));
+	initRemoveButton($('.remove-post-button'));
 });

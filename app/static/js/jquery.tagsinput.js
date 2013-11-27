@@ -19,66 +19,6 @@
 	var delimiter = new Array();
 	var tags_callbacks = new Array();
 
-	//only called if settings.autosize = true
-	$.fn.doAutosize = function(o){
-	    var minWidth = $(this).data('minwidth'),
-	        maxWidth = $(this).data('maxwidth'),
-	        val = '',
-	        input = $(this),
-	        testSubject = $('#'+$(this).data('tester_id'));
-
-		//if input.val === '' do nothing, otherwise keep going
-	    if (val === (val = input.val())) {return;}
-
-
-
-	    // Enter new content into testSubject
-	    var escaped = val.replace(/&/g, '&amp;').replace(/\s/g,' ').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-	    testSubject.html(escaped);
-	    // Calculate new width + whether to change
-	    var testerWidth = testSubject.width(),
-	        newWidth = (testerWidth + o.comfortZone) >= minWidth ? testerWidth + o.comfortZone : minWidth,
-	        currentWidth = input.width(),
-	        isValidWidthChange = (newWidth < currentWidth && newWidth >= minWidth)
-	                             || (newWidth > minWidth && newWidth < maxWidth);
-
-	    // Animate width
-	    if (isValidWidthChange) {
-	        input.width(newWidth);
-	    }
-
-
-
-  };
-  $.fn.resetAutosize = function(options){
-    // alert(JSON.stringify(options));
-    var minWidth =  $(this).data('minwidth') || options.minInputWidth || $(this).width(),
-        maxWidth = $(this).data('maxwidth') || options.maxInputWidth || ($(this).closest('.tagsinput').width() - options.inputPadding),
-        val = '',
-        input = $(this),
-        testSubject = $('<tester/>').css({
-            position: 'absolute',
-            top: -9999,
-            left: -9999,
-            width: 'auto',
-            fontSize: input.css('fontSize'),
-            fontFamily: input.css('fontFamily'),
-            fontWeight: input.css('fontWeight'),
-            letterSpacing: input.css('letterSpacing'),
-            whiteSpace: 'nowrap'
-        }),
-        testerId = $(this).attr('id')+'_autosize_tester';
-    if(! $('#'+testerId).length > 0){
-      testSubject.attr('id', testerId);
-      testSubject.appendTo('body');
-    }
-
-    input.data('minwidth', minWidth);
-    input.data('maxwidth', maxWidth);
-    input.data('tester_id', testerId);
-    //input.css('width', minWidth);
-  };
-
 	$.fn.addTag = function(value,options,settings,tag_id) {
 		options = jQuery.extend({focus:false,callback:true},options);
 
@@ -196,8 +136,6 @@
 	      interactive:true,
 	      defaultText:'add a tag',
 	      minChars:0,
-	      width:'300px',
-	      height:'100px',
 	      autocomplete: {selectFirst: false },
 	      hide:true,
 	      delimiter:',',
@@ -241,8 +179,8 @@
 
 			//instead of creating new markup, add unique ids to already exisitng
 			$(this).siblings('.tagsinput').attr('id', id + '_tagsinput');
-			$(this).siblings('.tagsinput').children('[data-id=_addTag').attr('id', id + '_addTag');
-			$(this).siblings('.tagsinput').children('[data-id=_addTag').children('[data-id=_tag]').attr('id', id + '_tag');
+			$(this).siblings('.tagsinput').find('[data-id=_addTag]').attr('id', id + '_addTag');
+			$(this).siblings('.tagsinput').find('[data-id=_tag]').attr('id', id + '_tag');
 
 
 
@@ -250,19 +188,9 @@
 				$.fn.tagsInput.importTags($(data.real_input),$(data.real_input).val());
 			}
 			if (settings.interactive) {
-				$(data.fake_input).val($(data.fake_input).attr('data-default'));
-				$(data.fake_input).css('color',settings.placeholderColor);
-		        $(data.fake_input).resetAutosize(settings);
 
 				$(data.holder).bind('click',data,function(event) {
 					$(event.data.fake_input).focus();
-				});
-
-				$(data.fake_input).bind('focus',data,function(event) {
-					if ($(event.data.fake_input).val()==$(event.data.fake_input).attr('data-default')) {
-						$(event.data.fake_input).val('');
-					}
-					$(event.data.fake_input).css('color','#000000');
 				});
 
 				if (settings.autocomplete_dict != undefined) {
@@ -271,7 +199,7 @@
 						settings.autocomplete
 					);
 
-					$(data.fake_input).autocomplete(autocomplete_options);
+					$(data.fake_input).autocomplete({source: settings.autocomplete_list});
 					$(data.fake_input).bind('autocompleteselect',data,function(event,ui) {
 						tokentext = ui.item.value;
 						$(event.data.real_input).addTag(tokentext,{focus:true,unique:(settings.unique)}, settings);
@@ -288,27 +216,11 @@
 									$(event.data.real_input).addTag($(event.data.fake_input).val(),{focus:true,unique:(settings.unique)});
 							} else {
 								$(event.data.fake_input).val($(event.data.fake_input).attr('data-default'));
-								$(event.data.fake_input).css('color',settings.placeholderColor);
 							}
 							return false;
 						});
 				}
 
-				//Delete last tag on backspace
-/*
-				data.removeWithBackspace && $(data.fake_input).bind('keydown', function(event)
-				{
-					if(event.keyCode == 8 && $(this).val() == '')
-					{
-						 event.preventDefault();
-						 var last_tag = $(this).closest('.tagsinput').find('.tag:last').text();
-						 var id = $(this).attr('id').replace(/_tag$/, '');
-						 last_tag = last_tag.replace(/[\s]+x$/, '');
-						 $('#' + id).removeTag(escape(last_tag));
-						 $(this).trigger('focus');
-					}
-				});
-*/
 				$(data.fake_input).blur();
 
 				//Removes the not_valid class when user changes the value of the fake input
