@@ -354,7 +354,7 @@ $('.remove-tag').on('click', function(e) {
 			}
 
 			function remove_post(){
-				post = $('.post[data-post-id=' + post_id +']').parent('li');
+				post = $('.post[data-post-id=' + post_id +']');
 				post.addClass('post--remove-from-stream');
 				post.one('webkitAnimationEnd mozAnimationEnd oAnimationEnd animationEnd', function(){
 					post.remove();
@@ -442,7 +442,7 @@ function replace_one_post(post_id) {
 		url: '/display_single_post',
 		type: 'POST',
 		success: function(new_post){
-			old_post.parent('li').prepend(new_post);
+			old_post.before(new_post);
 			old_post.remove();
 		},
 		error: function(){
@@ -765,7 +765,7 @@ window.initRemoveButton = function($jqObject) {
 		$(this).on('click', function(e){
 			e.preventDefault();
 			var post_id = $(this).closest('.post').data('post-id');
-			var parent_post = $(this).closest('.post').parent('li');
+			var parent_post = $(this).closest('.post');
 			data = {
 				post_id : post_id
 			}
