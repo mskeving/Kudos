@@ -115,11 +115,11 @@ def feedback():
 
 @app.route('/')
 @app.route('/index')
-@login_required 
+@login_required
 def index():
 
 	user = g.user
-	new_post_form = EditPost() 
+	new_post_form = EditPost()
 	reply_form = NewReply()
 	delete_form = DeletePost()
 
@@ -206,7 +206,7 @@ def create_tag_list():
 	tag_dict = {}
 
 	for tag in user_tags:
-		#if tag has already been used on this post, don't add to available tags 
+		#if tag has already been used on this post, don't add to available tags
 		if tag.id in used_tags_dict:
 			continue
 
@@ -217,7 +217,7 @@ def create_tag_list():
 			fullname = tag.firstname + " " + tag.lastname + " (" + tag.nickname + ")"
 			tag_dict[fullname] = tag_user_id
 		elif tag.firstname and tag.lastname:
-			fullname = tag.firstname + " " + tag.lastname 
+			fullname = tag.firstname + " " + tag.lastname
 			tag_dict[fullname] = tag_user_id
 		elif tag.firstname:
 			tag_dict[tag.firstname] = tag_user_id
@@ -238,7 +238,7 @@ def create_tag_list():
 	tag_words_string = tag_dict.keys()
 	tag_ids_string = tag_dict.values()
 
-	return json.dumps({'tag_words': tag_words_string, 
+	return json.dumps({'tag_words': tag_words_string,
 		'tag_ids': tag_ids_string,
 		'tag_dict': tag_dict
 		})
@@ -253,7 +253,7 @@ def team(team):
 	this_team = Team.query.filter(Team.teamname==team).first()
 	name = "the " + this_team.teamname + " Team"
 	team_members = UserTeam.query.filter(UserTeam.team_id==this_team.id).all()
-	tags = Tag.query.filter(and_(Tag.team_tag_id==this_team.id, Tag.is_deleted==False)).order_by(Tag.time.desc()).all() 
+	tags = Tag.query.filter(and_(Tag.team_tag_id==this_team.id, Tag.is_deleted==False)).order_by(Tag.time.desc()).all()
 
 	tagged_posts = []
 	for tag in tags:
@@ -273,10 +273,10 @@ def team(team):
 		teams = UserTeam.query.filter(UserTeam.user_id==member.user.id).all()
 		for team in teams:
 			#using DB relationship to get teamname
-			list_of_teams.append(team.team.teamname) 
+			list_of_teams.append(team.team.teamname)
 		print "list_of_teams: %r" % list_of_teams
-		#keep all user info 
-		dict_of_users_teams[member.user] = list_of_teams 
+		#keep all user info
+		dict_of_users_teams[member.user] = list_of_teams
 
 	# Prefilled tag data for post creation flow
 	prefill_data = {
@@ -309,8 +309,8 @@ def user(username):
 	manager = User.query.filter_by(id=user.manager_id).first()
 	name = user.firstname
 
-	#get all tags that user is tagged in 
-	tags = Tag.query.filter(and_(Tag.user_tag_id==user.id, Tag.is_deleted==False)).order_by(Tag.time.desc()).all() 
+	#get all tags that user is tagged in
+	tags = Tag.query.filter(and_(Tag.user_tag_id==user.id, Tag.is_deleted==False)).order_by(Tag.time.desc()).all()
 
 	tagged_posts = []
 	#for each tag, find post associated with it
@@ -341,10 +341,10 @@ def user(username):
 		'name': user.firstname + ' ' + user.lastname,
 	}
 
-	return render_template('user.html', 
+	return render_template('user.html',
 		new_post_form=new_post_form,
 		reply_form=reply_form,
-		user=user, 
+		user=user,
 		posts=indented_posts,
 		list_of_team_names=list_of_team_names,
 		manager=manager,
@@ -436,7 +436,7 @@ def send_email(sender, recipients, reply_to, subject, html, post_id):
 		recipients = [settings.email_stealer]
 
 	msg = Message(
-		subject=subject, 
+		subject=subject,
 		sender=sender,
 		recipients=recipients,
 		reply_to=reply_to,
@@ -457,17 +457,17 @@ def new_post():
 
 	user_id = g.user.id
 
-	new_post_form = EditPost() 
+	new_post_form = EditPost()
 	reply_form = NewReply()
 	delete_form = DeletePost()
-	
+
 	form = request.form
 	photo_url = form.get('photo_url')
 	filename = form.get('filename')
 	post_text = form.get('post_text')
 
 
-	new_post = Post(body=post_text, time=datetime.utcnow(), user_id=user_id, photo_link=photo_url) 
+	new_post = Post(body=post_text, time=datetime.utcnow(), user_id=user_id, photo_link=photo_url)
 	db.session.add(new_post)
 	db.session.commit()
 	db.session.refresh(new_post)
@@ -480,7 +480,7 @@ def new_post():
 
 	tagged_user_ids = []
 	tagged_team_ids = []
-	for i in range(len(tag_ids)-1): #last index will be "" because of delimiters 
+	for i in range(len(tag_ids)-1): #last index will be "" because of delimiters
 		#USER TAG
 		if tag_ids[i] in seen_already:
 			continue
@@ -493,7 +493,7 @@ def new_post():
 			tagged_user_ids.append(user_id)
 			db.session.add(new_tag)
 
-			
+
 		#TEAM TAGS
 		elif tag_ids[i][0] == 't':
 			team_id = int(tag_ids[i][1:]) #remove leading 't' to convert back to int team_id
@@ -501,7 +501,7 @@ def new_post():
 			tagged_team_ids.append(team_id)
 			db.session.add(new_tag)
 	db.session.commit()
-	
+
 	db.session.refresh(new_post)
 	posts=[new_post,]
 	indented_post = posts_to_indented_posts(posts)[0]
@@ -588,7 +588,7 @@ def create_notification_for_tagged_users(tagged_users_list, photo_url, post_text
 		if user_object != g.user:
 			recipient_list.append(user_object.email)
 
-	#create notification for taggees 
+	#create notification for taggees
 	generate_email(header, post_text, subject, recipient_list, parent_post_id, photo_url)
 
 
@@ -640,7 +640,7 @@ def create_notification_for_managers(tagged_users_list, photo_url, post_text, po
 @login_required
 def send_thanks():
 
-	post_id=request.form["post_id"]  
+	post_id=request.form["post_id"]
 	print "post_id: %r" % post_id
 
 	new_thanks = Thanks(thanks_sender=g.user.id, post_id=post_id, time=datetime.utcnow())
@@ -658,7 +658,7 @@ def remove_thanks():
 	thanks_sender = g.user.id
 	post_id = form.get('post_id')
 
-	delete_thanks = Thanks.query.filter(and_(Thanks.thanks_sender==thanks_sender, Thanks.post_id==post_id)).all() 
+	delete_thanks = Thanks.query.filter(and_(Thanks.thanks_sender==thanks_sender, Thanks.post_id==post_id)).all()
 
 	for thank in delete_thanks:
 		thank.is_deleted = True
@@ -673,7 +673,7 @@ def display_thanks():
 	thanks = Thanks.query.filter(Thanks.post_id==post_id).all()
 	thankers = []
 	for thank in thanks:
-		thankers.append(thank.thanker)	
+		thankers.append(thank.thanker)
 
 	return thankers
 
@@ -681,7 +681,7 @@ def display_thanks():
 #ADD NEW TAG
 @app.route('/newtag', methods=['POST'])
 @login_required
-def add_tag():	
+def add_tag():
 	user_id = g.user.id
 	form = request.form
 	post_id = form.get("parent_post_id")
@@ -698,7 +698,7 @@ def add_tag():
 	tagged_user_ids = [] #to get user emails for notifications
 	tagged_team_ids = []
 
-	for i in range(len(tag_ids)-1): #last index will be "" because of delimiters 
+	for i in range(len(tag_ids)-1): #last index will be "" because of delimiters
 		#USER TAGS
 		if tag_ids[i][0] == 'u':
 			tag_user_id = int(tag_ids[i][1:]) #remove leading 'u' to convert back to int user_id
@@ -726,7 +726,7 @@ def add_tag():
 			team['teamname'] = tagged_team.teamname
 			team['team_id'] = tagged_team.id
 			team_tag_info.append(team)
-			db.session.add(new_tag)	
+			db.session.add(new_tag)
 
 			tagged_team_ids.append(tagged_team.id)
 
@@ -748,7 +748,7 @@ def delete_tag():
 
 	form = request.form
 	tag_id = form.get('tag_id')
-	
+
 	delete_tag = db.session.query(Tag).filter_by(id=tag_id).one()
 	if delete_tag.user_tag_id:
 		tag_info = {'user_id': delete_tag.user_tag_id}
@@ -775,7 +775,7 @@ def new_comment():
 	if not parent_post:
 		comment_info = {"is_error": True}
 		return json.dumps(comment_info)
-	
+
 	new_comment = Post(body=body, parent_post_id=parent_post_id, time=datetime.utcnow(), user_id=g.user.id)
 	db.session.add(new_comment)
 	db.session.commit()
@@ -809,7 +809,7 @@ def new_comment():
 @app.route('/deletecomment/<postid>', methods=['POST'])
 @login_required
 def delete_comment(postid):
-	
+
 	delete_comment = db.session.query(Post).filter_by(id=postid).one()
 	delete_comment.is_deleted = True
 	db.session.commit()
@@ -830,7 +830,7 @@ def delete_post():
 	if delete_post:
 		delete_post.is_deleted = True
 
-		#delete post, replies, associatated tags, and thanks 
+		#delete post, replies, associatated tags, and thanks
 		to_delete_list = []
 		to_delete_list.append(delete_post)
 		for tag in delete_post.tags:
@@ -867,7 +867,7 @@ def tagged_in_post():
 @app.route('/post/<post_id>', methods=['GET'])
 @login_required
 def permalink_for_post_with_id(post_id):
-	new_post_form = EditPost() 
+	new_post_form = EditPost()
 	reply_form = NewReply()
 	posts = Post.query.filter(and_(Post.id==int(post_id), Post.is_deleted==False)).all()
 	if posts:
@@ -909,7 +909,7 @@ def all_users():
 		user_teams = sorted(user.users_teams, cmp=lambda x, y: cmp(x.id, y.id))
 		dict_of_users_teams[user.id] = [ut.team for ut in user_teams]
 
-	return render_template('allusers.html', 
+	return render_template('allusers.html',
 		all_users=all_users,
 		user_teams_dict=dict_of_users_teams,
 		)
@@ -930,14 +930,14 @@ class HPost:
 		self.dbo = dbo
 		self.children = []
 
-	#the representation 
+	#the representation
 	def __repr__(self):
 		return "HPost(%d, %r)" % (self.dbo.id, self.children)
 
 	@staticmethod
 	def build(posts_list):
 		#builds a tree of all posts
-		#returns lists of parent post, with list of replies 
+		#returns lists of parent post, with list of replies
 		#Each parent creates a new HPost, with post_id as dbo and children is list of replies
 		#HPost(1, [HPost(3)]) -- 3rd post in Post is reply to first post
 
@@ -949,11 +949,11 @@ class HPost:
 
 			#parent posts have no parent_post_id
 			if post.parent_post_id == None:
-				
+
 				ret.append(h)
 			#if it's a child, append to parent's children list
 			else:
-				parent = post.parent_post_id	
+				parent = post.parent_post_id
 				d[parent].children.append(h)
 		return ret
 
@@ -973,7 +973,7 @@ class HPost:
 
 		d = {}
 		for post in hposts:
-			#better way of getting column names? 
+			#better way of getting column names?
 			d['body'] = post.dbo.body
 			d['indent'] = indent
 			d['post_id'] = post.dbo.id
@@ -989,7 +989,7 @@ class HPost:
 		return posts_list
 
 
-		
+
 	@classmethod
 	def dump(cls, hposts, indent):
 		for post in hposts:
@@ -1034,13 +1034,16 @@ def posts_to_indented_posts(posts):
 				if tag.is_deleted == False:
 					tagged_teams.append(tag)
 			else:
-				print "no tags for this post.id: %r" % p.id 
+				print "no tags for this post.id: %r" % p.id
 
 		#display tags in random order each time
 		random.shuffle(tagged_users)
 		random.shuffle(tagged_teams)
 		d['tagged_users'] = tagged_users
 		d['tagged_teams'] = tagged_teams
+
+		all_tags  = tagged_teams + tagged_users
+		d['all_tags'] = all_tags
 
 		#list of users giving thanks for post
 		thankers = []
@@ -1053,5 +1056,5 @@ def posts_to_indented_posts(posts):
 		indented_posts.append(d)
 
 	return indented_posts
-	
+
 
