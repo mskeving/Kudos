@@ -1057,6 +1057,10 @@ body {
     .thanked {
       color: $red;
 
+      &.butt {
+        cursor: default !important;
+      }
+
       &:active, &:focus {
         outline: none;
       }
@@ -1480,6 +1484,7 @@ body {
 
 .banner {
   position: fixed;
+  z-index: 999;
   top: .75rem;
   left: 0;
   right: 0;

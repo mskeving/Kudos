@@ -39,6 +39,8 @@ $(document).ready(function(){
 							}
 							initCommentButtons($('.post[data-post-id]'));
 							initRemoveButton($('.post[data-post-id] .remove-post-button'));
+							initTagsModal($('.js--show-all-taggees'));
+							initRemoveComment($('.remove-comment'));
 							scrollInAction = false;
 						},
 						error: function(){

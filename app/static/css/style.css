@@ -1136,6 +1136,10 @@ body {
   color: #f36062;
 }
 
+.post__actions .thanked.butt {
+  cursor: default !important;
+}
+
 .post__actions .thanked:active,
 .post__actions .thanked:focus {
   outline: none;
@@ -1764,6 +1768,7 @@ body {
 
 .banner {
   position: fixed;
+  z-index: 999;
   top: .75rem;
   left: 0;
   right: 0;
