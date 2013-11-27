@@ -141,11 +141,7 @@
     <div class="post-metadata post__comments">
       <div class="count cf">
         {% set comments = post.get('comments')|length %}
-        {% if comments == 1 %}
-          <a class="comments__count comment-count">{{comments}} Thank</a>
-        {% else %}
-          <a class="comments__count comment-count">{{comments}} Thanks</a>
-        {% endif %}
+          <span class="comments__count comment-count">{{comments}} Thank{{ '' if comments == 1 else 's' }}</span>
         <small class="f-r"><a title="Permalink to this post" href="/post/{{post_object.id}}">{{post.get('time')}}</a></small>
       </div>
 

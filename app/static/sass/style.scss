@@ -1118,20 +1118,15 @@ body {
 .count {
   font-family: $proxima;
 
-  a {
+  a, span {
     color: rgba(0,0,0,.5);
     text-decoration: none;
-      &:hover {
-        text-decoration: underline;
-      }
+  }
+
+  a:hover {
+    text-decoration: underline;
   }
 }
-
-  .comments__count {
-    color: inherit;
-    cursor: pointer;
-    text-decoration: none;
-  }
 
 .comments {
   font-size: .85rem;
