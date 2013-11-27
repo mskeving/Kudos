@@ -177,7 +177,7 @@ function show_all_tags(post_id) {
 
 window.initTagsModal = function($jqObject) {
 	$jqObject.each(function(){
-		$(this).on('click', function(e){
+		$(this).off().on('click', function(e){
       e.preventDefault();
       var post_id = $(this).parents('.post[data-post-id]').data('post-id'),
           taggees = show_all_tags(post_id);
@@ -449,6 +449,8 @@ function replace_one_post(post_id) {
 			old_post.before(new_post);
 			initCommentButtons($('.post[data-post-id=' + post_id + ']'));
 			initRemoveButton($('.post[data-post-id=' + post_id + '] .remove-post-button'));
+			initTagsModal($('post[data-post-id=' + post_id + '] .js--show-all-taggees'));
+			initRemoveComment($('post [data-post-id=' + post_id + '] .remove-comment'));
 			old_post.remove();
 		},
 		error: function(){
@@ -459,52 +461,56 @@ function replace_one_post(post_id) {
 
 
 //REMOVE COMMENT
-$('.remove-comment').on('click', function(e){
-	e.preventDefault();
-	var post_id = $(this).data('comment-id');
-	var parent_post_id = $(this).closest('.comments').data('post-id');
-	var comment = $(this).parents('[data-comment-id=' + post_id + ']');
-	data = {
-		post_id: post_id
-	};
-
-	$.ajax({
-		type: "POST",
-		data: data,
-		url: '/deletepost',
-		success: function(comment_id){
-
-			var remove = function(){
-				comment.remove();
-				$('#comment-body-' + parent_post_id).removeAttr('disabled').removeClass('no-w').addClass('g--two-thirds');
-				$('.comment-button[data-post-id=' + parent_post_id + ']').removeClass('span-all thanked').addClass('g--one-third comment-button').html('<i class="fa fa-heart"></i> Thank');
-				initCommentButtons($('.post[data-post-id=' + parent_post_id + ']'));
+window.initRemoveComment = function($jqObject) {
+	$jqObject.each(function(){
+		$(this).off().on('click', function(e){
+			e.preventDefault();
+			var post_id = $(this).data('comment-id');
+			var parent_post_id = $(this).closest('.comments').data('post-id');
+			var comment = $(this).parents('[data-comment-id=' + post_id + ']');
+			data = {
+				post_id: post_id
 			};
 
-			if(animations.supported) {
-				comment.addClass("js--comment-remove").one('webkitAnimationEnd oAnimationEnd mozAnimationEnd animationEnd', remove());
-			} else {
-				remove();
-			}
+			$.ajax({
+				type: "POST",
+				data: data,
+				url: '/deletepost',
+				success: function(comment_id){
 
-			comment_count_selector = $('[data-post-id=' + parent_post_id + '] .comment-count');
-			change_count(comment_count_selector, -1);
+					var remove = function(){
+						comment.remove();
+						$('#comment-body-' + parent_post_id).removeAttr('disabled').removeClass('no-w').addClass('g--two-thirds');
+						$('.thanked[data-post-id=' + parent_post_id + ']').removeClass('span-all thanked').addClass('g--one-third comment-button').html('<i class="fa fa-heart"></i> Thank');
+						initCommentButtons($('.post[data-post-id=' + parent_post_id + ']'));
+					};
 
-		},
-		error: function(){
-			display_error();
-			error_info = {
-				'func_name': '/deletepost'
-			}
-			send_error_msg(error_info);
-		}
+					if(animations.supported) {
+						comment.addClass("js--comment-remove").one('webkitAnimationEnd oAnimationEnd mozAnimationEnd animationEnd', remove());
+					} else {
+						remove();
+					}
+
+					comment_count_selector = $('[data-post-id=' + parent_post_id + '] .comment-count');
+					change_count(comment_count_selector, -1);
+
+				},
+				error: function(){
+					display_error();
+					error_info = {
+						'func_name': '/deletepost'
+					}
+					send_error_msg(error_info);
+				}
+			});
+		});
 	});
-});
+};
 
 
 //SUBMIT NEW COMMENT
 window.initCommentButtons = function($jqObject){
-	$jqObject.find('.comment-button').one('click', function(e){
+	$jqObject.find('.comment-button').off().one('click', function(e){
 	e.preventDefault();
 	var new_comment_btn = $(this);
 	var data = {
@@ -530,6 +536,8 @@ window.initCommentButtons = function($jqObject){
 
 			comment_count_selector = $('[data-post-id=' + data.parent_post_id + '] .comment-count');
 			change_count(comment_count_selector, 1);
+
+			initRemoveComment($('[data-post-id=' + data.parent_post_id + '] .remove-comment'));
 
 			//clear and hide comment modal
 			new_comment_btn.addClass('thanked js--pressed span-all an-w').html('<i class="fa fa-heart"></i> Thanked');
@@ -733,6 +741,7 @@ function create_post(public_url) {
 			initCommentButtons($('.post[data-post-id=' + data.parent_post_id + ']'));
 			initRemoveButton($('.post[data-post-id=' + data.parent_post_id + '] .remove-post-button'));
 			initTagsModal($('.post[data-post-id=' + data.parent_post_id + '] .js--show-all-taggees'));
+			initRemoveComment($('.post[data-post-id=' + data.parent_post_id + '] .remove-comment'));
 
 			$('.new-post-form').removeClass('submitting');
 
@@ -769,7 +778,7 @@ function change_to_no_posts_yet_title() {
 //REMOVE POST
 window.initRemoveButton = function($jqObject) {
 	$jqObject.each(function(){
-		$(this).on('click', function(e){
+		$(this).off().on('click', function(e){
 			e.preventDefault();
 			var post_id = $(this).closest('.post').data('post-id');
 			var parent_post = $(this).closest('.post');
@@ -857,4 +866,5 @@ $(document).ready(function(){
 	initCharCount($('[data-character-count]'));
 	initRemoveButton($('.remove-post-button'));
 	initTagsModal($('.js--show-all-taggees'));
+	initRemoveComment($('.remove-comment'));
 });
