@@ -359,6 +359,9 @@ $('.remove-tag').on('click', function(e) {
 				post.one('webkitAnimationEnd mozAnimationEnd oAnimationEnd animationEnd', function(){
 					post.remove();
 				});
+				if ($('ol.posts').children('li').length == 1){
+					change_to_no_posts_yet_title();
+				}
 			}
 
 			replace_one_post(post_id);
@@ -439,7 +442,7 @@ function replace_one_post(post_id) {
 		url: '/display_single_post',
 		type: 'POST',
 		success: function(new_post){
-			old_post.parent('li').prepend(new_post);
+			old_post.before(new_post);
 			old_post.remove();
 		},
 		error: function(){
@@ -504,22 +507,17 @@ window.initCommentButtons = function($jqObject){
 	}
 
 	var all_comments = $('.comments[data-post-id=' + data.parent_post_id + ']');
-
+	show_progress($('.comment-button'));
 	$.ajax({
 		type: "POST",
 		url: '/newcomment',
 		data: data,
 		success: function(response){
 			if (response.is_error) {
+				end_show_progress($('.comment-button'));
 				display_error("Sorry! This post had already been removed.");
 				return
 			}
-
-			$.extend(data, {
-				tagged_team_ids: JSON.stringify(response.tagged_team_ids),
-				tagged_user_ids: JSON.stringify(response.tagged_user_ids),
-				is_comment: true
-			});
 
 			all_comments.append(response.comment_template);
 			all_comments.children('.one-comment').last().addClass('js--new-comment');
@@ -531,7 +529,13 @@ window.initCommentButtons = function($jqObject){
 			new_comment_btn.addClass('thanked js--pressed span-all an-w').html('<i class="fa fa-heart"></i> Thanked');
 			$('#comment-body-' + data.parent_post_id).addClass('an-w no-w').attr('disabled', 'true').val('');
 
+			end_show_progress($('.comment-button'));
 			if (data.post_text){
+				$.extend(data, {
+					tagged_team_ids: JSON.stringify(response.tagged_team_ids),
+					tagged_user_ids: JSON.stringify(response.tagged_user_ids),
+					is_comment: true
+				})
 				send_notifications(data);
 			}
 		},
@@ -693,7 +697,22 @@ function create_post(public_url) {
 		data: data,
 		success: function(response){
 			// response includes post markup, and list of tagged team/user ids
-			$('.post-column').prepend(response.new_post);
+
+			//if first post on user page, remove 'Why not be the first?'
+			if ($('.no-posts').length > 0){
+				$('.no-posts').hide();
+				$('.no-posts').removeClass('no-posts');
+				var full_name = data.hidden_tag_text;
+				full_name = full_name.substring(0, full_name.length -1); // remove trailing '|' from hidden_tag_text
+				var new_post_column = '<h2 class="gamma p post-column-title">Posts thanking ' + full_name + '</h2>\
+									<ol class="posts post-column">' + response.new_post + '</ol>'
+				$('.main-column').append(new_post_column)
+			}
+
+			else {
+				$('.post-column').prepend(response.new_post);
+			}
+
 			$('ol.posts .post').first().addClass('post--new-in-stream');
 			clear_post_modal_info();
 			end_show_progress($('.submit-new-post'));
@@ -711,13 +730,10 @@ function create_post(public_url) {
 			$('.new-post-form').removeClass('submitting');
 
 			if (data.tagged_team_ids || data.tagged_user_ids){
-				console.log('team ids: ' + data.tagged_team_ids);
-				console.log('user ids:' + data.tagged_user_ids);
+				// only send emails if users or teams tagged
 				send_notifications(data);
 			}
-			else{
-				console.log('no one tagged - no emails sent');
-			}
+
 		},
 		error: function(resp){
 			display_error();
@@ -733,11 +749,20 @@ function create_post(public_url) {
 	});
 }
 
+function change_to_no_posts_yet_title() {
+	full_name = $('.prefilled_tag_text').val();
+	full_name = full_name.substring(0, full_name.length -1); // remove trailing '|' from hidden_tag_text
+	$('.post-column-title').remove();
+	var post_column_title = '<p class="beta promo faded no-posts post-column-title">\
+	No posts thanking ' + full_name + ' yet. Why not <a href="#" class="js--hocus-focus">\
+	be the first?</a></p>'
+	$('.main-column').append(post_column_title);
+}
 
 //REMOVE POST
 window.initRemoveButton = function($jqObject) {
 	$jqObject.each(function(){
-		$(this).on('click', function(e) {
+		$(this).on('click', function(e){
 			e.preventDefault();
 			var post_id = $(this).closest('.post').data('post-id');
 			var parent_post = $(this).closest('.post');
@@ -756,6 +781,9 @@ window.initRemoveButton = function($jqObject) {
 						});
 					} else {
 						$(this).remove();
+					}
+					if ($('ol.posts').children('li').length == 1){
+						change_to_no_posts_yet_title();
 					}
 					console.log("success deleting post");
 				},

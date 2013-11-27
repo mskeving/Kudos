@@ -622,15 +622,15 @@ def create_notification_for_managers(tagged_users_list, photo_url, post_text, po
 		subject = "Kudos to your team members!"
 		if len(reports_objects) == 1:
 			subject = "Kudos to your team member, " + str(reports_objects[0].firstname) + "!"
-			header = "As " + str(reports_objects[0].firstname) + "'s team lead, we wanted to let you know " + g.user.firstname + " " + g.user.lastname + " sent them this Kudos:"
+			header = "As " + str(reports_objects[0].firstname) + "'s lead, we want to let you know that " + g.user.firstname + " " + g.user.lastname + " sent them this Kudos:"
 		elif len(reports_objects) == 2:
 			subject = "Kudos to your team members, " + str(reports_objects[0].firstname) + " and " + str(reports_objects[1].firstname) + "!"
-			header = "As their team lead, we wanted to let you know " + g.user.firstname + " " + g.user.lastname + " sent them this Kudos:"
+			header = "As their team lead, we want to let you know " + g.user.firstname + " " + g.user.lastname + " sent them this Kudos:"
 		elif len(reports_objects) > 2:
 			reports_str = ""
 			for report in reports_objects[:-1]:
 				reports_str += str(report.firstname) + ", "
-			header = "As " + reports_str + " and " + str(reports_objects[-1].firstname) + "'s team lead, we wanted to let you know" + g.user.firstname + " " + g.user.lastname + " sent them this Kudos:"
+			header = "As " + reports_str + " and " + str(reports_objects[-1].firstname) + "'s lead, we want to let you know that " + g.user.firstname + " " + g.user.lastname + " sent them this Kudos:"
 
 		generate_email(header, post_text, subject, recipient_list, post_id, photo_url)
 
@@ -785,6 +785,7 @@ def new_comment():
 
 	tags_for_parent_post = Tag.query.filter(and_(Tag.post_id==parent_post_id, Tag.is_deleted==False)).all()
 
+	#get tag information to send notifications
 	tagged_user_ids = []
 	tagged_team_ids = []
 	for tag in tags_for_parent_post:
@@ -819,26 +820,27 @@ def delete_comment(postid):
 
 
 #DELETE POSTS
-@app.route('/deletepost', methods=['GET','POST'])
+@app.route('/deletepost', methods=['POST'])
 @login_required
 def delete_post():
 	form = request.form
 	post_id = form.get('post_id')
 
 	delete_post = db.session.query(Post).filter_by(id=post_id).first()
-	delete_post.is_deleted = True
+	if delete_post:
+		delete_post.is_deleted = True
 
-	#delete post, replies, associatated tags, and thanks 
-	to_delete_list = []
-	to_delete_list.append(delete_post)
-	for tag in delete_post.tags:
-		tag.is_deleted = True
-	for comment in delete_post.children:
-		comment.is_deleted = True
-	for thank in delete_post.thanks:
-		thank.is_deleted = True
+		#delete post, replies, associatated tags, and thanks 
+		to_delete_list = []
+		to_delete_list.append(delete_post)
+		for tag in delete_post.tags:
+			tag.is_deleted = True
+		for comment in delete_post.children:
+			comment.is_deleted = True
+		for thank in delete_post.thanks:
+			thank.is_deleted = True
 
-	db.session.commit()
+		db.session.commit()
 
 	return post_id
 
