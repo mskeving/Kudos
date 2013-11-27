@@ -622,15 +622,15 @@ def create_notification_for_managers(tagged_users_list, photo_url, post_text, po
 		subject = "Kudos to your team members!"
 		if len(reports_objects) == 1:
 			subject = "Kudos to your team member, " + str(reports_objects[0].firstname) + "!"
-			header = "As " + str(reports_objects[0].firstname) + "'s lead, we want to let you know that " + g.user.firstname + " " + g.user.lastname + " sent them this Kudos:"
+			header = "As " + str(reports_objects[0].firstname) + "'s lead, we want you to know that " + g.user.firstname + " " + g.user.lastname + " sent them this Kudos:"
 		elif len(reports_objects) == 2:
 			subject = "Kudos to your team members, " + str(reports_objects[0].firstname) + " and " + str(reports_objects[1].firstname) + "!"
-			header = "As their team lead, we want to let you know " + g.user.firstname + " " + g.user.lastname + " sent them this Kudos:"
+			header = "As their team lead, we want you to know that " + g.user.firstname + " " + g.user.lastname + " sent them this Kudos:"
 		elif len(reports_objects) > 2:
 			reports_str = ""
 			for report in reports_objects[:-1]:
 				reports_str += str(report.firstname) + ", "
-			header = "As " + reports_str + " and " + str(reports_objects[-1].firstname) + "'s lead, we want to let you know that " + g.user.firstname + " " + g.user.lastname + " sent them this Kudos:"
+			header = "As " + reports_str + " and " + str(reports_objects[-1].firstname) + "'s lead, we want you to know that " + g.user.firstname + " " + g.user.lastname + " sent them this Kudos:"
 
 		generate_email(header, post_text, subject, recipient_list, post_id, photo_url)
 

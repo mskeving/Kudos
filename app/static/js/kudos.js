@@ -714,7 +714,8 @@ function create_post(public_url) {
 			else {
 				$('.post-column').prepend(response.new_post);
 			}
-
+			initCommentButtons($('.post[data-post-id=' + response.post_id + ']'));
+			initRemoveButton($('.post[data-post-id=' + response.post_id + '] .remove-post-button'));
 			$('ol.posts .post').first().addClass('post--new-in-stream');
 			clear_post_modal_info();
 			end_show_progress($('.submit-new-post'));
@@ -725,9 +726,6 @@ function create_post(public_url) {
 				tagged_user_ids: JSON.stringify(response.tagged_user_ids),
 				is_new_post: true
 			});
-
-			initCommentButtons($('.post[data-post-id=' + data.parent_post_id + ']'));
-			initRemoveButton($('.post[data-post-id=' + data.parent_post_id + '] .remove-post-button'));
 
 			$('.new-post-form').removeClass('submitting');
 
