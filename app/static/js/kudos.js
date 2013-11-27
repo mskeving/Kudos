@@ -473,7 +473,7 @@ $('.remove-comment').on('click', function(e){
 			var remove = function(){
 				comment.remove();
 				$('#comment-body-' + parent_post_id).removeAttr('disabled').removeClass('no-w').addClass('g--two-thirds');
-				$('.comment-button[data-post-id=' + parent_post_id + ']').removeClass('span-all thanked').addClass('g--one-third').html('<i class="fa fa-heart"></i> Thank');
+				$('.comment-button[data-post-id=' + parent_post_id + ']').removeClass('span-all thanked').addClass('g--one-third comment-button').html('<i class="fa fa-heart"></i> Thank');
 				initCommentButtons($('.post[data-post-id=' + parent_post_id + ']'));
 			};
 

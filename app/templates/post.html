@@ -79,7 +79,7 @@
 
             {% if all_tags|length == 1 %}
 
-              <a href="{{ url_for('team', team=all_tags[0].team_tag.teamname) if all_tags[0].team_tag.teamname else url_for('team', team=all_tags[0].user_tag.username) }}">
+              <a href="{{ url_for('team', team=all_tags[0].team_tag.teamname) if all_tags[0].team_tag.teamname else url_for('user', username=all_tags[0].user_tag.username) }}">
                 {{all_tags[0].team_tag.teamname if all_tags[0].team_tag.teamname else (all_tags[0].user_tag.firstname) + ' ' + (all_tags[0].user_tag.lastname)}}
               </a>
 
