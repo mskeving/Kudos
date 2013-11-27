@@ -175,11 +175,15 @@ function show_all_tags(post_id) {
         return result;
 };
 
-$('.js--show-all-taggees').on('click', function(e){
-        e.preventDefault();
-        var post_id = $(this).parents('.post[data-post-id]').data('post-id'),
-            taggees = show_all_tags(post_id);
-});
+window.initTagsModal = function($jqObject) {
+	$jqObject.each(function(){
+		$(this).on('click', function(e){
+      e.preventDefault();
+      var post_id = $(this).parents('.post[data-post-id]').data('post-id'),
+          taggees = show_all_tags(post_id);
+		});
+	});
+};
 
 function collect_tags(form){
 	//collects tags that you have chosen to submit with new post
@@ -728,6 +732,7 @@ function create_post(public_url) {
 
 			initCommentButtons($('.post[data-post-id=' + data.parent_post_id + ']'));
 			initRemoveButton($('.post[data-post-id=' + data.parent_post_id + '] .remove-post-button'));
+			initTagsModal($('.post[data-post-id=' + data.parent_post_id + '] .js--show-all-taggees'));
 
 			$('.new-post-form').removeClass('submitting');
 
@@ -851,4 +856,5 @@ $(document).ready(function(){
 	initCommentButtons($('.post[data-post-id]'));
 	initCharCount($('[data-character-count]'));
 	initRemoveButton($('.remove-post-button'));
+	initTagsModal($('.js--show-all-taggees'));
 });
