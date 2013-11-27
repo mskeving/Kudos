@@ -37,6 +37,8 @@ $(document).ready(function(){
 							else if (!$('.loaded').length>0) {
 								$('.post-column.posts__home').append('<p class="promo loaded faded">Made with <i class="fa fa-heart"></i> by <a href="/team/Kudos">Team Kudos</a>.</p>');
 							}
+							initCommentButtons($('.post[data-post-id]'));
+							initRemoveButton($('.post[data-post-id] .remove-post-button'));
 							scrollInAction = false;
 						},
 						error: function(){

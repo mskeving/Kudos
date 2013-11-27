@@ -289,7 +289,7 @@ window.initCharCount = function($obj) {
 
 
 //TAG MODAL
-$('.addtag-button').on('click', function(e){
+$('.addtag-button').live('click', function(e){
 	e.preventDefault();
 	var post_id = $(this).data('post-id');
 
@@ -322,7 +322,7 @@ $('html').addClass('js--lightbox-open');
 });
 
 //REMOVE TAG
-$('.remove-tag').on('click', function(e) {
+$('.remove-tag').live('click', function(e) {
 	e.preventDefault();
 	var avatar = $(this).parent('.avatar-container'),
 		post_id = $(this).parents('.post').data('post-id'),
@@ -443,6 +443,8 @@ function replace_one_post(post_id) {
 		type: 'POST',
 		success: function(new_post){
 			old_post.before(new_post);
+			initCommentButtons($('.post[data-post-id=' + post_id + ']'));
+			initRemoveButton($('.post[data-post-id=' + post_id + '] .remove-post-button'));
 			old_post.remove();
 		},
 		error: function(){
