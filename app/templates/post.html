@@ -33,7 +33,7 @@
                 <img src="{{ tag.user_tag.photo if tag.user_tag.photo else '/static/img/team_photo.jpg'}}" title="{{tag.team_tag.teamname if tag.team_tag.teamname else (tag.user_tag.firstname) + ' ' + (tag.user_tag.lastname)}}" alt="{{tag.username}}" />
               </a>
 
-              {% if g.user.username == post_object.author.username%}
+              {% if g.user.username == post_object.author.username or g.user.username == tag.user_tag.username %}
                 <div class="post__remove-tag remove-tag mobile-hidden">
                   <i class="fa fa-times"></i>
                 </div>

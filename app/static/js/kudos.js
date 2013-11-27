@@ -304,7 +304,7 @@ $('.addtag-button').live('click', function(e){
             <input type="text" class="tag_input vi-hd" data-post-id="' + post_id + '"/>\
             <div data-id="_tagsinput" class="tagsinput h-m">\
               <div data-id="_addTag">\
-                <input data-id="_tag" class="spit input span-all input--plain input--plain-highlight" value="" data-default="Who do you want to thank?" placeholder="Who do you want to thank?"/>\
+                <input data-id="_tag" data-post-id="' + post_id + '" class="spit input span-all input--plain input--plain-highlight" value="" data-default="Who do you want to thank?" placeholder="Who do you want to thank?"/>\
               </div>\
             </div>\
             <button type="submit" class="f-r new-tag-btn in butt" data-post-id="' + post_id + '">Add tags</button>\
@@ -315,13 +315,15 @@ $('.addtag-button').live('click', function(e){
         </form>\
       </div>');
 
-$('html').addClass('js--lightbox-open');
+	$('html').addClass('js--lightbox-open');
 
-	var tag_input = $('.tag_input[data-post-id=' + post_id + ']'),
-	    tag_modal = $('.tag-modal[data-post-id=' + post_id + ']');
+		var tag_input = $('.tag_input[data-post-id=' + post_id + ']'),
+		    tag_modal = $('.tag-modal[data-post-id=' + post_id + ']');
 
-	prepModals();
-	get_tag_list(tag_input, post_id);
+		prepModals();
+		get_tag_list(tag_input, post_id);
+
+		$('[data-post-id="' + post_id + '"].ui-autocomplete-input').focus();
 
 });
 
