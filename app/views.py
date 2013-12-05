@@ -138,6 +138,16 @@ def index():
 		delete_form=delete_form,
 		)
 
+@app.route('/display')
+@login_required
+def display():
+	posts = Post.query.filter(and_(Post.parent_post_id==None, Post.is_deleted==False)).limit(10).all()
+
+	if posts is not None:
+		indented_posts = posts_to_indented_posts(posts)
+
+	return indented_posts
+
 @app.route('/get_more_posts', methods=['POST'])
 @login_required
 def get_more_posts():
