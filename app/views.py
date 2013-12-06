@@ -138,6 +138,19 @@ def index():
 		delete_form=delete_form,
 		)
 
+@app.route('/tv')
+def tv():
+
+	#query for all parent posts
+	posts = Post.query.filter(and_(Post.parent_post_id==None, Post.is_deleted==False)).order_by(Post.time.desc()).limit(10).all()
+
+	if posts != None:
+		indented_posts = posts_to_indented_posts(posts)
+
+	return render_template("tv-display.html",
+		posts=indented_posts,
+		)
+
 @app.route('/get_more_posts', methods=['POST'])
 @login_required
 def get_more_posts():

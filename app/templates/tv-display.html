@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" class="d--tv">
+  <head>
+      <title>Kudos</title>
+
+    <meta charset="UTF-8" />
+    <meta name="google" content="notranslate">
+    <meta http-equiv="Content-Language" content="en" />
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1" />
+
+    <link rel="stylesheet" href="/static/css/style.css" type="text/css" charset="utf-8" />
+    <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.1/css/font-awesome.css" rel="stylesheet" />
+    <link rel="apple-touch-icon-precomposed" href="/static/img/touch-icon.png" />
+    <link rel="shortcut icon" href="/static/img/favicon.png" />
+
+    <script type="text/javascript" src="//code.jquery.com/jquery-1.7.min.js"></script>
+    <script type="text/javascript" src="//use.typekit.net/bgx4jzo.js"></script>
+    <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
+  </head>
+
+  <body>
+    <div class="site__content wrap cf island cn-c">
+      {% block content %}
+
+      <div class="main-column cn-w img">
+
+      {% if posts %}
+
+        <ol class="post-column posts posts--tv">
+
+          {% for post in posts[:9] %}
+            {% include 'post-readonly.html' with context %}
+          {% endfor %}
+
+        </ol>
+
+      {% else %}
+          <p class="alpha promo faded">Oh no!</p>
+          <p class="beta promo faded">No posts yet. <a href="#" class="js--hocus-focus">Get to it!</a></p>
+
+          <ol class="post-column posts posts__home">
+          </ol>
+
+      {% endif %}
+
+      </div>
+
+      {% endblock %}
+    </div>
+    <script>
+      $(document).ready(function(){
+        var refresh = setInterval(function(){
+          var container = $('.posts--tv');
+
+          container.load('/tv .posts--tv > *')
+        }, 60000)
+      });
+    </script>
+
+  </body>
+
+</html>
