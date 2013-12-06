@@ -67,6 +67,16 @@ input, textarea, button {
 
 // Centering in the unknown
 .cn-c {
+
+  .d--tv & {
+    height: 100%;
+    overflow: visible;
+
+    &:before {
+      height: 30%;
+    }
+  }
+
   text-align: center;
   overflow: scroll;
 
@@ -82,6 +92,7 @@ input, textarea, button {
 .cn-w {
   display: inline-block;
   vertical-align: middle;
+  text-align: left;
 }
 
 // Cutting off bottom margins
@@ -576,7 +587,35 @@ html {
   }
 }
 
-body {
+.d--tv {
+  overflow: hidden;
+  font-size: 1vw;
+  background-image: inline-image('tv-branding.svg'), inline-image('header-db.svg');
+  background-size: auto 3vw, 3vw auto;
+  background-position: center 90%, center center;
+  background-repeat: no-repeat, no-repeat;
+  &:after, &:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 9999;
+  }
+
+  &:after {
+    left: 75%;
+    background-image: linear-gradient(to right, transparentize(#E8E2DC, 1), #E8E2DC 70%);
+  }
+
+  &:before {
+    right: 75%;
+    background-image: linear-gradient(to left, transparentize(#E8E2DC, 1), #E8E2DC 70%);
+  }
+}
+
+html, body {
   height: 100%;
 }
 
@@ -704,11 +743,30 @@ body {
   $POSTS
 \*-----------------------------------*/
 
+.main-column {
+  .d--tv & {
+    margin-left: -3rem;
+  }
+}
+
 .posts {
   list-style: none;
   padding-left: 0;
   perspective: 2000px;
   @extend .fix3d;
+}
+
+.posts--tv {
+  white-space: nowrap;
+  animation: tvscroll 60s infinite;
+  > .post {
+    text-indent: 0 !important;
+    white-space: normal;
+    width: 100%;
+    vertical-align: middle;
+    display: inline-block;
+    margin: 0 1.5rem;
+  }
 }
 
 .post__new-content {
@@ -722,6 +780,10 @@ body {
   padding-top: 1.5rem;
   margin-bottom: 1rem;
   transition: .3s;
+
+  &.post--xl {
+    //transform: scale(1.25);
+  }
 }
 
   .post__container {
@@ -1357,6 +1419,64 @@ body {
   100% {
     opacity: 1;
     max-height: 500px;
+  }
+}
+
+@keyframes tvscroll {
+  0%, 1.5% {
+    opacity: 0;
+  }
+
+  2%, 9.7% {
+    opacity: 1;
+    text-indent: 0;
+  }
+
+  10%, 19.7% {
+    text-indent: calc(-100% - 3rem);
+  }
+
+  20%, 29.7% {
+    text-indent: calc(-200% - 6rem);
+  }
+
+  30%, 39.7% {
+    text-indent: calc(-300% - 9rem);
+  }
+
+  40%, 49.7% {
+    text-indent: calc(-400% - 12rem);
+  }
+
+  50%, 59.7% {
+    text-indent: calc(-500% - 15rem);
+  }
+
+  60%, 69.7% {
+    text-indent: calc(-600% - 18rem);
+  }
+
+  70%, 79.7% {
+    text-indent: calc(-700% - 21rem);
+  }
+
+  80%, 89.7% {
+    text-indent: calc(-800% - 24rem);
+    opacity: 1;
+  }
+
+  90%, 98.9% {
+    text-indent: calc(-900% - 27rem);
+    opacity: 0;
+  }
+
+  98.5% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 0;
+    text-indent: 0;
   }
 }
 
