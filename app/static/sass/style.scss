@@ -73,7 +73,7 @@ input, textarea, button {
     overflow: visible;
 
     &:before {
-      height: 30%;
+      height: 25%;
     }
   }
 
@@ -588,10 +588,11 @@ html {
 }
 
 .d--tv {
+  background-color: desaturate($cream, 100%);
   overflow: hidden;
-  font-size: 1vw;
+  font-size: 1.4vw;
   background-image: inline-image('tv-branding.svg'), inline-image('header-db.svg');
-  background-size: auto 3vw, 3vw auto;
+  background-size: auto 4vw, 4vw auto;
   background-position: center 90%, center center;
   background-repeat: no-repeat, no-repeat;
   &:after, &:before {
@@ -606,12 +607,12 @@ html {
 
   &:after {
     left: 75%;
-    background-image: linear-gradient(to right, transparentize(#E8E2DC, 1), #E8E2DC 70%);
+    background-image: linear-gradient(to right, transparentize(desaturate($cream, 100%), 1), desaturate($cream, 100%) 70%);
   }
 
   &:before {
     right: 75%;
-    background-image: linear-gradient(to left, transparentize(#E8E2DC, 1), #E8E2DC 70%);
+    background-image: linear-gradient(to left, transparentize(desaturate($cream, 100%), 1), desaturate($cream, 100%) 70%);
   }
 }
 
@@ -758,7 +759,7 @@ html, body {
 
 .posts--tv {
   white-space: nowrap;
-  animation: tvscroll 60s infinite;
+  animation: tvscroll 120s infinite;
   > .post {
     text-indent: 0 !important;
     white-space: normal;
@@ -1427,46 +1428,45 @@ html, body {
     opacity: 0;
   }
 
-  2%, 9.7% {
+  2%, 9.6% {
     opacity: 1;
     text-indent: 0;
   }
 
-  10%, 19.7% {
+  10%, 19.6% {
     text-indent: calc(-100% - 3rem);
   }
 
-  20%, 29.7% {
+  20%, 29.6% {
     text-indent: calc(-200% - 6rem);
   }
 
-  30%, 39.7% {
+  30%, 39.6% {
     text-indent: calc(-300% - 9rem);
   }
 
-  40%, 49.7% {
+  40%, 49.6% {
     text-indent: calc(-400% - 12rem);
   }
 
-  50%, 59.7% {
+  50%, 59.6% {
     text-indent: calc(-500% - 15rem);
   }
 
-  60%, 69.7% {
+  60%, 69.6% {
     text-indent: calc(-600% - 18rem);
   }
 
-  70%, 79.7% {
+  70%, 79.6% {
     text-indent: calc(-700% - 21rem);
   }
 
-  80%, 89.7% {
+  80%, 89.6% {
     text-indent: calc(-800% - 24rem);
     opacity: 1;
   }
 
   90%, 98.9% {
-    text-indent: calc(-900% - 27rem);
     opacity: 0;
   }
 
