@@ -14,7 +14,7 @@ from oauth2client.client import (FlowExchangeError,
 								OAuth2WebServerFlow)
 from forms import LoginForm, EditForm, EditPost, DeletePost, NewReply
 from models import (User, Post, UserTeam, Team, Tag,
-					Thanks)
+					Thanks, UNMODERATED, ACCEPTED, REJECTED)
 from datetime import datetime
 from flask.ext.sqlalchemy import sqlalchemy
 from sqlalchemy import and_, or_, func
@@ -113,6 +113,100 @@ def feedback():
 
 	return "complete"
 
+def admin_required():
+    def wrapper():
+        @wraps()
+        def wrapped(*args, **kwargs):
+            if g.user.email not in settings.admin_emails:
+                return "not an admin"
+            return
+        return wrapped
+    return wrapper
+
+@app.route('/admin')
+@login_required
+@admin_required
+def admin():
+	user = g.user
+	new_post_form = EditPost()
+	reply_form = NewReply()
+	delete_form = DeletePost()
+	status = UNMODERATED
+	header = 'Unmoderated Posts:'
+	posts = Post.query.filter(and_(Post.parent_post_id==None, Post.is_deleted==False, Post.status==status)).order_by(Post.time.desc()).all()
+
+	if posts is not None:
+		indented_posts = posts_to_indented_posts(posts)
+
+	return render_template('admin.html',
+		title='admin',
+		user=user,
+		header=header,
+		posts=indented_posts,
+		new_post_form=new_post_form,
+		reply_form=reply_form,
+		delete_form=delete_form,
+		)
+
+
+@app.route('/admin/unmoderated')
+@login_required
+def unmoderated_posts():
+	status = UNMODERATED
+	header = 'Unmoderated Posts: '
+	return real_admin_fn(status, header)
+
+@app.route('/admin/accepted')
+@login_required
+def accepted_posts():
+	status = ACCEPTED
+	header = 'Accepted Posts: '
+	return real_admin_fn(status, header)
+
+@app.route('/admin/rejected')
+@login_required
+def rejected_posts():
+	status = REJECTED
+	header = 'Rejected Posts: '
+	return real_admin_fn(status, header)
+
+def real_admin_fn(status, header):
+	user = g.user
+	new_post_form = EditPost()
+	reply_form = NewReply()
+	delete_form = DeletePost()
+
+	posts = Post.query.filter(and_(Post.parent_post_id==None, Post.is_deleted==False, Post.status==status)).order_by(Post.time.desc()).all()
+
+	if posts is not None:
+		indented_posts = posts_to_indented_posts(posts)
+
+	return render_template('admin.html',
+		title='admin',
+		user=user,
+		header=header,
+		posts=indented_posts,
+		new_post_form=new_post_form,
+		reply_form=reply_form,
+		delete_form=delete_form,
+		)
+
+@app.route('/moderate_post', methods=['POST'])
+@login_required
+def moderate_post():
+	form = request.form
+	post_id = form.get('post_id')
+	status = form.get('status')
+
+	post = Post.query.filter(Post.id==post_id).one()
+
+	post.status = int(status)
+
+	db.session.commit()
+
+	return "complete"
+
+
 @app.route('/')
 @app.route('/index')
 @login_required
@@ -142,7 +236,7 @@ def index():
 def tv():
 
 	#query for all parent posts
-	posts = Post.query.filter(and_(Post.parent_post_id==None, Post.is_deleted==False)).order_by(Post.time.desc()).limit(10).all()
+	posts = Post.query.filter(and_(Post.parent_post_id==None, Post.is_deleted==False, Post.status==ACCEPTED)).order_by(Post.time.desc()).limit(10).all()
 
 	if posts != None:
 		indented_posts = posts_to_indented_posts(posts)

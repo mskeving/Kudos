@@ -62,7 +62,7 @@
     <div class="post__content cf">
       {% if post_object.photo_link %}
         <a href="{{post_object.photo_link}}" class="js--lightbox b f-l post__photo">
-          <img src='{{post_object.photo_link}}' data-post-id="{{post.id}}" />
+          <img src='{{post_object.photo_link}}' data-post-id="{{post_object.id}}" />
         </a>
       {% endif %}
       <div class="post-author post__meta h-m">

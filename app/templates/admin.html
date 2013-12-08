@@ -1,0 +1,43 @@
+
+{% extends "base.html" %}
+{% block content %}
+
+<div class="main-column">
+
+<ul>
+	<li><a href="{{ url_for('unmoderated_posts') }}">Unmoderated Posts</a></li>
+	<li><a href="{{ url_for('accepted_posts') }}">Accepted Posts</a></li>
+	<li><a href="{{ url_for('rejected_posts') }}">Rejected Posts</a></li>
+</ul>
+<h2 class="gamma p">{{header}}</h2>
+{% if posts %}
+
+
+	<ol class="post-column posts posts__home">
+
+		{% for post in posts %}
+		  {% include 'post.html' with context %}
+		  {% set post_object = post.get('post_object') %}
+		  <div class='status' style='margin-bottom:50px'>
+		  	<button class='moderate-btn accept-post' type='button' style='padding:0px 10px' data-post-id='{{post_object.id}}' value=1>Accept</button>
+		  	<button class='moderate-btn reject-post' type='button' style='padding:0px 10px' data-post-id='{{post_object.id}}' value=2>Reject</button>
+		  </div>
+		{% endfor %}
+
+	</ol>
+
+{% else %}
+		<p class="alpha promo faded">Oh no!</p>
+		<p class="beta promo faded">No posts yet. <a href="#" class="js--hocus-focus">Get to it!</a></p>
+
+		<ol class="post-column posts posts__home">
+		</ol>
+
+{% endif %}
+
+</div>
+
+{% endblock %}
+
+
+

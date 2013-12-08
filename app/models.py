@@ -14,7 +14,7 @@ class Team(db.Model):
 	is_deleted = db.Column(db.Boolean, default=False, nullable=False)
 	tagged_in = db.relationship('Tag', backref='team_tag')
 	teams = db.relationship('UserTeam', backref='team')
-	# ex) query results from UserTeam: 
+	# ex) query results from UserTeam:
 	# for team in userteams:
 	# 	team.team.teamname
 
@@ -96,19 +96,22 @@ class User(db.Model):
 		return unicode(self.id)
 
 	def __repr__(self):
-		#tells how to print objects of this class. Used for debugging. 
+		#tells how to print objects of this class. Used for debugging.
 		return '<User %d:%s>' % (self.id, self.username)
 
+UNMODERATED, ACCEPTED, REJECTED = (0,1,2)
 class Post(db.Model):
 	__tablename__ = "posts"
 
 	id = db.Column(db.Integer, primary_key=True)
 	body = db.Column(db.String(500))
-	parent_post_id = db.Column(db.Integer, db.ForeignKey('posts.id')) #denotes that it's a reply
+	parent_post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
 	time = db.Column(db.DateTime)
-	user_id = db.Column(db.Integer, db.ForeignKey('users.id')) #users is tablename
+	user_id = db.Column(db.Integer, db.ForeignKey('users.id')) #users is the tablename
 	photo_link = db.Column(db.String(140))
+	photo_url_fullsize = db.Column(db.String(140))
 	is_deleted = db.Column(db.Boolean, default=False, nullable=False)
+	status = db.Column(db.Integer, default=0, nullable=False)
 
 	tags = db.relationship('Tag', backref='post')
 	thanks = db.relationship('Thanks', backref='post')
@@ -139,12 +142,12 @@ class Tag(db.Model):
 	user_tag_id = db.Column(db.Integer, db.ForeignKey('users.id'), index=True)
 	body = db.Column(db.String(200)) #just for readability in DB store string of tag
 	post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
-	tag_author = db.Column(db.Integer, db.ForeignKey('users.id')) 
+	tag_author = db.Column(db.Integer, db.ForeignKey('users.id'))
 	time = db.Column(db.DateTime)
 	is_deleted = db.Column(db.Boolean, default=False, nullable=False)
 
 
-	
+
 
 
 

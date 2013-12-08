@@ -859,6 +859,38 @@ function s3_upload(data, callback){
     var s3upload = new S3Upload(settings);
 };
 
+//admin tool - moderate posts to display on /tv
+$('.moderate-btn').live('click', function(){
+	post_id = $(this).data('post-id');
+	status_buttons = $(this).parents('.status');
+	parent_post = $('.moderate-btn.accept-post[data-post-id=' + post_id + ']').parents('.status').siblings('.post[data-post-id=' + post_id + ']')
+	data = {
+		post_id: post_id,
+		status: $(this).val()
+	};
+	$.ajax({
+		data: data,
+		type: 'POST',
+		url: '/moderate_post',
+		success: function(resp){
+			parent_post.addClass('post--remove-from-stream');
+			if(animations.supported) {
+				parent_post.one('webkitAnimationEnd mozAnimationEnd oAnimationEnd animationEnd', function(){
+					$(this).remove();
+					status_buttons.remove();
+				});
+			} else {
+				status_buttons.remove();
+				parent_post.remove();
+			}
+			console.log('modified post status');
+		},
+		error: function(){
+			console.log('error modifying post status');
+		}
+	})
+})
+
 // Ready when you are
 
 // Prepare tags input
