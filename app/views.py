@@ -125,7 +125,6 @@ def admin_required():
 
 @app.route('/admin')
 @login_required
-@admin_required
 def admin():
 	user = g.user
 	new_post_form = EditPost()
