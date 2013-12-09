@@ -188,6 +188,7 @@ def moderate_post():
 	post = Post.query.filter(Post.id==post_id).one()
 
 	post.status = int(status)
+	post.status_committer = g.user.email
 
 	db.session.commit()
 
@@ -1146,6 +1147,7 @@ def posts_to_indented_posts(posts):
 		d['thankers'] = thankers
 
 		d['time'] = p.time.strftime("%m/%d/%Y")
+		d['status_committer'] = p.status_committer
 
 		indented_posts.append(d)
 

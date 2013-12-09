@@ -2,6 +2,7 @@
 {% extends "base.html" %}
 {% block content %}
 
+<h1>Admin Page</h1>
 <div class="main-column">
 
 <ul>
@@ -19,10 +20,16 @@
 			{% set post_object = post.get('post_object') %}
 			<div class='status' style='margin-bottom:50px'>
 			{% if status == 'unmoderated' or status == 'rejected' %}
-				<button class='moderate-btn accept-post' type='button' style='padding:0px 10px' data-post-id='{{post_object.id}}' value=1>Accept</button>
+				{% if status == 'rejected' and post.get('status_committer') != None %}
+					Removed from TV display by {{post.get('status_committer')}}. Would you rather allow it?
+				{% endif %}
+				<button class='moderate-btn accept-post' type='button' style='padding:0px 10px' data-post-id='{{post_object.id}}' value=1>Allow</button>
 			{% endif %}
 			{% if status == 'unmoderated' or status == 'accepted' %}
-				<button class='moderate-btn reject-post' type='button' style='padding:0px 10px' data-post-id='{{post_object.id}}' value=2>Reject</button>
+				{% if status == 'accepted' and post.get('status_committer') != None %}
+					Allowed on TV display by {{post.get('status_committer')}}. Would you rather remove it?
+				{% endif %}
+				<button class='moderate-btn reject-post' type='button' style='padding:0px 10px' data-post-id='{{post_object.id}}' value=2>Remove</button>
 			{% endif %}
 			</div>
 		{% endfor %}
