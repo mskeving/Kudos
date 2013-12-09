@@ -123,54 +123,33 @@ def admin_required(f):
 		return f(*args, **kwargs)
 	return decorated_function
 
+
 @app.route('/admin')
-@login_required
-@admin_required
-def admin():
-	user = g.user
-	new_post_form = EditPost()
-	reply_form = NewReply()
-	delete_form = DeletePost()
-	status = UNMODERATED
-	header = 'Unmoderated Posts:'
-	posts = Post.query.filter(and_(Post.parent_post_id==None, Post.is_deleted==False, Post.status==status)).order_by(Post.time.desc()).all()
-
-	if posts is not None:
-		indented_posts = posts_to_indented_posts(posts)
-
-	return render_template('admin.html',
-		title='admin',
-		user=user,
-		header=header,
-		posts=indented_posts,
-		new_post_form=new_post_form,
-		reply_form=reply_form,
-		delete_form=delete_form,
-		)
-
-
 @app.route('/admin/unmoderated')
 @login_required
+@admin_required
 def unmoderated_posts():
 	status = UNMODERATED
 	header = 'Unmoderated Posts: '
-	return real_admin_fn(status, header)
+	return render_admin_page(status, header)
 
 @app.route('/admin/accepted')
 @login_required
+@admin_required
 def accepted_posts():
 	status = ACCEPTED
 	header = 'Accepted Posts: '
-	return real_admin_fn(status, header)
+	return render_admin_page(status, header)
 
 @app.route('/admin/rejected')
 @login_required
+@admin_required
 def rejected_posts():
 	status = REJECTED
 	header = 'Rejected Posts: '
-	return real_admin_fn(status, header)
+	return render_admin_page(status, header)
 
-def real_admin_fn(status, header):
+def render_admin_page(status, header):
 	user = g.user
 	new_post_form = EditPost()
 	reply_form = NewReply()
@@ -181,6 +160,13 @@ def real_admin_fn(status, header):
 	if posts is not None:
 		indented_posts = posts_to_indented_posts(posts)
 
+	if status == REJECTED:
+		status = 'rejected'
+	elif status == ACCEPTED:
+		status = 'accepted'
+	else:
+		status = 'unmoderated'
+
 	return render_template('admin.html',
 		title='admin',
 		user=user,
@@ -189,6 +175,7 @@ def real_admin_fn(status, header):
 		new_post_form=new_post_form,
 		reply_form=reply_form,
 		delete_form=delete_form,
+		status=status
 		)
 
 @app.route('/moderate_post', methods=['POST'])
