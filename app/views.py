@@ -113,18 +113,19 @@ def feedback():
 
 	return "complete"
 
-def admin_required():
-    def wrapper():
-        @wraps()
-        def wrapped(*args, **kwargs):
-            if g.user.email not in settings.admin_emails:
-                return "not an admin"
-            return
-        return wrapped
-    return wrapper
+def admin_required(f):
+	from functools import wraps
+	@wraps(f)
+	def decorated_function(*args, **kwargs):
+		if g.user.email not in settings.admin_emails:
+			return render_template('error_page.html',
+				error_msg="This page is only available to Kudos admins")
+		return f(*args, **kwargs)
+	return decorated_function
 
 @app.route('/admin')
 @login_required
+@admin_required
 def admin():
 	user = g.user
 	new_post_form = EditPost()
