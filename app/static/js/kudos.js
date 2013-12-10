@@ -151,28 +151,28 @@ function get_tag_list(obj, post_id){
 };
 
 function show_all_tags(post_id) {
-        var result;
-        var data = {
-                post_id: post_id
-        };
+    var result;
+    var data = {
+        post_id: post_id
+    };
 
-        $.ajax({
-                url: '/tagged_in_post',
-                type: 'POST',
-                data: data,
-                success: function(data) {
-                        $('body').append(data);
-                        $('html').addClass('js--lightbox-open');
-                        prepModals();
-                },
-                error: function(message) {
-                        console.log('Error fetching taggees for post #' + data.post_id);
-                        console.log(message);
-                        return false;
-                }
-        });
+    $.ajax({
+        url: '/tagged_in_post',
+        type: 'POST',
+        data: data,
+        success: function(data) {
+            $('body').append(data);
+            $('html').addClass('js--lightbox-open');
+            prepModals();
+        },
+        error: function(message) {
+            console.log('Error fetching taggees for post #' + data.post_id);
+            console.log(message);
+            return false;
+        }
+    });
 
-        return result;
+    return result;
 };
 
 window.initTagsModal = function($jqObject) {
@@ -865,14 +865,17 @@ $('.moderate-btn').live('click', function(){
 	status_buttons = $(this).parents('.status');
 	parent_post = $('.moderate-btn[data-post-id=' + post_id + ']').parents('.status').siblings('.post[data-post-id=' + post_id + ']')
 	data = {
-		post_id: post_id,
-		status: $(this).val()
+		'post_id': post_id,
+		'status': $(this).val()
 	};
 	$.ajax({
 		data: data,
 		type: 'POST',
 		url: '/moderate_post',
 		success: function(resp){
+			accepted_count = parseInt($('.count-accepted-posts').text());
+			rejected_count = parseInt($('.count-rejected-posts').text());
+			unmoderated_count = parseInt($('.count-unmoderated-posts').text());
 			parent_post.addClass('post--remove-from-stream');
 			if(animations.supported) {
 				parent_post.one('webkitAnimationEnd mozAnimationEnd oAnimationEnd animationEnd', function(){
@@ -882,6 +885,34 @@ $('.moderate-btn').live('click', function(){
 			} else {
 				status_buttons.remove();
 				parent_post.remove();
+			}
+			if ($('.accepted').length > 0){
+				//decrease accepted by 1 and increase reject by 1
+				accepted_count -= 1;
+				rejected_count += 1;
+				$('.count-accepted-posts').text(accepted_count);
+				$('.count-rejected-posts').text(rejected_count);
+			}
+			else if ($('.rejected').length > 0){
+				//decrease rejected by 1 and increase accepted by 1
+				accepted_count += 1;
+				rejected_count -= 1;
+				$('.count-accepted-posts').text(accepted_count);
+				$('.count-rejected-posts').text(rejected_count);
+			}
+			else if ($('.unmoderated').length > 0){
+				unmoderated_count -= 1
+				if (data['status'] == 1){
+					//clicked Accept
+					accepted_count += 1;
+				}
+				else if (data['status'] == 2){
+					//clicked Reject
+					rejected_count += 1;
+				}
+				$('.count-accepted-posts').text(accepted_count);
+				$('.count-rejected-posts').text(rejected_count);
+				$('.count-unmoderated-posts').text(unmoderated_count);
 			}
 			console.log('modified post status');
 		},

@@ -157,6 +157,13 @@ def render_admin_page(status, header):
 
 	posts = Post.query.filter(and_(Post.parent_post_id==None, Post.is_deleted==False, Post.status==status)).order_by(Post.time.desc()).all()
 
+	accepted_posts = Post.query.filter(and_(Post.parent_post_id==None, Post.is_deleted==False, Post.status==ACCEPTED)).all()
+	rejected_posts = Post.query.filter(and_(Post.parent_post_id==None, Post.is_deleted==False, Post.status==REJECTED)).all()
+	unmoderated_posts = Post.query.filter(and_(Post.parent_post_id==None, Post.is_deleted==False, Post.status==UNMODERATED)).all()
+	count_accepted_posts = len(accepted_posts)
+	count_rejected_posts = len(rejected_posts)
+	count_unmoderated_posts = len(unmoderated_posts)
+
 	if posts is not None:
 		indented_posts = posts_to_indented_posts(posts)
 
@@ -175,8 +182,11 @@ def render_admin_page(status, header):
 		new_post_form=new_post_form,
 		reply_form=reply_form,
 		delete_form=delete_form,
-		status=status
-		)
+		status=status,
+		count_unmoderated_posts=count_unmoderated_posts,
+		count_accepted_posts=count_accepted_posts,
+		count_rejected_posts=count_rejected_posts,
+	)
 
 @app.route('/moderate_post', methods=['POST'])
 @login_required

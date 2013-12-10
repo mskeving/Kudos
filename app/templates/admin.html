@@ -6,11 +6,11 @@
 <div class="main-column">
 
 <ul>
-	<li><a href="{{ url_for('unmoderated_posts') }}">Unmoderated Posts</a></li>
-	<li><a href="{{ url_for('accepted_posts') }}">Accepted Posts</a></li>
-	<li><a href="{{ url_for('rejected_posts') }}">Rejected Posts</a></li>
+	<li><a href="{{ url_for('unmoderated_posts') }}">Unmoderated Posts</a> (<span class='count-unmoderated-posts'>{{count_unmoderated_posts}}</span>)</li>
+	<li><a href="{{ url_for('accepted_posts') }}">Accepted Posts</a> (<span class='count-accepted-posts'>{{count_accepted_posts}}</span>)</li>
+	<li><a href="{{ url_for('rejected_posts') }}">Rejected Posts</a> (<span class='count-rejected-posts'>{{count_rejected_posts}}</span>)</li>
 </ul>
-<h2 class="gamma p">{{header}}</h2>
+<h2 class="gamma p {{status}}">{{header}}</h2>
 {% if posts %}
 
 	<ol class="posts">
