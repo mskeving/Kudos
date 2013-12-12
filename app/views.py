@@ -899,8 +899,6 @@ def add_tag():
 	tag_ids = request.form['tag_ids'].split('|')
 	tag_text = request.form['tag_text'].split('|')
 
-	user_tag_info = []
-	team_tag_info = []
 	tagged_user_ids = [] # used in kudos.js for send_notifications
 	tagged_team_ids = []
 
@@ -916,7 +914,6 @@ def add_tag():
 			user['photo'] = tagged_user.photo
 			user['username'] = tagged_user.username
 			user['user_id'] = tagged_user.id
-			user_tag_info.append(user)
 			db.session.add(new_tag)
 
 			tagged_user_ids.append(tagged_user.id)
@@ -931,7 +928,6 @@ def add_tag():
 			team['photo'] = tagged_team.photo
 			team['teamname'] = tagged_team.teamname
 			team['team_id'] = tagged_team.id
-			team_tag_info.append(team)
 			db.session.add(new_tag)
 
 			tagged_team_ids.append(tagged_team.id)
@@ -939,8 +935,6 @@ def add_tag():
 	db.session.commit()
 
 	new_tag_dict={}
-	new_tag_dict['user_tags'] = user_tag_info
-	new_tag_dict['team_tags'] = team_tag_info
 	new_tag_dict['tagged_user_ids'] = tagged_user_ids
 	new_tag_dict['tagged_team_ids'] = tagged_team_ids
 	tag_info_json = json.dumps(new_tag_dict)
