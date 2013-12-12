@@ -25,6 +25,8 @@ from flask.ext.mail import Message
 
 from settings import settings
 
+settings.login_handler.setup(app, auth_finish)
+
 def auth_finish(email, next):
 	if email is None:
 		error_msg = "You need to authenticate with Google in order to log in to Kudos."
@@ -53,10 +55,6 @@ def auth_finish(email, next):
 	login_user(u[0], remember=True)
 
 	return redirect(next or '/')
-
-
-settings.login_handler.setup(app, auth_finish)
-
 
 @app.before_request
 def before_request():
