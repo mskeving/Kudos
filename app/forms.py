@@ -1,6 +1,4 @@
-from flask.ext.wtf import Form, TextField, BooleanField, TextAreaField, SubmitField, HiddenField
-from flask.ext.wtf import Required, Length
-from app.models import User
+from flask.ext.wtf import Form, HiddenField
 
 class EditPost(Form):
 	hidden_tag_ids = HiddenField('hidden_tag_ids')

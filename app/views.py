@@ -56,14 +56,14 @@ def auth_finish(email, next):
 
 settings.login_handler.setup(app, auth_finish)
 
+# g.user is User object of the logged in user. All requests will have access to this.
 @app.before_request
 def before_request():
-	#all requests will have access to the logged in user, even in templates
 	g.user = current_user
 
+# for avatars when no S3 connection - not currently in use.
 @app.route('/static/img/<path:filename>')
 def serve_image(filename):
-	#for avatars when no S3 connection
 	image_path = os.path.join(app.root_path, 'static','img')
 	return send_from_directory(image_path, filename)
 
@@ -74,13 +74,10 @@ def login():
 	auth_url = settings.login_handler.start(request.url_root, next)
 	return render_template('login.html', auth_url=auth_url)
 
-#LOGOUT
 @app.route('/logout')
 def logout():
 	logout_user()
 	return redirect(url_for('index'))
-
-last_user_cache = [None]
 
 @lm.user_loader
 def load_user(id_str):
@@ -111,94 +108,11 @@ def feedback():
 
 	return "complete"
 
-def admin_required(f):
-	from functools import wraps
-	@wraps(f)
-	def decorated_function(*args, **kwargs):
-		if g.user.email not in settings.admin_emails:
-			return render_template('error_page.html',
-				error_msg="This page is only available to Kudos admins")
-		return f(*args, **kwargs)
-	return decorated_function
-
-
-@app.route('/admin')
-@app.route('/admin/unmoderated')
-@login_required
-@admin_required
-def unmoderated_posts():
-	status = UNMODERATED
-	header = 'Unmoderated Posts: '
-	return render_admin_page(status, header)
-
-@app.route('/admin/accepted')
-@login_required
-@admin_required
-def accepted_posts():
-	status = ACCEPTED
-	header = 'Accepted Posts: '
-	return render_admin_page(status, header)
-
-@app.route('/admin/rejected')
-@login_required
-@admin_required
-def rejected_posts():
-	status = REJECTED
-	header = 'Rejected Posts: '
-	return render_admin_page(status, header)
-
-def render_admin_page(status, header):
-	user = g.user
-	new_post_form = EditPost()
-
-	posts = Post.query.filter(and_(Post.parent_post_id==None, Post.is_deleted==False, Post.status==status)).order_by(Post.time.desc()).all()
-
-	accepted_posts = Post.query.filter(and_(Post.parent_post_id==None, Post.is_deleted==False, Post.status==ACCEPTED)).all()
-	rejected_posts = Post.query.filter(and_(Post.parent_post_id==None, Post.is_deleted==False, Post.status==REJECTED)).all()
-	unmoderated_posts = Post.query.filter(and_(Post.parent_post_id==None, Post.is_deleted==False, Post.status==UNMODERATED)).all()
-	count_accepted_posts = len(accepted_posts)
-	count_rejected_posts = len(rejected_posts)
-	count_unmoderated_posts = len(unmoderated_posts)
-
-	if posts is not None:
-		indented_posts = posts_to_indented_posts(posts)
-
-	if status == REJECTED:
-		status = 'rejected'
-	elif status == ACCEPTED:
-		status = 'accepted'
-	else:
-		status = 'unmoderated'
-
-	return render_template('admin.html',
-		title='admin',
-		user=user,
-		header=header,
-		posts=indented_posts,
-		new_post_form=new_post_form,
-		status=status,
-		count_unmoderated_posts=count_unmoderated_posts,
-		count_accepted_posts=count_accepted_posts,
-		count_rejected_posts=count_rejected_posts,
-	)
-
-@app.route('/moderate_post', methods=['POST'])
-@login_required
-def moderate_post():
-	form = request.form
-	post_id = form.get('post_id')
-	status = form.get('status')
-
-	post = Post.query.filter(Post.id==post_id).one()
-
-	post.status = int(status)
-	post.status_committer = g.user.email
-
-	db.session.commit()
-
-	return "complete"
-
-
+'''
+Root page
+Displays most recent 10 posts.
+More posts are displayed as you scroll down page, through JavaScript calling get_more_posts
+'''
 @app.route('/')
 @app.route('/index')
 @login_required
@@ -220,6 +134,10 @@ def index():
 		new_post_form=new_post_form,
 		)
 
+
+'''
+Queries for 10 most recent posts that have been accepted by an admin for display
+'''
 @app.route('/tv')
 def tv():
 
@@ -233,6 +151,125 @@ def tv():
 		posts=indented_posts,
 		)
 
+'''
+decorator for pages only admins can see
+admins are defined in settings.py under admin_emails
+'''
+def admin_required(f):
+	from functools import wraps
+	@wraps(f)
+	def decorated_function(*args, **kwargs):
+		if g.user.email not in settings.admin_emails:
+			return render_template('error_page.html',
+				error_msg="This page is only available to Kudos admins")
+		return f(*args, **kwargs)
+	return decorated_function
+
+
+'''
+Use /admin to determine which posts are display on TV
+no link currently goes to this endpoint. Will need to type /admin manually
+Defaults to showing all unmoderated posts, waiting to be cleared
+'''
+@app.route('/admin')
+@app.route('/admin/unmoderated')
+@login_required
+@admin_required
+def unmoderated_posts():
+	# UNMODERATED = 0
+	status = UNMODERATED
+	header = 'Unmoderated Posts: '
+	return render_admin_page(status, header)
+
+
+@app.route('/admin/accepted')
+@login_required
+@admin_required
+def accepted_posts():
+	# ACCEPTED = 1
+	status = ACCEPTED
+	header = 'Accepted Posts: '
+	return render_admin_page(status, header)
+
+@app.route('/admin/rejected')
+@login_required
+@admin_required
+def rejected_posts():
+	# REJECTED = 2
+	status = REJECTED
+	header = 'Rejected Posts: '
+	return render_admin_page(status, header)
+
+
+
+'''
+-Queries for all posts with given status (ACCEPTED, REJECTED, or UNMODERATED)
+-Then does a separate query for each status individually to get counts for each category
+TODO: be smarter about this flow.
+'''
+def render_admin_page(status, header):
+	user = g.user
+	new_post_form = EditPost()
+
+	posts = Post.query.filter(and_(Post.parent_post_id==None, Post.is_deleted==False, Post.status==status)).order_by(Post.time.desc()).all()
+
+	accepted_posts = Post.query.filter(and_(Post.parent_post_id==None, Post.is_deleted==False, Post.status==ACCEPTED)).all()
+	rejected_posts = Post.query.filter(and_(Post.parent_post_id==None, Post.is_deleted==False, Post.status==REJECTED)).all()
+	unmoderated_posts = Post.query.filter(and_(Post.parent_post_id==None, Post.is_deleted==False, Post.status==UNMODERATED)).all()
+	count_accepted_posts = len(accepted_posts)
+	count_rejected_posts = len(rejected_posts)
+	count_unmoderated_posts = len(unmoderated_posts)
+
+	if posts is not None:
+		indented_posts = posts_to_indented_posts(posts)
+
+	# reassign status to string to use in template logic for readability
+	if status == REJECTED:
+		status = 'rejected'
+	elif status == ACCEPTED:
+		status = 'accepted'
+	else:
+		status = 'unmoderated'
+
+	return render_template('admin.html',
+		title='admin',
+		user=user,
+		header=header,
+		posts=indented_posts,
+		new_post_form=new_post_form,
+		status=status,
+		count_unmoderated_posts=count_unmoderated_posts,
+		count_accepted_posts=count_accepted_posts,
+		count_rejected_posts=count_rejected_posts,
+	)
+
+
+
+'''
+Called when admin clicks on 'accept' or 'reject' for given post
+Changes status value in db for that post
+'''
+@app.route('/moderate_post', methods=['POST'])
+@login_required
+def moderate_post():
+	form = request.form
+	post_id = form.get('post_id')
+	status = form.get('status')
+
+	post = Post.query.filter(Post.id==post_id).one()
+
+	post.status = int(status)
+	post.status_committer = g.user.email
+
+	db.session.commit()
+
+	return "complete"
+
+'''
+Endpoint for infinite scrolling function located in index.js
+Receives the post_id of last post on page, and fetches the next 5 posts
+Renders post.html template for each post and returns json of this
+'''
 @app.route('/get_more_posts', methods=['POST'])
 @login_required
 def get_more_posts():
@@ -270,6 +307,19 @@ def get_more_posts():
 
 	return new_posts_json
 
+
+
+
+'''
+Called each time you click 'add tag' on a post, or when adding tags for a new post
+Queries for all entries in User and Team tables (not deleted)
+If adding tag on existing post, queries for tags already on that post and excludes them with used_tags_dict
+
+Available tags are added to tag_dict with 'u' or 't' prepended
+'u' and 't' are used throughout app to denote whether it's a user or a team tag
+
+returns a json of all available tags (user/team id's, strings of names, and full tag dictionary)
+'''
 @app.route('/create_tag_list', methods=['POST'])
 @login_required
 def create_tag_list():
@@ -281,6 +331,7 @@ def create_tag_list():
 	team_tags = Team.query.filter_by(is_deleted=False).all()
 	all_tags = user_tags + team_tags
 
+	# Can never tag yourself
 	used_tags_dict = {
 		g.user.id: 'user'
 	}
@@ -297,13 +348,16 @@ def create_tag_list():
 		print "used_tags_dict: %r " % used_tags_dict
 
 	tag_dict = {}
+	# will include all available tags for given post
+	# {name: user_id,
+	#	teamname: team_id}
 
 	for tag in user_tags:
-		#if tag has already been used on this post, don't add to available tags
 		if tag.id in used_tags_dict:
+			#if tag has already been used on this post, don't add to available tags
 			continue
 
-		# Needs to match the tag ids in user prefill_data
+		# prepend 'u' to denote it's a user tag, and keep id unqiue from team id's
 		tag_user_id = "u" + str(tag.id)
 		#Available User Tags: full name, last name, nickname, teamname
 		if tag.firstname and tag.lastname and tag.nickname:
@@ -319,11 +373,11 @@ def create_tag_list():
 		else:
 			print "no name for user: "
 
-	#Team Tags - all teams
+
 	for tag in team_tags:
 		if tag.id in used_tags_dict:
 			continue
-		# Needs to match the tag ids in team prefill_data
+		# prepend 't' to keep id's unique from user id's
 		tag_team_id = "t" + str(tag.id)
 		tag_dict[tag.teamname] = tag_team_id
 
@@ -336,7 +390,19 @@ def create_tag_list():
 		'tag_dict': tag_dict
 		})
 
-#TEAM PROFILE
+
+
+
+
+'''
+TEAM PROFILE
+
+Displays all teams members for given team by querying users_teams
+Displays all posts where given team is tagged in
+
+prefill_data is included so that when you create a new post on a team page, that team will be automatically tagged.
+Stored in a hidden field in team.html
+'''
 @app.route('/team/<team>')
 @login_required
 def team(team):
@@ -349,7 +415,6 @@ def team(team):
 
 	tagged_posts = []
 	for tag in tags:
-		print "tag: %r " % tag
 		tagged_posts.append(tag.post)
 
 	indented_posts = []
@@ -358,7 +423,8 @@ def team(team):
 
 	dict_of_users_teams = {}
 	list_of_users = []
-	#get list of teams each member is a part of
+	# get list of teams each member is a part of (a user can be on multiple teams)
+	# not currently used on team.html
 	for member in team_members:
 		list_of_users.append(member.user)
 		list_of_teams = []
@@ -366,18 +432,15 @@ def team(team):
 		for team in teams:
 			#using DB relationship to get teamname
 			list_of_teams.append(team.team.teamname)
-		print "list_of_teams: %r" % list_of_teams
 		#keep all user info
 		dict_of_users_teams[member.user] = list_of_teams
 
 	# Prefilled tag data for post creation flow
+	# tag data for team needs to be prepended with 't' to differentiate from user id's
 	prefill_data = {
-		# Needs to match the team ids in create_tag_list
 		'id': 't' + str(this_team.id),
 		'name': this_team.teamname,
 	}
-
-	print "dict_of_users_teams %r" % dict_of_users_teams
 
 	return render_template('team.html',
 		new_post_form=new_post_form,
@@ -388,6 +451,8 @@ def team(team):
 		name=name,
 		prefill_data=prefill_data,
 	)
+
+
 
 
 #USER PROFILE
