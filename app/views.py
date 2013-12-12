@@ -886,8 +886,8 @@ def display_thanks():
 ADD NEW TAG TO EXISTING POST
 
 Can add user or team tags. id's are kept separate and unique by prepending with 'u' or 't' respectively
-Submit new tags to db and return a json with all of the tags added to create
-
+Submit new tags to db and returns a json with all of the tag_ids. These ids need to be passed back to send email notifications
+TODO: sort of backwards to send this to client and then back to server to send emails.
 '''
 @app.route('/newtag', methods=['POST'])
 @login_required
@@ -954,7 +954,13 @@ def delete_tag():
 	return json.dumps(tag_info)
 
 
-#SUBMIT NEW COMMENT
+'''
+/newcomment is called whenever you click 'Thank', whether you include a comment or not
+If user does not include text, body is stored as an empty string.
+
+Tags for the parent post are queried so email notifications can be sent with new comment.
+Notifications are only sent to taggees if text is included
+'''
 @app.route('/newcomment', methods=['POST'])
 @login_required
 def new_comment():
@@ -998,7 +1004,7 @@ def new_comment():
 
 	return json.dumps(comment_info)
 
-#DELETE COMMENT
+# DELETE COMMENT
 @app.route('/deletecomment/<postid>', methods=['POST'])
 @login_required
 def delete_comment(postid):
@@ -1012,7 +1018,12 @@ def delete_comment(postid):
 	return status
 
 
-#DELETE POSTS
+'''
+DELETE POST
+
+To delete post, must also delete associated tags, comments, and thanks
+Set these entires to is_deleted=True
+'''
 @app.route('/deletepost', methods=['POST', 'GET'])
 @login_required
 def delete_post():
@@ -1037,6 +1048,11 @@ def delete_post():
 
 	return post_id
 
+
+'''
+called from kudos.js to display all tags for a given post_info_dict
+Used if tags needs to be truncated. Returns tagged_modal template, which displays list of names
+'''
 @app.route('/tagged_in_post', methods=['POST'])
 def tagged_in_post():
 	form = request.form
@@ -1056,7 +1072,12 @@ def tagged_in_post():
 			error_msg="No Post Found")
 
 
-#POST PAGE
+'''
+POST PAGE
+
+Displays a single post
+Endpoint for link in notification emails, or when you click on date for a given post
+'''
 @app.route('/post/<post_id>', methods=['GET'])
 @login_required
 def permalink_for_post_with_id(post_id):
@@ -1077,7 +1098,13 @@ def permalink_for_post_with_id(post_id):
 		)
 
 
-#ALL USERS
+'''
+Retrieve all users in db and teams they're on
+allusers.html will only display their subteam (list_of_teams[-1])
+
+TODO: Think more about performance here.
+Infinite scrolling to display more teams? Load a fraction first to get something loaded on page and then display more?
+'''
 @app.route('/all_users')
 @login_required
 def all_users():
@@ -1087,14 +1114,6 @@ def all_users():
 	for user in all_users:
 		all_user_ids.append(user.id)
 
-	#users_teams = UserTeam.query.filter(UserTeam.user_id.in_(all_user_ids)).all()
-
-	# {user_id: [team1, team2]}
-	#dict_of_users_teams2 = {ut: (ut.user_id, ut.team_id) for ut in users_teams}
-
-	#dict_of_users_teams=defaultdict(list)
-	#for ut in dict_of_users_teams2.keys():
-	#	dict_of_users_teams[ut.user_id].append(ut.team)
 	dict_of_users_teams = {}
 	for user in all_users:
 		user_teams = sorted(user.users_teams, cmp=lambda x, y: cmp(x.id, y.id))
@@ -1106,88 +1125,12 @@ def all_users():
 		)
 
 
-# @app.errorhandler(404)
-# def internal_error(error):
-# 	return render_template('404.html'), 404
+'''
+Takes in a LIST of posts
+Returns a list of dictionaries for each post with relevant information for easy retrieval (ex. taggees, thankers, comments etc)
 
-# @app.errorhandler(500)
-# def internal_error(error):
-# 	db.session.rollback()
-# 	return render_template('500.html'), 500
-
-
-class HPost:
-	def __init__(self, dbo):
-		self.dbo = dbo
-		self.children = []
-
-	#the representation
-	def __repr__(self):
-		return "HPost(%d, %r)" % (self.dbo.id, self.children)
-
-	@staticmethod
-	def build(posts_list):
-		#builds a tree of all posts
-		#returns lists of parent post, with list of replies
-		#Each parent creates a new HPost, with post_id as dbo and children is list of replies
-		#HPost(1, [HPost(3)]) -- 3rd post in Post is reply to first post
-
-		ret = []
-		d = {}
-		for post in posts_list:
-			h = HPost(post)
-			d[post.id] = h
-
-			#parent posts have no parent_post_id
-			if post.parent_post_id == None:
-
-				ret.append(h)
-			#if it's a child, append to parent's children list
-			else:
-				parent = post.parent_post_id
-				d[parent].children.append(h)
-		return ret
-
-
-	#create empty list to append to in calcIndentHelper
-	@staticmethod
-	def calcIndent(hposts):
-		posts_list = []
-		posts_list = HPost.calcIndentHelper(hposts, posts_list)
-		return posts_list
-
-
-	#cls is HPost, so you can do cls.method instead of HPost.method
-	@classmethod
-	def calcIndentHelper(cls, hposts, posts_list, indent=0):
-		#returns a list of dictionaries. Each dictionary has properties of each post
-
-		d = {}
-		for post in hposts:
-			#better way of getting column names?
-			d['body'] = post.dbo.body
-			d['indent'] = indent
-			d['post_id'] = post.dbo.id
-			d['firstname'] = post.dbo.author.firstname
-			d['photo'] = post.dbo.author.photo
-			d['timestamp'] = post.dbo.time
-
-			posts_list.append(d)
-			d = {}
-			cls.calcIndentHelper(post.children, posts_list, indent+1)
-
-
-		return posts_list
-
-
-
-	@classmethod
-	def dump(cls, hposts, indent):
-		for post in hposts:
-			print indent * " " + str(post.dbo.id), str(post.dbo.body)
-			cls.dump(post.children, indent+1)
-
-
+TODO: rename to something more relevant. Was originally created to display posts and their children (indented on the page)
+'''
 def posts_to_indented_posts(posts):
 	# Turns a list of posts from a database query into a list of dictionaries
 	# with the right keys/values to be passed to the post.html template
@@ -1227,7 +1170,7 @@ def posts_to_indented_posts(posts):
 			else:
 				print "no tags for this post.id: %r" % p.id
 
-		#display tags in random order each time
+		# display tags in random order each time
 		random.shuffle(tagged_users)
 		random.shuffle(tagged_teams)
 		d['tagged_users'] = tagged_users
@@ -1236,17 +1179,29 @@ def posts_to_indented_posts(posts):
 		all_tags  = tagged_teams + tagged_users
 		d['all_tags'] = all_tags
 
-		#list of users giving thanks for post
+		# list of users giving thanks for post
 		thankers = []
 		for thank in p.thanks:
 			thankers.append(thank.user)
 		d['thankers'] = thankers
 
 		d['time'] = p.time.strftime("%m/%d/%Y")
+
+		# admin who approves/rejects post for TV display. Only used on /admin
 		d['status_committer'] = p.status_committer
 
 		indented_posts.append(d)
 
 	return indented_posts
+
+
+# @app.errorhandler(404)
+# def internal_error(error):
+# 	return render_template('404.html'), 404
+
+# @app.errorhandler(500)
+# def internal_error(error):
+# 	db.session.rollback()
+# 	return render_template('500.html'), 500
 
 
