@@ -435,7 +435,7 @@ def team(team):
 		#keep all user info
 		dict_of_users_teams[member.user] = list_of_teams
 
-	# Prefilled tag data for post creation flow
+	# Prefilled tag data for new post creation flow
 	# tag data for team needs to be prepended with 't' to differentiate from user id's
 	prefill_data = {
 		'id': 't' + str(this_team.id),
@@ -454,8 +454,15 @@ def team(team):
 
 
 
+'''
+USER PROFILE
 
-#USER PROFILE
+Displays basic information for given user by querying User table
+Displays posts given user is tagged in (but not posts their teams are tagged in)
+
+prefill_data is included so that when you create a new post on a user page, that user will be automatically tagged.
+Stored in a hidden field in user.html
+'''
 @app.route('/user/<username>')
 @login_required
 def user(username):
@@ -464,31 +471,27 @@ def user(username):
 	manager = User.query.filter_by(id=user.manager_id).first()
 	name = user.firstname
 
-	#get all tags that user is tagged in
+	if user == None:
+		flash('User ' + username + ' not found.')
+		return redirect(url_for('index'))
+
+	# get all tags that user is tagged in
 	tags = Tag.query.filter(and_(Tag.user_tag_id==user.id, Tag.is_deleted==False)).order_by(Tag.time.desc()).all()
 
 	tagged_posts = []
-	#for each tag, find post associated with it
 	for tag in tags:
+		# for each tag, find post associated with it
 		tagged_posts.append(tag.post)
 
 	indented_posts = []
 	if len(tagged_posts) != 0:
 		indented_posts = posts_to_indented_posts(tagged_posts)
 
-	dict_of_users_teams = {}
-
-	#TODO: also display tagged posts for the user's teams
-	list_of_team_names = []
+	# TODO: also display tagged posts for the user's teams
 	teams = db.session.query(UserTeam).filter_by(user_id=user.id).all()
+	list_of_team_names = []
 	for team in teams:
 		list_of_team_names.append(team.team.teamname)
-	dict_of_users_teams[user.id]=list_of_team_names
-
-
-	if user == None:
-		flash('User ' + username + ' not found.')
-		return redirect(url_for('index'))
 
 	prefill_data = {
 		# Needs to match the user tag ids in create_tag_list
@@ -508,10 +511,17 @@ def user(username):
 
 
 
+
+'''
+Uploads image files to S3 account when submitting new post with strong, unique signature
+called from s3_upload in kudos.js
+
+returns a json of the signed request and the public url for the thumbnail image
+'''
 @app.route('/sign_s3_upload/')
 def sign_s3_upload():
-	#TODO: Think about preventing abuse of this
-	#associate uploads with a user. If there are any things in S3 bucket that aren't referenced with a user, delete them
+	# TODO: Think about preventing abuse of this
+	# ex) associate uploads with a user. If there are any things in S3 bucket that aren't referenced with a user, delete them
 	AWS_ACCESS_KEY = settings.image_store.aws_credentials.access_key_id
 	AWS_SECRET_KEY = settings.image_store.aws_credentials.secret_access_key
 	S3_BUCKET = settings.image_store.bucket_name
@@ -545,6 +555,15 @@ def sign_s3_upload():
 		 'public_url': public_url
 	  })
 
+
+
+
+'''
+Creates an email to send in case of error.
+This is an ajax endpoint, so if an ajax request fails, an email is sent.
+
+Currently, only information sent from server is the logged in user
+'''
 @app.route('/send_error_msg', methods=['POST'])
 def send_error_msg():
 	form = request.form
@@ -560,57 +579,27 @@ def send_error_msg():
 		text=text,
 		kudos_header=kudos_header,
 		)
+	# need to include post_id param when called send_email, but error won't necessarily have one
 	post_id = None
 
 	if settings.email_stealer is None:
+		# only send error emails on prod
 		send_email(sender, recipient_list, reply_to, subject, html, post_id)
 
 	return "complete"
 
 
-def generate_email(header, message, subject, recipient_list, post_id, img_url):
-	print "generating email for %r" % recipient_list
-	reply_to = g.user.email
 
-	html = render_template('notification_email.html',
-		kudos_header=header,
-		message=message,
-		img_url=img_url,
-		post_id=post_id,
-		)
-	sender = settings.mail_sender.username
-	send_email(sender, recipient_list, reply_to, subject, html, post_id)
+'''
+CREATE NEW POST
 
-
-def send_email(sender, recipients, reply_to, subject, html, post_id):
-	print "in send_email"
-
-	if settings.email_stealer is not None:
-		subject = "%s (%s)" % (subject, ', '.join(recipients))
-		recipients = [settings.email_stealer]
-
-	msg = Message(
-		subject=subject,
-		sender=sender,
-		recipients=recipients,
-		reply_to=reply_to,
-		html=html)
-
-	def send_async(my_app, msg):
-		with my_app.app_context():
-			mail.send(msg)
-			print "email sent to %r, post_id: %r" % (msg.recipients, post_id)
-
-	Thread(target=send_async, args=[app,msg]).start()
-
-
-#ADD NEW POST
+Submite the new post to db with all user/team tags associated with it
+Returns a json with post.html rendered and relevant post information
+'''
 @app.route('/createpost', methods=['POST'])
 @login_required
 def new_post():
-
 	user_id = g.user.id
-
 	new_post_form = EditPost()
 
 	form = request.form
@@ -618,33 +607,30 @@ def new_post():
 	filename = form.get('filename')
 	post_text = form.get('post_text')
 
-
 	new_post = Post(body=post_text, time=datetime.utcnow(), user_id=user_id, photo_link=photo_url)
 	db.session.add(new_post)
 	db.session.commit()
 	db.session.refresh(new_post)
 	post_id = new_post.id
 
-	#Submit tags
+	# create lists of tag information from hidden fields
 	tag_ids = form.get('hidden_tag_ids', '').split('|')
 	tag_text = form.get('hidden_tag_text', '').split('|')
 	seen_already = set()
-
 	tagged_user_ids = []
 	tagged_team_ids = []
 	for i in range(len(tag_ids)-1): #last index will be "" because of delimiters
-		#USER TAG
 		if tag_ids[i] in seen_already:
+			# prevent duplicates of tags on single post in case of error submitting post the first time
 			continue
-
 		seen_already.add(tag_ids[i])
 
+		#USER TAGS
 		if tag_ids[i][0] == 'u':
 			user_id = int(tag_ids[i][1:]) #remove leading 'u' to convert back to int user_id
 			new_tag = Tag(user_tag_id=user_id, body=tag_text[i], post_id=post_id, tag_author=user_id, time=datetime.utcnow())
 			tagged_user_ids.append(user_id)
 			db.session.add(new_tag)
-
 
 		#TEAM TAGS
 		elif tag_ids[i][0] == 't':
@@ -661,7 +647,7 @@ def new_post():
 	post_page = render_template('post.html',
 		post=indented_post,
 		new_post_form=new_post_form,
-		)
+	)
 
 
 	post_info_dict = {
@@ -671,9 +657,13 @@ def new_post():
 		'tagged_team_ids': tagged_team_ids
 	}
 
-
 	return json.dumps(post_info_dict)
 
+
+
+'''
+View single post page from email link or by clicking on date of post
+'''
 @app.route('/display_single_post', methods=['POST'])
 @login_required
 def display_single_post():
@@ -687,9 +677,15 @@ def display_single_post():
 	return render_template('post.html',
 		post=indented_post,
 		new_post_form=new_post_form,
-		)
+	)
 
 
+'''
+Email notifications created when a user is tagged in a post
+data from form includes post_id, tagged_team_ids, tagged_user_ids, post_text, photo_url, and whether it's a post or comment
+
+Formats the wording for emails differently depending on if it's a new comment or a new post
+'''
 @app.route('/create_notifications', methods=["POST"])
 def create_notifications():
 	form = request.form
@@ -731,6 +727,7 @@ def create_notifications():
 
 	return "complete"
 
+# Sets up recipient list for any users tagged in post
 def create_notification_for_tagged_users(tagged_users_list, photo_url, post_text, parent_post_id, subject, header):
 	recipient_list=[]
 	for user_object in tagged_users_list:
@@ -740,7 +737,7 @@ def create_notification_for_tagged_users(tagged_users_list, photo_url, post_text
 	#create notification for taggees
 	generate_email(header, post_text, subject, recipient_list, parent_post_id, photo_url)
 
-
+# Sets up recipient list for any teams tagged in post
 def create_notification_for_tagged_teams(users_teams_in_tagged_teams, photo_url, post_text, post_id, subject, header):
 	# TODO: separate notifications for different teams. {teamname:[list_of_team_members],}
 	recipient_list = []
@@ -750,6 +747,11 @@ def create_notification_for_tagged_teams(users_teams_in_tagged_teams, photo_url,
 	generate_email(header, post_text, subject, recipient_list, post_id, photo_url)
 
 
+
+'''
+Sets up recipient list for any managers of users tagged in post
+If multiple users are tagged in post with same manager, manager receives one email with list of reports
+'''
 def create_notification_for_managers(tagged_users_list, photo_url, post_text, post_id):
 	#Managers will only receive notifications when their reports are first tagged in a post. Nothing for comments
 	manager_to_reports_dict = defaultdict(list)
@@ -765,6 +767,7 @@ def create_notification_for_managers(tagged_users_list, photo_url, post_text, po
 	for manager in manager_objects_to_notify:
 		reports_objects = manager_to_reports_dict.get(manager.id)
 		if g.user == manager:
+			# don't send email to manager if they are person creating the post
 			continue
 
 		recipient_list = [manager.email]
@@ -784,7 +787,55 @@ def create_notification_for_managers(tagged_users_list, photo_url, post_text, po
 		generate_email(header, post_text, subject, recipient_list, post_id, photo_url)
 
 
-#SEND THANKS
+
+'''
+Renders templates for emails based on parameters passed in
+'''
+def generate_email(header, message, subject, recipient_list, post_id, img_url):
+	print "generating email for %r" % recipient_list
+	reply_to = g.user.email
+
+	html = render_template('notification_email.html',
+		kudos_header=header,
+		message=message,
+		img_url=img_url,
+		post_id=post_id,
+		)
+	sender = settings.mail_sender.username
+	send_email(sender, recipient_list, reply_to, subject, html, post_id)
+
+
+'''
+Sends emails to list of recipients
+if there is an email_stealer from settings.py, send all emails to this address (for testing) with custom subject
+
+emails are sent asynchronously
+'''
+def send_email(sender, recipients, reply_to, subject, html, post_id):
+	if settings.email_stealer is not None:
+		subject = "%s (%s)" % (subject, ', '.join(recipients))
+		recipients = [settings.email_stealer]
+
+	msg = Message(
+		subject=subject,
+		sender=sender,
+		recipients=recipients,
+		reply_to=reply_to,
+		html=html)
+
+	def send_async(my_app, msg):
+		with my_app.app_context():
+			mail.send(msg)
+			print "email sent to %r, post_id: %r" % (msg.recipients, post_id)
+
+	Thread(target=send_async, args=[app,msg]).start()
+
+
+'''
+SEND THANKS
+called when user clicks on 'thank' button.
+No comment info included, this is through /newcomment
+'''
 @app.route('/sendthanks', methods=['POST'])
 @login_required
 def send_thanks():
@@ -798,7 +849,10 @@ def send_thanks():
 
 	return post_id
 
-#REMOVE THANKS
+
+'''
+Users can remove thanks they've given. Changes is_deleted=True in Thanks table
+'''
 @app.route('/removethanks', methods=['POST'])
 @login_required
 def remove_thanks():
@@ -815,6 +869,7 @@ def remove_thanks():
 
 	return "complete"
 
+# currently not used anywhere.
 @app.route('/displaythanks', methods=['POST'])
 @login_required
 def display_thanks():
@@ -827,24 +882,26 @@ def display_thanks():
 	return thankers
 
 
-#ADD NEW TAG
+'''
+ADD NEW TAG TO EXISTING POST
+
+Can add user or team tags. id's are kept separate and unique by prepending with 'u' or 't' respectively
+Submit new tags to db and return a json with all of the tags added to create
+
+'''
 @app.route('/newtag', methods=['POST'])
 @login_required
 def add_tag():
 	user_id = g.user.id
 	form = request.form
 	post_id = form.get("parent_post_id")
-	photo_url = form.get("post_photo_url")
-
-	post_text = form.get("post_text")
 
 	tag_ids = request.form['tag_ids'].split('|')
 	tag_text = request.form['tag_text'].split('|')
 
-	new_tag_dict={}
 	user_tag_info = []
 	team_tag_info = []
-	tagged_user_ids = [] #to get user emails for notifications
+	tagged_user_ids = [] # used in kudos.js for send_notifications
 	tagged_team_ids = []
 
 	for i in range(len(tag_ids)-1): #last index will be "" because of delimiters
@@ -854,7 +911,7 @@ def add_tag():
 			new_tag = Tag(user_tag_id=tag_user_id, body=tag_text[i], post_id=post_id, tag_author=user_id, time=datetime.utcnow())
 
 			tagged_user = User.query.filter_by(id=tag_user_id).first()
-			#get tag information to create avatars client side
+			# get tag information to create avatars client side
 			user = {}
 			user['photo'] = tagged_user.photo
 			user['username'] = tagged_user.username
@@ -881,6 +938,7 @@ def add_tag():
 
 	db.session.commit()
 
+	new_tag_dict={}
 	new_tag_dict['user_tags'] = user_tag_info
 	new_tag_dict['team_tags'] = team_tag_info
 	new_tag_dict['tagged_user_ids'] = tagged_user_ids

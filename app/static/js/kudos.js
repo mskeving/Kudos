@@ -440,6 +440,8 @@ $('.new-tag-btn').live('click', function(e) {
 	}
 });
 
+
+//take out the entire post and replace with new one to get accurtate tag truncation with any new tags
 function replace_one_post(post_id) {
 	old_post = $('.post[data-post-id=' + post_id + ']');
 	data = {'post_id': post_id};
@@ -579,6 +581,7 @@ $('.comment__input').each(function(){
 
 function send_notifications(data){
 	// data must include post_id, tagged_team_ids, tagged_user_ids, post_text, photo_url
+	// send notifications in sepapate ajax request for performance
 	$.ajax({
 		type: "POST",
 		url: "/create_notifications",
