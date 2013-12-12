@@ -910,10 +910,6 @@ def add_tag():
 
 			tagged_user = User.query.filter_by(id=tag_user_id).first()
 			# get tag information to create avatars client side
-			user = {}
-			user['photo'] = tagged_user.photo
-			user['username'] = tagged_user.username
-			user['user_id'] = tagged_user.id
 			db.session.add(new_tag)
 
 			tagged_user_ids.append(tagged_user.id)
@@ -924,10 +920,6 @@ def add_tag():
 			new_tag = Tag(team_tag_id=tag_team_id, body=tag_text[i], post_id=post_id, tag_author=user_id, time=datetime.utcnow())
 
 			tagged_team = Team.query.filter_by(id=tag_team_id).first()
-			team = {}
-			team['photo'] = tagged_team.photo
-			team['teamname'] = tagged_team.teamname
-			team['team_id'] = tagged_team.id
 			db.session.add(new_tag)
 
 			tagged_team_ids.append(tagged_team.id)
