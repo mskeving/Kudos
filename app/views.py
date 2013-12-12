@@ -12,7 +12,7 @@ from flask.ext.login import (login_user, logout_user, current_user,
 							fresh_login_required)
 from oauth2client.client import (FlowExchangeError,
 								OAuth2WebServerFlow)
-from forms import EditPost, DeletePost
+from forms import EditPost
 from models import (User, Post, UserTeam, Team, Tag,
 					Thanks, UNMODERATED, ACCEPTED, REJECTED)
 from datetime import datetime
@@ -150,7 +150,6 @@ def rejected_posts():
 def render_admin_page(status, header):
 	user = g.user
 	new_post_form = EditPost()
-	delete_form = DeletePost()
 
 	posts = Post.query.filter(and_(Post.parent_post_id==None, Post.is_deleted==False, Post.status==status)).order_by(Post.time.desc()).all()
 
@@ -177,7 +176,6 @@ def render_admin_page(status, header):
 		header=header,
 		posts=indented_posts,
 		new_post_form=new_post_form,
-		delete_form=delete_form,
 		status=status,
 		count_unmoderated_posts=count_unmoderated_posts,
 		count_accepted_posts=count_accepted_posts,
@@ -208,7 +206,6 @@ def index():
 
 	user = g.user
 	new_post_form = EditPost()
-	delete_form = DeletePost()
 
 	#query for all parent posts
 	posts = Post.query.filter(and_(Post.parent_post_id==None, Post.is_deleted==False)).order_by(Post.time.desc()).limit(10).all()
@@ -221,7 +218,6 @@ def index():
 		user=user,
 		posts=indented_posts,
 		new_post_form=new_post_form,
-		delete_form=delete_form,
 		)
 
 @app.route('/tv')
@@ -551,7 +547,6 @@ def new_post():
 	user_id = g.user.id
 
 	new_post_form = EditPost()
-	delete_form = DeletePost()
 
 	form = request.form
 	photo_url = form.get('photo_url')
