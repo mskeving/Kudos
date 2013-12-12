@@ -12,7 +12,7 @@ from flask.ext.login import (login_user, logout_user, current_user,
 							fresh_login_required)
 from oauth2client.client import (FlowExchangeError,
 								OAuth2WebServerFlow)
-from forms import LoginForm, EditForm, EditPost, DeletePost, NewReply
+from forms import EditPost, DeletePost
 from models import (User, Post, UserTeam, Team, Tag,
 					Thanks, UNMODERATED, ACCEPTED, REJECTED)
 from datetime import datetime
@@ -24,8 +24,6 @@ from threading import Thread
 from flask.ext.mail import Message
 
 from settings import settings
-
-settings.login_handler.setup(app, auth_finish)
 
 def auth_finish(email, next):
 	if email is None:
@@ -55,6 +53,8 @@ def auth_finish(email, next):
 	login_user(u[0], remember=True)
 
 	return redirect(next or '/')
+
+settings.login_handler.setup(app, auth_finish)
 
 @app.before_request
 def before_request():
@@ -150,7 +150,6 @@ def rejected_posts():
 def render_admin_page(status, header):
 	user = g.user
 	new_post_form = EditPost()
-	reply_form = NewReply()
 	delete_form = DeletePost()
 
 	posts = Post.query.filter(and_(Post.parent_post_id==None, Post.is_deleted==False, Post.status==status)).order_by(Post.time.desc()).all()
@@ -178,7 +177,6 @@ def render_admin_page(status, header):
 		header=header,
 		posts=indented_posts,
 		new_post_form=new_post_form,
-		reply_form=reply_form,
 		delete_form=delete_form,
 		status=status,
 		count_unmoderated_posts=count_unmoderated_posts,
@@ -210,7 +208,6 @@ def index():
 
 	user = g.user
 	new_post_form = EditPost()
-	reply_form = NewReply()
 	delete_form = DeletePost()
 
 	#query for all parent posts
@@ -224,7 +221,6 @@ def index():
 		user=user,
 		posts=indented_posts,
 		new_post_form=new_post_form,
-		reply_form=reply_form,
 		delete_form=delete_form,
 		)
 
@@ -246,7 +242,6 @@ def tv():
 def get_more_posts():
 
 	new_post_form = EditPost()
-	reply_form = NewReply()
 	form = request.form
 	num_posts_to_display = 5
 
@@ -272,7 +267,6 @@ def get_more_posts():
 	for post in indented_posts:
 		new_posts += render_template('post.html',
 			post=post,
-			reply_form=reply_form,
 			new_post_form=new_post_form,
 			)
 
@@ -350,7 +344,6 @@ def create_tag_list():
 @app.route('/team/<team>')
 @login_required
 def team(team):
- 	reply_form = NewReply()
 	new_post_form = EditPost()
 
 	this_team = Team.query.filter(Team.teamname==team).first()
@@ -392,7 +385,6 @@ def team(team):
 
 	return render_template('team.html',
 		new_post_form=new_post_form,
-		reply_form=reply_form,
 		team=this_team,
 		team_members=list_of_users,
 		posts=indented_posts,
@@ -406,7 +398,6 @@ def team(team):
 @app.route('/user/<username>')
 @login_required
 def user(username):
-	reply_form = NewReply()
 	new_post_form = EditPost()
 	user = User.query.filter_by(username=username).first()
 	manager = User.query.filter_by(id=user.manager_id).first()
@@ -446,7 +437,6 @@ def user(username):
 
 	return render_template('user.html',
 		new_post_form=new_post_form,
-		reply_form=reply_form,
 		user=user,
 		posts=indented_posts,
 		list_of_team_names=list_of_team_names,
@@ -561,7 +551,6 @@ def new_post():
 	user_id = g.user.id
 
 	new_post_form = EditPost()
-	reply_form = NewReply()
 	delete_form = DeletePost()
 
 	form = request.form
@@ -611,7 +600,6 @@ def new_post():
 
 	post_page = render_template('post.html',
 		post=indented_post,
-		reply_form=reply_form,
 		new_post_form=new_post_form,
 		)
 
@@ -630,7 +618,6 @@ def new_post():
 @login_required
 def display_single_post():
 	new_post_form = EditPost()
-	reply_form = NewReply()
 	form = request.form
 	post_id = form.get('post_id')
 
@@ -639,7 +626,6 @@ def display_single_post():
 
 	return render_template('post.html',
 		post=indented_post,
-		reply_form=reply_form,
 		new_post_form=new_post_form,
 		)
 
@@ -971,7 +957,6 @@ def tagged_in_post():
 @login_required
 def permalink_for_post_with_id(post_id):
 	new_post_form = EditPost()
-	reply_form = NewReply()
 	posts = Post.query.filter(and_(Post.id==int(post_id), Post.is_deleted==False)).all()
 	if posts:
 		post = posts_to_indented_posts(posts)[0]
@@ -979,7 +964,6 @@ def permalink_for_post_with_id(post_id):
 		user=g.user,
 		post=post,
 		new_post=new_post,
-		reply_form=reply_form,
 		new_post_form=new_post_form,
 		)
 
