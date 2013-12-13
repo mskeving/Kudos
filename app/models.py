@@ -93,7 +93,7 @@ class Post(db.Model):
 	photo_link = db.Column(db.String(140))
 	photo_url_fullsize = db.Column(db.String(140))
 	is_deleted = db.Column(db.Boolean, default=False, nullable=False)
-	status = db.Column(db.Integer, default=0, nullable=False)
+	status = db.Column(db.Integer, default=0)
 	status_committer = db.Column(db.String(140))
 
 	tags = db.relationship('Tag', backref='post')

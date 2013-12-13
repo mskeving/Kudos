@@ -117,7 +117,6 @@ More posts are displayed as you scroll down page, through JavaScript calling get
 @app.route('/index')
 @login_required
 def index():
-
 	user = g.user
 	new_post_form = EditPost()
 
