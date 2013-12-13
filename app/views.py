@@ -936,7 +936,7 @@ def add_tag():
 
 
 #DELETE TAGS
-@app.route('/deletetag', methods=['POST'])
+@app.route('/deletetag', methods=['GET','POST'])
 @login_required
 def delete_tag():
 
