@@ -519,6 +519,7 @@ called from s3_upload in kudos.js
 returns a json of the signed request and the public url for the thumbnail image
 '''
 @app.route('/sign_s3_upload/')
+@login_required
 def sign_s3_upload():
 	# TODO: Think about preventing abuse of this
 	# ex) associate uploads with a user. If there are any things in S3 bucket that aren't referenced with a user, delete them
