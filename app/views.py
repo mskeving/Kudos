@@ -102,21 +102,22 @@ def feedback():
 	html = render_template('feedback_email.html',
 		text=text,
 		kudos_header=kudos_header,
-		)
+	)
 	post_id = None
 	send_email(sender, recipient_list, reply_to, subject, html, post_id)
 
 	return "complete"
 
-'''
-Root page
-Displays most recent 10 posts.
-More posts are displayed as you scroll down page, through JavaScript calling get_more_posts
-'''
+
 @app.route('/')
 @app.route('/index')
 @login_required
 def index():
+	'''
+	Home page - displays most recent 10 posts and a post-modal to submit new posts.
+	returns:
+		- index.html
+	'''
 	user = g.user
 	new_post_form = EditPost()
 
@@ -131,15 +132,18 @@ def index():
 		user=user,
 		posts=indented_posts,
 		new_post_form=new_post_form,
-		)
+	)
 
 
-'''
-Queries for 10 most recent posts that have been accepted by an admin for display
-'''
 @app.route('/tv')
 def tv():
+	'''
+	endpoint to fetch posts for display page (most recent 10 posts).
+	Will only display posts that have been accepted by an admin
 
+	returns:
+		- tv-display.html
+	'''
 	#query for all parent posts
 	posts = Post.query.filter(and_(Post.parent_post_id==None, Post.is_deleted==False, Post.status==ACCEPTED)).order_by(Post.time.desc()).limit(10).all()
 
@@ -148,13 +152,14 @@ def tv():
 
 	return render_template("tv-display.html",
 		posts=indented_posts,
-		)
+	)
 
-'''
-decorator for pages only admins can see
-admins are defined in settings.py under admin_emails
-'''
+
 def admin_required(f):
+	'''
+	decorator for pages only admins can see
+	admins are defined in settings.py under admin_emails
+	'''
 	from functools import wraps
 	@wraps(f)
 	def decorated_function(*args, **kwargs):
@@ -165,16 +170,20 @@ def admin_required(f):
 	return decorated_function
 
 
-'''
-Use /admin to determine which posts are display on TV
-no link currently goes to this endpoint. Will need to type /admin manually
-Defaults to showing all unmoderated posts, waiting to be cleared
-'''
+
 @app.route('/admin')
 @app.route('/admin/unmoderated')
 @login_required
 @admin_required
 def unmoderated_posts():
+	'''
+	Use /admin to determine which posts are display on TV
+	no link currently goes to this endpoint. Will need to type /admin manually
+	Defaults to showing all unmoderated posts, waiting to be accepted or rejected
+
+	returns:
+		- call to render_admin_page
+	'''
 	# UNMODERATED = 0
 	status = UNMODERATED
 	header = 'Unmoderated Posts: '
@@ -200,13 +209,19 @@ def rejected_posts():
 	return render_admin_page(status, header)
 
 
-
-'''
--Queries for all posts with given status (ACCEPTED, REJECTED, or UNMODERATED)
--Then does a separate query for each status individually to get counts for each category
-TODO: be smarter about this flow.
-'''
 def render_admin_page(status, header):
+	'''
+	Queries for all posts with given status
+	Then does a separate query for each status individually to get counts for each category
+	TODO: be smarter about this flow.
+
+	Args:
+		- status: could be ACCEPTED, REJECTED, or UNMODERATED
+		- header: used in admin.html to ittle the list of posts ex. 'Rejected Posts: '
+
+	Returns:
+		- admin.html
+	'''
 	user = g.user
 	new_post_form = EditPost()
 
@@ -243,14 +258,20 @@ def render_admin_page(status, header):
 	)
 
 
-
-'''
-Called when admin clicks on 'accept' or 'reject' for given post
-Changes status value in db for that post
-'''
 @app.route('/moderate_post', methods=['POST'])
 @login_required
 def moderate_post():
+	'''
+	Called when admin clicks on 'accept' or 'reject' for given post
+	Changes status value in db for that post
+
+	Args (from ajax request):
+		- post_id: post id for parent post being moderated
+		- status: 1 or 2 depending on if it's accepted or rejected respectively
+
+	Returns:
+		- 'complete'
+	'''
 	form = request.form
 	post_id = form.get('post_id')
 	status = form.get('status')
@@ -264,14 +285,20 @@ def moderate_post():
 
 	return "complete"
 
-'''
-Endpoint for infinite scrolling function located in index.js
-Receives the post_id of last post on page, and fetches the next 5 posts
-Renders post.html template for each post and returns json of this
-'''
+
 @app.route('/get_more_posts', methods=['POST'])
 @login_required
 def get_more_posts():
+	'''
+	Endpoint for infinite scrolling function located in index.js
+	Fetches the next 5 posts
+
+	Args (from ajax request):
+		- last_post_id: post id of last post currently displayed on page
+
+	Returns:
+		- json of post.html for each new post to display
+	'''
 
 	new_post_form = EditPost()
 	form = request.form
@@ -300,7 +327,7 @@ def get_more_posts():
 		new_posts += render_template('post.html',
 			post=post,
 			new_post_form=new_post_form,
-			)
+		)
 
 	new_posts_json = json.dumps(new_posts)
 
@@ -308,20 +335,20 @@ def get_more_posts():
 
 
 
-
-'''
-Called each time you click 'add tag' on a post, or when adding tags for a new post
-Queries for all entries in User and Team tables (not deleted)
-If adding tag on existing post, queries for tags already on that post and excludes them with used_tags_dict
-
-Available tags are added to tag_dict with 'u' or 't' prepended
-'u' and 't' are used throughout app to denote whether it's a user or a team tag
-
-returns a json of all available tags (user/team id's, strings of names, and full tag dictionary)
-'''
 @app.route('/create_tag_list', methods=['POST'])
 @login_required
 def create_tag_list():
+	'''
+	Called each time you interact with tag tokenizer
+	Queries for all potential tags (users and teams) and excludes those already used on post
+	'u' and 't' are prepend to user and team tags respectively to differentiate id's
+
+	Args (from ajax request):
+		- post_id: post id of post to get potential tags for
+
+	Returns:
+		- json of all available tags (includes user/team id's and name strings)
+	'''
 
 	form = request.form
 	post_id = form.get('post_id')
@@ -387,24 +414,20 @@ def create_tag_list():
 	return json.dumps({'tag_words': tag_words_string,
 		'tag_ids': tag_ids_string,
 		'tag_dict': tag_dict
-		})
+	})
 
 
-
-
-
-'''
-TEAM PROFILE
-
-Displays all teams members for given team by querying users_teams
-Displays all posts where given team is tagged in
-
-prefill_data is included so that when you create a new post on a team page, that team will be automatically tagged.
-Stored in a hidden field in team.html
-'''
 @app.route('/team/<team>')
 @login_required
 def team(team):
+
+	'''
+	Team Profile: Displays all teams members for given team
+	Displays all posts where given team is tagged in
+
+	Returns:
+		- team.html
+	'''
 	new_post_form = EditPost()
 
 	this_team = Team.query.filter(Team.teamname==team).first()
@@ -423,7 +446,7 @@ def team(team):
 	dict_of_users_teams = {}
 	list_of_users = []
 	# get list of teams each member is a part of (a user can be on multiple teams)
-	# not currently used on team.html
+	# info not currently used on team.html
 	for member in team_members:
 		list_of_users.append(member.user)
 		list_of_teams = []
@@ -431,13 +454,11 @@ def team(team):
 		for team in teams:
 			#using DB relationship to get teamname
 			list_of_teams.append(team.team.teamname)
-		#keep all user info
 		dict_of_users_teams[member.user] = list_of_teams
 
-	# Prefilled tag data for new post creation flow
-	# tag data for team needs to be prepended with 't' to differentiate from user id's
+	# Needed so new posts will automatically tag given team
 	prefill_data = {
-		'id': 't' + str(this_team.id),
+		'id': 't' + str(this_team.id), # prepend with 't' to differentiate from user id's
 		'name': this_team.teamname,
 	}
 
@@ -453,18 +474,17 @@ def team(team):
 
 
 
-'''
-USER PROFILE
-
-Displays basic information for given user by querying User table
-Displays posts given user is tagged in (but not posts their teams are tagged in)
-
-prefill_data is included so that when you create a new post on a user page, that user will be automatically tagged.
-Stored in a hidden field in user.html
-'''
 @app.route('/user/<username>')
 @login_required
 def user(username):
+	'''
+	User Profile: Displays basic information for given user
+	Displays posts given user is tagged in (TODO: include posts their teams are tagged in)
+	If you are viewing your own user page, will not be able to submit new tag
+
+	Returns:
+		- user.html
+	'''
 	new_post_form = EditPost()
 	user = User.query.filter_by(username=username).first()
 	manager = User.query.filter_by(id=user.manager_id).first()
@@ -486,15 +506,13 @@ def user(username):
 	if len(tagged_posts) != 0:
 		indented_posts = posts_to_indented_posts(tagged_posts)
 
-	# TODO: also display tagged posts for the user's teams
 	teams = db.session.query(UserTeam).filter_by(user_id=user.id).all()
 	list_of_team_names = []
 	for team in teams:
 		list_of_team_names.append(team.team.teamname)
 
 	prefill_data = {
-		# Needs to match the user tag ids in create_tag_list
-		'id': 'u' + str(user.id),
+		'id': 'u' + str(user.id), # prepend 'u' to differentiate from team id's
 		'name': user.firstname + ' ' + user.lastname,
 	}
 
@@ -509,19 +527,18 @@ def user(username):
 	)
 
 
-
-
-'''
-Uploads image files to S3 account when submitting new post with strong, unique signature
-called from s3_upload in kudos.js
-
-returns a json of the signed request and the public url for the thumbnail image
-'''
 @app.route('/sign_s3_upload/')
 @login_required
 def sign_s3_upload():
-	# TODO: Think about preventing abuse of this
-	# ex) associate uploads with a user. If there are any things in S3 bucket that aren't referenced with a user, delete them
+	'''
+	Uploads image files chosen with Dropbox Chooser to S3 account when submitting new post
+	Called from s3_upload in kudos.js
+	TODO: Think through other abuse scenarios (ex. delete any uploads that aren't referenced with a user)
+
+	Returns:
+		- json including the signed request and public url for the thumbnail image
+	'''
+
 	AWS_ACCESS_KEY = settings.image_store.aws_credentials.access_key_id
 	AWS_SECRET_KEY = settings.image_store.aws_credentials.secret_access_key
 	S3_BUCKET = settings.image_store.bucket_name
@@ -530,9 +547,7 @@ def sign_s3_upload():
 	r = os.urandom(32)
 	object_name = base64.urlsafe_b64encode(r)+'?x=y&'
 
-
 	mime_type = request.args.get('s3_object_type')
-
 
 	expires = int(time.time()+10)
 	amz_headers = "x-amz-acl:public-read"
@@ -553,21 +568,24 @@ def sign_s3_upload():
 	return json.dumps({
 		'signed_request': '%s?AWSAccessKeyId=%s&Expires=%d&Signature=%s' % (public_url, AWS_ACCESS_KEY, expires, signature),
 		 'public_url': public_url
-	  })
+	})
 
 
 
-
-'''
-Creates an email to send in case of error.
-This is an ajax endpoint, so if an ajax request fails, an email is sent.
-
-Currently, only information sent from server is the logged in user
-'''
 @app.route('/send_error_msg', methods=['POST'])
 def send_error_msg():
-	form = request.form
+	'''
+	Sends an email to send in case of error in ajax request
+	Currently, only information sent from server is the logged in user
 
+	Args (from ajax request):
+		- text: error message passed from error handler
+
+	Returns:
+		- 'complete'
+	'''
+
+	form = request.form
 	sender = g.user.email
 	reply_to = sender
 	recipient_list = ["mskeving@gmail.com"]
@@ -578,7 +596,7 @@ def send_error_msg():
 	html = render_template('feedback_email.html',
 		text=text,
 		kudos_header=kudos_header,
-		)
+	)
 	# need to include post_id param when called send_email, but error won't necessarily have one
 	post_id = None
 
@@ -590,21 +608,26 @@ def send_error_msg():
 
 
 
-'''
-CREATE NEW POST
-
-Submite the new post to db with all user/team tags associated with it
-Returns a json with post.html rendered and relevant post information
-'''
 @app.route('/createpost', methods=['POST'])
 @login_required
 def new_post():
+	'''
+	Submit the new post to db with all user/team tags associated with it
+
+	Args (from ajax request):
+		- photo_url: url of image form dropbox chooser. If nothing selected, null
+		- post_text: text submitted by user
+		- tag_ids: team or user id's of tags chosen (| delimited string)
+		- tag_text: username or teamname of tags chosen (| delimited string)
+
+	Returns:
+		-json including post.html as post_page, post_id of new post, tagged user and team id's
+	'''
 	user_id = g.user.id
 	new_post_form = EditPost()
 
 	form = request.form
 	photo_url = form.get('photo_url')
-	filename = form.get('filename')
 	post_text = form.get('post_text')
 
 	new_post = Post(body=post_text, time=datetime.utcnow(), user_id=user_id, photo_link=photo_url)
@@ -660,13 +683,18 @@ def new_post():
 	return json.dumps(post_info_dict)
 
 
-
-'''
-View single post page from email link or by clicking on date of post
-'''
 @app.route('/display_single_post', methods=['POST'])
 @login_required
 def display_single_post():
+	'''
+	View single post page from email link or by clicking on date of post
+
+	Args:
+		post_id: post id of post to display
+
+	Returns:
+		post.html
+	'''
 	new_post_form = EditPost()
 	form = request.form
 	post_id = form.get('post_id')
@@ -680,21 +708,30 @@ def display_single_post():
 	)
 
 
-'''
-Email notifications created when a user is tagged in a post
-data from form includes post_id, tagged_team_ids, tagged_user_ids, post_text, photo_url, and whether it's a post or comment
-
-Formats the wording for emails differently depending on if it's a new comment or a new post
-'''
 @app.route('/create_notifications', methods=["POST"])
 def create_notifications():
-	form = request.form
+	'''
+	Email notifications created when a user is tagged in a post
 
+	Args:
+		- parent_post_id: post id of post with activity
+		- tagged_team_ids: ids of any teams tagged in post
+		- tagged_user_ids: ids of any users tagged in post
+		- post_text: body of post
+		- photo_url: url for post image, if included
+		- is_new_post: only available if user is submitting a new post
+		- is_comment: only available if user is submitting a comment
+
+	Returns:
+		- 'complete'
+	'''
+
+	form = request.form
+	parent_post_id = form.get('parent_post_id')
 	tagged_user_ids = json.loads(form.get('tagged_user_ids'))
 	tagged_team_ids = json.loads(form.get('tagged_team_ids'))
 	photo_url = form.get('photo_url')
 	post_text = form.get('post_text')
-	parent_post_id = form.get('parent_post_id')
 
 	is_comment = form.get('is_comment')
 	if is_comment:
@@ -727,8 +764,11 @@ def create_notifications():
 
 	return "complete"
 
-# Sets up recipient list for any users tagged in post
 def create_notification_for_tagged_users(tagged_users_list, photo_url, post_text, parent_post_id, subject, header):
+	'''
+	Sets up recipient list for any users tagged in post
+	Calls generate_email to render email template
+	'''
 	recipient_list=[]
 	for user_object in tagged_users_list:
 		if user_object != g.user:
@@ -737,7 +777,6 @@ def create_notification_for_tagged_users(tagged_users_list, photo_url, post_text
 	#create notification for taggees
 	generate_email(header, post_text, subject, recipient_list, parent_post_id, photo_url)
 
-# Sets up recipient list for any teams tagged in post
 def create_notification_for_tagged_teams(users_teams_in_tagged_teams, photo_url, post_text, post_id, subject, header):
 	# TODO: separate notifications for different teams. {teamname:[list_of_team_members],}
 	recipient_list = []
@@ -747,13 +786,23 @@ def create_notification_for_tagged_teams(users_teams_in_tagged_teams, photo_url,
 	generate_email(header, post_text, subject, recipient_list, post_id, photo_url)
 
 
-
-'''
-Sets up recipient list for any managers of users tagged in post
-If multiple users are tagged in post with same manager, manager receives one email with list of reports
-'''
 def create_notification_for_managers(tagged_users_list, photo_url, post_text, post_id):
-	#Managers will only receive notifications when their reports are first tagged in a post. Nothing for comments
+	'''
+	Sets up recipient list for any managers of users tagged in post
+	If multiple users are tagged in post with same manager, manager receives one email with list of reports
+	Managers will only receive notifications when their reports are first tagged in a post. Nothing for comments
+	Calls generate_email to render email template
+
+	Args:
+		tagged_users_list: list of users tagged
+		photo_url: url for photo associated with post
+		post_text: body of post
+		post_id: post id
+
+	Returns:
+		None
+	'''
+
 	manager_to_reports_dict = defaultdict(list)
 	for user_object in tagged_users_list:
 		manager_to_reports_dict[user_object.manager_id].append(user_object)
@@ -787,12 +836,23 @@ def create_notification_for_managers(tagged_users_list, photo_url, post_text, po
 		generate_email(header, post_text, subject, recipient_list, post_id, photo_url)
 
 
-
-'''
-Renders templates for emails based on parameters passed in
-'''
 def generate_email(header, message, subject, recipient_list, post_id, img_url):
-	print "generating email for %r" % recipient_list
+	'''
+	renders notification_email.html with parameters
+	Calls send_email to actually send
+
+	Args:
+		- header: String to go at top of email body
+		- message: post body to be displayed in email
+		- subject: email subject
+		- recipient_list: list of email recipients
+		- post_id: post id
+		- img_url: url for photo
+
+	Returns:
+		None
+	'''
+
 	reply_to = g.user.email
 
 	html = render_template('notification_email.html',
@@ -805,13 +865,24 @@ def generate_email(header, message, subject, recipient_list, post_id, img_url):
 	send_email(sender, recipient_list, reply_to, subject, html, post_id)
 
 
-'''
-Sends emails to list of recipients
-if there is an email_stealer from settings.py, send all emails to this address (for testing) with custom subject
-
-emails are sent asynchronously
-'''
 def send_email(sender, recipients, reply_to, subject, html, post_id):
+	'''
+	Sends emails to list of recipients
+	if there is an email_stealer from settings.py, send all emails to this address (for testing) with custom subject
+	emails are sent asynchronously with send_async
+
+	Args:
+		- sender: email address notifications will be coming from
+		- recipients: list of email recipients
+		- reply_to: reply_to email address
+		- subject: email subject
+		- html: rendered template for notificaiton_email.html
+		-post_id: post id
+
+	Returns:
+		None
+	'''
+
 	if settings.email_stealer is not None:
 		subject = "%s (%s)" % (subject, ', '.join(recipients))
 		recipients = [settings.email_stealer]
@@ -821,7 +892,8 @@ def send_email(sender, recipients, reply_to, subject, html, post_id):
 		sender=sender,
 		recipients=recipients,
 		reply_to=reply_to,
-		html=html)
+		html=html,
+	)
 
 	def send_async(my_app, msg):
 		with my_app.app_context():
@@ -831,31 +903,19 @@ def send_email(sender, recipients, reply_to, subject, html, post_id):
 	Thread(target=send_async, args=[app,msg]).start()
 
 
-'''
-SEND THANKS
-called when user clicks on 'thank' button.
-No comment info included, this is through /newcomment
-'''
-@app.route('/sendthanks', methods=['POST'])
-@login_required
-def send_thanks():
-
-	post_id=request.form["post_id"]
-	print "post_id: %r" % post_id
-
-	new_thanks = Thanks(thanks_sender=g.user.id, post_id=post_id, time=datetime.utcnow())
-	db.session.add(new_thanks)
-	db.session.commit()
-
-	return post_id
-
-
-'''
-Users can remove thanks they've given. Changes is_deleted=True in Thanks table
-'''
 @app.route('/removethanks', methods=['POST'])
 @login_required
 def remove_thanks():
+	'''
+	Users can remove thanks they've given (is_deleted=True)
+
+	Args (from ajax request):
+		post_id: post id of their thank
+
+	Returns:
+		- 'complete'
+	'''
+
 	form = request.form
 
 	thanks_sender = g.user.id
@@ -882,16 +942,23 @@ def display_thanks():
 	return thankers
 
 
-'''
-ADD NEW TAG TO EXISTING POST
-
-Can add user or team tags. id's are kept separate and unique by prepending with 'u' or 't' respectively
-Submit new tags to db and returns a json with all of the tag_ids. These ids need to be passed back to send email notifications
-TODO: sort of backwards to send this to client and then back to server to send emails.
-'''
 @app.route('/newtag', methods=['POST'])
 @login_required
 def add_tag():
+	'''
+	Add new user or team tag to post
+	Id's for users and teams are kept separate and unique by prepending with 'u' or 't'
+	TODO: sort of backwards to send this to client and then back to server to send email notifications. Call directly from here
+
+	Args:
+		- post_id: post id for parent post
+		- tag_ids: | delimited string with user or team ids for tags
+		- tag_text: | delimited string with text of tags (team and user names)
+
+	Returns:
+		-json including tagged_user_ids and tagged_team_ids
+	'''
+
 	user_id = g.user.id
 	form = request.form
 	post_id = form.get("parent_post_id")
@@ -938,6 +1005,15 @@ def add_tag():
 @app.route('/deletetag', methods=['GET','POST'])
 @login_required
 def delete_tag():
+	'''
+	Remove tags from an existing post
+
+	Args:
+		- tag_id: tag id (not user or team id)
+
+	Returns:
+		- json including user_ids and team_ids
+	'''
 
 	form = request.form
 	tag_id = form.get('tag_id')
@@ -954,16 +1030,25 @@ def delete_tag():
 	return json.dumps(tag_info)
 
 
-'''
-/newcomment is called whenever you click 'Thank', whether you include a comment or not
-If user does not include text, body is stored as an empty string.
-
-Tags for the parent post are queried so email notifications can be sent with new comment.
-Notifications are only sent to taggees if text is included
-'''
 @app.route('/newcomment', methods=['POST'])
 @login_required
 def new_comment():
+	'''
+	Called whenever you click 'Thank', whether you include a comment or not.
+	If user does not include text, body is stored as an empty string.
+
+	Tags for the parent post are queried so email notifications can be sent with new comment.
+	Notifications are only sent to taggees if text is included
+
+	Args:
+		- body: post body
+		- parent_post_id: post id
+		- tag_ids: | delimited string with user or team ids for tags
+		- tag_text: | delimited string with text of tags (team and user names)
+
+	Returns:
+		-json including comment.html, tagged_user_ids, and tagged_team_ids
+	'''
 
 	form = request.form
 
@@ -1004,29 +1089,22 @@ def new_comment():
 
 	return json.dumps(comment_info)
 
-# DELETE COMMENT
-@app.route('/deletecomment/<postid>', methods=['POST'])
-@login_required
-def delete_comment(postid):
-
-	delete_comment = db.session.query(Post).filter_by(id=postid).one()
-	delete_comment.is_deleted = True
-	db.session.commit()
-
-	status = "complete"
-
-	return status
 
 
-'''
-DELETE POST
-
-To delete post, must also delete associated tags, comments, and thanks
-Set these entires to is_deleted=True
-'''
 @app.route('/deletepost', methods=['POST', 'GET'])
 @login_required
 def delete_post():
+	'''
+	Called to remove a parent post or any thanks/comments
+	To delete post, must also delete associated tags, comments, and thanks
+
+	Args:
+		- post_id: post id of parent_post or comment to remove
+
+	Returns:
+		- post_id
+	'''
+
 	form = request.form
 	post_id = form.get('post_id')
 
@@ -1049,12 +1127,19 @@ def delete_post():
 	return post_id
 
 
-'''
-called from kudos.js to display all tags for a given post_info_dict
-Used if tags needs to be truncated. Returns tagged_modal template, which displays list of names
-'''
+
 @app.route('/tagged_in_post', methods=['POST'])
 def tagged_in_post():
+	'''
+	called from kudos.js to display text for all tags in a post
+	Used if tags needs to be truncated.
+
+	Args:
+		post_id: post id
+
+	Returns:
+		tagged_modal.html, which displays simple list of names in lightbox
+	'''
 	form = request.form
 	post_id = form.get('post_id')
 
@@ -1072,15 +1157,17 @@ def tagged_in_post():
 			error_msg="No Post Found")
 
 
-'''
-POST PAGE
 
-Displays a single post
-Endpoint for link in notification emails, or when you click on date for a given post
-'''
 @app.route('/post/<post_id>', methods=['GET'])
 @login_required
 def permalink_for_post_with_id(post_id):
+	'''
+	Displays a single post
+	Link to this in notification emails, or when you click on date for a given post
+
+	Returns:
+		postpage.html
+	'''
 	new_post_form = EditPost()
 	posts = Post.query.filter(and_(Post.id==int(post_id), Post.is_deleted==False)).all()
 	if posts:
@@ -1098,16 +1185,17 @@ def permalink_for_post_with_id(post_id):
 		)
 
 
-'''
-Retrieve all users in db and teams they're on
-allusers.html will only display their subteam (list_of_teams[-1])
-
-TODO: Think more about performance here.
-Infinite scrolling to display more teams? Load a fraction first to get something loaded on page and then display more?
-'''
 @app.route('/all_users')
 @login_required
 def all_users():
+	'''
+	Display all active users and teams they're on
+	TODO: Think more about performance here.
+		-Infinite scrolling to display more teams? Load a fraction first to get something loaded on page and then display more?
+
+	Returns:
+		allusers.html
+	'''
 	all_users = User.query.filter(User.is_deleted==False).options(joinedload_all(User.users_teams, 'team')).order_by(User.firstname, User.lastname, User.employee_id).all()
 
 	all_user_ids = []
@@ -1125,15 +1213,19 @@ def all_users():
 		)
 
 
-'''
-Takes in a LIST of posts
-Returns a list of dictionaries for each post with relevant information for easy retrieval (ex. taggees, thankers, comments etc)
 
-TODO: rename to something more relevant. Was originally created to display posts and their children (indented on the page)
-'''
 def posts_to_indented_posts(posts):
-	# Turns a list of posts from a database query into a list of dictionaries
-	# with the right keys/values to be passed to the post.html template
+	'''
+	Transforms a list of posts to a list of dictionaries with relevant post information
+	TODO: rename to something more relevant. Was originally created to display posts and their children (indented on the page)
+
+	Args:
+		- posts: LIST of posts
+
+	Returns:
+		- List of dictionaries for each post with relevant information for easy retrieval (ex. taggees, thankers, comments etc)
+	'''
+
 	indented_posts = []
 
 	for p in posts:
