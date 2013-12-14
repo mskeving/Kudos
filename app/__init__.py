@@ -8,11 +8,13 @@ from flask.ext.sqlalchemy import SQLAlchemy
 import os
 from flask.ext.login import LoginManager
 from flask.ext.mail import Mail
+from flask_sslify import SSLify
 
 from settings import settings
 from lib.error_handler import KudosErrorHandler
 
 app = Flask(__name__)
+sslify = SSLify(app, permanent=True) # 301 redirect to https
 
 m = settings.mail_sender
 

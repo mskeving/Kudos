@@ -118,6 +118,7 @@ def index():
 	returns:
 		- index.html
 	'''
+
 	user = g.user
 	new_post_form = EditPost()
 
