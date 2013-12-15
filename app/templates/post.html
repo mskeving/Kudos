@@ -75,52 +75,58 @@
 
           {% if all_tags|length > 0 %}
 
-            <a href="{{ url_for('user', username=post_object.author.username) }}">{{post_object.author.firstname}} {{post_object.author.lastname}}</a> thanked
-
             {% if all_tags|length == 1 %}
 
               <a href="{{ '/team/' + all_tags[0].team_tag.teamname if all_tags[0].team_tag.teamname else '/user/' + all_tags[0].user_tag.username }}">
                 {{all_tags[0].team_tag.teamname if all_tags[0].team_tag.teamname else (all_tags[0].user_tag.firstname) + ' ' + (all_tags[0].user_tag.lastname)}}
               </a>
 
-            {% elif all_tags|length == 2 %}
-
-              <a href="{{ '/team/' + all_tags[0].team_tag.teamname if all_tags[0].team_tag.teamname else '/user/' + all_tags[0].user_tag.username }}">
-                {{all_tags[0].team_tag.teamname if all_tags[0].team_tag.teamname else (all_tags[0].user_tag.firstname) + ' ' + (all_tags[0].user_tag.lastname)}}
-              </a>
-              and
-              <a href="{{ '/team/' + all_tags[1].team_tag.teamname if all_tags[1].team_tag.teamname else '/user/' + all_tags[1].user_tag.username }}">
-                {{all_tags[1].team_tag.teamname if all_tags[1].team_tag.teamname else (all_tags[1].user_tag.firstname) + ' ' + (all_tags[1].user_tag.lastname)}}
-              </a>
-
-            {% elif all_tags|length == 3 %}
-
-              {% for tag in all_tags %}
-                {% if loop.index == 3 %}
-                  and
-                {% endif %}
-                <a href="{{ '/team/' + tag.team_tag.teamname if tag.team_tag.teamname else '/user/' + tag.user_tag.username }}">
-                  {{tag.team_tag.teamname if tag.team_tag.teamname else (tag.user_tag.firstname) + ' ' + (tag.user_tag.lastname)}}</a>{{ ',' if not loop.index == 3 else '' }}
-              {% endfor %}
-
-            {% elif all_tags|length == 4 %}
-
-              {% for tag in all_tags %}
-                {% if loop.index == 4 %}
-                  and
-                {% endif %}
-                <a href="{{ '/team/' + tag.team_tag.teamname if tag.team_tag.teamname else '/user/' + tag.user_tag.username }}">
-                  {{tag.team_tag.teamname if tag.team_tag.teamname else (tag.user_tag.firstname) + ' ' + (tag.user_tag.lastname)}}</a>{{ ',' if not loop.index == 4 else '' }}
-              {% endfor %}
+              was thanked by <a href="{{ url_for('user', username=post_object.author.username) }}">{{post_object.author.firstname}} {{post_object.author.lastname}}</a>
 
             {% else %}
 
-              {% for tag in all_tags[:3] %}
-                <a href="{{ '/team/' + tag.team_tag.teamname if tag.team_tag.teamname else '/user/' + tag.user_tag.username }}">
-                  {{tag.team_tag.teamname if tag.team_tag.teamname else (tag.user_tag.firstname) + ' ' + (tag.user_tag.lastname)}}</a>,
-              {% endfor %}
+              {% if all_tags|length == 2 %}
 
-              and <a href="#" class="js--show-all-taggees">{{ all_tags|length - 3 }} other{{ 's' if (all_tags|length - 3) > 1 else '' }}</a>
+                <a href="{{ '/team/' + all_tags[0].team_tag.teamname if all_tags[0].team_tag.teamname else '/user/' + all_tags[0].user_tag.username }}">
+                  {{all_tags[0].team_tag.teamname if all_tags[0].team_tag.teamname else (all_tags[0].user_tag.firstname) + ' ' + (all_tags[0].user_tag.lastname)}}
+                </a>
+                and
+                <a href="{{ '/team/' + all_tags[1].team_tag.teamname if all_tags[1].team_tag.teamname else '/user/' + all_tags[1].user_tag.username }}">
+                  {{all_tags[1].team_tag.teamname if all_tags[1].team_tag.teamname else (all_tags[1].user_tag.firstname) + ' ' + (all_tags[1].user_tag.lastname)}}
+                </a>
+
+              {% elif all_tags|length == 3 %}
+
+                {% for tag in all_tags %}
+                  {% if loop.index == 3 %}
+                    and
+                  {% endif %}
+                  <a href="{{ '/team/' + tag.team_tag.teamname if tag.team_tag.teamname else '/user/' + tag.user_tag.username }}">
+                    {{tag.team_tag.teamname if tag.team_tag.teamname else (tag.user_tag.firstname) + ' ' + (tag.user_tag.lastname)}}</a>{{ ',' if not loop.index == 3 else '' }}
+                {% endfor %}
+
+              {% elif all_tags|length == 4 %}
+
+                {% for tag in all_tags %}
+                  {% if loop.index == 4 %}
+                    and
+                  {% endif %}
+                  <a href="{{ '/team/' + tag.team_tag.teamname if tag.team_tag.teamname else '/user/' + tag.user_tag.username }}">
+                    {{tag.team_tag.teamname if tag.team_tag.teamname else (tag.user_tag.firstname) + ' ' + (tag.user_tag.lastname)}}</a>{{ ',' if not loop.index == 4 else '' }}
+                {% endfor %}
+
+              {% else %}
+
+                {% for tag in all_tags[:3] %}
+                  <a href="{{ '/team/' + tag.team_tag.teamname if tag.team_tag.teamname else '/user/' + tag.user_tag.username }}">
+                    {{tag.team_tag.teamname if tag.team_tag.teamname else (tag.user_tag.firstname) + ' ' + (tag.user_tag.lastname)}}</a>,
+                {% endfor %}
+
+                and <a href="#" class="js--show-all-taggees">{{ all_tags|length - 3 }} other{{ 's' if (all_tags|length - 3) > 1 else '' }}</a>
+
+              {% endif %}
+
+              were thanked by <a href="{{ url_for('user', username=post_object.author.username) }}">{{post_object.author.firstname}} {{post_object.author.lastname}}</a>
 
             {% endif %}
 
