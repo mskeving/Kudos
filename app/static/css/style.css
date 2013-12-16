@@ -1266,19 +1266,14 @@ body {
   font-family: proxima-nova, sans-serif;
 }
 
-.count a {
+.count a,
+.count span {
   color: rgba(0, 0, 0, 0.5);
   text-decoration: none;
 }
 
 .count a:hover {
   text-decoration: underline;
-}
-
-.comments__count {
-  color: inherit;
-  cursor: pointer;
-  text-decoration: none;
 }
 
 .comments {

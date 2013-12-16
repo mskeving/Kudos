@@ -1,0 +1,49 @@
+
+{% extends "base.html" %}
+{% block content %}
+
+<h1>Admin Page</h1>
+<div class="main-column">
+
+<ul>
+	<li><a href="{{ url_for('unmoderated_posts') }}">Unmoderated Posts</a> (<span class='count-unmoderated-posts'>{{count_unmoderated_posts}}</span>)</li>
+	<li><a href="{{ url_for('accepted_posts') }}">Accepted Posts</a> (<span class='count-accepted-posts'>{{count_accepted_posts}}</span>)</li>
+	<li><a href="{{ url_for('rejected_posts') }}">Rejected Posts</a> (<span class='count-rejected-posts'>{{count_rejected_posts}}</span>)</li>
+</ul>
+<h2 class="gamma p {{status}}">{{header}}</h2>
+{% if posts %}
+
+	<ol class="posts">
+
+		{% for post in posts %}
+			{% include 'post.html' with context %}
+			{% set post_object = post.get('post_object') %}
+			<div class='status' style='margin-bottom:50px'>
+			{% if status == 'unmoderated' or status == 'rejected' %}
+				{% if status == 'rejected' and post.get('status_committer') != None %}
+					Removed from TV display by {{post.get('status_committer')}}. Would you rather allow it?
+				{% endif %}
+				<button class='moderate-btn accept-post' type='button' style='padding:0px 10px' data-post-id='{{post_object.id}}' value=1>Allow</button>
+			{% endif %}
+			{% if status == 'unmoderated' or status == 'accepted' %}
+				{% if status == 'accepted' and post.get('status_committer') != None %}
+					Allowed on TV display by {{post.get('status_committer')}}. Would you rather remove it?
+				{% endif %}
+				<button class='moderate-btn reject-post' type='button' style='padding:0px 10px' data-post-id='{{post_object.id}}' value=2>Remove</button>
+			{% endif %}
+			</div>
+		{% endfor %}
+
+	</ol>
+
+{% else %}
+		<p class="beta promo faded">No posts to display here</p>
+
+{% endif %}
+
+</div>
+
+{% endblock %}
+
+
+

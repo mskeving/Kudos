@@ -14,7 +14,7 @@ class Team(db.Model):
 	is_deleted = db.Column(db.Boolean, default=False, nullable=False)
 	tagged_in = db.relationship('Tag', backref='team_tag')
 	teams = db.relationship('UserTeam', backref='team')
-	# ex) query results from UserTeam: 
+	# ex) query results from UserTeam to get teamn name a user is on:
 	# for team in userteams:
 	# 	team.team.teamname
 
@@ -45,16 +45,11 @@ class User(db.Model):
 	manager_id = db.Column(db.Integer)
 	is_deleted = db.Column(db.Boolean, default=False, nullable=False)
 
+	# backref is adding author to Post class
 	posts = db.relationship('Post', backref='author', lazy='dynamic')
 	users_teams = db.relationship('UserTeam', backref='user', primaryjoin="User.id==UserTeam.user_id")
 	tagged_in = db.relationship('Tag', backref='user_tag', primaryjoin="User.id==Tag.user_tag_id", lazy="dynamic'")
 	thanker = db.relationship('Thanks', backref='user')
-
-
-	# backref is adding author to Post class
-	# lazy.. whether all posts are loaded at the same time as user. look up options
-
-
 
 	def generate_photo_url(self, expires_in=300):
 		# url should be everything after bucket name (dropboxkudos)
@@ -70,19 +65,6 @@ class User(db.Model):
 				return "/static/img/" + os.path.basename(self.photo)
 			return "/static/img/generic_photo.jpg"
 
-
-	@staticmethod
-	def make_unique_nickname(nickname):
-		if User.query.filter_by(nickname=nickname).first() == None:
-			return nickname
-			version = 2
-			while True:
-				new_nickname = nickname + str(version)
-				if User.query.filter_by(nickname=new_nickname).first() == None:
-					break
-				version += 1
-			return new_nickname
-
 	def is_authenticated(self):
 		return True
 
@@ -96,19 +78,23 @@ class User(db.Model):
 		return unicode(self.id)
 
 	def __repr__(self):
-		#tells how to print objects of this class. Used for debugging. 
+		#tells how to print objects of this class. Used for debugging.
 		return '<User %d:%s>' % (self.id, self.username)
 
+UNMODERATED, ACCEPTED, REJECTED = (0,1,2) # used for monitoring posts displayed on TV
 class Post(db.Model):
 	__tablename__ = "posts"
 
 	id = db.Column(db.Integer, primary_key=True)
 	body = db.Column(db.String(500))
-	parent_post_id = db.Column(db.Integer, db.ForeignKey('posts.id')) #denotes that it's a reply
+	parent_post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
 	time = db.Column(db.DateTime)
-	user_id = db.Column(db.Integer, db.ForeignKey('users.id')) #users is tablename
+	user_id = db.Column(db.Integer, db.ForeignKey('users.id')) #users is the tablename
 	photo_link = db.Column(db.String(140))
+	photo_url_fullsize = db.Column(db.String(140))
 	is_deleted = db.Column(db.Boolean, default=False, nullable=False)
+	status = db.Column(db.Integer, default=0)
+	status_committer = db.Column(db.String(140))
 
 	tags = db.relationship('Tag', backref='post')
 	thanks = db.relationship('Thanks', backref='post')
@@ -139,12 +125,12 @@ class Tag(db.Model):
 	user_tag_id = db.Column(db.Integer, db.ForeignKey('users.id'), index=True)
 	body = db.Column(db.String(200)) #just for readability in DB store string of tag
 	post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
-	tag_author = db.Column(db.Integer, db.ForeignKey('users.id')) 
+	tag_author = db.Column(db.Integer, db.ForeignKey('users.id'))
 	time = db.Column(db.DateTime)
 	is_deleted = db.Column(db.Boolean, default=False, nullable=False)
 
 
-	
+
 
 
 

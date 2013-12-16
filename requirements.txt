@@ -3,9 +3,11 @@ Flask-Login==0.2.7
 Flask-Mail==0.9.0
 Flask-OpenID==1.1.1
 Flask-SQLAlchemy==1.0
+Flask-SSLify==0.1.4
 Flask-WTF==0.8.4
 Jinja2==2.7.1
 MarkupSafe==0.18
+Padding==0.4
 SQLAlchemy==0.7.10
 Tempita==0.5.1
 WTForms==1.0.4
@@ -16,10 +18,13 @@ decorator==3.4.0
 gunicorn==18.0
 httplib2==0.8
 itsdangerous==0.23
+keen==0.2.2
 newrelic==1.13.1.31
 oauth2client==1.2
 psycopg2==2.5.1
+pycrypto==2.6.1
 python-openid==2.2.5
 pytz==2013b
+requests==2.1.0
 sqlalchemy-migrate==0.7.2
 wsgiref==0.1.2

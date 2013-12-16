@@ -151,28 +151,28 @@ function get_tag_list(obj, post_id){
 };
 
 function show_all_tags(post_id) {
-        var result;
-        var data = {
-                post_id: post_id
-        };
+    var result;
+    var data = {
+        post_id: post_id
+    };
 
-        $.ajax({
-                url: '/tagged_in_post',
-                type: 'POST',
-                data: data,
-                success: function(data) {
-                        $('body').append(data);
-                        $('html').addClass('js--lightbox-open');
-                        prepModals();
-                },
-                error: function(message) {
-                        console.log('Error fetching taggees for post #' + data.post_id);
-                        console.log(message);
-                        return false;
-                }
-        });
+    $.ajax({
+        url: '/tagged_in_post',
+        type: 'POST',
+        data: data,
+        success: function(data) {
+            $('body').append(data);
+            $('html').addClass('js--lightbox-open');
+            prepModals();
+        },
+        error: function(message) {
+            console.log('Error fetching taggees for post #' + data.post_id);
+            console.log(message);
+            return false;
+        }
+    });
 
-        return result;
+    return result;
 };
 
 window.initTagsModal = function($jqObject) {
@@ -304,7 +304,7 @@ $('.addtag-button').live('click', function(e){
             <input type="text" class="tag_input vi-hd" data-post-id="' + post_id + '"/>\
             <div data-id="_tagsinput" class="tagsinput h-m">\
               <div data-id="_addTag">\
-                <input data-id="_tag" class="spit input span-all input--plain input--plain-highlight" value="" data-default="Who do you want to thank?" placeholder="Who do you want to thank?"/>\
+                <input data-id="_tag" data-post-id="' + post_id + '" class="spit input span-all input--plain input--plain-highlight" value="" data-default="Who do you want to thank?" placeholder="Who do you want to thank?"/>\
               </div>\
             </div>\
             <button type="submit" class="f-r new-tag-btn in butt" data-post-id="' + post_id + '">Add tags</button>\
@@ -315,13 +315,15 @@ $('.addtag-button').live('click', function(e){
         </form>\
       </div>');
 
-$('html').addClass('js--lightbox-open');
+	$('html').addClass('js--lightbox-open');
 
-	var tag_input = $('.tag_input[data-post-id=' + post_id + ']'),
-	    tag_modal = $('.tag-modal[data-post-id=' + post_id + ']');
+		var tag_input = $('.tag_input[data-post-id=' + post_id + ']'),
+		    tag_modal = $('.tag-modal[data-post-id=' + post_id + ']');
 
-	prepModals();
-	get_tag_list(tag_input, post_id);
+		prepModals();
+		get_tag_list(tag_input, post_id);
+
+		$('[data-post-id="' + post_id + '"].ui-autocomplete-input').focus();
 
 });
 
@@ -438,6 +440,8 @@ $('.new-tag-btn').live('click', function(e) {
 	}
 });
 
+
+//take out the entire post and replace with new one to get accurtate tag truncation with any new tags
 function replace_one_post(post_id) {
 	old_post = $('.post[data-post-id=' + post_id + ']');
 	data = {'post_id': post_id};
@@ -577,6 +581,7 @@ $('.comment__input').each(function(){
 
 function send_notifications(data){
 	// data must include post_id, tagged_team_ids, tagged_user_ids, post_text, photo_url
+	// send notifications in sepapate ajax request for performance
 	$.ajax({
 		type: "POST",
 		url: "/create_notifications",
@@ -726,7 +731,8 @@ function create_post(public_url) {
 			else {
 				$('.post-column').prepend(response.new_post);
 			}
-
+			initCommentButtons($('.post[data-post-id=' + response.post_id + ']'));
+			initRemoveButton($('.post[data-post-id=' + response.post_id + '] .remove-post-button'));
 			$('ol.posts .post').first().addClass('post--new-in-stream');
 			clear_post_modal_info();
 			end_show_progress($('.submit-new-post'));
@@ -855,6 +861,70 @@ function s3_upload(data, callback){
 
     var s3upload = new S3Upload(settings);
 };
+
+//admin tool - te posts to display on /tv
+$('.moderate-btn').live('click', function(){
+	post_id = $(this).data('post-id');
+	status_buttons = $(this).parents('.status');
+	parent_post = $('.moderate-btn[data-post-id=' + post_id + ']').parents('.status').siblings('.post[data-post-id=' + post_id + ']')
+	data = {
+		'post_id': post_id,
+		'status': $(this).val()
+	};
+	$.ajax({
+		data: data,
+		type: 'POST',
+		url: '/moderate_post',
+		success: function(resp){
+			accepted_count = parseInt($('.count-accepted-posts').text());
+			rejected_count = parseInt($('.count-rejected-posts').text());
+			unmoderated_count = parseInt($('.count-unmoderated-posts').text());
+			parent_post.addClass('post--remove-from-stream');
+			if(animations.supported) {
+				parent_post.one('webkitAnimationEnd mozAnimationEnd oAnimationEnd animationEnd', function(){
+					status_buttons.remove();
+					$(this).remove();
+				});
+			} else {
+				status_buttons.remove();
+				parent_post.remove();
+			}
+			if ($('.accepted').length > 0){
+				//decrease accepted by 1 and increase reject by 1
+				accepted_count -= 1;
+				rejected_count += 1;
+				$('.count-accepted-posts').text(accepted_count);
+				$('.count-rejected-posts').text(rejected_count);
+			}
+			else if ($('.rejected').length > 0){
+				//decrease rejected by 1 and increase accepted by 1
+				accepted_count += 1;
+				rejected_count -= 1;
+				$('.count-accepted-posts').text(accepted_count);
+				$('.count-rejected-posts').text(rejected_count);
+			}
+			else if ($('.unmoderated').length > 0){
+				unmoderated_count -= 1
+				if (data['status'] == 1){
+					//clicked Accept
+					accepted_count += 1;
+				}
+				else if (data['status'] == 2){
+					//clicked Reject
+					rejected_count += 1;
+				}
+				$('.count-accepted-posts').text(accepted_count);
+				$('.count-rejected-posts').text(rejected_count);
+				$('.count-unmoderated-posts').text(unmoderated_count);
+			}
+			console.log('modified post status');
+		},
+		error: function(){
+			display_error('error modifying post status')
+			console.log('error modifying post status');
+		}
+	})
+})
 
 // Ready when you are
 
