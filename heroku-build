@@ -1,7 +1,7 @@
 #! /bin/bash
 set -e
 out='heroku-build-output'
-top_level_files=(Procfile db_create.py db_upgrade.py runp-heroku.py requirements.txt settings_helper.py)
+top_level_files=(Procfile db_create.py db_upgrade.py runp-heroku.py requirements.txt settings_helper.py get_dropbook_data.py additional_employees.csv)
 
 die() {
 	for line in "$@"; do echo "$line" 1>&2; done
