@@ -866,7 +866,7 @@ function s3_upload(data, callback){
 $('.moderate-btn').live('click', function(){
 	post_id = $(this).data('post-id');
 	status_buttons = $(this).parents('.status');
-	parent_post = $('.moderate-btn[data-post-id=' + post_id + ']').parents('.status').siblings('.post[data-post-id=' + post_id + ']')
+	parent_post = $('.moderate-btn[data-post-id=' + post_id + ']').parents('.post[data-post-id=' + post_id + ']')
 	data = {
 		'post_id': post_id,
 		'status': $(this).val()
