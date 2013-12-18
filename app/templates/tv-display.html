@@ -28,6 +28,8 @@
 
         <ol class="post-column posts posts--tv">
 
+          {% set tv = 1 %}
+
           {% for post in posts[:9] %}
             {% include 'post-readonly.html' with context %}
           {% endfor %}

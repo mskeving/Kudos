@@ -1,5 +1,5 @@
 {% set post_object = post.get('post_object') %}
-<li class="post post--xl post--readonly post--single {% if post_object.photo_link %}post--photo{% endif %}" data-post-id="{{post_object.id}}">
+<li class="post {% if tv %}post--xl {% endif %}post--readonly post--single {% if post_object.photo_link %}post--photo{% endif %}" data-post-id="{{post_object.id}}">
 
   <div class="taggees post__taggees">
     <ul class="avatars cf post__thanks-to h-l standalone">
@@ -122,15 +122,32 @@
     </div><!-- /.post__content -->
 
     <div class="post-metadata post__comments">
-      <div class="count cf">
-        {% set comments = post.get('comments')|length %}
-        {% if comments == 1 %}
-          <a class="comments__count comment-count">{{comments}} Thank</a>
+        {% if tv %}
+        <div class="count cf">
+          {% set comments = post.get('comments')|length %}
+          {% if comments == 1 %}
+            <a class="comments__count comment-count">{{comments}} Thank</a>
+          {% else %}
+            <a class="comments__count comment-count">{{comments}} Thanks</a>
+          {% endif %}
+          <small class="f-r"><a title="Permalink to this post" href="/post/{{post_object.id}}">{{post.get('time')}}</a></small>
+        </div>
         {% else %}
-          <a class="comments__count comment-count">{{comments}} Thanks</a>
+        <div class="promo">
+          {% if status == 'unmoderated' or status == 'rejected' %}
+            {% if status == 'rejected' and post.get('status_committer') != None %}
+              <p>Removed from TV display by {{post.get('status_committer')}}. Would you rather allow it?</p>
+            {% endif %}
+            <button class='moderate-btn accept-post butt' type='button' style='padding:0px 10px' data-post-id='{{post_object.id}}' value=1><i class="fa fa-check"></i> Allow</button>
+          {% endif %}
+          {% if status == 'unmoderated' or status == 'accepted' %}
+            {% if status == 'accepted' and post.get('status_committer') != None %}
+              <p>Allowed on TV display by {{post.get('status_committer')}}. Would you rather remove it?</p>
+            {% endif %}
+            <button class='moderate-btn reject-post butt butt--primary' type='button' style='padding:0px 10px' data-post-id='{{post_object.id}}' value=2><i class="fa fa-times"></i> Remove</button>
+          {% endif %}
+        </div>
         {% endif %}
-        <small class="f-r"><a title="Permalink to this post" href="/post/{{post_object.id}}">{{post.get('time')}}</a></small>
-      </div>
     </div><!-- /.post__comments -->
   </div><!-- /.post__container -->
 </li>

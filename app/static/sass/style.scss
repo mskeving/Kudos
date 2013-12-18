@@ -296,6 +296,7 @@ hr {
   font-weight: 700;
   background-color: #fff;
   background-image: linear-gradient(rgba(0,0,0,0), rgba(0,0,0,.1));
+  -webkit-font-smoothing: antialiased;
 
   &:active, &:focus {
     outline: none;
@@ -380,6 +381,10 @@ hr {
   padding-left: 0;
   list-style: none;
   margin-bottom: 0;
+
+  &.p {
+    margin-bottom: $baseline;
+  }
 
   li, a {
     display: inline-block;
@@ -785,6 +790,10 @@ html, body {
   &.post--xl {
     //transform: scale(1.25);
   }
+}
+
+.post--readonly {
+  margin-bottom: 2rem;
 }
 
   .post__container {
