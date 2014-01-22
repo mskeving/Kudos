@@ -438,6 +438,7 @@ def team(team):
 
 	tagged_posts = [tag.post for tag in tags]
 
+	#comment
 	if len(tagged_posts) != 0:
 		indented_posts = [posts_to_indented_posts(tagged_posts)]
 
