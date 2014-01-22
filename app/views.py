@@ -436,13 +436,10 @@ def team(team):
 	team_members = UserTeam.query.filter(UserTeam.team_id==this_team.id).all()
 	tags = Tag.query.filter(and_(Tag.team_tag_id==this_team.id, Tag.is_deleted==False)).order_by(Tag.time.desc()).all()
 
-	tagged_posts = []
-	for tag in tags:
-		tagged_posts.append(tag.post)
+	tagged_posts = [tag.post for tag in tags]
 
-	indented_posts = []
 	if len(tagged_posts) != 0:
-		indented_posts = posts_to_indented_posts(tagged_posts)
+		indented_posts = [posts_to_indented_posts(tagged_posts)]
 
 	dict_of_users_teams = {}
 	list_of_users = []
