@@ -38,15 +38,15 @@ def auth_finish(email, next):
 		return redirect(url_for('login'))
 
 	if len(u) == 0:
-		error_msg = "You're not registered on Dropbox Kudos yet - are you a new Dropboxer? If so, contact kudos@dropbox.com to get access."
+		error_msg = "You're not registered on Kudos yet - are you a new employee? If so, contact admin@example.com to get access."
 		return back_to_login_with_error(error_msg)
 
 	if len(u) > 1:
-		error_msg = "Too many entries for %r in database. Please contact kudos@dropbox.com" % cred.id_token.get('email')
+		error_msg = "Too many entries for %r in database. Please contact admin@example.com" % cred.id_token.get('email')
 		return back_to_login_with_error(error_msg)
 
 	if u[0].is_deleted == True:
-		error_msg = "Looks like you no longer have access to Dropbox Kudos. If you think this is in error, contact kudos@dropbox.com to get access."
+		error_msg = "Looks like you no longer have access to Kudos. If you think this is in error, contact admin@example.com to get access."
 		return back_to_login_with_error(error_msg)
 
 	#tell flask to remember that u is current logged in user
@@ -94,7 +94,7 @@ def feedback():
 
 	sender = g.user.email
 	reply_to = sender
-	recipient_list = ["kudos@dropbox.com"]
+	recipient_list = ["admin#example.com"]
 	subject = "Kudos Feedback"
 	text = form.get('feedback')
 

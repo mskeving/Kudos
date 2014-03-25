@@ -37,7 +37,7 @@
 					{% if g.user.is_authenticated() %}
 					<!-- If user is logged in, allow them to logout -->
 					<li><a href="{{ url_for('user', username = g.user.username) }}">Your Profile</a></li>
-					<li><a href="{{ url_for('all_users') }}">All Dropboxers</a></li>
+					<li><a href="{{ url_for('all_users') }}">All Employees</a></li>
 					<li id="nav-feedback"><a href="#">Feedback</a></li>
 					{% endif %}
 				</ul>

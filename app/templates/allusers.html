@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<h1>All Dropboxers</h1>
+<h1>All Employees</h1>
 
 <div class="columns--two js--allusers">
 {% for user in all_users %}
@@ -18,7 +18,7 @@
   {% else %}
 
     <a class="b user-card__avatar img--cropper img--med img--med--tall f-l" href="{{ url_for('user', username=user.username) }}">
-      <img class="img" src="//dropabout.appspot.com/img?id=1" alt="{{user.username}}" />
+      <img class="img" src="" alt="{{user.username}}" />
     </a>
 
   {% endif %}
