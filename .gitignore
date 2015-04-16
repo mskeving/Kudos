@@ -1,21 +1,16 @@
 *.swp
-app.db
 *.pyc
 tmp/
 heroku_only/
-user_data.rtf
-dropbox to hackbright.rtf
 install_instructions.rtf
 /settings.py
 
-get_dropbook_data.py
 *.csv
 
 newrelic.ini
 
 .anvil/
 /env
-/app/static/hackbright_users.txt
 flask/*
 .DS_Store
 
@@ -27,6 +22,7 @@ heroku-push
 heroku-test-build
 heroku-test-push
 heroku-test-settings.py
+get_employee_data.py
 
 # Design-related dirs/files to ignore
 .sass-cache
